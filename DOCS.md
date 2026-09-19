@@ -23,7 +23,10 @@ Welcome to your new Madis Expo app! This document provides links to the document
 
 ## Backend & Data Fetching 🌐
 
-- **Supabase**: [https://supabase.com/docs/guides/getting-started/tutorials/with-expo-react-native](https://supabase.com/docs/guides/getting-started/tutorials/with-expo-react-native)
+Uniezz does **not** use Supabase or any other BaaS. The app talks to the Uniezz **Go API**; media lives in **AWS S3**.
+
+- **Uniezz API (Go):** auth, profiles, feed, chat, and the rest of the product. Base URL from app config — never call AWS or identity providers (USOS, Entra) from the client
+- **Media (AWS S3):** photos, chat attachments, exam files. The Go API authorizes uploads and issues object URLs; the app does not hold long-lived AWS keys
 - **TanStack Query (React Query)**: [https://tanstack.com/query/latest/docs/framework/react/quick-start](https://tanstack.com/query/latest/docs/framework/react/quick-start)
 - **Async Storage**: [https://react-native-async-storage.github.io/2.0/Usage/](https://react-native-async-storage.github.io/2.0/Usage/)
 
