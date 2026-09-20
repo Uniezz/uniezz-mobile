@@ -4,15 +4,8 @@ Expo / React Native app. Package manager is **Bun** — use `bun` / `bunx`, not 
 
 ## Get started
 
-From the monorepo root:
-
 ```bash
 bun install
-```
-
-Then in `apps/mobile`:
-
-```bash
 bun start
 ```
 
