@@ -1,5 +1,8 @@
 import { ms, mvs, s, vs } from "./scale";
 
+export const fonts = {
+  PlusJakartaSans: "Plus Jakarta Sans",
+};
 const colors = {
   white: "#FFFFFF",
   black: "#000000",
@@ -16,7 +19,7 @@ const colors = {
   lagoon: "#12A594",
   green: "#12875C",
   amber: "#B5760A",
-  red: "#C6374D",
+  error: "#C6374D",
   ink: "#E7F0FF",
   mist: "#F2F7FF",
   canvas: "#F4F7FD",
@@ -30,10 +33,12 @@ const colors = {
   amberLight: "#FBEFD9",
   errorLight: "#FBE6EA",
   gray: "#8E99B8",
+  textSecondary: "#59648A",
 };
 
 export const lightTheme = {
   themeName: "light",
+  fonts,
   colors: {
     ...colors,
   },
@@ -45,6 +50,8 @@ export const lightTheme = {
 //Not needed now
 export const darkTheme = {
   themeName: "dark",
+  fonts,
+
   colors: {
     ...colors,
   },

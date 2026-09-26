@@ -8,7 +8,7 @@ export default function LoadingScreen() {
   useEffect(() => {
     // TODO: Implement your custom session check and redirection logic here
     // For now, we'll just redirect to the auth group
-    router.replace("/(auth)");
+    router.replace("/(tabs)/feed"); // now we need to navigate into tabs
   }, [router]);
 
   return (
