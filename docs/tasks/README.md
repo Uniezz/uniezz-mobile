@@ -25,31 +25,31 @@ We go public when **UMCS (USOS)** and **at least one other university (Entra)** 
 
 ## How to read the tasks
 
-| Rule | Meaning |
-|------|---------|
-| Sprint | Two weeks. All four teams share the same sprint number. |
-| Estimate | 0.5d or 1d only. One person on that team. About **10d** per sprint. |
-| Depends | Finish this ID first. Web and mobile only talk to the Go API. |
-| Done when | Short check. If it is not true, the task is not done. |
+| Rule      | Meaning                                                             |
+| --------- | ------------------------------------------------------------------- |
+| Sprint    | Two weeks. All four teams share the same sprint number.             |
+| Estimate  | 0.5d or 1d only. One person on that team. About **10d** per sprint. |
+| Depends   | Finish this ID first. Web and mobile only talk to the Go API.       |
+| Done when | Short check. If it is not true, the task is not done.               |
 
 Locales: `TASKS.en.md`, `TASKS.uk.md`, `TASKS.ru.md`, `TASKS.pl.md`. IDs match in every language.
 
 ## Sprint outcomes
 
-| Sprint | People can… |
-|--------|-------------|
-| 1 | Sign in (UMCS and one Entra university). See the app shell. |
-| 2 | Edit profile, post on Feed, upload photos. |
-| 3 | Send chat messages, including groups. |
-| 4 | Find exams and course reviews. |
-| 5 | Swipe on Meet (if photo is ok). Read the Guide. Review a dorm. |
-| 6 | Moderators sign in (after we write the auth rules) and handle reports. |
+| Sprint | People can…                                                            |
+| ------ | ---------------------------------------------------------------------- |
+| 1      | Sign in (UMCS and one Entra university). See the app shell.            |
+| 2      | Edit profile, post on Feed, upload photos.                             |
+| 3      | Send chat messages, including groups.                                  |
+| 4      | Find exams and course reviews.                                         |
+| 5      | Swipe on Meet (if photo is ok). Read the Guide. Review a dorm.         |
+| 6      | Moderators sign in (after we write the auth rules) and handle reports. |
 
 ## Streams
 
-| Stream | File |
-|--------|------|
-| Backend | [backend/TASKS.en.md](backend/TASKS.en.md) |
-| Web | [frontend/TASKS.en.md](frontend/TASKS.en.md) |
-| Mobile | [mobile/TASKS.en.md](mobile/TASKS.en.md) |
-| Testing | [testing/TASKS.en.md](testing/TASKS.en.md) |
+| Stream  | File                                         |
+| ------- | -------------------------------------------- |
+| Backend | [backend/TASKS.en.md](backend/TASKS.en.md)   |
+| Web     | [frontend/TASKS.en.md](frontend/TASKS.en.md) |
+| Mobile  | [mobile/TASKS.en.md](mobile/TASKS.en.md)     |
+| Testing | [testing/TASKS.en.md](testing/TASKS.en.md)   |

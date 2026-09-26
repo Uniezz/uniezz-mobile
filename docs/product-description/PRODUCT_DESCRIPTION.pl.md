@@ -86,11 +86,11 @@ Moduł do szukania znajomych, towarzystwa i relacji:
 
 Aplikacja obsługuje cztery języki:
 
-| Język | Kod |
-|-------|-----|
-| Polski | `pl` |
+| Język     | Kod  |
+| --------- | ---- |
+| Polski    | `pl` |
 | Ukraiński | `uk` |
-| Rosyjski | `ru` |
+| Rosyjski  | `ru` |
 | Angielski | `en` |
 
 - Przełączanie języka w ustawieniach profilu
@@ -113,13 +113,13 @@ Aplikacja obsługuje cztery języki:
 
 ## Wartość dla studentów
 
-| Problem | Rozwiązanie w Uniezz |
-|---------|----------------------|
+| Problem                                               | Rozwiązanie w Uniezz                              |
+| ----------------------------------------------------- | ------------------------------------------------- |
 | Rozproszone czaty i grupy w mediach społecznościowych | Jedna platforma dla wszystkich lubelskich uczelni |
-| Trudno znaleźć materiały do egzaminów | Archiwum egzaminów i opinie o przedmiotach |
-| Nowy student nie wie, gdzie mieszkać i co kupować | Przewodnik z aktualnymi informacjami |
-| Trudno poznać ludzi poza własną uczelnią | Moduł poznawania między studentami miasta |
-| Toksyczne treści w otwartych grupach | Ścisła moderacja i weryfikacja studentów |
+| Trudno znaleźć materiały do egzaminów                 | Archiwum egzaminów i opinie o przedmiotach        |
+| Nowy student nie wie, gdzie mieszkać i co kupować     | Przewodnik z aktualnymi informacjami              |
+| Trudno poznać ludzi poza własną uczelnią              | Moduł poznawania między studentami miasta         |
+| Toksyczne treści w otwartych grupach                  | Ścisła moderacja i weryfikacja studentów          |
 
 ---
 
@@ -134,4 +134,4 @@ Aplikacja obsługuje cztery języki:
 
 ---
 
-*Dokument: PRODUCT_DESCRIPTION (PL) · Uniezz · v1.2*
+_Dokument: PRODUCT_DESCRIPTION (PL) · Uniezz · v1.2_

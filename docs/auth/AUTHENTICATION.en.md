@@ -4,24 +4,24 @@
 
 Uniezz verifies that a user is a real, active student before granting access. Five universities, three identity providers, one entry point on the **Go API** for web and mobile. No Supabase.
 
-| University | Provider | Verified data |
-|------------|----------|---------------|
-| **UMCS** | USOS API (OAuth 1.0a) | Identity, faculty, programme, year |
-| **Politechnika Lubelska** | Microsoft Entra ID (OIDC) | Identity, university; faculty if published |
+| University                   | Provider                  | Verified data                              |
+| ---------------------------- | ------------------------- | ------------------------------------------ |
+| **UMCS**                     | USOS API (OAuth 1.0a)     | Identity, faculty, programme, year         |
+| **Politechnika Lubelska**    | Microsoft Entra ID (OIDC) | Identity, university; faculty if published |
 | **Uniwersytet Przyrodniczy** | Microsoft Entra ID (OIDC) | Identity, university; faculty if published |
-| **KUL** | Microsoft Entra ID (OIDC) | Identity, university; faculty if published |
-| **WSEI** | Microsoft Entra ID (OIDC) | Identity, university; faculty if published |
-| *any of the five* | Email OTP | University domain only — fallback |
+| **KUL**                      | Microsoft Entra ID (OIDC) | Identity, university; faculty if published |
+| **WSEI**                     | Microsoft Entra ID (OIDC) | Identity, university; faculty if published |
+| _any of the five_            | Email OTP                 | University domain only — fallback          |
 
 ### Approaches Considered
 
-| Approach | Verdict |
-|----------|---------|
-| **USOS API (OAuth 1.0a)** | Chosen for UMCS. Official, verified data, self-service registration |
-| **Microsoft Entra ID (OIDC)** | Chosen for the other four. All five run Entra tenants |
-| **Email OTP on university domain** | Fallback when admin consent blocks the Entra app |
-| Moodle Web Services | Rejected. Token issued manually by university IT |
-| Scraping the campus login form | Rejected. Handling university passwords is a legal and security liability |
+| Approach                           | Verdict                                                                   |
+| ---------------------------------- | ------------------------------------------------------------------------- |
+| **USOS API (OAuth 1.0a)**          | Chosen for UMCS. Official, verified data, self-service registration       |
+| **Microsoft Entra ID (OIDC)**      | Chosen for the other four. All five run Entra tenants                     |
+| **Email OTP on university domain** | Fallback when admin consent blocks the Entra app                          |
+| Moodle Web Services                | Rejected. Token issued manually by university IT                          |
+| Scraping the campus login form     | Rejected. Handling university passwords is a legal and security liability |
 
 ---
 
@@ -43,11 +43,11 @@ The Consumer Secret never leaves the backend and is never committed. A revocatio
 
 USOS API uses OAuth 1.0a (three-legged), not OAuth 2.0. All request signing happens on the backend with HMAC-SHA1.
 
-| Step | URL |
-|------|-----|
+| Step          | URL                                                 |
+| ------------- | --------------------------------------------------- |
 | Request token | `https://apps.umcs.pl/services/oauth/request_token` |
-| Authorize | `https://apps.umcs.pl/services/oauth/authorize` |
-| Access token | `https://apps.umcs.pl/services/oauth/access_token` |
+| Authorize     | `https://apps.umcs.pl/services/oauth/authorize`     |
+| Access token  | `https://apps.umcs.pl/services/oauth/access_token`  |
 
 1. **Request token** — backend calls `request_token` with the Consumer Key, the requested `scopes`, and an `oauth_callback` pointing at Uniezz
 2. **Redirect** — the user is sent to `authorize` and logs in with their UMCS credentials on the university's own page
@@ -61,14 +61,14 @@ The user's UMCS password is entered only on the UMCS page and is never visible t
 
 None of these require administrator approval.
 
-| Scope | Purpose in Uniezz |
-|-------|-------------------|
-| *(default)* | Basic identity — user ID, first and last name |
-| `studies` | Programmes, courses, group lists — the source of faculty, programme, and year |
-| `email` | University email address, used as the account identifier |
-| `photo` | Profile photo and its visibility preferences |
-| `personal` | Date of birth — age gates, birthday features, age filters in Connections |
-| `offline_access` | Long-lived token so the profile can be refreshed between sessions |
+| Scope            | Purpose in Uniezz                                                             |
+| ---------------- | ----------------------------------------------------------------------------- |
+| _(default)_      | Basic identity — user ID, first and last name                                 |
+| `studies`        | Programmes, courses, group lists — the source of faculty, programme, and year |
+| `email`          | University email address, used as the account identifier                      |
+| `photo`          | Profile photo and its visibility preferences                                  |
+| `personal`       | Date of birth — age gates, birthday features, age filters in Connections      |
+| `offline_access` | Long-lived token so the profile can be refreshed between sessions             |
 
 **On `personal`:** this scope is requested for the date of birth, which Uniezz needs for age gates and for age filters in the Connections module. The same scope also returns PESEL and other identifiers — those are discarded at read time and never written to the database or the logs.
 
@@ -86,14 +86,14 @@ All five universities run Microsoft Entra ID tenants, confirmed against the Micr
 
 ### Tenants
 
-| University | Domains | Tenant ID | Type |
-|------------|---------|-----------|------|
-| Politechnika Lubelska | `pollub.edu.pl`, `student.pollub.edu.pl` | `dbb41d7a-0043-4ee2-9843-6e4ff66cc9c8` | Managed |
-| Uniwersytet Przyrodniczy | `up.lublin.pl`, `student.`, `stud.` | `25a59194-f151-40c5-9e45-365a4d46d7b9` | Managed |
-| WSEI | `wsei.lublin.pl`, `student.`, `stud.` | `bab1e1e4-b3e8-49c1-93e4-eaeff72f1f5d` | Managed |
-| KUL — students | `student.kul.pl` | `f445c1ee-43fc-42e8-b642-b382d382c3c1` | Managed — **accepted** |
-| KUL — staff | `kul.pl` | `7952c9f0-b177-4a4c-ab55-7c2f5ab0808d` | Managed — **rejected** |
-| UMCS | `umcs.pl` | `80dbd34a-9b20-490b-ac49-035af103ab2b` | Federated (own SAML IdP) |
+| University               | Domains                                  | Tenant ID                              | Type                     |
+| ------------------------ | ---------------------------------------- | -------------------------------------- | ------------------------ |
+| Politechnika Lubelska    | `pollub.edu.pl`, `student.pollub.edu.pl` | `dbb41d7a-0043-4ee2-9843-6e4ff66cc9c8` | Managed                  |
+| Uniwersytet Przyrodniczy | `up.lublin.pl`, `student.`, `stud.`      | `25a59194-f151-40c5-9e45-365a4d46d7b9` | Managed                  |
+| WSEI                     | `wsei.lublin.pl`, `student.`, `stud.`    | `bab1e1e4-b3e8-49c1-93e4-eaeff72f1f5d` | Managed                  |
+| KUL — students           | `student.kul.pl`                         | `f445c1ee-43fc-42e8-b642-b382d382c3c1` | Managed — **accepted**   |
+| KUL — staff              | `kul.pl`                                 | `7952c9f0-b177-4a4c-ab55-7c2f5ab0808d` | Managed — **rejected**   |
+| UMCS                     | `umcs.pl`                                | `80dbd34a-9b20-490b-ac49-035af103ab2b` | Federated (own SAML IdP) |
 
 KUL runs two separate tenants and is the only university where students are already isolated at the tenant level: the student tenant is accepted, the staff tenant is rejected. UMCS is listed for completeness — it authenticates through USOS instead.
 
@@ -116,13 +116,13 @@ Steps 2 and 3 depend on how each university provisions its accounts, which canno
 
 Available from the ID token with no extra request:
 
-| Claim | Use |
-|-------|-----|
-| `oid` | Stable user ID within the tenant — primary key |
-| `tid` | Tenant ID — resolves the university with certainty |
-| `name` | First and last name |
-| `preferred_username` | UPN, normally the university email |
-| `email` | Email when published by the administrator; otherwise fall back to the UPN |
+| Claim                | Use                                                                       |
+| -------------------- | ------------------------------------------------------------------------- |
+| `oid`                | Stable user ID within the tenant — primary key                            |
+| `tid`                | Tenant ID — resolves the university with certainty                        |
+| `name`               | First and last name                                                       |
+| `preferred_username` | UPN, normally the university email                                        |
+| `email`              | Email when published by the administrator; otherwise fall back to the UPN |
 
 ### Optional Profile Fields
 
@@ -164,12 +164,12 @@ Web and mobile never talk to USOS, Entra, or the mail provider. They talk to one
 
 ### Public API
 
-| Route | Purpose |
-|-------|---------|
-| `POST /auth/start` | Body: `{ university, provider? }`. Returns the redirect URL for the chosen provider, or starts the OTP flow |
-| `GET /auth/callback/:provider` | Single callback surface. Handles the USOS verifier, the Entra authorization code, and OTP submission |
-| `GET /auth/me` | Current session profile |
-| `POST /auth/logout` | Clears the Uniezz session |
+| Route                          | Purpose                                                                                                     |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| `POST /auth/start`             | Body: `{ university, provider? }`. Returns the redirect URL for the chosen provider, or starts the OTP flow |
+| `GET /auth/callback/:provider` | Single callback surface. Handles the USOS verifier, the Entra authorization code, and OTP submission        |
+| `GET /auth/me`                 | Current session profile                                                                                     |
+| `POST /auth/logout`            | Clears the Uniezz session                                                                                   |
 
 `:provider` is one of `usos`, `entra`, `otp`.
 
@@ -206,11 +206,11 @@ NormalizedProfile {
 
 ### Verification Levels
 
-| Level | Meaning | Source |
-|-------|---------|--------|
-| `verified` | Academic record confirmed | USOS API — UMCS |
+| Level       | Meaning                                  | Source                |
+| ----------- | ---------------------------------------- | --------------------- |
+| `verified`  | Academic record confirmed                | USOS API — UMCS       |
 | `directory` | Live account in the university directory | Entra ID — other four |
-| `domain` | University email ownership only | Email OTP |
+| `domain`    | University email ownership only          | Email OTP             |
 
 The level is stored on the profile and shown as a badge. Faculty and year are marked as confirmed or self-declared per field, not per account.
 
@@ -274,4 +274,4 @@ A new university needs a provider entry and a tenant or installation ID. Routes,
 
 ---
 
-*Document: AUTHENTICATION (EN) · Uniezz · v2.3*
+_Document: AUTHENTICATION (EN) · Uniezz · v2.3_

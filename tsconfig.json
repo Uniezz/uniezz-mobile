@@ -6,7 +6,6 @@
       "@/*": ["./src/*"],
       "@/assets/*": ["./assets/*"]
     },
-    "ignoreDeprecations": "6.0",
     "moduleResolution": "bundler",
     "skipLibCheck": true,
     "esModuleInterop": true
