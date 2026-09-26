@@ -86,12 +86,12 @@ A module for finding friends, socializing, and dating:
 
 The application supports four languages:
 
-| Language | Code |
-|----------|------|
-| Polish | `pl` |
+| Language  | Code |
+| --------- | ---- |
+| Polish    | `pl` |
 | Ukrainian | `uk` |
-| Russian | `ru` |
-| English | `en` |
+| Russian   | `ru` |
+| English   | `en` |
 
 - Language switch in profile settings
 - Full interface localization
@@ -113,13 +113,13 @@ Strict content moderation is a core principle of the platform:
 
 ## Value for Students
 
-| Problem | Uniezz Solution |
-|---------|-----------------|
-| Scattered chats and groups across social media | One platform for all Lublin universities |
-| Hard to find exam materials | Exam archive and course reviews |
-| Newcomers don't know where to live or shop | Guide with up-to-date information |
-| Difficult to meet people outside your university | Connections module across the city |
-| Toxic content in open groups | Strict moderation and student verification |
+| Problem                                          | Uniezz Solution                            |
+| ------------------------------------------------ | ------------------------------------------ |
+| Scattered chats and groups across social media   | One platform for all Lublin universities   |
+| Hard to find exam materials                      | Exam archive and course reviews            |
+| Newcomers don't know where to live or shop       | Guide with up-to-date information          |
+| Difficult to meet people outside your university | Connections module across the city         |
+| Toxic content in open groups                     | Strict moderation and student verification |
 
 ---
 
@@ -134,4 +134,4 @@ Strict content moderation is a core principle of the platform:
 
 ---
 
-*Document: PRODUCT_DESCRIPTION (EN) · Uniezz · v1.2*
+_Document: PRODUCT_DESCRIPTION (EN) · Uniezz · v1.2_

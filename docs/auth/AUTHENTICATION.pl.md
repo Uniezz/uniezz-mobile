@@ -4,24 +4,24 @@
 
 Uniezz weryfikuje, czy użytkownik jest rzeczywistym, aktywnym studentem, zanim przyzna mu dostęp. Pięć uczelni, trzech dostawców tożsamości, jeden punkt wejścia na **Go API** dla webu i mobile.
 
-| Uczelnia | Dostawca | Zweryfikowane dane |
-|----------|----------|--------------------|
-| **UMCS** | USOS API (OAuth 1.0a) | Tożsamość, wydział, kierunek, rok |
-| **Politechnika Lubelska** | Microsoft Entra ID (OIDC) | Tożsamość, uczelnia; wydział, jeśli opublikowany |
-| **Uniwersytet Przyrodniczy** | Microsoft Entra ID (OIDC) | Tożsamość, uczelnia; wydział, jeśli opublikowany |
-| **KUL** | Microsoft Entra ID (OIDC) | Tożsamość, uczelnia; wydział, jeśli opublikowany |
-| **WSEI** | Microsoft Entra ID (OIDC) | Tożsamość, uczelnia; wydział, jeśli opublikowany |
-| *dowolna z pięciu* | Email OTP | Wyłącznie domena uczelniana — rozwiązanie zapasowe |
+| Uczelnia                     | Dostawca                  | Zweryfikowane dane                                 |
+| ---------------------------- | ------------------------- | -------------------------------------------------- |
+| **UMCS**                     | USOS API (OAuth 1.0a)     | Tożsamość, wydział, kierunek, rok                  |
+| **Politechnika Lubelska**    | Microsoft Entra ID (OIDC) | Tożsamość, uczelnia; wydział, jeśli opublikowany   |
+| **Uniwersytet Przyrodniczy** | Microsoft Entra ID (OIDC) | Tożsamość, uczelnia; wydział, jeśli opublikowany   |
+| **KUL**                      | Microsoft Entra ID (OIDC) | Tożsamość, uczelnia; wydział, jeśli opublikowany   |
+| **WSEI**                     | Microsoft Entra ID (OIDC) | Tożsamość, uczelnia; wydział, jeśli opublikowany   |
+| _dowolna z pięciu_           | Email OTP                 | Wyłącznie domena uczelniana — rozwiązanie zapasowe |
 
 ### Rozważane podejścia
 
-| Podejście | Decyzja |
-|-----------|---------|
-| **USOS API (OAuth 1.0a)** | Wybrane dla UMCS. Oficjalne, zweryfikowane dane, samodzielna rejestracja |
-| **Microsoft Entra ID (OIDC)** | Wybrane dla pozostałych czterech. Wszystkie pięć uczelni ma tenanty Entra |
-| **Email OTP na domenie uczelnianej** | Rozwiązanie zapasowe, gdy administrator blokuje zgodę na aplikację |
-| Moodle Web Services | Odrzucone. Token wydawany ręcznie przez dział IT uczelni |
-| Scraping formularza logowania kampusu | Odrzucone. Obsługa haseł uczelnianych to ryzyko prawne i bezpieczeństwa |
+| Podejście                             | Decyzja                                                                   |
+| ------------------------------------- | ------------------------------------------------------------------------- |
+| **USOS API (OAuth 1.0a)**             | Wybrane dla UMCS. Oficjalne, zweryfikowane dane, samodzielna rejestracja  |
+| **Microsoft Entra ID (OIDC)**         | Wybrane dla pozostałych czterech. Wszystkie pięć uczelni ma tenanty Entra |
+| **Email OTP na domenie uczelnianej**  | Rozwiązanie zapasowe, gdy administrator blokuje zgodę na aplikację        |
+| Moodle Web Services                   | Odrzucone. Token wydawany ręcznie przez dział IT uczelni                  |
+| Scraping formularza logowania kampusu | Odrzucone. Obsługa haseł uczelnianych to ryzyko prawne i bezpieczeństwa   |
 
 ---
 
@@ -43,11 +43,11 @@ Consumer Secret nie opuszcza backendu i nie trafia do repozytorium. Pod tym samy
 
 USOS API używa OAuth 1.0a (trójetapowego), nie OAuth 2.0. Podpisywanie żądań odbywa się w całości po stronie backendu algorytmem HMAC-SHA1.
 
-| Krok | URL |
-|------|-----|
+| Krok          | URL                                                 |
+| ------------- | --------------------------------------------------- |
 | Request token | `https://apps.umcs.pl/services/oauth/request_token` |
-| Authorize | `https://apps.umcs.pl/services/oauth/authorize` |
-| Access token | `https://apps.umcs.pl/services/oauth/access_token` |
+| Authorize     | `https://apps.umcs.pl/services/oauth/authorize`     |
+| Access token  | `https://apps.umcs.pl/services/oauth/access_token`  |
 
 1. **Request token** — backend wywołuje `request_token` z Consumer Key, listą `scopes` oraz `oauth_callback` wskazującym na Uniezz
 2. **Przekierowanie** — użytkownik trafia na `authorize` i loguje się danymi UMCS na stronie uczelni
@@ -61,14 +61,14 @@ Hasło do UMCS wpisywane jest wyłącznie na stronie UMCS i nigdy nie jest widoc
 
 Żaden z nich nie wymaga zgody administratora.
 
-| Scope | Zastosowanie w Uniezz |
-|-------|-----------------------|
-| *(domyślny)* | Podstawowa tożsamość — identyfikator, imię i nazwisko |
-| `studies` | Programy, przedmioty, listy grup — źródło wydziału, kierunku i roku studiów |
-| `email` | Uczelniany adres e-mail, używany jako identyfikator konta |
-| `photo` | Zdjęcie profilowe i ustawienia jego widoczności |
-| `personal` | Data urodzenia — ograniczenia wiekowe, urodziny, filtry wieku w module Znajomości |
-| `offline_access` | Długoterminowy token pozwalający odświeżać profil między sesjami |
+| Scope            | Zastosowanie w Uniezz                                                             |
+| ---------------- | --------------------------------------------------------------------------------- |
+| _(domyślny)_     | Podstawowa tożsamość — identyfikator, imię i nazwisko                             |
+| `studies`        | Programy, przedmioty, listy grup — źródło wydziału, kierunku i roku studiów       |
+| `email`          | Uczelniany adres e-mail, używany jako identyfikator konta                         |
+| `photo`          | Zdjęcie profilowe i ustawienia jego widoczności                                   |
+| `personal`       | Data urodzenia — ograniczenia wiekowe, urodziny, filtry wieku w module Znajomości |
+| `offline_access` | Długoterminowy token pozwalający odświeżać profil między sesjami                  |
 
 **O zakresie `personal`:** żądany jest ze względu na datę urodzenia, potrzebną Uniezz do ograniczeń wiekowych oraz filtrów wieku w module Znajomości. Ten sam zakres zwraca PESEL i inne identyfikatory — są one odrzucane przy odczycie i nigdy nie trafiają do bazy ani do logów.
 
@@ -86,14 +86,14 @@ Wszystkie pięć uczelni prowadzi tenanty Microsoft Entra ID — potwierdzone pr
 
 ### Tenanty
 
-| Uczelnia | Domeny | Tenant ID | Typ |
-|----------|--------|-----------|-----|
-| Politechnika Lubelska | `pollub.edu.pl`, `student.pollub.edu.pl` | `dbb41d7a-0043-4ee2-9843-6e4ff66cc9c8` | Managed |
-| Uniwersytet Przyrodniczy | `up.lublin.pl`, `student.`, `stud.` | `25a59194-f151-40c5-9e45-365a4d46d7b9` | Managed |
-| WSEI | `wsei.lublin.pl`, `student.`, `stud.` | `bab1e1e4-b3e8-49c1-93e4-eaeff72f1f5d` | Managed |
-| KUL — studenci | `student.kul.pl` | `f445c1ee-43fc-42e8-b642-b382d382c3c1` | Managed — **dopuszczony** |
-| KUL — pracownicy | `kul.pl` | `7952c9f0-b177-4a4c-ab55-7c2f5ab0808d` | Managed — **odrzucany** |
-| UMCS | `umcs.pl` | `80dbd34a-9b20-490b-ac49-035af103ab2b` | Federated (własny IdP SAML) |
+| Uczelnia                 | Domeny                                   | Tenant ID                              | Typ                         |
+| ------------------------ | ---------------------------------------- | -------------------------------------- | --------------------------- |
+| Politechnika Lubelska    | `pollub.edu.pl`, `student.pollub.edu.pl` | `dbb41d7a-0043-4ee2-9843-6e4ff66cc9c8` | Managed                     |
+| Uniwersytet Przyrodniczy | `up.lublin.pl`, `student.`, `stud.`      | `25a59194-f151-40c5-9e45-365a4d46d7b9` | Managed                     |
+| WSEI                     | `wsei.lublin.pl`, `student.`, `stud.`    | `bab1e1e4-b3e8-49c1-93e4-eaeff72f1f5d` | Managed                     |
+| KUL — studenci           | `student.kul.pl`                         | `f445c1ee-43fc-42e8-b642-b382d382c3c1` | Managed — **dopuszczony**   |
+| KUL — pracownicy         | `kul.pl`                                 | `7952c9f0-b177-4a4c-ab55-7c2f5ab0808d` | Managed — **odrzucany**     |
+| UMCS                     | `umcs.pl`                                | `80dbd34a-9b20-490b-ac49-035af103ab2b` | Federated (własny IdP SAML) |
 
 KUL prowadzi dwa osobne tenanty i jest jedyną uczelnią, gdzie studenci są już oddzieleni na poziomie tenanta: tenant studencki jest dopuszczony, tenant pracowniczy odrzucany. UMCS wymieniono dla kompletności — loguje się przez USOS.
 
@@ -116,13 +116,13 @@ Kroki 2 i 3 zależą od tego, jak każda uczelnia zakłada konta, czego nie da s
 
 Dostępne z tokenu ID bez dodatkowego zapytania:
 
-| Claim | Zastosowanie |
-|-------|--------------|
-| `oid` | Stabilny identyfikator użytkownika w tenancie — klucz główny |
-| `tid` | Identyfikator tenanta — jednoznacznie wskazuje uczelnię |
-| `name` | Imię i nazwisko |
-| `preferred_username` | UPN, zwykle uczelniany e-mail |
-| `email` | E-mail, jeśli opublikowany przez administratora; w przeciwnym razie używany jest UPN |
+| Claim                | Zastosowanie                                                                         |
+| -------------------- | ------------------------------------------------------------------------------------ |
+| `oid`                | Stabilny identyfikator użytkownika w tenancie — klucz główny                         |
+| `tid`                | Identyfikator tenanta — jednoznacznie wskazuje uczelnię                              |
+| `name`               | Imię i nazwisko                                                                      |
+| `preferred_username` | UPN, zwykle uczelniany e-mail                                                        |
+| `email`              | E-mail, jeśli opublikowany przez administratora; w przeciwnym razie używany jest UPN |
 
 ### Opcjonalne pola profilu
 
@@ -164,12 +164,12 @@ Web i mobile nigdy nie komunikują się z USOS, Entra ani dostawcą poczty. Rozm
 
 ### Publiczne API
 
-| Trasa | Przeznaczenie |
-|-------|---------------|
-| `POST /auth/start` | Treść: `{ university, provider? }`. Zwraca URL przekierowania wybranego dostawcy lub rozpoczyna przepływ OTP |
-| `GET /auth/callback/:provider` | Jeden punkt zwrotny. Obsługuje verifier z USOS, kod autoryzacyjny Entra oraz wprowadzenie OTP |
-| `GET /auth/me` | Profil bieżącej sesji |
-| `POST /auth/logout` | Czyści sesję Uniezz |
+| Trasa                          | Przeznaczenie                                                                                                |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| `POST /auth/start`             | Treść: `{ university, provider? }`. Zwraca URL przekierowania wybranego dostawcy lub rozpoczyna przepływ OTP |
+| `GET /auth/callback/:provider` | Jeden punkt zwrotny. Obsługuje verifier z USOS, kod autoryzacyjny Entra oraz wprowadzenie OTP                |
+| `GET /auth/me`                 | Profil bieżącej sesji                                                                                        |
+| `POST /auth/logout`            | Czyści sesję Uniezz                                                                                          |
 
 `:provider` to jedno z `usos`, `entra`, `otp`.
 
@@ -206,11 +206,11 @@ NormalizedProfile {
 
 ### Poziomy weryfikacji
 
-| Poziom | Znaczenie | Źródło |
-|--------|-----------|--------|
-| `verified` | Potwierdzony wpis w systemie studiów | USOS API — UMCS |
-| `directory` | Aktywne konto w katalogu uczelni | Entra ID — pozostałe cztery |
-| `domain` | Wyłącznie posiadanie uczelnianego e-maila | Email OTP |
+| Poziom      | Znaczenie                                 | Źródło                      |
+| ----------- | ----------------------------------------- | --------------------------- |
+| `verified`  | Potwierdzony wpis w systemie studiów      | USOS API — UMCS             |
+| `directory` | Aktywne konto w katalogu uczelni          | Entra ID — pozostałe cztery |
+| `domain`    | Wyłącznie posiadanie uczelnianego e-maila | Email OTP                   |
 
 Poziom zapisywany jest w profilu i prezentowany jako odznaka. Wydział i rok oznaczane są jako potwierdzone lub zadeklarowane osobno dla każdego pola, a nie dla całego konta.
 
@@ -274,4 +274,4 @@ Nowa uczelnia wymaga wpisu dostawcy oraz identyfikatora tenanta lub instalacji. 
 
 ---
 
-*Dokument: AUTHENTICATION (PL) · Uniezz · v2.3*
+_Dokument: AUTHENTICATION (PL) · Uniezz · v2.3_
