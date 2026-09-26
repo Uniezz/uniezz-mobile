@@ -14,10 +14,11 @@ export const UIAvatar = ({
   color,
   size,
   style,
+  ...props
 }: UIAvatarProps) => {
   styles.useVariants({ size, color });
   return (
-    <View style={[styles.avatar, styles.container, style]}>
+    <View style={[styles.avatar, styles.container, style]} {...props}>
       {imageSrc ? (
         <Image
           style={styles.container}

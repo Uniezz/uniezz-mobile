@@ -12,9 +12,14 @@ export const UIText = ({
   color,
   weight,
   style,
+  ...props
 }: UITextProps) => {
   styles.useVariants({ size, color, weight });
-  return <Text style={[styles.text, style]}>{children}</Text>;
+  return (
+    <Text style={[styles.text, style]} {...props}>
+      {children}
+    </Text>
+  );
 };
 
 const styles = StyleSheet.create((theme) => ({

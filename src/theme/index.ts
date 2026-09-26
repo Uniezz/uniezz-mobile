@@ -33,6 +33,8 @@ const colors = {
   amberLight: "#FBEFD9",
   errorLight: "#FBE6EA",
   gray: "#8E99B8",
+  grayLight: "rgba(246, 248, 254)",
+  graySoft: "rgba(230, 236, 248)",
   textSecondary: "#59648A",
 };
 
