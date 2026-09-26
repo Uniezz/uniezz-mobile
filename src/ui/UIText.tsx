@@ -22,13 +22,24 @@ const styles = StyleSheet.create((theme) => ({
     fontFamily: theme.fonts.PlusJakartaSans,
     variants: {
       size: {
+        xs: {
+          fontSize: theme.vs(10),
+        },
         sm: {
           fontSize: theme.vs(12),
         },
         default: {
           fontSize: theme.vs(14),
         },
-        lg: { fontSize: theme.vs(18) },
+        rg: {
+          fontSize: theme.vs(16),
+        },
+
+        md: {
+          fontSize: theme.vs(18),
+        },
+        lg: { fontSize: theme.vs(20) },
+
         xl: {
           fontSize: theme.vs(28),
         },
@@ -47,6 +58,9 @@ const styles = StyleSheet.create((theme) => ({
         },
         success: {
           color: theme.colors.green,
+        },
+        white: {
+          color: theme.colors.white,
         },
       },
       weight: {
