@@ -1,10 +1,9 @@
-import { Text } from "react-native";
-import { UIScreen } from "@/ui";
+import { Text, View } from "react-native";
 
 export default function FeedScreen() {
   return (
-    <UIScreen title="Feed">
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Text>Feed Screen</Text>
-    </UIScreen>
+    </View>
   );
 }

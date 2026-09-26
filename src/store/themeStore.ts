@@ -3,7 +3,7 @@ import { UnistylesRuntime } from "react-native-unistyles";
 import { create } from "zustand";
 import { createJSONStorage, persist, StateStorage } from "zustand/middleware";
 
-export type AppTheme = "light" | "dark" | "gold";
+export type AppTheme = "light" | "dark";
 
 const storage = createMMKV();
 
