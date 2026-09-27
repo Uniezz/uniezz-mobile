@@ -2,24 +2,32 @@
 
 ## Overview
 
-Uniezz verifies that a user is a real, active student before granting access. Five universities, three identity providers, one entry point on the **Go API** for web and mobile. No Supabase.
+Uniezz verifies that a user is a real, active student before granting access. Five universities, one entry point on the **Go API** for web and mobile. No Supabase.
 
-| University                   | Provider                  | Verified data                              |
-| ---------------------------- | ------------------------- | ------------------------------------------ |
-| **UMCS**                     | USOS API (OAuth 1.0a)     | Identity, faculty, programme, year         |
-| **Politechnika Lubelska**    | Microsoft Entra ID (OIDC) | Identity, university; faculty if published |
-| **Uniwersytet Przyrodniczy** | Microsoft Entra ID (OIDC) | Identity, university; faculty if published |
-| **KUL**                      | Microsoft Entra ID (OIDC) | Identity, university; faculty if published |
-| **WSEI**                     | Microsoft Entra ID (OIDC) | Identity, university; faculty if published |
-| _any of the five_            | Email OTP                 | University domain only — fallback          |
+### Designed sign-in UX
+
+| Selection                          | On **Continue**                                                                          | Then                                  |
+| ---------------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------- |
+| **UMCS**                           | Immediately open USOS auth (same idea as Google OAuth — leave Uniezz, finish at the IdP) | USOS redirect → feed                  |
+| **KUL · Politechnika · UP · WSEI** | Stay in Uniezz                                                                           | University email → 6-digit OTP → feed |
+
+| University                   | Provider in product UX | Verified data                      |
+| ---------------------------- | ---------------------- | ---------------------------------- |
+| **UMCS**                     | USOS API (OAuth 1.0a)  | Identity, faculty, programme, year |
+| **Politechnika Lubelska**    | Email OTP              | University domain only             |
+| **Uniwersytet Przyrodniczy** | Email OTP              | University domain only             |
+| **KUL**                      | Email OTP              | University domain only             |
+| **WSEI**                     | Email OTP              | University domain only             |
+
+Microsoft Entra ID (OIDC) remains a **future option** for the four non-USOS universities if tenant admin consent lands; until then the Continue path is email OTP (see Provider 2 notes below).
 
 ### Approaches Considered
 
 | Approach                           | Verdict                                                                   |
 | ---------------------------------- | ------------------------------------------------------------------------- |
 | **USOS API (OAuth 1.0a)**          | Chosen for UMCS. Official, verified data, self-service registration       |
-| **Microsoft Entra ID (OIDC)**      | Chosen for the other four. All five run Entra tenants                     |
-| **Email OTP on university domain** | Fallback when admin consent blocks the Entra app                          |
+| **Email OTP on university domain** | Chosen for the other four in the current UX                               |
+| **Microsoft Entra ID (OIDC)**      | Planned upgrade for the other four when admin consent is available        |
 | Moodle Web Services                | Rejected. Token issued manually by university IT                          |
 | Scraping the campus login form     | Rejected. Handling university passwords is a legal and security liability |
 

@@ -4,18 +4,29 @@ Source of truth: **`uniezz-web-app.pen`** (pen.dev). Everything below is exporte
 
 ## Screens
 
-| #   | Web (1440×1024)                                               | iOS (393×852)                               |
-| --- | ------------------------------------------------------------- | ------------------------------------------- |
-| 01  | [Sign In](exports/web/01-sign-in.png)                         | [Sign In](exports/ios/01-sign-in.png)       |
-| 02  | [Sign In · Email Code](exports/web/02-sign-in-email-code.png) | [Feed](exports/ios/02-feed.png)             |
-| 03  | [Feed](exports/web/03-feed.png)                               | [Chat](exports/ios/03-chat.png)             |
-| 04  | [Exams & Courses](exports/web/04-exams-and-courses.png)       | [Meet](exports/ios/04-meet.png)             |
-| 05  | [Chat](exports/web/05-chat.png)                               | [Study](exports/ios/05-study.png)           |
-| 06  | [Connections](exports/web/06-connections.png)                 | [Guide](exports/ios/06-guide.png)           |
-| 07  | [Student Guide](exports/web/07-student-guide.png)             | [Moderation](exports/ios/07-moderation.png) |
-| 08  | [Moderation Sign In](exports/web/08-moderation-sign-in.png)   | —                                           |
+| #   | Web (1440×1024)                                                            | iOS (393×852)                                        |
+| --- | -------------------------------------------------------------------------- | ---------------------------------------------------- |
+| 01  | [Sign In · UMCS / USOS](exports/web/01-sign-in.png)                        | [Sign In](exports/ios/01-sign-in.png)                |
+| 01b | [Sign In · Email university](exports/web/01b-sign-in-email-university.png) | [Sign In · Email](exports/ios/01b-sign-in-email.png) |
+| 02  | [Sign In · Email](exports/web/02-sign-in-email.png)                        | [Sign In · Code](exports/ios/01c-sign-in-code.png)   |
+| 02b | [Sign In · Code](exports/web/02b-sign-in-code.png)                         | —                                                    |
+| 03  | [Feed](exports/web/03-feed.png)                                            | [Feed](exports/ios/02-feed.png)                      |
+| 04  | [Exams & Courses](exports/web/04-exams-and-courses.png)                    | [Chat](exports/ios/03-chat.png)                      |
+| 05  | [Chat](exports/web/05-chat.png)                                            | [Meet](exports/ios/04-meet.png)                      |
+| 06  | [Connections](exports/web/06-connections.png)                              | [Study](exports/ios/05-study.png)                    |
+| 07  | [Student Guide](exports/web/07-student-guide.png)                          | [Guide](exports/ios/06-guide.png)                    |
+| 08  | [Moderation Sign In](exports/web/08-moderation-sign-in.png)                | [Moderation](exports/ios/07-moderation.png)          |
 
 Also: [Web UI Kit](exports/kit/00-ui-kit.png) · [iOS UIKit](exports/kit/uikit.png) · [States & Variants](exports/kit/states-variants.png) · [all screens as one PDF](exports/all-screens.pdf)
+
+### Student sign-in flow
+
+| Selection                        | Continue                                   | Next steps                               |
+| -------------------------------- | ------------------------------------------ | ---------------------------------------- |
+| **UMCS** (USOS)                  | Opens USOS auth in the browser immediately | User finishes on USOS → redirect to feed |
+| **Any other university** (Email) | Stays in Uniezz                            | Email input → 6-digit OTP → feed         |
+
+Same pattern as any OAuth provider (USOS today; Google-style IdP would also leave the app on Continue). Non-USOS universities use university-domain email + OTP — no password on Uniezz.
 
 The web app uses a left sidebar; mobile collapses it to five bottom tabs — **Feed · Chat · Meet · Study · Guide**. Tab bar is **iOS 26 liquid glass** (`UITabBar`). Status bar is native (not drawn). `My Profile` and `Saved` have no tab; profile sits behind the avatar in the app bar.
 
@@ -120,9 +131,9 @@ Documented on the **UIKit · States & Variants** board ([export](exports/kit/sta
 
 ## Notes on the moderation screens
 
-`08 · Moderation Sign In` and its iOS counterpart propose a **separate credential path** for moderators — email, password and a TOTP authenticator code — deliberately not the student login.
+`08 · Moderation Sign In` and `iOS · 07 Moderation` use a **separate credential path** — email and password only. Moderators can be outside any university; they are appointed, not verified as students. No authenticator / TOTP step.
 
-This is a design proposal, not a decided flow. [`../auth/AUTHENTICATION.en.md`](../auth/AUTHENTICATION.en.md) covers the three _student_ providers (USOS, Entra ID, email OTP) and says nothing about moderator authentication. The 30-minute idle timeout, the TOTP second factor and the queue statistics shown on the panel are all invented for the mock. Settle them in the auth doc before building.
+This is a design proposal, not a decided flow. [`../auth/AUTHENTICATION.en.md`](../auth/AUTHENTICATION.en.md) covers student providers and says nothing about moderator authentication yet. The 30-minute idle timeout and the queue statistics on the panel are invented for the mock — settle them in the auth doc before building.
 
 ## Regenerating the exports
 
