@@ -14,9 +14,10 @@ export const UIAvatar = ({
   color,
   size,
   style,
+  rounded,
   ...props
 }: UIAvatarProps) => {
-  styles.useVariants({ size, color });
+  styles.useVariants({ size, color, rounded });
   return (
     <View style={[styles.avatar, styles.container, style]} {...props}>
       {imageSrc ? (
@@ -40,6 +41,10 @@ const styles = StyleSheet.create((theme) => ({
     justifyContent: "center",
     alignItems: "center",
     variants: {
+      rounded: {
+        default: {},
+        lg: {},
+      },
       size: {
         //unistyles asks to do so :( https://unistyl.es/v3/references/variants/#defining-the-same-variant-across-multiple-styles
         xs: {},
@@ -60,7 +65,6 @@ const styles = StyleSheet.create((theme) => ({
     },
   },
   container: {
-    borderRadius: theme.vs(999),
     variants: {
       size: {
         xs: {
@@ -93,6 +97,10 @@ const styles = StyleSheet.create((theme) => ({
         ember: {},
         green: {},
         periwinkle: {},
+      },
+      rounded: {
+        default: { borderRadius: theme.vs(999) },
+        lg: { borderRadius: theme.vs(10) },
       },
     },
   },
