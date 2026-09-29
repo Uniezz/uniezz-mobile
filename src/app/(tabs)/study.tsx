@@ -1,6 +1,8 @@
-import { UIAvatar, UIButton, UIRow, UISegmented } from "@/ui";
+import { UIAvatar, UIButton, UIIconButton, UIRow, UISegmented } from "@/ui";
 import { useState } from "react";
 import { View, Text } from "react-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
+
 const items: string[] = ["Direct", "Groups", "Requests"];
 
 export default function StudyScreen() {
@@ -24,6 +26,9 @@ export default function StudyScreen() {
         onPress={handlePress}
       />
       <UIButton onPress={pressUIButton}>hi</UIButton>
+      <UIIconButton>
+        <Ionicons name="baseball" />
+      </UIIconButton>
     </View>
   );
 }
