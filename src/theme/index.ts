@@ -1,23 +1,47 @@
 import { ms, mvs, s, vs } from "./scale";
 
+export const fonts = {
+  PlusJakartaSans: "Plus Jakarta Sans",
+};
 const colors = {
-  white: "#FFFFFF",
-  black: "#000000",
+  white: "rgb(255, 255, 255)",
+  black: "rgb(0, 0, 0)",
+  midnight: "rgb(5, 16, 46)",
+  abyss: "rgb(11, 27, 69)",
+  harbor: "rgb(22, 41, 107)",
+  indigo: "rgb(36, 58, 140)",
+  brand: "#2D4195",
+  brandDeep: "rgb(45, 65, 149)",
+  periwinkle: "rgb(109, 118, 181)",
+  violet: "rgb(109, 91, 245)",
+  violetDeep: "rgb(91, 73, 224)",
+  ember: "rgb(240, 112, 58)",
+  lagoon: "rgb(18, 165, 148)",
+  green: "rgb(18, 135, 92)",
+  amber: "rgb(181, 118, 10)",
+  error: "rgb(198, 55, 77)",
+  ink: "rgb(231, 240, 255)",
+  mist: "rgb(242, 247, 255)",
+  canvas: "rgb(244, 247, 253)",
+  hairline: "rgb(225, 232, 247)",
+  rule: "rgb(200, 212, 236)",
+  brandLight: "rgb(231, 236, 251)",
+  violetLight: "rgb(236, 233, 254)",
+  emberLight: "rgb(255, 237, 227)",
+  lagoonLight: "rgb(221, 244, 240)",
+  greenLight: "rgb(223, 243, 234)",
+  amberLight: "rgb(251, 239, 217)",
+  errorLight: "rgb(251, 230, 234)",
+  gray: "rgb(142, 153, 184)",
+  grayLight: "rgba(246, 248, 254)",
+  graySoft: "rgba(230, 236, 248)",
+  textSecondary: "rgb(89, 100, 138)",
 };
 
 export const lightTheme = {
   themeName: "light",
+  fonts,
   colors: {
-    primary: "#e5f6ea",
-    darkGreen: "#2E7D32",
-    lightGreen: "#E8F5E9",
-    background: "#FFFFFF",
-    surface: "#F9FAFB",
-    textPrimary: "#1F2937",
-    textSecondary: "#6B7280",
-    lightGray: "#E5E7EB",
-
-    backdrop: "rgba(0, 0, 0, 0.5)",
     ...colors,
   },
   s,
@@ -25,39 +49,12 @@ export const lightTheme = {
   ms,
   mvs,
 };
-
+//Not needed now
 export const darkTheme = {
   themeName: "dark",
-  colors: {
-    primary: "#81C784",
-    darkGreen: "#4CAF50",
-    lightGreen: "#1B5E20",
-    background: "#111827",
-    surface: "#1F2937",
-    textPrimary: "#F9FAFB",
-    textSecondary: "#9CA3AF",
-    lightGray: "#374151",
-    backdrop: "rgba(0, 0, 0, 0.7)",
-    ...colors,
-  },
-  s,
-  vs,
-  ms,
-  mvs,
-};
+  fonts,
 
-export const goldTheme = {
-  themeName: "gold",
   colors: {
-    primary: "#D4AF37", // Gold
-    darkGreen: "#B8860B", // Dark Goldenrod
-    lightGreen: "#FFF8E1", // Light Gold tint
-    background: "#0C0C0C", // Deep Black/Gold
-    surface: "#1A1A1A",
-    textPrimary: "#F9FAFB",
-    textSecondary: "#D4AF37",
-    lightGray: "#333333",
-    backdrop: "rgba(0, 0, 0, 0.8)",
     ...colors,
   },
   s,

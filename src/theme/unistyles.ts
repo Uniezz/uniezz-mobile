@@ -1,11 +1,10 @@
 import { useThemeStore } from "@/store/themeStore";
 import { StyleSheet } from "react-native-unistyles";
-import { darkTheme, goldTheme, lightTheme } from ".";
+import { darkTheme, lightTheme } from ".";
 
 const appThemes = {
   light: lightTheme,
   dark: darkTheme,
-  gold: goldTheme,
 };
 
 const breakpoints = {
@@ -29,7 +28,7 @@ declare module "react-native-unistyles" {
 StyleSheet.configure({
   settings: {
     initialTheme: () => {
-      return useThemeStore.getState().theme || "dark";
+      return useThemeStore.getState().theme || "light";
     },
   },
   breakpoints,
