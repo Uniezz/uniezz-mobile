@@ -1,7 +1,6 @@
 import { ReactNode } from "react";
 import { Pressable, PressableProps } from "react-native";
 import { StyleSheet, UnistylesVariants } from "react-native-unistyles";
-import { UIText } from "./UIText";
 
 type UIButtonProps = UnistylesVariants<typeof styles> & {
   children: ReactNode;
@@ -13,9 +12,10 @@ export const UIButton = ({
   type,
   disabled,
   style,
+  radius,
   ...props
 }: UIButtonProps) => {
-  styles.useVariants({ size, type });
+  styles.useVariants({ size, type, radius });
 
   return (
     <Pressable
@@ -26,20 +26,13 @@ export const UIButton = ({
         typeof style === "function" ? style(state) : style,
       ]}
     >
-      <UIText
-        color={type === "secondary" || type === "ghost" ? "brand" : "white"}
-        weight="bold"
-        size={size}
-      >
-        {children}
-      </UIText>
+      {children}
     </Pressable>
   );
 };
 
 const styles = StyleSheet.create((theme) => ({
   button: (pressed: boolean, disabled: boolean) => ({
-    borderRadius: theme.vs(8),
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
@@ -63,6 +56,14 @@ const styles = StyleSheet.create((theme) => ({
         },
         ghost: {
           backgroundColor: "transparent",
+        },
+      },
+      radius: {
+        default: {
+          borderRadius: theme.vs(8),
+        },
+        md: {
+          borderRadius: theme.vs(12),
         },
       },
     },

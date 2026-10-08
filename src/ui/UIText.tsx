@@ -67,6 +67,9 @@ const styles = StyleSheet.create((theme) => ({
         white: {
           color: theme.colors.white,
         },
+        black: {
+          color: theme.colors.black,
+        },
       },
       weight: {
         light: {
