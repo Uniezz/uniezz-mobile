@@ -1,0 +1,16 @@
+{
+  "m": {
+    "f": "icons",
+    "u": 1024,
+    "z": 1020,
+    "s": 59648,
+    "h": "616ed2c350e47b431e1f4b21605d647bcbe1e4fd0a3c6ef56f8ea3af19c9bc8d"
+  },
+  "i": {
+    "library-big": [1024, [[59648, "currentColor"]]],
+    "map-pin": [1024, [[59649, "currentColor"]]],
+    "message-square": [1024, [[59650, "currentColor"]]],
+    "newspaper": [1024, [[59651, "currentColor"]]],
+    "sparkles": [1024, [[59652, "currentColor"]]]
+  }
+}
