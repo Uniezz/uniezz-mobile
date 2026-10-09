@@ -1,5 +1,6 @@
 import { RowItem, RowPicker } from "@/components";
 import { Icon, UIButton, UIPage, UIText } from "@/ui";
+import { router } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
@@ -29,6 +30,11 @@ const items: RowItem[] = [
 
 export default function WelcomeScreen() {
   const [selected, setSelected] = useState<number>(0);
+  const handleContinuePress = () => {
+    if (items[selected].bottomText === "Microsoft") {
+      router.push("/otp");
+    }
+  };
   return (
     <UIPage style={styles.page}>
       <View style={styles.topContainer}>
@@ -63,10 +69,15 @@ export default function WelcomeScreen() {
             items={items}
             selectedItem={selected}
           />
-          <UIButton style={styles.continueButton} size="rg" radius="md">
+          <UIButton
+            onPress={handleContinuePress}
+            style={styles.continueButton}
+            size="rg"
+            radius="md"
+          >
             <Icon name="shield-check" size={16} color={"white"} />
             <UIText weight="semibold" size="rg" color="white">
-              Continue with UMCS
+              Continue with {items[selected].bottomText}
             </UIText>
           </UIButton>
         </View>

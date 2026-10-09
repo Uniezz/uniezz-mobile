@@ -25,13 +25,13 @@ export const UIInput = ({
       <View style={styles.inputContainer({ isError, editable })}>
         {leftIcon}
         <TextInput
+          {...props}
           hitSlop={{ top: vs(12), bottom: vs(12), left: s(12), right: s(12) }}
           style={styles.input}
           autoCorrect={false}
           autoCapitalize="none"
           editable={editable}
           placeholderTextColor={"grey"}
-          {...props}
         />
       </View>
       {isError && editable ? (
@@ -75,6 +75,8 @@ const styles = StyleSheet.create((theme) => ({
   input: {
     fontFamily: theme.fonts.PlusJakartaSans,
     fontWeight: "semibold",
+    flex: 1,
+    height: theme.vs(41),
   },
   errorText: {
     color: theme.colors.error,
