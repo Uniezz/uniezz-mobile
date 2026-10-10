@@ -32,7 +32,7 @@ const styles = StyleSheet.create((theme, rt) => ({
     paddingTop: 0,
   },
   bottomContainer: {
-    flex: 3,
+    flex: 1.7,
     gap: theme.vs(14),
     backgroundColor: theme.colors.canvas,
     borderTopLeftRadius: theme.vs(20),
@@ -45,7 +45,6 @@ const styles = StyleSheet.create((theme, rt) => ({
     flex: 1,
     justifyContent: "space-between",
   },
-
   textContainer: {
     gap: theme.vs(5),
   },

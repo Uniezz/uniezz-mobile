@@ -1,42 +1,54 @@
 import { Icon, UIText } from "@/ui";
-import { View } from "react-native";
+import { View, StyleSheet as RNStyleSheet } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-
-{
-}
+import { MeshGradientView } from "expo-mesh-gradient";
+import { GRADIENT_COLORS, GRADIENT_POINTS } from "@/utils";
 
 export const AuthBrand = () => {
   return (
-    /* TODO: add here gradient */
+    <View style={styles.container}>
+      <MeshGradientView
+        style={RNStyleSheet.absoluteFill}
+        columns={3}
+        rows={3}
+        colors={GRADIENT_COLORS}
+        points={GRADIENT_POINTS}
+      />
 
-    <View style={styles.topContainer}>
-      <View style={styles.uniezzContainer}>
-        <View style={styles.iconContainer}>
-          <Icon name="graduation-cap" size={19} color={"white"} />
+      <View style={styles.content}>
+        <View style={styles.uniezzContainer}>
+          <View style={styles.iconContainer}>
+            <Icon name="graduation-cap" size={19} color="white" />
+          </View>
+          <UIText weight="bold" size="lg" color="white">
+            Uniezz
+          </UIText>
         </View>
-        <UIText weight="bold" size="lg" color="white">
-          Uniezz
+
+        <UIText weight="bold" size="xl" color="white">
+          One platform for every student in Lublin.
+        </UIText>
+
+        <UIText color="white">
+          Your password stays on your university's own login page.
         </UIText>
       </View>
-
-      <UIText weight="bold" size="xl" color="white">
-        One platform for every student in Lublin.
-      </UIText>
-      <UIText color="gray">
-        Your password stays on your university own login page.
-      </UIText>
     </View>
   );
 };
 
 const styles = StyleSheet.create((theme, rt) => ({
-  topContainer: {
+  container: {
     flex: 1,
-    backgroundColor: theme.colors.abyss,
-    paddingTop: rt.insets.top,
-    gap: theme.vs(12),
+    overflow: "hidden",
+    backgroundColor: "transparent",
+  },
+  content: {
+    paddingTop: rt.insets.top + theme.vs(4),
     paddingHorizontal: theme.s(24),
     paddingVertical: theme.vs(24),
+    gap: theme.vs(12),
+    backgroundColor: "transparent",
   },
   uniezzContainer: {
     flexDirection: "row",
