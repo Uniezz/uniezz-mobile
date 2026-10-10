@@ -1,1 +1,22 @@
-{"m":{"f":"icons-ead33819","u":1024,"z":1020,"s":59648,"h":"ead338196d4b7b593710c5dbc4d79cd0f8ca1369e78a99c4add3df8dd920dc82"},"i":{"at-sign":[1024,[[59648,"currentColor"]]],"check":[1024,[[59649,"currentColor"]]],"graduation-cap":[1024,[[59650,"currentColor"]]],"library-big":[1024,[[59651,"currentColor"]]],"mail":[1024,[[59652,"currentColor"]]],"map-pin":[1024,[[59653,"currentColor"]]],"message-square":[1024,[[59654,"currentColor"]]],"newspaper":[1024,[[59655,"currentColor"]]],"send":[1024,[[59656,"currentColor"]]],"shield-check":[1024,[[59657,"currentColor"]]],"sparkles":[1024,[[59658,"currentColor"]]]}}
+{
+  "m": {
+    "f": "icons-ead33819",
+    "u": 1024,
+    "z": 1020,
+    "s": 59648,
+    "h": "ead338196d4b7b593710c5dbc4d79cd0f8ca1369e78a99c4add3df8dd920dc82"
+  },
+  "i": {
+    "at-sign": [1024, [[59648, "currentColor"]]],
+    "check": [1024, [[59649, "currentColor"]]],
+    "graduation-cap": [1024, [[59650, "currentColor"]]],
+    "library-big": [1024, [[59651, "currentColor"]]],
+    "mail": [1024, [[59652, "currentColor"]]],
+    "map-pin": [1024, [[59653, "currentColor"]]],
+    "message-square": [1024, [[59654, "currentColor"]]],
+    "newspaper": [1024, [[59655, "currentColor"]]],
+    "send": [1024, [[59656, "currentColor"]]],
+    "shield-check": [1024, [[59657, "currentColor"]]],
+    "sparkles": [1024, [[59658, "currentColor"]]]
+  }
+}

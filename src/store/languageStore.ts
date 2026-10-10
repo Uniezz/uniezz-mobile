@@ -1,7 +1,6 @@
 import { createMMKV } from "react-native-mmkv";
 import { create } from "zustand";
 import { createJSONStorage, persist, StateStorage } from "zustand/middleware";
-import i18n from "@/internationalization";
 
 const storage = createMMKV();
 
@@ -29,11 +28,6 @@ export const useLanguageStore = create<LanguageState>()(
       language: null,
       setLanguage: (language) => {
         set({ language });
-        try {
-          i18n.changeLanguage(language);
-        } catch {
-          // i18n might not be fully initialized
-        }
       },
     }),
     {

@@ -1,4 +1,4 @@
-import { AuthBrand } from "@/components";
+import { AuthBrand } from "./AuthBrand";
 import { UIPage, UIText } from "@/ui";
 import { ReactNode } from "react";
 import { View } from "react-native";

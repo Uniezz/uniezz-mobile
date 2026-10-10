@@ -26,4 +26,11 @@ i18n.use(initReactI18next).init({
   },
 });
 
+useLanguageStore.subscribe((state) => {
+  if (state.language && i18n.language !== state.language) {
+    // eslint-disable-next-line import/no-named-as-default-member
+    i18n.changeLanguage(state.language);
+  }
+});
+
 export default i18n;
