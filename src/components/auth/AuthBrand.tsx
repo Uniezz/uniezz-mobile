@@ -30,7 +30,7 @@ export const AuthBrand = () => {
         </UIText>
 
         <UIText color="white">
-          Your password stays on your university's own login page.
+          Your password stays on your university&apos;s own login page.
         </UIText>
       </View>
     </View>

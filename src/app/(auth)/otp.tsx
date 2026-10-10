@@ -2,13 +2,13 @@ import { AuthPage } from "@/components";
 import { Icon, UIButton, UIInput, UIText } from "@/ui";
 import { autoComplete, CELL_COUNT } from "@/utils";
 import { useState } from "react";
-import { View } from "react-native";
 import {
   CodeField,
   useBlurOnFulfill,
   useClearByFocusCell,
 } from "react-native-confirmation-code-field";
 import { StyleSheet } from "react-native-unistyles";
+import { KeyboardStickyView } from "react-native-keyboard-controller";
 
 export default function OtpScreen() {
   {
@@ -80,7 +80,17 @@ export default function OtpScreen() {
           }}
         />
       )}
-      <View style={styles.actionButtons}>
+      <KeyboardStickyView
+        offset={{
+          closed: styles.keyboardStickyView(false).height,
+          opened: styles.keyboardStickyView(true).height,
+        }}
+        style={styles.actionButtons}
+      >
+        {/*
+          This button need to be disabled
+          while on otp and did not fully provided code
+          */}
         <UIButton
           style={styles.continueButton}
           onPress={onButtonPress}
@@ -96,12 +106,12 @@ export default function OtpScreen() {
             {step === true ? "Send code" : "Verify and continue"}
           </UIText>
         </UIButton>
-      </View>
+      </KeyboardStickyView>
     </AuthPage>
   );
 }
 
-const styles = StyleSheet.create((theme) => ({
+const styles = StyleSheet.create((theme, rt) => ({
   cell: (isFocused: boolean, isEntered: boolean) => ({
     width: theme.s(48),
     height: theme.vs(48),
@@ -122,4 +132,7 @@ const styles = StyleSheet.create((theme) => ({
     flex: 1,
     justifyContent: "flex-end",
   },
+  keyboardStickyView: (open: boolean) => ({
+    height: open ? rt.insets.bottom + theme.vs(16) : 0,
+  }),
 }));
