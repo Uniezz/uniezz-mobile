@@ -81,10 +81,17 @@ export default function OtpScreen() {
         />
       )}
       <View style={styles.actionButtons}>
-        <UIButton onPress={onButtonPress} radius="md" size="rg">
-          {/*
-            TODO: add here check icon if step is otp code
-            */}
+        <UIButton
+          style={styles.continueButton}
+          onPress={onButtonPress}
+          radius="md"
+          size="rg"
+        >
+          <Icon
+            size={16}
+            color={"white"}
+            name={step === false ? "check" : "send"}
+          />
           <UIText size="md" weight="semibold" color="white">
             {step === true ? "Send code" : "Verify and continue"}
           </UIText>
@@ -107,7 +114,10 @@ const styles = StyleSheet.create((theme) => ({
     borderRadius: theme.vs(10),
     backgroundColor: isEntered ? "transparent" : theme.colors.brandLight,
   }),
-
+  continueButton: {
+    flexDirection: "row",
+    gap: theme.s(8),
+  },
   actionButtons: {
     flex: 1,
     justifyContent: "flex-end",
