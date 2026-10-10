@@ -88,6 +88,7 @@ export default function OtpScreen() {
         style={styles.actionButtons}
       >
         {/*
+          TODO:
           This button need to be disabled
           while on otp and did not fully provided code
           */}
