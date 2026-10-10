@@ -33967,28 +33967,28 @@
             },
             {
               "type": "text",
-              "id": "m21mA",
+              "id": "xmV7N",
               "name": "Headline",
               "fill": "$on-navy",
               "textGrowth": "fixed-width",
               "width": "fill_container",
-              "content": "Sign in with your university email.",
-              "lineHeight": 1.15,
+              "content": "One platform for every student in Lublin.",
+              "lineHeight": 1.22,
               "fontFamily": "$font-display",
               "fontSize": 27,
               "fontWeight": "700"
             },
             {
               "type": "text",
-              "id": "M1Nxtg",
+              "id": "ZSENS",
               "name": "Sub",
               "fill": "$on-navy-muted",
               "textGrowth": "fixed-width",
               "width": "fill_container",
-              "content": "We’ll send a six-digit code. No password is stored in Uniezz.",
-              "lineHeight": 1.4,
+              "content": "Your password stays on your university's own login page.",
+              "lineHeight": 1.5,
               "fontFamily": "$font-body",
-              "fontSize": 14,
+              "fontSize": 13.5,
               "fontWeight": "normal"
             }
           ]
@@ -34040,77 +34040,11 @@
                   "fill": "$text-secondary",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "Only student addresses from your university domain are accepted.",
+                  "content": "We’ll send a six-digit code to this inbox. Use the address your university issued.",
                   "lineHeight": 1.4,
                   "fontFamily": "$font-body",
                   "fontSize": 14,
                   "fontWeight": "normal"
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "ph3ZS",
-              "name": "University Chip",
-              "width": "fill_container",
-              "fill": "$ice-50",
-              "cornerRadius": "$r-md",
-              "gap": 10,
-              "padding": 12,
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "gDKDJ",
-                  "name": "Badge",
-                  "width": 32,
-                  "height": 32,
-                  "fill": "$brand",
-                  "cornerRadius": 8,
-                  "justifyContent": "center",
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "l3d8dp",
-                      "name": "Abbr",
-                      "fill": "$on-brand",
-                      "content": "PL",
-                      "fontFamily": "$font-display",
-                      "fontSize": 11,
-                      "fontWeight": "700"
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "jH9fa",
-                  "name": "Text",
-                  "width": "fill_container",
-                  "layout": "vertical",
-                  "gap": 2,
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "GCTPk",
-                      "name": "Name",
-                      "fill": "$text-primary",
-                      "content": "Politechnika Lubelska",
-                      "fontFamily": "$font-body",
-                      "fontSize": 13,
-                      "fontWeight": "600"
-                    },
-                    {
-                      "type": "text",
-                      "id": "FWoBS",
-                      "name": "Provider",
-                      "fill": "$text-secondary",
-                      "content": "Microsoft · student.pollub.edu.pl",
-                      "fontFamily": "$font-body",
-                      "fontSize": 11,
-                      "fontWeight": "normal"
-                    }
-                  ]
                 }
               ]
             },
@@ -34134,41 +34068,6 @@
                   "enabled": false
                 }
               }
-            },
-            {
-              "type": "frame",
-              "id": "QBF4I",
-              "name": "Hint",
-              "width": "fill_container",
-              "fill": "$brand-soft",
-              "cornerRadius": "$r-md",
-              "gap": 8,
-              "padding": 12,
-              "children": [
-                {
-                  "type": "icon",
-                  "id": "tPYxt",
-                  "name": "Hint Icon",
-                  "width": 16,
-                  "height": 16,
-                  "icon": "info",
-                  "library": "lucide",
-                  "fill": "$brand"
-                },
-                {
-                  "type": "text",
-                  "id": "cgKtr",
-                  "name": "Hint Text",
-                  "fill": "$brand",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "Use the inbox your university issued. Personal Gmail or Outlook addresses won’t work here.",
-                  "lineHeight": 1.4,
-                  "fontFamily": "$font-body",
-                  "fontSize": 12,
-                  "fontWeight": "normal"
-                }
-              ]
             },
             {
               "type": "frame",
@@ -34403,28 +34302,28 @@
             },
             {
               "type": "text",
-              "id": "LMJoc",
+              "id": "cAY3v",
               "name": "Headline",
               "fill": "$on-navy",
               "textGrowth": "fixed-width",
               "width": "fill_container",
-              "content": "Check your university inbox.",
-              "lineHeight": 1.15,
+              "content": "One platform for every student in Lublin.",
+              "lineHeight": 1.22,
               "fontFamily": "$font-display",
               "fontSize": 27,
               "fontWeight": "700"
             },
             {
               "type": "text",
-              "id": "rqrrJ",
+              "id": "i6HULs",
               "name": "Sub",
               "fill": "$on-navy-muted",
               "textGrowth": "fixed-width",
               "width": "fill_container",
-              "content": "The six-digit code expires in 5 minutes.",
-              "lineHeight": 1.4,
+              "content": "Your password stays on your university's own login page.",
+              "lineHeight": 1.5,
               "fontFamily": "$font-body",
-              "fontSize": 14,
+              "fontSize": 13.5,
               "fontWeight": "normal"
             }
           ]
@@ -34457,39 +34356,14 @@
               "name": "Heading",
               "width": "fill_container",
               "layout": "vertical",
-              "gap": 10,
-              "alignItems": "center",
+              "gap": 6,
               "children": [
-                {
-                  "type": "frame",
-                  "id": "G889xN",
-                  "name": "Mail Circle",
-                  "width": 52,
-                  "height": 52,
-                  "fill": "$brand-soft",
-                  "cornerRadius": 16,
-                  "justifyContent": "center",
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "icon",
-                      "id": "BXon2",
-                      "name": "Mail Icon",
-                      "width": 22,
-                      "height": 22,
-                      "icon": "mail",
-                      "library": "lucide",
-                      "fill": "$brand"
-                    }
-                  ]
-                },
                 {
                   "type": "text",
                   "id": "f1t7cf",
                   "name": "Title",
                   "fill": "$text-primary",
                   "content": "Check your university inbox",
-                  "textAlign": "center",
                   "fontFamily": "$font-display",
                   "fontSize": 21,
                   "fontWeight": "700"
@@ -34503,7 +34377,6 @@
                   "width": "fill_container",
                   "content": "We sent a six-digit code to k.malinowski@student.pollub.edu.pl. It expires in 5 minutes.",
                   "lineHeight": 1.4,
-                  "textAlign": "center",
                   "fontFamily": "$font-body",
                   "fontSize": 14,
                   "fontWeight": "normal"
@@ -34732,38 +34605,6 @@
                   "fontSize": 15
                 }
               }
-            },
-            {
-              "type": "frame",
-              "id": "Y84P59",
-              "name": "Notice",
-              "width": "fill_container",
-              "gap": 8,
-              "children": [
-                {
-                  "type": "icon",
-                  "id": "gLrSF",
-                  "name": "Lock",
-                  "width": 14,
-                  "height": 14,
-                  "icon": "shield-check",
-                  "library": "lucide",
-                  "fill": "$text-muted"
-                },
-                {
-                  "type": "text",
-                  "id": "xr2I7",
-                  "name": "Notice Text",
-                  "fill": "$text-muted",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "Email sign-in confirms your university domain only.",
-                  "lineHeight": 1.4,
-                  "fontFamily": "$font-body",
-                  "fontSize": 11,
-                  "fontWeight": "normal"
-                }
-              ]
             },
             {
               "type": "frame",

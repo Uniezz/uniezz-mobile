@@ -1,4 +1,5 @@
-import { UIButton, UIInput, UIPage, UIText } from "@/ui";
+import { AuthPage } from "@/components";
+import { Icon, UIButton, UIInput, UIText } from "@/ui";
 import { autoComplete, CELL_COUNT } from "@/utils";
 import { useState } from "react";
 import { View } from "react-native";
@@ -8,15 +9,7 @@ import {
   useClearByFocusCell,
 } from "react-native-confirmation-code-field";
 import { StyleSheet } from "react-native-unistyles";
-{
-  /*
-  TODO: generate two steps in
-  design for this page - provide email
-  and otp for mobile
 
-  split screen into smaller components
-  */
-}
 export default function OtpScreen() {
   {
     /*
@@ -41,61 +34,53 @@ export default function OtpScreen() {
     value: otp,
     setValue: setOtp,
   });
+
   return (
-    <UIPage style={styles.root}>
-      <View style={styles.container}>
-        {step === false ? (
-          <View style={styles.otpContainer}>
-            <UIText weight="bold" size="lg">
-              Check your university inbox
-            </UIText>
-            <UIText color="gray">
-              We sent a six-digit code to {email}. It expires in 5 minutes.
-            </UIText>
-            <CodeField
-              ref={ref}
-              {...props}
-              value={otp}
-              onChangeText={setOtp}
-              cellCount={CELL_COUNT}
-              keyboardType="number-pad"
-              textContentType="oneTimeCode"
-              autoComplete={autoComplete}
-              renderCell={({ index, symbol, isFocused }) => {
-                const isEntered = symbol.length !== 0;
-                return (
-                  <UIText
-                    key={index}
-                    size="xl"
-                    style={styles.cell(isFocused, isEntered)}
-                    onLayout={getCellOnLayoutHandler(index)}
-                  >
-                    {symbol}
-                  </UIText>
-                );
-              }}
-            />
-          </View>
-        ) : (
-          <View style={styles.emailContainer}>
-            <UIText weight="bold" size="lg">
-              Provide your university email
-            </UIText>
-            {/*TODO: add email icon in UIInput*/}
-            <UIInput
-              captionText="Email"
-              value={email}
-              onChangeText={setEmail}
-              editable
-            />
-          </View>
-        )}
-      </View>
-      {/*
-        TODO: use here react-native-keyboard-controller,
-        so button moves above keyboard
-        */}
-      <View style={styles.container}>
+    <AuthPage
+      topText={
+        step === false
+          ? "Provide your university email"
+          : "Check your university inbox"
+      }
+      bottomText={
+        step === false
+          ? "We’ll send a six-digit code to this inbox. Use the address your university issued."
+          : `We sent a six-digit code to ${email}. It expires in 5 minutes.`
+      }
+    >
+      {step === false ? (
+        <UIInput
+          leftIcon={<Icon name="at-sign" size={18} color={"gray"} />}
+          captionText="Email"
+          value={email}
+          onChangeText={setEmail}
+        />
+      ) : (
+        <CodeField
+          ref={ref}
+          {...props}
+          value={otp}
+          onChangeText={setOtp}
+          cellCount={CELL_COUNT}
+          keyboardType="number-pad"
+          textContentType="oneTimeCode"
+          autoComplete={autoComplete}
+          renderCell={({ index, symbol, isFocused }) => {
+            const isEntered = symbol.length !== 0;
+            return (
+              <UIText
+                key={index}
+                size="xl"
+                style={styles.cell(isFocused, isEntered)}
+                onLayout={getCellOnLayoutHandler(index)}
+              >
+                {symbol}
+              </UIText>
+            );
+          }}
+        />
+      )}
+      <View style={styles.actionButtons}>
         <UIButton onPress={onButtonPress} radius="md" size="rg">
           {/*
             TODO: add here check icon if step is otp code
@@ -105,16 +90,11 @@ export default function OtpScreen() {
           </UIText>
         </UIButton>
       </View>
-    </UIPage>
+    </AuthPage>
   );
 }
 
 const styles = StyleSheet.create((theme) => ({
-  root: {
-    flex: 1,
-    paddingHorizontal: theme.s(16),
-    justifyContent: "center",
-  },
   cell: (isFocused: boolean, isEntered: boolean) => ({
     width: theme.s(48),
     height: theme.vs(48),
@@ -127,12 +107,9 @@ const styles = StyleSheet.create((theme) => ({
     borderRadius: theme.vs(10),
     backgroundColor: isEntered ? "transparent" : theme.colors.brandLight,
   }),
-  container: {
+
+  actionButtons: {
     flex: 1,
     justifyContent: "flex-end",
   },
-  otpContainer: {
-    gap: theme.vs(10),
-  },
-  emailContainer: { gap: theme.vs(20) },
 }));
