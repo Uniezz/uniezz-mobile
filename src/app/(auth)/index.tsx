@@ -37,6 +37,7 @@ export default function WelcomeScreen() {
   };
   return (
     <UIPage style={styles.page}>
+      {/* TODO: add here gradient */}
       <View style={styles.topContainer}>
         <View style={styles.uniezzContainer}>
           <View style={styles.iconContainer}>
