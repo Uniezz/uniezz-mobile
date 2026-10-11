@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
-import { View } from "react-native";
-import { ViewProps } from "react-native-svg/lib/typescript/fabric/utils";
+import { View, ViewProps } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
 type UIPageProps = {
@@ -19,7 +18,7 @@ const styles = StyleSheet.create((theme, rt) => ({
   page: {
     flex: 1,
     backgroundColor: theme.colors.canvas,
-    paddinTop: rt.insets.top,
+    paddingTop: rt.insets.top,
     paddingBottom: rt.insets.bottom,
   },
 }));
