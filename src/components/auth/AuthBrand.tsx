@@ -1,8 +1,13 @@
 import { Icon, UIText } from "@/ui";
 import { View, StyleSheet as RNStyleSheet } from "react-native";
+import Animated, { FadeInDown } from "react-native-reanimated";
 import { StyleSheet } from "react-native-unistyles";
 import { MeshGradientView } from "expo-mesh-gradient";
 import { GRADIENT_COLORS, GRADIENT_POINTS } from "@/utils";
+
+const brandEntering = FadeInDown.duration(380);
+const headlineEntering = FadeInDown.duration(380).delay(70);
+const subtitleEntering = FadeInDown.duration(380).delay(140);
 
 export const AuthBrand = () => {
   return (
@@ -16,22 +21,26 @@ export const AuthBrand = () => {
       />
 
       <View style={styles.content}>
-        <View style={styles.uniezzContainer}>
+        <Animated.View entering={brandEntering} style={styles.uniezzContainer}>
           <View style={styles.iconContainer}>
             <Icon name="graduation-cap" size={19} color="white" />
           </View>
           <UIText weight="bold" size="lg" color="white">
             Uniezz
           </UIText>
-        </View>
+        </Animated.View>
 
-        <UIText weight="bold" size="xl" color="white">
-          One platform for every student in Lublin.
-        </UIText>
+        <Animated.View entering={headlineEntering}>
+          <UIText weight="bold" size="xl" color="white">
+            One platform for every student in Lublin.
+          </UIText>
+        </Animated.View>
 
-        <UIText color="white">
-          Your password stays on your university&apos;s own login page.
-        </UIText>
+        <Animated.View entering={subtitleEntering}>
+          <UIText color="white">
+            Your password stays on your university&apos;s own login page.
+          </UIText>
+        </Animated.View>
       </View>
     </View>
   );

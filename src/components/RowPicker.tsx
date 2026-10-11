@@ -1,5 +1,6 @@
 import { Icon, UIText } from "@/ui";
 import { View, Pressable } from "react-native";
+import Animated, { FadeInDown } from "react-native-reanimated";
 import { StyleSheet } from "react-native-unistyles";
 
 export type RowItem = {
@@ -12,11 +13,10 @@ type RowPickerProps = {
   selectedItem: number;
   onItemPress: (idx: number) => void;
 };
-{
-  /*
-  TODO: add some entering animation
-  */
-}
+
+const getRowEntering = (index: number) =>
+  FadeInDown.duration(380).delay(index * 70);
+
 export const RowPicker = ({
   items,
   selectedItem,
@@ -30,24 +30,25 @@ export const RowPicker = ({
           onItemPress(index);
         };
         return (
-          <Pressable
-            onPress={handlePress}
-            style={styles.item(isItemSelected)}
-            key={index}
-          >
-            <View>
-              <UIText color="black" weight="semibold">
-                {item.topText}
-              </UIText>
-              <UIText size="sm" color="gray">
-                {item.bottomText}
-              </UIText>
-            </View>
+          <Animated.View key={index} entering={getRowEntering(index)}>
+            <Pressable
+              onPress={handlePress}
+              style={styles.item(isItemSelected)}
+            >
+              <View>
+                <UIText color="black" weight="semibold">
+                  {item.topText}
+                </UIText>
+                <UIText size="sm" color="gray">
+                  {item.bottomText}
+                </UIText>
+              </View>
 
-            <View style={styles.selectedMark(isItemSelected)}>
-              <Icon name="check" color={"white"} size={14} />
-            </View>
-          </Pressable>
+              <View style={styles.selectedMark(isItemSelected)}>
+                <Icon name="check" color={"white"} size={14} />
+              </View>
+            </Pressable>
+          </Animated.View>
         );
       })}
     </View>
