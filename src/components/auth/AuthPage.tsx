@@ -32,7 +32,7 @@ const styles = StyleSheet.create((theme, rt) => ({
     paddingTop: 0,
   },
   bottomContainer: {
-    flex: 1.7,
+    flex: 2,
     gap: theme.vs(14),
     backgroundColor: theme.colors.canvas,
     borderTopLeftRadius: theme.vs(20),

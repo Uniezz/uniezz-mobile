@@ -9,25 +9,30 @@ import {
 } from "react-native-confirmation-code-field";
 import { StyleSheet } from "react-native-unistyles";
 import { KeyboardStickyView } from "react-native-keyboard-controller";
+import { router } from "expo-router";
+{
+  /*
+  TODO: instead of direct states define and use schema in
+  src/schemas/otp.ts
+  schema need to have current step, pretty error text
 
+  move all logic into useOtpScreen hook so we can
+  have clean screen with only UI defined - in need to have all
+  handlers, variables, react hook form
+  */
+}
 export default function OtpScreen() {
-  {
-    /*
-    TODO: instead of direct states define and use schema in
-    src/schemas/otp.ts
-    schema need to have current step, pretty error text
-
-    move all logic into useOtpScreen hook so we can
-    have clean screen with only UI defined - in need to have all
-    handlers, variables, react hook form
-    */
-  }
   const [step, setStep] = useState<boolean>(false);
   const [otp, setOtp] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const onButtonPress = () => {
     setStep((prev) => !prev);
   };
+
+  const onBackPress = () => {
+    router.back();
+  };
+
   const ref = useBlurOnFulfill({ value: otp, cellCount: CELL_COUNT });
 
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
@@ -51,6 +56,8 @@ export default function OtpScreen() {
       {step === false ? (
         // TODO: add here on input some placeholder
         <UIInput
+          keyboardType="email-address"
+          autoFocus
           leftIcon={<Icon name="at-sign" size={18} color={"gray"} />}
           captionText="Email"
           value={email}
@@ -61,6 +68,7 @@ export default function OtpScreen() {
           ref={ref}
           {...props}
           value={otp}
+          autoFocus
           onChangeText={setOtp}
           cellCount={CELL_COUNT}
           keyboardType="number-pad"
@@ -94,7 +102,7 @@ export default function OtpScreen() {
           while on otp and did not fully provided code
           */}
         <UIButton
-          style={styles.continueButton}
+          style={styles.button}
           onPress={onButtonPress}
           radius="md"
           size="rg"
@@ -106,6 +114,18 @@ export default function OtpScreen() {
           />
           <UIText size="md" weight="semibold" color="white">
             {step === true ? "Send code" : "Verify and continue"}
+          </UIText>
+        </UIButton>
+        <UIButton
+          style={styles.button}
+          onPress={onBackPress}
+          radius="md"
+          size="rg"
+          type="ghost"
+        >
+          <Icon size={16} name={"arrow-left"} color={"rgb(89, 100, 138)"} />
+          <UIText weight="semibold" color="secondary">
+            Back to universities
           </UIText>
         </UIButton>
       </KeyboardStickyView>
@@ -126,7 +146,7 @@ const styles = StyleSheet.create((theme, rt) => ({
     borderRadius: theme.vs(10),
     backgroundColor: isEntered ? "transparent" : theme.colors.brandLight,
   }),
-  continueButton: {
+  button: {
     flexDirection: "row",
     gap: theme.s(8),
   },
