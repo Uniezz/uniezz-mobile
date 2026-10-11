@@ -1,6 +1,5 @@
 import * as z from "zod";
 
-export const OTP_STEPS = ["email", "code"] as const;
 const emailError = (iss: { input: unknown }) =>
   !iss.input
     ? "Enter your university email address."
