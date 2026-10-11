@@ -32,7 +32,6 @@ export default function OtpScreen() {
       {isEmailStep ? (
         <UIInput
           keyboardType="email-address"
-          autoFocus
           leftIcon={<Icon name="at-sign" size={18} color={"gray"} />}
           captionText="Email"
           placeholder={emailPlaceholder}
