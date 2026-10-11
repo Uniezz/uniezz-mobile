@@ -1,2 +1,1 @@
-// Hooks
-export * from "./useOtpPage";
+export * from "./useOtpScreen";

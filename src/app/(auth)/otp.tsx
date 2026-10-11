@@ -1,59 +1,52 @@
 import { AuthPage } from "@/components";
+import { useOtpScreen } from "@/hooks";
 import { Icon, UIButton, UIInput, UIText } from "@/ui";
-import { autoComplete, CELL_COUNT } from "@/utils";
 import { CodeField } from "react-native-confirmation-code-field";
-import { StyleSheet } from "react-native-unistyles";
 import { KeyboardStickyView } from "react-native-keyboard-controller";
-import { useOtpPage } from "@/hooks";
-{
-  /*
-  TODO: instead of direct states define and use schema in
-  src/schemas/otp.ts
-  schema need to have current step, pretty error text
+import { StyleSheet } from "react-native-unistyles";
 
-  move all logic into useOtpScreen hook so we can
-  have clean screen with only UI defined - in need to have all
-  handlers, variables, react hook form
-  */
-}
 export default function OtpScreen() {
   const {
     onBackPress,
     email,
-    setEmail,
-    ref,
+    onEmailChange,
+    emailError,
+    emailPlaceholder,
     props,
-    otp,
-    setOtp,
+    code,
+    onCodeChange,
     getCellOnLayoutHandler,
+    cellCount,
+    autoComplete,
     onButtonPress,
     topText,
     bottomText,
     buttonText,
     iconName,
     isEmailStep,
-  } = useOtpPage();
+    isButtonDisabled,
+  } = useOtpScreen();
 
   return (
     <AuthPage topText={topText} bottomText={bottomText}>
       {isEmailStep ? (
-        // TODO: add here on input some placeholder
         <UIInput
           keyboardType="email-address"
           autoFocus
           leftIcon={<Icon name="at-sign" size={18} color={"gray"} />}
           captionText="Email"
+          placeholder={emailPlaceholder}
           value={email}
-          onChangeText={setEmail}
+          onChangeText={onEmailChange}
+          errorText={emailError}
         />
       ) : (
         <CodeField
-          ref={ref}
           {...props}
-          value={otp}
+          value={code}
           autoFocus
-          onChangeText={setOtp}
-          cellCount={CELL_COUNT}
+          onChangeText={onCodeChange}
+          cellCount={cellCount}
           keyboardType="number-pad"
           textContentType="oneTimeCode"
           autoComplete={autoComplete}
@@ -79,16 +72,12 @@ export default function OtpScreen() {
         }}
         style={styles.actionButtons}
       >
-        {/*
-          TODO:
-          This button need to be disabled
-          while on otp and did not fully provided code
-          */}
         <UIButton
           style={styles.button}
           onPress={onButtonPress}
           radius="md"
           size="rg"
+          disabled={isButtonDisabled}
         >
           <Icon size={16} color={"white"} name={iconName} />
           <UIText size="md" weight="semibold" color="white">

@@ -1,1 +1,1 @@
-// Schemas
+export * from "./otp";
