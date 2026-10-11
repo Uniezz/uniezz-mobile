@@ -49,6 +49,7 @@ export default function OtpScreen() {
       }
     >
       {step === false ? (
+        // TODO: add here on input some placeholder
         <UIInput
           leftIcon={<Icon name="at-sign" size={18} color={"gray"} />}
           captionText="Email"

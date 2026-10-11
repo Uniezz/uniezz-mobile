@@ -12,7 +12,11 @@ type RowPickerProps = {
   selectedItem: number;
   onItemPress: (idx: number) => void;
 };
-
+{
+  /*
+  TODO: add some entering animation
+  */
+}
 export const RowPicker = ({
   items,
   selectedItem,
