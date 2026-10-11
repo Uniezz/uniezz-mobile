@@ -1,15 +1,10 @@
 import { AuthPage } from "@/components";
 import { Icon, UIButton, UIInput, UIText } from "@/ui";
 import { autoComplete, CELL_COUNT } from "@/utils";
-import { useState } from "react";
-import {
-  CodeField,
-  useBlurOnFulfill,
-  useClearByFocusCell,
-} from "react-native-confirmation-code-field";
+import { CodeField } from "react-native-confirmation-code-field";
 import { StyleSheet } from "react-native-unistyles";
 import { KeyboardStickyView } from "react-native-keyboard-controller";
-import { router } from "expo-router";
+import { useOtpPage } from "@/hooks";
 {
   /*
   TODO: instead of direct states define and use schema in
@@ -22,38 +17,26 @@ import { router } from "expo-router";
   */
 }
 export default function OtpScreen() {
-  const [step, setStep] = useState<boolean>(false);
-  const [otp, setOtp] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const onButtonPress = () => {
-    setStep((prev) => !prev);
-  };
-
-  const onBackPress = () => {
-    router.back();
-  };
-
-  const ref = useBlurOnFulfill({ value: otp, cellCount: CELL_COUNT });
-
-  const [props, getCellOnLayoutHandler] = useClearByFocusCell({
-    value: otp,
-    setValue: setOtp,
-  });
+  const {
+    onBackPress,
+    email,
+    setEmail,
+    ref,
+    props,
+    otp,
+    setOtp,
+    getCellOnLayoutHandler,
+    onButtonPress,
+    topText,
+    bottomText,
+    buttonText,
+    iconName,
+    isEmailStep,
+  } = useOtpPage();
 
   return (
-    <AuthPage
-      topText={
-        step === false
-          ? "Provide your university email"
-          : "Check your university inbox"
-      }
-      bottomText={
-        step === false
-          ? "We’ll send a six-digit code to this inbox. Use the address your university issued."
-          : `We sent a six-digit code to ${email}. It expires in 5 minutes.`
-      }
-    >
-      {step === false ? (
+    <AuthPage topText={topText} bottomText={bottomText}>
+      {isEmailStep ? (
         // TODO: add here on input some placeholder
         <UIInput
           keyboardType="email-address"
@@ -107,13 +90,9 @@ export default function OtpScreen() {
           radius="md"
           size="rg"
         >
-          <Icon
-            size={16}
-            color={"white"}
-            name={step === false ? "check" : "send"}
-          />
+          <Icon size={16} color={"white"} name={iconName} />
           <UIText size="md" weight="semibold" color="white">
-            {step === true ? "Send code" : "Verify and continue"}
+            {buttonText}
           </UIText>
         </UIButton>
         <UIButton

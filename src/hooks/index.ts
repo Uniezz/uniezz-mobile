@@ -1,3 +1,2 @@
 // Hooks
-export * from "./useSetHeader";
-export * from "./useMockResource";
+export * from "./useOtpPage";
