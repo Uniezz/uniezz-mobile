@@ -1,2 +1,4 @@
-// Export icons here
-export {};
+import { createNanoIconSet } from "react-native-nano-icons";
+import glyphMap from "./icons.glyphmap.json";
+
+export const Icon = createNanoIconSet(glyphMap);

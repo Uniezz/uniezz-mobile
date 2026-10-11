@@ -1,5 +1,5 @@
 {
-  "version": "2.19",
+  "version": "2.21",
   "children": [
     {
       "type": "frame",
@@ -1940,7 +1940,7 @@
             "type": "image",
             "enabled": true,
             "url": "https://images.unsplash.com/photo-1527493324787-47372b893452?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODk0NTM5NTd8&ixlib=rb-4.1.0&q=80&w=1080",
-            "mode": "fill"
+            "mode": "cover"
           },
           "cornerRadius": "$r-md"
         },
@@ -7400,7 +7400,7 @@
                                 "type": "image",
                                 "enabled": true,
                                 "url": "https://images.unsplash.com/flagged/photo-1554391812-b02bb159a2bf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODk0NTQzNTB8&ixlib=rb-4.1.0&q=80&w=1080",
-                                "mode": "fill"
+                                "mode": "cover"
                               },
                               "cornerRadius": 999
                             },
@@ -8666,7 +8666,7 @@
                                 "type": "image",
                                 "enabled": true,
                                 "url": "https://images.unsplash.com/photo-1723720474126-8704a01f6089?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODk0NTQzODN8&ixlib=rb-4.1.0&q=80&w=1080",
-                                "mode": "fill"
+                                "mode": "cover"
                               },
                               "cornerRadius": "$r-md"
                             },
@@ -8706,7 +8706,7 @@
                                 "type": "image",
                                 "enabled": true,
                                 "url": "https://images.unsplash.com/photo-1548453282-29d422a7025a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODk0NTQzODR8&ixlib=rb-4.1.0&q=80&w=1080",
-                                "mode": "fill"
+                                "mode": "cover"
                               },
                               "cornerRadius": "$r-md"
                             },
@@ -8746,7 +8746,7 @@
                                 "type": "image",
                                 "enabled": true,
                                 "url": "https://images.unsplash.com/photo-1785059934614-0d2d6bb5168b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODk0NTQzODR8&ixlib=rb-4.1.0&q=80&w=1080",
-                                "mode": "fill"
+                                "mode": "cover"
                               },
                               "cornerRadius": "$r-md"
                             },
@@ -8786,7 +8786,7 @@
                                 "type": "image",
                                 "enabled": true,
                                 "url": "https://images.unsplash.com/photo-1537043218005-98885a42594b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODk0NTQzODV8&ixlib=rb-4.1.0&q=80&w=1080",
-                                "mode": "fill"
+                                "mode": "cover"
                               },
                               "cornerRadius": "$r-md"
                             },
@@ -12330,7 +12330,7 @@
                             "type": "image",
                             "enabled": true,
                             "url": "https://images.unsplash.com/photo-1577614739132-81b2b774038c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODk0NTI5Mzl8&ixlib=rb-4.1.0&q=80&w=1080",
-                            "mode": "fill"
+                            "mode": "cover"
                           }
                         },
                         "Bzgk1": {
@@ -17644,7 +17644,7 @@
                                     "type": "image",
                                     "enabled": true,
                                     "url": "https://images.unsplash.com/photo-1552558636-f6a8f071c2b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODk0NTMxMjB8&ixlib=rb-4.1.0&q=80&w=1080",
-                                    "mode": "fill"
+                                    "mode": "cover"
                                   },
                                   "cornerRadius": [
                                     14,
@@ -18215,7 +18215,7 @@
                                 "type": "image",
                                 "enabled": true,
                                 "url": "https://images.unsplash.com/photo-1711763560415-17e4d2341f78?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODk0NTMxODh8&ixlib=rb-4.1.0&q=80&w=1080",
-                                "mode": "fill"
+                                "mode": "cover"
                               },
                               "layout": "none",
                               "children": [
@@ -21293,7 +21293,7 @@
                             "type": "image",
                             "enabled": true,
                             "url": "https://images.unsplash.com/photo-1527493324787-47372b893452?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODk0NTM5NTd8&ixlib=rb-4.1.0&q=80&w=1080",
-                            "mode": "fill"
+                            "mode": "cover"
                           }
                         },
                         {
@@ -23677,7 +23677,7 @@
                     "type": "image",
                     "enabled": true,
                     "url": "https://images.unsplash.com/photo-1552558636-f6a8f071c2b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODk0NTMxMjB8&ixlib=rb-4.1.0&q=80&w=1080",
-                    "mode": "fill"
+                    "mode": "cover"
                   }
                 }
               }
@@ -24900,7 +24900,7 @@
                   "type": "image",
                   "enabled": true,
                   "url": "https://images.unsplash.com/photo-1711763560415-17e4d2341f78?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODk0NTMxODh8&ixlib=rb-4.1.0&q=80&w=1080",
-                  "mode": "fill"
+                  "mode": "cover"
                 },
                 {
                   "type": "gradient",
@@ -29202,7 +29202,7 @@
         "type": "image",
         "enabled": true,
         "url": "https://images.unsplash.com/photo-1527493324787-47372b893452?w=800&q=80",
-        "mode": "fill"
+        "mode": "cover"
       },
       "cornerRadius": "$r-md"
     },
@@ -33815,6 +33815,815 @@
                       ]
                     }
                   ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "nfj9X",
+      "x": 0,
+      "y": 8432,
+      "name": "iOS · 01b Email",
+      "clip": true,
+      "width": 393,
+      "height": 852,
+      "fill": [
+        {
+          "type": "mesh_gradient",
+          "enabled": true,
+          "columns": 3,
+          "rows": 3,
+          "colors": [
+            "#0A1746",
+            "#17275F",
+            "#2D4195",
+            "#0B1740",
+            "#243A8C",
+            "#5B49E0",
+            "#05102E",
+            "#16296B",
+            "#3A2E86"
+          ],
+          "points": [
+            [
+              0,
+              0
+            ],
+            [
+              0.5,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              0.5
+            ],
+            [
+              0.5,
+              0.5
+            ],
+            [
+              1,
+              0.5
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0.5,
+              1
+            ],
+            [
+              1,
+              1
+            ]
+          ]
+        },
+        {
+          "type": "gradient",
+          "gradientType": "linear",
+          "enabled": true,
+          "rotation": 0,
+          "size": {
+            "height": 1
+          },
+          "colors": [
+            {
+              "color": "#05102EB3",
+              "position": 0
+            },
+            {
+              "color": "#05102E00",
+              "position": 0.7
+            }
+          ]
+        }
+      ],
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "b1SAaE",
+          "name": "Hero",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "padding": [
+            14,
+            24,
+            24,
+            24
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "N28kw",
+              "name": "Logo",
+              "gap": 10,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "V1vGl",
+                  "name": "Mark",
+                  "width": 34,
+                  "height": 34,
+                  "fill": "$brand",
+                  "cornerRadius": 10,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "InG3i",
+                      "name": "Cap",
+                      "width": 19,
+                      "height": 19,
+                      "icon": "graduation-cap",
+                      "library": "lucide",
+                      "fill": "$on-brand"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "snAt1",
+                  "name": "Wordmark",
+                  "fill": "$on-navy",
+                  "content": "Uniezz",
+                  "fontFamily": "$font-display",
+                  "fontSize": 21,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "xmV7N",
+              "name": "Headline",
+              "fill": "$on-navy",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "One platform for every student in Lublin.",
+              "lineHeight": 1.22,
+              "fontFamily": "$font-display",
+              "fontSize": 27,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "ZSENS",
+              "name": "Sub",
+              "fill": "$on-navy-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Your password stays on your university's own login page.",
+              "lineHeight": 1.5,
+              "fontFamily": "$font-body",
+              "fontSize": 13.5,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "t25QCm",
+          "name": "Sheet",
+          "width": "fill_container",
+          "height": "fill_container",
+          "fill": "$surface",
+          "cornerRadius": [
+            26,
+            26,
+            0,
+            0
+          ],
+          "layout": "vertical",
+          "gap": 16,
+          "padding": [
+            22,
+            20,
+            0,
+            20
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "uuw5P",
+              "name": "Heading",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "WEPKJ",
+                  "name": "Title",
+                  "fill": "$text-primary",
+                  "content": "Provide your university email",
+                  "fontFamily": "$font-display",
+                  "fontSize": 21,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "ZZyxt",
+                  "name": "Sub text",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "We’ll send a six-digit code to this inbox. Use the address your university issued.",
+                  "lineHeight": 1.4,
+                  "fontFamily": "$font-body",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "id": "Okg8Z",
+              "type": "ref",
+              "ref": "G4Pdg",
+              "name": "Email Field",
+              "width": "fill_container",
+              "descendants": {
+                "ib82d": {
+                  "content": "Email"
+                },
+                "mdf15": {
+                  "icon": "mail"
+                },
+                "hk39o": {
+                  "content": "k.malinowski@student.pollub.edu.pl"
+                },
+                "vNrIi": {
+                  "enabled": false
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "To60L",
+              "name": "Grow",
+              "width": 1,
+              "height": "fill_container"
+            },
+            {
+              "id": "xyFxC",
+              "type": "ref",
+              "ref": "XPghv",
+              "name": "Send Code",
+              "width": "fill_container",
+              "padding": [
+                14,
+                20
+              ],
+              "cornerRadius": "$r-md",
+              "descendants": {
+                "N84nfV": {
+                  "icon": "send"
+                },
+                "D45Gn": {
+                  "content": "Send code",
+                  "fontSize": 15
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "F8v1X",
+              "name": "Back",
+              "width": "fill_container",
+              "gap": 6,
+              "padding": [
+                4,
+                0
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "B3uf9",
+                  "name": "Back Icon",
+                  "width": 15,
+                  "height": 15,
+                  "icon": "arrow-left",
+                  "library": "lucide",
+                  "fill": "$text-secondary"
+                },
+                {
+                  "type": "text",
+                  "id": "mk9w1",
+                  "name": "Back Label",
+                  "fill": "$text-secondary",
+                  "content": "Back to universities",
+                  "fontFamily": "$font-body",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "TfrDr",
+              "name": "Home Indicator",
+              "width": "fill_container",
+              "height": 32,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 100,
+                  "id": "tSllh",
+                  "name": "Bar",
+                  "opacity": 0.18,
+                  "fill": "$text-primary",
+                  "width": 140,
+                  "height": 5
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "vrl05",
+      "x": 500,
+      "y": 8432,
+      "name": "iOS · 01c OTP",
+      "clip": true,
+      "width": 393,
+      "height": 852,
+      "fill": [
+        {
+          "type": "mesh_gradient",
+          "enabled": true,
+          "columns": 3,
+          "rows": 3,
+          "colors": [
+            "#0A1746",
+            "#17275F",
+            "#2D4195",
+            "#0B1740",
+            "#243A8C",
+            "#5B49E0",
+            "#05102E",
+            "#16296B",
+            "#3A2E86"
+          ],
+          "points": [
+            [
+              0,
+              0
+            ],
+            [
+              0.5,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              0.5
+            ],
+            [
+              0.5,
+              0.5
+            ],
+            [
+              1,
+              0.5
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0.5,
+              1
+            ],
+            [
+              1,
+              1
+            ]
+          ]
+        },
+        {
+          "type": "gradient",
+          "gradientType": "linear",
+          "enabled": true,
+          "rotation": 0,
+          "size": {
+            "height": 1
+          },
+          "colors": [
+            {
+              "color": "#05102EB3",
+              "position": 0
+            },
+            {
+              "color": "#05102E00",
+              "position": 0.7
+            }
+          ]
+        }
+      ],
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "yQaGQ",
+          "name": "Hero",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "padding": [
+            14,
+            24,
+            24,
+            24
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "ZLz6T",
+              "name": "Logo",
+              "gap": 10,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "RNejw",
+                  "name": "Mark",
+                  "width": 34,
+                  "height": 34,
+                  "fill": "$brand",
+                  "cornerRadius": 10,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "F8JmIw",
+                      "name": "Cap",
+                      "width": 19,
+                      "height": 19,
+                      "icon": "graduation-cap",
+                      "library": "lucide",
+                      "fill": "$on-brand"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "w1rIEs",
+                  "name": "Wordmark",
+                  "fill": "$on-navy",
+                  "content": "Uniezz",
+                  "fontFamily": "$font-display",
+                  "fontSize": 21,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "cAY3v",
+              "name": "Headline",
+              "fill": "$on-navy",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "One platform for every student in Lublin.",
+              "lineHeight": 1.22,
+              "fontFamily": "$font-display",
+              "fontSize": 27,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "i6HULs",
+              "name": "Sub",
+              "fill": "$on-navy-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Your password stays on your university's own login page.",
+              "lineHeight": 1.5,
+              "fontFamily": "$font-body",
+              "fontSize": 13.5,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "h0XrLe",
+          "name": "Sheet",
+          "width": "fill_container",
+          "height": "fill_container",
+          "fill": "$surface",
+          "cornerRadius": [
+            26,
+            26,
+            0,
+            0
+          ],
+          "layout": "vertical",
+          "gap": 16,
+          "padding": [
+            22,
+            20,
+            0,
+            20
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "aSZa8",
+              "name": "Heading",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "f1t7cf",
+                  "name": "Title",
+                  "fill": "$text-primary",
+                  "content": "Check your university inbox",
+                  "fontFamily": "$font-display",
+                  "fontSize": 21,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "wO8iq",
+                  "name": "Sub text",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "We sent a six-digit code to k.malinowski@student.pollub.edu.pl. It expires in 5 minutes.",
+                  "lineHeight": 1.4,
+                  "fontFamily": "$font-body",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "r7UNE",
+              "name": "Digits",
+              "width": "fill_container",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "zjmUo",
+                  "name": "Digit 1",
+                  "width": "fill_container",
+                  "height": 52,
+                  "fill": "$surface",
+                  "cornerRadius": 10,
+                  "stroke": "$border-strong",
+                  "strokeWidth": 1,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "HQ0DJ",
+                      "name": "Value",
+                      "fill": "$text-primary",
+                      "content": "4",
+                      "fontFamily": "$font-display",
+                      "fontSize": 22,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "NzJ28",
+                  "name": "Digit 2",
+                  "width": "fill_container",
+                  "height": 52,
+                  "fill": "$surface",
+                  "cornerRadius": 10,
+                  "stroke": "$border-strong",
+                  "strokeWidth": 1,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "W2cZ3",
+                      "name": "Value",
+                      "fill": "$text-primary",
+                      "content": "1",
+                      "fontFamily": "$font-display",
+                      "fontSize": 22,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "DQWj1",
+                  "name": "Digit 3",
+                  "width": "fill_container",
+                  "height": 52,
+                  "fill": "$surface",
+                  "cornerRadius": 10,
+                  "stroke": "$border-strong",
+                  "strokeWidth": 1,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "zRnCI",
+                      "name": "Value",
+                      "fill": "$text-primary",
+                      "content": "8",
+                      "fontFamily": "$font-display",
+                      "fontSize": 22,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "q6hJEY",
+                  "name": "Digit 4",
+                  "width": "fill_container",
+                  "height": 52,
+                  "fill": "$surface",
+                  "cornerRadius": 10,
+                  "stroke": "$border-strong",
+                  "strokeWidth": 1,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "yCnkD",
+                      "name": "Value",
+                      "fill": "$text-primary",
+                      "content": "2",
+                      "fontFamily": "$font-display",
+                      "fontSize": 22,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "pT8Gs",
+                  "name": "Digit 5",
+                  "width": "fill_container",
+                  "height": 52,
+                  "fill": "$ice-50",
+                  "cornerRadius": 10,
+                  "stroke": "$brand",
+                  "strokeWidth": 1.5,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 1,
+                      "id": "T5zDm",
+                      "name": "Caret",
+                      "fill": "$brand",
+                      "width": 2,
+                      "height": 24
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "vN2VB",
+                  "name": "Digit 6",
+                  "width": "fill_container",
+                  "height": 52,
+                  "fill": "$ice-50",
+                  "cornerRadius": 10,
+                  "stroke": "$border-strong",
+                  "strokeWidth": 1,
+                  "justifyContent": "center",
+                  "alignItems": "center"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "P17YVb",
+              "name": "Meta",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "KLlnG",
+                  "name": "Timer",
+                  "gap": 6,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "TsJMk",
+                      "name": "Clock",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "timer",
+                      "library": "lucide",
+                      "fill": "$text-muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "ffPI9",
+                      "name": "Timer Label",
+                      "fill": "$text-muted",
+                      "content": "Resend in 0:42",
+                      "fontFamily": "$font-body",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "OHCyb",
+                  "name": "Change Email",
+                  "fill": "$brand",
+                  "content": "Change email",
+                  "fontFamily": "$font-body",
+                  "fontSize": 12,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "djSHA",
+              "name": "Grow",
+              "width": 1,
+              "height": "fill_container"
+            },
+            {
+              "id": "PSE0S",
+              "type": "ref",
+              "ref": "XPghv",
+              "name": "Verify",
+              "width": "fill_container",
+              "padding": [
+                14,
+                20
+              ],
+              "cornerRadius": "$r-md",
+              "descendants": {
+                "N84nfV": {
+                  "icon": "check"
+                },
+                "D45Gn": {
+                  "content": "Verify and continue",
+                  "fontSize": 15
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "qMxeQ",
+              "name": "Home Indicator",
+              "width": "fill_container",
+              "height": 32,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 100,
+                  "id": "eAE3U",
+                  "name": "Bar",
+                  "opacity": 0.18,
+                  "fill": "$text-primary",
+                  "width": 140,
+                  "height": 5
                 }
               ]
             }

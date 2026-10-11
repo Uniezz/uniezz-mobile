@@ -6,3 +6,6 @@ export * from "./UIRow";
 export * from "./UISegmented";
 export * from "./UIButton";
 export * from "./UIIconButton";
+export * from "./UIPage";
+
+export * from "./icons";
