@@ -35,6 +35,8 @@ export default function WelcomeScreen() {
   const handleContinuePress = () => {
     if (items[selected].bottomText === "Microsoft") {
       router.push("/otp");
+    } else {
+      router.push("/usos");
     }
   };
   return (
