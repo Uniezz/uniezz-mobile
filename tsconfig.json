@@ -8,7 +8,9 @@
     },
     "moduleResolution": "bundler",
     "skipLibCheck": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "module": "ESNext",
+    "noUncheckedIndexedAccess": true
   },
   "include": [
     "**/*.ts",
