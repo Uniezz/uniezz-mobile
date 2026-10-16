@@ -25,6 +25,7 @@ export default function FinishLoginScreen(): React.JSX.Element {
         text1: "Couldn’t sign in with USOS.",
         text2: error || "The sign-in redirect did not include a code.",
       });
+      router.dismissAll();
       router.replace("/(auth)");
       return;
     }

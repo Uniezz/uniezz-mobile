@@ -17,6 +17,7 @@ export function useExchangeLoginCode() {
   return useMutation({
     mutationFn: (body: ExchangeLoginCodeBody) => exchangeLoginCode(body),
     onSuccess: async (session) => {
+      router.dismissAll();
       await saveSession(session);
       router.replace("/feed");
     },
@@ -26,6 +27,7 @@ export function useExchangeLoginCode() {
         text1: "Couldn’t sign in with USOS.",
         text2: getErrorMessage(error),
       });
+      router.dismissAll();
       router.replace("/(auth)");
     },
   });
