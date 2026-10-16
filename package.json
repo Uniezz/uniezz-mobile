@@ -4,6 +4,8 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
+    "ios": "bun --env-file=.env.staging.local run expo run:ios",
+    "ios:prod": "bun --env-file=.env.production.local run expo run:ios",
     "start:staging": "bun --env-file=.env.staging run start",
     "start:production": "bun --env-file=.env.production run start",
     "schema:staging": "bun --env-file=.env.staging.local run schema:generate",
@@ -11,7 +13,8 @@
     "schema:generate": "openapi-typescript ${EXPO_PUBLIC_API_URL}/openapi.yaml -o ./src/@types/schema.d.ts && bun run write:schema",
     "schema:local": "openapi-typescript ./api/openapi.yaml -o ./src/@types/schema.d.ts && bun run write:schema",
     "write:schema": "prettier --write ./src/@types/schema.d.ts",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\""
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^5",

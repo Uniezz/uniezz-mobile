@@ -4,6 +4,7 @@ import { router } from "expo-router";
 import { useState } from "react";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { StyleSheet } from "react-native-unistyles";
+import Toast from "react-native-toast-message";
 
 const items: RowItem[] = [
   {
@@ -12,19 +13,19 @@ const items: RowItem[] = [
   },
   {
     topText: "KUL",
-    bottomText: "Microsoft",
+    bottomText: "Email OTP",
   },
   {
     topText: "Politechnika Lubelska",
-    bottomText: "Microsoft",
+    bottomText: "Email OTP",
   },
   {
     topText: "Uniwersytet Przyrodniczy",
-    bottomText: "Microsoft",
+    bottomText: "Email OTP",
   },
   {
     topText: "WSEI",
-    bottomText: "Microsoft",
+    bottomText: "Email OTP",
   },
 ];
 
@@ -32,12 +33,18 @@ const buttonEntering = FadeInDown.duration(380).delay(items.length * 70 + 50);
 
 export default function WelcomeScreen() {
   const [selected, setSelected] = useState<number>(0);
+
   const handleContinuePress = () => {
-    if (items[selected].bottomText === "Microsoft") {
-      router.push("/otp");
-    } else {
+    if (items[selected]?.bottomText === "USOS") {
       router.push("/usos");
+      return;
     }
+
+    Toast.show({
+      type: "info",
+      text1: "Email OTP sign-in isn’t available yet.",
+      text2: "For now, sign in with UMCS via USOS.",
+    });
   };
   return (
     <AuthPage
@@ -58,7 +65,7 @@ export default function WelcomeScreen() {
         >
           <Icon name="shield-check" size={16} color={"white"} />
           <UIText weight="semibold" size="rg" color="white">
-            Continue with {items[selected].bottomText}
+            {`Continue with ${items[selected]?.bottomText ?? "university"}`}
           </UIText>
         </UIButton>
       </Animated.View>

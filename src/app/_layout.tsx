@@ -1,3 +1,4 @@
+import "@/schemas";
 import "@/internationalization";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";

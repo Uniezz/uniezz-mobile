@@ -1,4 +1,16 @@
-import { ColorValue } from "react-native";
+import type { StartUsosLoginParams } from "@/@types/auth";
+import { env } from "@/schemas";
+import type { ColorValue } from "react-native";
+
+export function getUsosStartUrl(
+  university: StartUsosLoginParams["university"],
+): string {
+  const url = new URL(
+    `/auth/usos/start?university=${university}&platform=mobile`,
+    env.EXPO_PUBLIC_API_URL,
+  );
+  return url.toString();
+}
 
 export const GRADIENT_COLORS: ColorValue[] = [
   "#0a1746",
