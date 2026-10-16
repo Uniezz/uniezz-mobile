@@ -10,7 +10,8 @@
     "schema:production": "bun --env-file=.env.production.local run schema:generate",
     "schema:generate": "openapi-typescript ${EXPO_PUBLIC_API_URL}/openapi.yaml -o ./src/@types/schema.d.ts && bun run write:schema",
     "schema:local": "openapi-typescript ./api/openapi.yaml -o ./src/@types/schema.d.ts && bun run write:schema",
-    "write:schema": "prettier --write ./src/@types/schema.d.ts"
+    "write:schema": "prettier --write ./src/@types/schema.d.ts",
+    "lint": "expo lint"
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^5",
@@ -40,6 +41,7 @@
     "expo-localization": "~57.0.2",
     "expo-mesh-gradient": "~57.0.2",
     "expo-router": "~57.0.25",
+    "expo-secure-store": "~57.0.4",
     "expo-splash-screen": "~57.0.9",
     "expo-status-bar": "~57.0.1",
     "expo-symbols": "~57.0.3",
@@ -47,6 +49,8 @@
     "expo-web-browser": "~57.0.3",
     "i18next": "^26.4.2",
     "lodash": "^4.18.1",
+    "openapi-fetch": "^0.17.0",
+    "openapi-react-query": "^0.5.4",
     "openapi-typescript": "^7.13.0",
     "prettier": "^3.9.8",
     "react": "19.2.3",
