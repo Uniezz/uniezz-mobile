@@ -1,15 +1,17 @@
 import { useEffect } from "react";
 import { View, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
+import { useSession } from "@/contexts";
 
 export default function LoadingScreen() {
   const router = useRouter();
+  const { session, isLoading } = useSession();
 
   useEffect(() => {
-    // TODO: Implement your custom session check and redirection logic here
-    // For now, we'll just redirect to the auth group
-    router.replace("/(auth)"); // now we need to navigate into tabs
-  }, [router]);
+    if (!isLoading) {
+      router.replace(session ? "/feed" : "/(auth)");
+    }
+  }, [isLoading, router, session]);
 
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
