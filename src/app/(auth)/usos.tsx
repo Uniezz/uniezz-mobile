@@ -8,7 +8,7 @@ import { StyleSheet } from "react-native-unistyles";
 
 const USOS_SOURCE = { uri: getUsosStartUrl("umcs") };
 
-function renderLoading(): React.JSX.Element {
+function renderLoading() {
   return (
     <View style={styles.loading}>
       <ActivityIndicator color="white" />
@@ -16,7 +16,7 @@ function renderLoading(): React.JSX.Element {
   );
 }
 
-export default function UsosScreen(): React.JSX.Element {
+export default function UsosScreen() {
   const handleNavigation = useUsosLogin();
 
   return (
