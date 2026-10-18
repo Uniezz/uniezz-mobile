@@ -2,19 +2,11 @@ import { useUsosLogin } from "@/hooks";
 import { Icon, UIIconButton } from "@/ui";
 import { getUsosStartUrl } from "@/utils";
 import { router } from "expo-router";
-import { ActivityIndicator, View } from "react-native";
+import { View } from "react-native";
 import { WebView } from "react-native-webview";
 import { StyleSheet } from "react-native-unistyles";
 
 const USOS_SOURCE = { uri: getUsosStartUrl("umcs") };
-
-function renderLoading() {
-  return (
-    <View style={styles.loading}>
-      <ActivityIndicator color="white" />
-    </View>
-  );
-}
 
 export default function UsosScreen() {
   const handleNavigation = useUsosLogin();
@@ -25,7 +17,6 @@ export default function UsosScreen() {
         source={USOS_SOURCE}
         onShouldStartLoadWithRequest={handleNavigation}
         startInLoadingState
-        renderLoading={renderLoading}
         style={styles.webView}
       />
       <UIIconButton onPress={() => router.back()} style={styles.backButton}>
@@ -42,12 +33,6 @@ const styles = StyleSheet.create((theme) => ({
   },
   webView: {
     flex: 1,
-  },
-  loading: {
-    ...StyleSheet.absoluteFillObject,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: theme.colors.midnight,
   },
   backButton: {
     position: "absolute",

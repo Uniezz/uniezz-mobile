@@ -1,8 +1,6 @@
-import { useExchangeLoginCode } from "@/hooks";
-import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useRef } from "react";
+import { useFinishLogin } from "@/hooks";
+import { useLocalSearchParams } from "expo-router";
 import { ActivityIndicator, View } from "react-native";
-import Toast from "react-native-toast-message";
 import { StyleSheet } from "react-native-unistyles";
 
 export default function FinishLoginScreen(): React.JSX.Element {
@@ -10,28 +8,7 @@ export default function FinishLoginScreen(): React.JSX.Element {
     code?: string;
     error?: string;
   }>();
-  const { mutate: exchangeLoginCode } = useExchangeLoginCode();
-  const hasHandledCallback = useRef(false);
-
-  useEffect(() => {
-    if (hasHandledCallback.current) {
-      return;
-    }
-    hasHandledCallback.current = true;
-
-    if (error || !code) {
-      Toast.show({
-        type: "error",
-        text1: "Couldn’t sign in with USOS.",
-        text2: error || "The sign-in redirect did not include a code.",
-      });
-      router.dismissAll();
-      router.replace("/(auth)");
-      return;
-    }
-
-    exchangeLoginCode({ code });
-  }, [code, error, exchangeLoginCode]);
+  useFinishLogin(code, error);
 
   return (
     <View style={styles.container}>

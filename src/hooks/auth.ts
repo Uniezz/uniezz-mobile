@@ -1,43 +1,87 @@
-import { exchangeLoginCode } from "@/api";
+import { $api } from "@/api";
 import { useSession } from "@/contexts";
-import { useMutation } from "@tanstack/react-query";
 import { router } from "expo-router";
 import Toast from "react-native-toast-message";
 import * as Linking from "expo-linking";
-import { useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import type { WebViewNavigation } from "react-native-webview";
-import type { ExchangeLoginCodeBody } from "@/@types/auth";
-import { getErrorMessage } from "@/utils";
 
-const USOS_REDIRECT_URL = Linking.createURL("auth/callback");
+const USOS_REDIRECT_URL = new URL(Linking.createURL("auth/callback"));
+
+function showLoginError(message: string): void {
+  Toast.show({
+    type: "error",
+    text1: "Couldn’t sign in with USOS.",
+    text2: message,
+  });
+}
 
 export function useExchangeLoginCode() {
   const { saveSession } = useSession();
 
-  return useMutation({
-    mutationFn: (body: ExchangeLoginCodeBody) => exchangeLoginCode(body),
+  return $api.useMutation("post", "/auth/exchange", {
     onSuccess: async (session) => {
+      try {
+        await saveSession(session);
+      } catch {
+        showLoginError("Couldn’t save your session. Please sign in again.");
+        router.dismissAll();
+        router.replace("/(auth)");
+        return;
+      }
+
       router.dismissAll();
-      await saveSession(session);
       router.replace("/feed");
     },
     onError: (error) => {
-      Toast.show({
-        type: "error",
-        text1: "Couldn’t sign in with USOS.",
-        text2: getErrorMessage(error),
-      });
+      showLoginError(
+        error instanceof Error
+          ? error.message
+          : error?.error || "Please try again.",
+      );
       router.dismissAll();
       router.replace("/(auth)");
     },
   });
 }
 
+export function useFinishLogin(code?: string, error?: string): void {
+  const { mutate: exchangeLoginCode } = useExchangeLoginCode();
+  const hasHandledCallback = useRef(false);
+
+  useEffect(() => {
+    if (hasHandledCallback.current) {
+      return;
+    }
+    hasHandledCallback.current = true;
+
+    if (error || !code) {
+      showLoginError(error || "The sign-in redirect did not include a code.");
+      router.dismissAll();
+      router.replace("/(auth)");
+      return;
+    }
+
+    exchangeLoginCode({ body: { code } });
+  }, [code, error, exchangeLoginCode]);
+}
+
 export function useUsosLogin(): (navigation: WebViewNavigation) => boolean {
   const hasHandledRedirect = useRef(false);
 
-  return (navigation: WebViewNavigation): boolean => {
-    if (!navigation.url.startsWith(USOS_REDIRECT_URL)) {
+  return useCallback((navigation: WebViewNavigation): boolean => {
+    let callbackUrl: URL;
+    try {
+      callbackUrl = new URL(navigation.url);
+    } catch {
+      return true;
+    }
+
+    if (
+      callbackUrl.protocol !== USOS_REDIRECT_URL.protocol ||
+      callbackUrl.host !== USOS_REDIRECT_URL.host ||
+      callbackUrl.pathname !== USOS_REDIRECT_URL.pathname
+    ) {
       return true;
     }
 
@@ -46,7 +90,6 @@ export function useUsosLogin(): (navigation: WebViewNavigation) => boolean {
     }
     hasHandledRedirect.current = true;
 
-    const callbackUrl = new URL(navigation.url);
     router.replace({
       pathname: "/finish",
       params: {
@@ -55,5 +98,5 @@ export function useUsosLogin(): (navigation: WebViewNavigation) => boolean {
       },
     });
     return false;
-  };
+  }, []);
 }

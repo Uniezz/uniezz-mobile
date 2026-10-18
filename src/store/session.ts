@@ -1,21 +1,13 @@
 import * as SecureStore from "expo-secure-store";
 import type { IssuedSession } from "@/@types/auth";
+import { z } from "zod";
 
 const SESSION_STORAGE_KEY = "uniezz.session";
 
-function isIssuedSession(value: unknown): value is IssuedSession {
-  if (typeof value !== "object" || value === null) {
-    return false;
-  }
-
-  const session = value as Record<string, unknown>;
-  return (
-    typeof session.token === "string" &&
-    session.token.length > 0 &&
-    typeof session.expiresAt === "string" &&
-    Number.isFinite(Date.parse(session.expiresAt))
-  );
-}
+const issuedSessionSchema: z.ZodType<IssuedSession> = z.strictObject({
+  token: z.string().min(1),
+  expiresAt: z.iso.datetime({ offset: true }),
+});
 
 export async function loadStoredSession(): Promise<IssuedSession | null> {
   const storedSession = await SecureStore.getItemAsync(SESSION_STORAGE_KEY);
@@ -23,23 +15,21 @@ export async function loadStoredSession(): Promise<IssuedSession | null> {
     return null;
   }
 
-  let session: unknown;
+  let storedValue: unknown;
   try {
-    session = JSON.parse(storedSession);
+    storedValue = JSON.parse(storedSession);
   } catch {
     await SecureStore.deleteItemAsync(SESSION_STORAGE_KEY);
     return null;
   }
 
-  if (
-    !isIssuedSession(session) ||
-    Date.parse(session.expiresAt) <= Date.now()
-  ) {
+  const parsed = issuedSessionSchema.safeParse(storedValue);
+  if (!parsed.success || Date.parse(parsed.data.expiresAt) <= Date.now()) {
     await SecureStore.deleteItemAsync(SESSION_STORAGE_KEY);
     return null;
   }
 
-  return session;
+  return parsed.data;
 }
 
 export async function storeSession(session: IssuedSession): Promise<void> {
