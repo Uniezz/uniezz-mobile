@@ -35,7 +35,7 @@ export const RowPicker = ({
               onPress={handlePress}
               style={styles.item(isItemSelected)}
             >
-              <View>
+              <View style={styles.textContainer}>
                 <UIText color="black" weight="semibold">
                   {item.topText}
                 </UIText>
@@ -58,6 +58,9 @@ export const RowPicker = ({
 const styles = StyleSheet.create((theme) => ({
   container: {
     gap: theme.vs(7),
+  },
+  textContainer: {
+    flex: 1,
   },
   item: (isItemSelected: boolean) => ({
     alignItems: "center",

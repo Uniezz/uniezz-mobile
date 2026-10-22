@@ -5,10 +5,9 @@ import type { ColorValue } from "react-native";
 export function getUsosStartUrl(
   university: StartUsosLoginParams["university"],
 ): string {
-  const url = new URL(
-    `/auth/usos/start?university=${university}&platform=mobile`,
-    env.EXPO_PUBLIC_API_URL,
-  );
+  const url = new URL("/auth/usos/start", env.EXPO_PUBLIC_API_URL);
+  url.searchParams.set("university", university);
+  url.searchParams.set("platform", "mobile");
   return url.toString();
 }
 

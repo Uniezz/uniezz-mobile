@@ -21,6 +21,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/auth/universities": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get the list of supported universities
+     * @description Lists every university the app supports, in display order, with how its students log in.
+     */
+    get: operations["getUniversities"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/auth/usos/callback": {
     parameters: {
       query?: never;
@@ -85,6 +105,30 @@ export interface components {
       /** @description token to be used in Authorization header for subsequent requests */
       token: string;
     };
+    UniversityDTO: {
+      /**
+       * @description Authentication method used by the university
+       * @example USOS
+       */
+      authMethod: string;
+      /**
+       * @description Allowed student email domains for OTP authentication
+       * @example [
+       *       "student.kul.pl"
+       *     ]
+       */
+      domains?: string[] | null;
+      /**
+       * @description Unique identifier of the university
+       * @example umcs
+       */
+      id: string;
+      /**
+       * @description Display name of the university
+       * @example Uniwersytet Marii Curie-Skłodowskiej
+       */
+      name: string;
+    };
   };
   responses: never;
   parameters: never;
@@ -145,6 +189,35 @@ export interface operations {
       };
       /** @description Internal Server Error */
       500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  getUniversities: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["UniversityDTO"][] | null;
+        };
+      };
+      /** @description Error */
+      default: {
         headers: {
           [name: string]: unknown;
         };
