@@ -2,7 +2,7 @@ import { useUsosLogin } from "@/hooks";
 import { Icon, UIIconButton } from "@/ui";
 import { getUsosStartUrl } from "@/utils";
 import { router } from "expo-router";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import { WebView } from "react-native-webview";
 import { StyleSheet } from "react-native-unistyles";
 
@@ -31,7 +31,7 @@ const styles = StyleSheet.create((theme, rt) => ({
   container: {
     flex: 1,
     backgroundColor: theme.colors.midnight,
-    paddingTop: rt.insets.top,
+    paddingTop: Platform.OS === "android" ? rt.insets.top : 0,
   },
   webView: {
     flex: 1,
