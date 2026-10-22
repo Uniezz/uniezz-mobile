@@ -15,29 +15,31 @@ export default function UsosScreen() {
     <View style={styles.container}>
       <WebView
         source={USOS_SOURCE}
+        incognito
         onShouldStartLoadWithRequest={handleNavigation}
         startInLoadingState
         style={styles.webView}
       />
-      <UIIconButton onPress={() => router.back()} style={styles.backButton}>
+      <UIIconButton onPress={router.back} size="lg" style={styles.backButton}>
         <Icon name="arrow-left" size={18} color="white" />
       </UIIconButton>
     </View>
   );
 }
 
-const styles = StyleSheet.create((theme) => ({
+const styles = StyleSheet.create((theme, rt) => ({
   container: {
     flex: 1,
-    position: "relative",
+    backgroundColor: theme.colors.midnight,
+    paddingTop: rt.insets.top,
   },
   webView: {
     flex: 1,
   },
   backButton: {
     position: "absolute",
+    top: rt.insets.top + theme.vs(14),
+    left: theme.s(16),
     zIndex: 1,
-    top: theme.vs(20),
-    left: theme.s(20),
   },
 }));

@@ -25,12 +25,10 @@ export function useExchangeLoginCode() {
         await saveSession(session);
       } catch {
         showLoginError("Couldn’t save your session. Please sign in again.");
-        router.dismissAll();
         router.replace("/(auth)");
         return;
       }
 
-      router.dismissAll();
       router.replace("/feed");
     },
     onError: (error) => {
@@ -39,7 +37,6 @@ export function useExchangeLoginCode() {
           ? error.message
           : error?.error || "Please try again.",
       );
-      router.dismissAll();
       router.replace("/(auth)");
     },
   });
@@ -57,7 +54,6 @@ export function useFinishLogin(code?: string, error?: string): void {
 
     if (error || !code) {
       showLoginError(error || "The sign-in redirect did not include a code.");
-      router.dismissAll();
       router.replace("/(auth)");
       return;
     }

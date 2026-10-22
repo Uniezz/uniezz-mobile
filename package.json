@@ -5,7 +5,9 @@
   "scripts": {
     "start": "expo start",
     "ios": "bun --env-file=.env.staging.local run expo run:ios",
+    "android": "bun --env-file=.env.staging.local run expo run:android",
     "ios:prod": "bun --env-file=.env.production.local run expo run:ios",
+    "android:prod": "bun --env-file=.env.production.local run expo android:ios",
     "start:staging": "bun --env-file=.env.staging run start",
     "start:production": "bun --env-file=.env.production run start",
     "schema:staging": "bun --env-file=.env.staging.local run schema:generate",
