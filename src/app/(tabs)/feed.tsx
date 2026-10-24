@@ -3,11 +3,19 @@ import { useState } from "react";
 import { ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-const FILTERS = ["All", "Events", "People", "News", "Campus"];
+const FILTERS = [
+  { label: "All", value: "all" },
+  { label: "Events", value: "events" },
+  { label: "People", value: "people" },
+  { label: "News", value: "news" },
+  { label: "Campus", value: "campus" }
+] as const;
 
 export default function FeedScreen() {
-  const [querry, setQuerry] = useState("");
+  const [query, setQuery] = useState("");
   const [selected, setSelected] = useState(0);
+
+  const activeFilter = FILTERS[selected];
 
   return (
     <UIPage>
@@ -18,8 +26,8 @@ export default function FeedScreen() {
 
         <UIInput
           placeholder="Search..."
-          value={querry}
-          onChangeText={setQuerry}
+          value={query}
+          onChangeText={setQuery}
           leftIcon={<Icon name="search" size={18} color="grey" />}
         />
 
@@ -28,15 +36,27 @@ export default function FeedScreen() {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.chips}
         >
-          {FILTERS.map((label, index) => (
+          {FILTERS.map((item, index) => (
             <UIChip
-              key={label}
-              label={label}
+              key={item.value}
+              label={item.label}
               selected={selected === index}
               onPress={() => setSelected(index)}
             />
           ))}
         </ScrollView>
+      </View>
+
+      {/*Waiting for API*/}
+
+      <View style={styles.body}>
+        <UIText color="secondary" size="sm">
+          Filter: {activeFilter?.label}
+          {query ? ` · “${query}”` : ""}
+        </UIText>
+        <UIText color="secondary" size="sm">
+          Posts will be here
+        </UIText>
       </View>
     </UIPage>
   );
@@ -53,4 +73,10 @@ const styles = StyleSheet.create((theme) => ({
     gap: theme.s(8),
     paddingVertical: theme.vs(4),
   },
+  body: {
+    flex: 1,
+    paddingHorizontal: theme.s(16),
+    paddingTop: theme.vs(24),
+    gap: theme.vs(6),
+  }
 }));
