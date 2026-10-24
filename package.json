@@ -15,7 +15,8 @@
     "schema:generate": "openapi-typescript ${EXPO_PUBLIC_API_URL}/openapi.yaml -o ./src/@types/schema.d.ts && bun run write:schema",
     "write:schema": "prettier --write ./src/@types/schema.d.ts",
     "lint": "expo lint",
-    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\""
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,md}\""
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^5",

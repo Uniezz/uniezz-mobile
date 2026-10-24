@@ -1,19 +1,13 @@
 import { Pressable } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { UIText } from "./UIText";
-
-
 type UIChipProps = {
   label: string;
   selected?: boolean;
   onPress?: () => void;
 };
 
-export const UIChip = ({
-  label,
-  selected = false,
-  onPress,
-}: UIChipProps) => {
+export const UIChip = ({ label, selected = false, onPress }: UIChipProps) => {
   return (
     <Pressable onPress={onPress} style={styles.chip({ selected })}>
       <UIText
