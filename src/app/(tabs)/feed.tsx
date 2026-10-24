@@ -20,6 +20,7 @@ export default function FeedScreen() {
           placeholder="Search..."
           value={querry}
           onChangeText={setQuerry}
+          leftIcon={<Icon name="search" size={18} color="grey" />}
         />
 
         <ScrollView
