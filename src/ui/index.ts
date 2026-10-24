@@ -9,3 +9,4 @@ export * from "./UIIconButton";
 export * from "./UIPage";
 
 export * from "./icons";
+export * from "./UIChip";
