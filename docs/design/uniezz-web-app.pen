@@ -29947,34 +29947,11 @@
               "alignItems": "center",
               "children": [
                 {
-                  "type": "frame",
-                  "id": "w12Yv",
-                  "name": "Mark",
-                  "width": 32,
-                  "height": 32,
-                  "fill": "$blue",
-                  "cornerRadius": 9,
-                  "justifyContent": "center",
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "y0NF41",
-                      "name": "Letter",
-                      "fill": "$white",
-                      "content": "u",
-                      "fontFamily": "$font",
-                      "fontSize": 18,
-                      "fontWeight": "700"
-                    }
-                  ]
-                },
-                {
                   "type": "text",
                   "id": "H7BXy",
                   "name": "Wordmark",
                   "fill": "$white",
-                  "content": "uniezz",
+                  "content": "Uniezz",
                   "fontFamily": "$font",
                   "fontSize": 21,
                   "fontWeight": "600",
@@ -30653,34 +30630,11 @@
               "alignItems": "center",
               "children": [
                 {
-                  "type": "frame",
-                  "id": "Y8ohk",
-                  "name": "Mark",
-                  "width": 32,
-                  "height": 32,
-                  "fill": "$blue",
-                  "cornerRadius": 9,
-                  "justifyContent": "center",
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "Z7FdyO",
-                      "name": "Letter",
-                      "fill": "$white",
-                      "content": "u",
-                      "fontFamily": "$font",
-                      "fontSize": 18,
-                      "fontWeight": "700"
-                    }
-                  ]
-                },
-                {
                   "type": "text",
                   "id": "BOb1w",
                   "name": "Wordmark",
                   "fill": "$white",
-                  "content": "uniezz",
+                  "content": "Uniezz",
                   "fontFamily": "$font",
                   "fontSize": 21,
                   "fontWeight": "600",
@@ -31275,34 +31229,11 @@
               "alignItems": "center",
               "children": [
                 {
-                  "type": "frame",
-                  "id": "KE79U",
-                  "name": "Mark",
-                  "width": 32,
-                  "height": 32,
-                  "fill": "$blue",
-                  "cornerRadius": 9,
-                  "justifyContent": "center",
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "I4R2Hl",
-                      "name": "Letter",
-                      "fill": "$white",
-                      "content": "u",
-                      "fontFamily": "$font",
-                      "fontSize": 18,
-                      "fontWeight": "700"
-                    }
-                  ]
-                },
-                {
                   "type": "text",
                   "id": "cJHl4",
                   "name": "Wordmark",
                   "fill": "$white",
-                  "content": "uniezz  moderation",
+                  "content": "Uniezz  moderation",
                   "fontFamily": "$font",
                   "fontSize": 21,
                   "fontWeight": "600",
@@ -31999,34 +31930,11 @@
           "alignItems": "center",
           "children": [
             {
-              "type": "frame",
-              "id": "g3IVyw",
-              "name": "Mark",
-              "width": 32,
-              "height": 32,
-              "fill": "$blue",
-              "cornerRadius": 9,
-              "justifyContent": "center",
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "text",
-                  "id": "d0iqo",
-                  "name": "Letter",
-                  "fill": "$white",
-                  "content": "u",
-                  "fontFamily": "$font",
-                  "fontSize": 18,
-                  "fontWeight": "700"
-                }
-              ]
-            },
-            {
               "type": "text",
               "id": "wu5nV",
               "name": "Wordmark",
               "fill": "$white",
-              "content": "uniezz",
+              "content": "Uniezz",
               "fontFamily": "$font",
               "fontSize": 21,
               "fontWeight": "600",
@@ -37576,34 +37484,11 @@
           "alignItems": "center",
           "children": [
             {
-              "type": "frame",
-              "id": "c6yp8",
-              "name": "Mark",
-              "width": 32,
-              "height": 32,
-              "fill": "$blue",
-              "cornerRadius": 9,
-              "justifyContent": "center",
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "text",
-                  "id": "pOqHn",
-                  "name": "Letter",
-                  "fill": "$white",
-                  "content": "u",
-                  "fontFamily": "$font",
-                  "fontSize": 18,
-                  "fontWeight": "700"
-                }
-              ]
-            },
-            {
               "type": "text",
               "id": "CYveD",
               "name": "Wordmark",
               "fill": "$white",
-              "content": "uniezz moderation",
+              "content": "Uniezz moderation",
               "fontFamily": "$font",
               "fontSize": 21,
               "fontWeight": "600",
@@ -42886,7 +42771,7 @@
                               "id": "i83ER",
                               "name": "Wordmark",
                               "fill": "$white",
-                              "content": "uniezz",
+                              "content": "Uniezz",
                               "fontFamily": "$font",
                               "fontSize": 20,
                               "fontWeight": "600",
