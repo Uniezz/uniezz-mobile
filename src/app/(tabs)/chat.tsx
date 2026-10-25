@@ -2,7 +2,7 @@ import { UIPage, UIText } from "@/ui";
 
 export default function ChatScreen() {
   return (
-    <UIPage>
+    <UIPage backdrop="city">
       <UIText>Chat Screen</UIText>
     </UIPage>
   );

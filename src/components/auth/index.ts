@@ -1,2 +1,2 @@
-export * from "./AuthBrand";
+export * from "./AuthWordmark";
 export * from "./AuthPage";

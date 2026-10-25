@@ -33,7 +33,7 @@ export default function UsosScreen() {
 const styles = StyleSheet.create((theme, rt) => ({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.midnight,
+    backgroundColor: theme.colors.ink,
     paddingTop: Platform.OS === "android" ? rt.insets.top : 0,
   },
   webView: {

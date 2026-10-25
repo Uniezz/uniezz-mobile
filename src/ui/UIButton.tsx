@@ -39,20 +39,23 @@ const styles = StyleSheet.create((theme) => ({
     variants: {
       size: {
         sm: { height: theme.vs(31) },
-        default: { height: theme.vs(41) },
-        rg: { height: theme.vs(51) },
+        default: { height: theme.vs(47) },
+        rg: { height: theme.vs(56) },
       },
       type: {
         default: {
-          backgroundColor: theme.colors.brand,
+          backgroundColor: theme.colors.white,
         },
         secondary: {
-          backgroundColor: theme.colors.white,
-          borderWidth: theme.vs(1),
-          borderColor: theme.colors.gray,
+          backgroundColor: theme.colors.white5,
+          borderWidth: 1,
+          borderColor: theme.colors.white10,
+        },
+        brand: {
+          backgroundColor: theme.colors.blue,
         },
         danger: {
-          backgroundColor: theme.colors.error,
+          backgroundColor: theme.colors.red,
         },
         ghost: {
           backgroundColor: "transparent",
@@ -60,10 +63,10 @@ const styles = StyleSheet.create((theme) => ({
       },
       radius: {
         default: {
-          borderRadius: theme.vs(8),
+          borderRadius: theme.vs(999),
         },
         md: {
-          borderRadius: theme.vs(12),
+          borderRadius: theme.vs(16),
         },
       },
     },

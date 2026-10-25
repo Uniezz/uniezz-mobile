@@ -1,4 +1,4 @@
-import { Icon, UIText } from "@/ui";
+import { UIGlass, UIText } from "@/ui";
 import { View, Pressable } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { StyleSheet } from "react-native-unistyles";
@@ -23,9 +23,10 @@ export const RowPicker = ({
   onItemPress,
 }: RowPickerProps) => {
   return (
-    <View style={styles.container}>
+    <UIGlass style={styles.group}>
       {items.map((item, index) => {
         const isItemSelected = selectedItem === index;
+        const isLast = index === items.length - 1;
         const handlePress = () => {
           onItemPress(index);
         };
@@ -33,55 +34,60 @@ export const RowPicker = ({
           <Animated.View key={index} entering={getRowEntering(index)}>
             <Pressable
               onPress={handlePress}
-              style={styles.item(isItemSelected)}
+              accessibilityRole="radio"
+              accessibilityState={{ selected: isItemSelected }}
+              style={styles.item(isItemSelected, isLast)}
             >
               <View style={styles.textContainer}>
-                <UIText color="black" weight="semibold">
+                <UIText weight="semibold" size="rg">
                   {item.topText}
                 </UIText>
-                <UIText size="sm" color="gray">
-                  {item.bottomText}
-                </UIText>
               </View>
-
-              <View style={styles.selectedMark(isItemSelected)}>
-                <Icon name="check" color={"white"} size={14} />
+              <UIText size="sm" color="gray">
+                {item.bottomText}
+              </UIText>
+              <View style={styles.radio(isItemSelected)}>
+                {isItemSelected ? <View style={styles.radioDot} /> : null}
               </View>
             </Pressable>
           </Animated.View>
         );
       })}
-    </View>
+    </UIGlass>
   );
 };
 
 const styles = StyleSheet.create((theme) => ({
-  container: {
-    gap: theme.vs(7),
+  group: {
+    backgroundColor: theme.colors.ink70,
   },
   textContainer: {
     flex: 1,
   },
-  item: (isItemSelected: boolean) => ({
+  item: (isItemSelected: boolean, isLast: boolean) => ({
     alignItems: "center",
-    justifyContent: "space-between",
     flexDirection: "row",
-    gap: theme.s(10),
-    paddingVertical: theme.vs(8),
-    paddingHorizontal: theme.s(10),
-    borderRadius: theme.vs(12),
-    borderWidth: theme.vs(1),
-    backgroundColor: isItemSelected ? theme.colors.brandLight : "transparent",
-    borderColor: isItemSelected ? theme.colors.brand : theme.colors.gray,
+    gap: theme.s(12),
+    paddingVertical: theme.vs(13),
+    paddingHorizontal: theme.s(16),
+    backgroundColor: isItemSelected ? theme.colors.blue20 : "transparent",
+    borderBottomWidth: isLast ? 0 : 1,
+    borderBottomColor: theme.colors.white5,
   }),
-  selectedMark: (isItemSelected: boolean) => ({
-    width: theme.s(19),
-    height: theme.vs(19),
-    borderRadius: theme.vs(19),
-    backgroundColor: isItemSelected ? theme.colors.brand : "transparent",
-    borderWidth: theme.vs(1),
-    borderColor: isItemSelected ? theme.colors.brand : theme.colors.gray,
+  radio: (isItemSelected: boolean) => ({
+    width: theme.vs(22),
+    height: theme.vs(22),
+    borderRadius: theme.vs(11),
+    borderWidth: isItemSelected ? 0 : 1.5,
+    borderColor: theme.colors.white20,
+    backgroundColor: isItemSelected ? theme.colors.white : "transparent",
     justifyContent: "center",
     alignItems: "center",
   }),
+  radioDot: {
+    width: theme.vs(8),
+    height: theme.vs(8),
+    borderRadius: theme.vs(4),
+    backgroundColor: theme.colors.ink,
+  },
 }));

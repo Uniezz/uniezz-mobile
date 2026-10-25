@@ -21,7 +21,7 @@ export default function WelcomeScreen() {
   const selectedUniversity = universities[selected];
   const items = universities.map(({ name, authMethod }) => ({
     topText: name,
-    bottomText: authMethod === "OTP" ? "Email OTP" : authMethod,
+    bottomText: authMethod === "OTP" ? "Email code" : authMethod,
   }));
 
   const handleContinuePress = () => {
@@ -29,30 +29,21 @@ export default function WelcomeScreen() {
       return;
     }
 
-    if (selectedUniversity.authMethod === "USOS") {
-      router.push({
-        pathname: "/usos",
-        params: { university: selectedUniversity.id },
-      });
-      return;
-    }
-
-    Toast.show({
-      type: "info",
-      text1: "Email OTP sign-in isn’t available yet.",
-      text2: "For now, sign in with a USOS university.",
+    router.push({
+      pathname: selectedUniversity.authMethod === "USOS" ? "/usos" : "/otp",
+      params: { university: selectedUniversity.id },
     });
   };
   return (
     <AuthPage
-      topText="Choose your university"
-      bottomText="You will finish signing in on its own page."
+      topText="Sign in"
+      bottomText="Choose your university to sign in with USOS or a university email code."
     >
       {isPending ? (
         <UIText color="gray">Loading universities...</UIText>
       ) : isError ? (
         <UIButton onPress={() => void refetch()} type="secondary">
-          <UIText color="black">Couldn’t load universities. Try again.</UIText>
+          <UIText>Couldn’t load universities. Try again.</UIText>
         </UIButton>
       ) : items.length === 0 ? (
         <UIText color="gray">No universities available.</UIText>
@@ -71,14 +62,20 @@ export default function WelcomeScreen() {
           disabled={!selectedUniversity}
           style={styles.continueButton}
           size="rg"
-          radius="md"
         >
-          <Icon name="shield-check" size={16} color={"white"} />
-          <UIText weight="semibold" size="rg" color="white">
+          <Icon
+            name="shield-check"
+            size={18}
+            uniProps={(theme) => ({ color: theme.colors.ink })}
+          />
+          <UIText weight="semibold" size="md" color="black">
             {`Continue with ${items[selected]?.bottomText ?? "university"}`}
           </UIText>
         </UIButton>
       </Animated.View>
+      <UIText size="sm" color="gray" style={styles.note}>
+        Uniezz never sees your university password.
+      </UIText>
     </AuthPage>
   );
 }
@@ -92,7 +89,13 @@ const styles = StyleSheet.create((theme, rt) => ({
     gap: theme.s(8),
   },
   list: {
-    flex: 1,
-    marginBottom: theme.vs(14),
+    flexGrow: 0,
+    flexShrink: 1,
+    marginBottom: theme.vs(16),
+  },
+  note: {
+    textAlign: "center",
+    paddingTop: theme.vs(14),
+    paddingBottom: theme.vs(8),
   },
 }));

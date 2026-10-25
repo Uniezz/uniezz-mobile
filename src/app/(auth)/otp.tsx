@@ -1,8 +1,8 @@
 import { AuthPage } from "@/components";
 import { useOtpScreen } from "@/hooks";
 import { Icon, UIButton, UIInput, UIText } from "@/ui";
+import { View } from "react-native";
 import { CodeField } from "react-native-confirmation-code-field";
-import { KeyboardStickyView } from "react-native-keyboard-controller";
 import { StyleSheet } from "react-native-unistyles";
 
 export default function OtpScreen() {
@@ -32,7 +32,13 @@ export default function OtpScreen() {
       {isEmailStep ? (
         <UIInput
           keyboardType="email-address"
-          leftIcon={<Icon name="at-sign" size={18} color={"gray"} />}
+          leftIcon={
+            <Icon
+              name="at-sign"
+              size={16}
+              uniProps={(theme) => ({ color: theme.colors.white40 })}
+            />
+          }
           captionText="Email"
           placeholder={emailPlaceholder}
           value={email}
@@ -54,7 +60,7 @@ export default function OtpScreen() {
             return (
               <UIText
                 key={index}
-                size="xl"
+                weight="semibold"
                 style={styles.cell(isFocused, isEntered)}
                 onLayout={getCellOnLayoutHandler(index)}
               >
@@ -64,64 +70,61 @@ export default function OtpScreen() {
           }}
         />
       )}
-      <KeyboardStickyView
-        offset={{
-          closed: styles.keyboardStickyView(false).height,
-          opened: styles.keyboardStickyView(true).height,
-        }}
-        style={styles.actionButtons}
-      >
+      <View style={styles.actionButtons}>
         <UIButton
           style={styles.button}
           onPress={onButtonPress}
-          radius="md"
           size="rg"
           disabled={isButtonDisabled}
         >
-          <Icon size={16} color={"white"} name={iconName} />
-          <UIText size="md" weight="semibold" color="white">
+          <Icon
+            size={16}
+            uniProps={(theme) => ({ color: theme.colors.ink })}
+            name={iconName}
+          />
+          <UIText size="md" weight="semibold" color="black">
             {buttonText}
           </UIText>
         </UIButton>
         <UIButton
           style={styles.button}
           onPress={onBackPress}
-          radius="md"
           size="rg"
           type="ghost"
         >
-          <Icon size={16} name={"arrow-left"} color={"rgb(89, 100, 138)"} />
+          <Icon
+            size={16}
+            name={"arrow-left"}
+            uniProps={(theme) => ({ color: theme.colors.white60 })}
+          />
           <UIText weight="semibold" color="secondary">
             Back to universities
           </UIText>
         </UIButton>
-      </KeyboardStickyView>
+      </View>
     </AuthPage>
   );
 }
 
-const styles = StyleSheet.create((theme, rt) => ({
+const styles = StyleSheet.create((theme) => ({
   cell: (isFocused: boolean, isEntered: boolean) => ({
     width: theme.s(48),
     height: theme.vs(48),
     lineHeight: theme.vs(48),
-    borderWidth: theme.s(1),
-    borderColor: isFocused ? theme.colors.brand : theme.colors.gray,
+    fontSize: theme.vs(22),
+    borderWidth: isFocused ? 1.5 : 1,
+    borderColor: isFocused ? theme.colors.white60 : theme.colors.white10,
     textAlign: "center",
     alignItems: "center",
-    color: theme.colors.black,
-    borderRadius: theme.vs(10),
-    backgroundColor: isEntered ? "transparent" : theme.colors.brandLight,
+    color: theme.colors.white,
+    borderRadius: theme.vs(16),
+    backgroundColor: isEntered ? theme.colors.white10 : theme.colors.white5,
   }),
   button: {
     flexDirection: "row",
     gap: theme.s(8),
   },
   actionButtons: {
-    flex: 1,
-    justifyContent: "flex-end",
+    marginTop: theme.vs(16),
   },
-  keyboardStickyView: (open: boolean) => ({
-    height: open ? rt.insets.bottom + theme.vs(16) : 0,
-  }),
 }));

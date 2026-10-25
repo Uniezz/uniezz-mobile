@@ -1,10 +1,10 @@
 {
   "m": {
-    "f": "icons-eb838505",
+    "f": "icons-a1f4ac30",
     "u": 1024,
     "z": 1020,
     "s": 59648,
-    "h": "eb838505c2833c67b9fd1bfcdab0ba3c4d88a1f9dbf63049eabf3124b30303c4"
+    "h": "a1f4ac30ac569a1eb943fff14800a418d61a8ffa21f85184b30e0bbf5d67410c"
   },
   "i": {
     "arrow-left": [1024, [[59648, "currentColor"]]],
@@ -16,9 +16,10 @@
     "map-pin": [1024, [[59654, "currentColor"]]],
     "message-square": [1024, [[59655, "currentColor"]]],
     "newspaper": [1024, [[59656, "currentColor"]]],
-    "send": [1024, [[59657, "currentColor"]]],
-    "shield-check": [1024, [[59658, "currentColor"]]],
-    "sparkles": [1024, [[59659, "currentColor"]]],
-    "timer": [1024, [[59660, "currentColor"]]]
+    "search": [1024, [[59657, "currentColor"]]],
+    "send": [1024, [[59658, "currentColor"]]],
+    "shield-check": [1024, [[59659, "currentColor"]]],
+    "sparkles": [1024, [[59660, "currentColor"]]],
+    "timer": [1024, [[59661, "currentColor"]]]
   }
 }
