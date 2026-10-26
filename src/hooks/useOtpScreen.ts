@@ -26,6 +26,7 @@ export const useOtpScreen = () => {
     handleSubmit,
     setValue,
     setError,
+    clearErrors,
     formState: { errors, isSubmitted },
   } = form;
 
@@ -47,6 +48,11 @@ export const useOtpScreen = () => {
   };
 
   const onButtonPress = handleSubmit(async (data) => {
+    if (!university) {
+      router.replace("/(auth)");
+      return;
+    }
+
     try {
       if (data.step === "email") {
         await requestCode({ email: data.email, university });
@@ -63,7 +69,13 @@ export const useOtpScreen = () => {
   });
 
   const onBackPress = () => {
-    router.back();
+    if (isEmailStep) {
+      router.back();
+      return;
+    }
+
+    clearErrors();
+    setValue("step", "email");
   };
 
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
@@ -78,6 +90,7 @@ export const useOtpScreen = () => {
     ? "We’ll send a six-digit code to this inbox. Use the address your university issued."
     : `We sent a six-digit code to ${email}. It expires in 10 minutes.`;
   const buttonText = isEmailStep ? "Send code" : "Verify and continue";
+  const backText = isEmailStep ? "Back to universities" : "Change email";
   const iconName: "send" | "check" = isEmailStep ? "send" : "check";
   const isButtonDisabled =
     isPending || (!isEmailStep && code.length !== CELL_COUNT);
@@ -100,6 +113,7 @@ export const useOtpScreen = () => {
     topText,
     bottomText,
     buttonText,
+    backText,
     iconName,
     isEmailStep,
     isButtonDisabled,

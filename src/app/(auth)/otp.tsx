@@ -23,6 +23,7 @@ export default function OtpScreen() {
     topText,
     bottomText,
     buttonText,
+    backText,
     iconName,
     isEmailStep,
     isButtonDisabled,
@@ -106,7 +107,7 @@ export default function OtpScreen() {
             uniProps={(theme) => ({ color: theme.colors.white60 })}
           />
           <UIText weight="semibold" color="secondary">
-            Back to universities
+            {backText}
           </UIText>
         </UIButton>
       </View>
