@@ -1,4 +1,5 @@
-import { $api } from "@/api";
+import { $api, requestOtpCode, verifyOtpCode } from "@/api";
+import { useMutation } from "@tanstack/react-query";
 import { useSession } from "@/contexts";
 import { router } from "expo-router";
 import Toast from "react-native-toast-message";
@@ -38,6 +39,32 @@ export function useExchangeLoginCode() {
           : error?.error || "Please try again.",
       );
       router.replace("/(auth)");
+    },
+  });
+}
+
+export function useRequestOtpCode() {
+  return useMutation({ mutationFn: requestOtpCode });
+}
+
+export function useVerifyOtpCode() {
+  const { saveSession } = useSession();
+
+  return useMutation({
+    mutationFn: verifyOtpCode,
+    onSuccess: async (session) => {
+      try {
+        await saveSession(session);
+      } catch {
+        Toast.show({
+          type: "error",
+          text1: "Couldn’t sign in.",
+          text2: "Couldn’t save your session. Please sign in again.",
+        });
+        return;
+      }
+
+      router.replace("/feed");
     },
   });
 }
