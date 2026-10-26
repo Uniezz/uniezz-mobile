@@ -6,7 +6,6 @@ import { useState } from "react";
 import { ScrollView } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { StyleSheet } from "react-native-unistyles";
-import Toast from "react-native-toast-message";
 
 const buttonEntering = FadeInDown.duration(380).delay(400);
 
@@ -19,10 +18,8 @@ export default function WelcomeScreen() {
     refetch,
   } = useUniversities();
   const selectedUniversity = universities[selected];
-  const items = universities.map(({ name, authMethod }) => ({
-    topText: name,
-    bottomText: authMethod === "OTP" ? "Email code" : authMethod,
-  }));
+  const selectedAuthMethod = selectedUniversity?.authMethod;
+  const items = universities.map(({ name }) => ({ topText: name }));
 
   const handleContinuePress = () => {
     if (!selectedUniversity) {
@@ -69,7 +66,7 @@ export default function WelcomeScreen() {
             uniProps={(theme) => ({ color: theme.colors.ink })}
           />
           <UIText weight="semibold" size="md" color="black">
-            {`Continue with ${items[selected]?.bottomText ?? "university"}`}
+            {`Continue with ${selectedAuthMethod === "OTP" ? "Email code" : (selectedAuthMethod ?? "university")}`}
           </UIText>
         </UIButton>
       </Animated.View>

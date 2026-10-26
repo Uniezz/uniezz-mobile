@@ -5,7 +5,6 @@ import { StyleSheet } from "react-native-unistyles";
 
 export type RowItem = {
   topText: string;
-  bottomText: string;
 };
 
 type RowPickerProps = {
@@ -43,9 +42,6 @@ export const RowPicker = ({
                   {item.topText}
                 </UIText>
               </View>
-              <UIText size="sm" color="gray">
-                {item.bottomText}
-              </UIText>
               <View style={styles.radio(isItemSelected)}>
                 {isItemSelected ? <View style={styles.radioDot} /> : null}
               </View>
