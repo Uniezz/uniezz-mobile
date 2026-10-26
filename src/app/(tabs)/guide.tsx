@@ -18,9 +18,9 @@ export default function GuideScreen() {
   };
 
   return (
-    <UIPage style={styles.page}>
+    <UIPage backdrop="city" style={styles.page}>
       <UIText>Guide Screen</UIText>
-      <UIButton onPress={handleLogout} type="danger" radius="md">
+      <UIButton onPress={handleLogout} type="danger">
         <UIText color="white" weight="semibold">
           Log out
         </UIText>

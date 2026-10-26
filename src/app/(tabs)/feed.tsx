@@ -10,9 +10,9 @@ export default function FeedScreen() {
   const [selected, setSelected] = useState(0);
 
   return (
-    <UIPage>
+    <UIPage backdrop="city">
       <View style={styles.header}>
-        <UIText weight="bold" size="lg">
+        <UIText weight="bold" size="xl">
           Feed
         </UIText>
 
@@ -20,7 +20,13 @@ export default function FeedScreen() {
           placeholder="Search..."
           value={querry}
           onChangeText={setQuerry}
-          leftIcon={<Icon name="search" size={18} color="grey" />}
+          leftIcon={
+            <Icon
+              name="search"
+              size={16}
+              uniProps={(theme) => ({ color: theme.colors.white40 })}
+            />
+          }
         />
 
         <ScrollView

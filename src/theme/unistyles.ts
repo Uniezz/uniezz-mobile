@@ -28,7 +28,7 @@ declare module "react-native-unistyles" {
 StyleSheet.configure({
   settings: {
     initialTheme: () => {
-      return useThemeStore.getState().theme || "light";
+      return useThemeStore.getState().theme || "dark";
     },
   },
   breakpoints,

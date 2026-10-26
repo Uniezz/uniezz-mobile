@@ -7,6 +7,8 @@ export * from "./UISegmented";
 export * from "./UIButton";
 export * from "./UIIconButton";
 export * from "./UIPage";
+export * from "./UIGlass";
+export * from "./UIBackdrop";
 
 export * from "./icons";
 export * from "./UIChip";

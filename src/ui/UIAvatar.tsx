@@ -28,7 +28,7 @@ export const UIAvatar = ({
           source={{ uri: imageSrc }}
         />
       ) : (
-        <UIText weight="bold" color="white" size={size}>
+        <UIText weight="bold" style={styles.initials}>
           {placeholderText}
         </UIText>
       )}
@@ -54,13 +54,11 @@ const styles = StyleSheet.create((theme) => ({
         xl: {},
       },
       color: {
-        default: { backgroundColor: theme.colors.abyss },
-        indigo: { backgroundColor: theme.colors.indigo },
-        violet: { backgroundColor: theme.colors.violet },
-        lagoon: { backgroundColor: theme.colors.lagoon },
-        ember: { backgroundColor: theme.colors.ember },
-        green: { backgroundColor: theme.colors.green },
-        periwinkle: { backgroundColor: theme.colors.periwinkle },
+        default: {
+          backgroundColor: theme.colors.surface,
+          borderWidth: 1,
+          borderColor: theme.colors.white10,
+        },
       },
     },
   },
@@ -91,17 +89,25 @@ const styles = StyleSheet.create((theme) => ({
       color: {
         // here too :(  https://unistyl.es/v3/references/variants/#defining-the-same-variant-across-multiple-styles
         default: {},
-        indigo: {},
-        violet: {},
-        lagoon: {},
-        ember: {},
-        green: {},
-        periwinkle: {},
       },
       rounded: {
         default: { borderRadius: theme.vs(999) },
         lg: { borderRadius: theme.vs(10) },
       },
+    },
+  },
+  initials: {
+    variants: {
+      size: {
+        xs: { fontSize: theme.vs(9) },
+        sm: { fontSize: theme.vs(11) },
+        default: { fontSize: theme.vs(14) },
+        lg: { fontSize: theme.vs(17) },
+        xl: { fontSize: theme.vs(22) },
+      },
+      // same-variant rule again: https://unistyl.es/v3/references/variants/#defining-the-same-variant-across-multiple-styles
+      color: { default: {} },
+      rounded: { default: {}, lg: {} },
     },
   },
 }));
