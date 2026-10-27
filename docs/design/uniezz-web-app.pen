@@ -50685,6 +50685,1548 @@
           ]
         }
       ]
+    },
+    {
+      "type": "frame",
+      "id": "ueL6Y",
+      "x": 4186,
+      "y": 6888,
+      "name": "50 Logo Directions · Symbols only",
+      "clip": true,
+      "width": 1472,
+      "height": 3370,
+      "fill": "#F0F3FC",
+      "layout": "none",
+      "children": [
+        {
+          "type": "text",
+          "id": "PS10H",
+          "x": 48,
+          "y": 38,
+          "name": "Board heading",
+          "fill": "#131C36",
+          "textGrowth": "fixed-width",
+          "width": 1376,
+          "content": "50 ways to make your mark.",
+          "fontFamily": "Bricolage Grotesque",
+          "fontSize": 44,
+          "fontWeight": "700"
+        },
+        {
+          "type": "text",
+          "id": "zBIXF",
+          "x": 48,
+          "y": 98,
+          "name": "Board subtitle",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 1376,
+          "content": "UNIEZZ · SYMBOL-ONLY EXPLORATIONS · 512 × 512 · NUMBERS ARE OUTSIDE THE LOGOS",
+          "fontFamily": "Geist Mono",
+          "fontSize": 12,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "N8R5M",
+          "x": 48,
+          "y": 429,
+          "name": "Concept label 1",
+          "fill": "#263451",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "01  Together",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "rS0PZ",
+          "x": 328,
+          "y": 158,
+          "name": "02 · Twin hello",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-02.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "PYjpy",
+          "x": 328,
+          "y": 429,
+          "name": "Concept label 2",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "02 · Twin hello",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "Il4ej",
+          "x": 608,
+          "y": 429,
+          "name": "Concept label 3",
+          "fill": "#263451",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "03  Common ground",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "nJ9nw",
+          "x": 888,
+          "y": 158,
+          "name": "04 · Campus welcome",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-04.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "WzYXQ",
+          "x": 888,
+          "y": 429,
+          "name": "Concept label 4",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "04 · Campus welcome",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "g2idLm",
+          "x": 1168,
+          "y": 158,
+          "name": "05 · Find your people",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-05.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "WGyDQ",
+          "x": 1168,
+          "y": 429,
+          "name": "Concept label 5",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "05 · Find your people",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "QmtUK",
+          "x": 48,
+          "y": 476,
+          "name": "06 · Open invitation",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-06.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "F5KbDS",
+          "x": 48,
+          "y": 747,
+          "name": "Concept label 6",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "06 · Open invitation",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "u3PjX",
+          "x": 328,
+          "y": 747,
+          "name": "Concept label 7",
+          "fill": "#263451",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "07  Open circle",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "EWaeT",
+          "x": 608,
+          "y": 747,
+          "name": "Concept label 8",
+          "fill": "#263451",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "08  Cross paths",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "ElK0i",
+          "x": 888,
+          "y": 476,
+          "name": "09 · Meet in the middle",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-09.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "MMBS3",
+          "x": 888,
+          "y": 747,
+          "name": "Concept label 9",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "09 · Meet in the middle",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "IubBk",
+          "x": 1168,
+          "y": 476,
+          "name": "10 · People in orbit",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-10.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "GRcip",
+          "x": 1168,
+          "y": 747,
+          "name": "Concept label 10",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "10 · People in orbit",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "P4cvM",
+          "x": 48,
+          "y": 1065,
+          "name": "Concept label 11",
+          "fill": "#263451",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "11  Doorway",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "Y0TuV",
+          "x": 328,
+          "y": 794,
+          "name": "12 · Shared table",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-12.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "fxLlq",
+          "x": 328,
+          "y": 1065,
+          "name": "Concept label 12",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "12 · Shared table",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "o7Q1KG",
+          "x": 608,
+          "y": 794,
+          "name": "13 · Study then say hi",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-13.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "wi6VH",
+          "x": 608,
+          "y": 1065,
+          "name": "Concept label 13",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "13 · Study then say hi",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "K532S",
+          "x": 888,
+          "y": 794,
+          "name": "14 · Campus crossroads",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-14.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "VzOb8",
+          "x": 888,
+          "y": 1065,
+          "name": "Concept label 14",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "14 · Campus crossroads",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "EidzL",
+          "x": 1168,
+          "y": 794,
+          "name": "15 · Chat link",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-15.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "nGitt",
+          "x": 1168,
+          "y": 1065,
+          "name": "Concept label 15",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "15 · Chat link",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "Z202ZE",
+          "x": 48,
+          "y": 1112,
+          "name": "16 · Nearby friends",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-16.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "hEezs",
+          "x": 48,
+          "y": 1383,
+          "name": "Concept label 16",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "16 · Nearby friends",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "Ev2ii",
+          "x": 328,
+          "y": 1112,
+          "name": "17 · Shared room",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-17.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "Y37zMP",
+          "x": 328,
+          "y": 1383,
+          "name": "Concept label 17",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "17 · Shared room",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "ouAKt",
+          "x": 608,
+          "y": 1112,
+          "name": "18 · Coffee after class",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-18.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "n76z65",
+          "x": 608,
+          "y": 1383,
+          "name": "Concept label 18",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "18 · Coffee after class",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "FsvTT",
+          "x": 888,
+          "y": 1112,
+          "name": "19 · City plan",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-19.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "ThcmZ",
+          "x": 888,
+          "y": 1383,
+          "name": "Concept label 19",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "19 · City plan",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "TnGV9",
+          "x": 1168,
+          "y": 1112,
+          "name": "20 · A place to belong",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-20.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "hXIr2",
+          "x": 1168,
+          "y": 1383,
+          "name": "Concept label 20",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "20 · A place to belong",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "HHEi1",
+          "x": 48,
+          "y": 1430,
+          "name": "21 · Lublin together",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-21.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "I6q3R",
+          "x": 48,
+          "y": 1701,
+          "name": "Concept label 21",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "21 · Lublin together",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "gI7Xi",
+          "x": 328,
+          "y": 1430,
+          "name": "22 · Group chat",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-22.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "Z1GS9E",
+          "x": 328,
+          "y": 1701,
+          "name": "Concept label 22",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "22 · Group chat",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "VLXVP",
+          "x": 608,
+          "y": 1430,
+          "name": "23 · Student circle",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-23.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "Ol3nV",
+          "x": 608,
+          "y": 1701,
+          "name": "Concept label 23",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "23 · Student circle",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "SW05n",
+          "x": 888,
+          "y": 1430,
+          "name": "24 · Meet here",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-24.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "NXuJA",
+          "x": 888,
+          "y": 1701,
+          "name": "Concept label 24",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "24 · Meet here",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "U1Lbp",
+          "x": 1168,
+          "y": 1430,
+          "name": "25 · Study buddies",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-25.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "pef4s",
+          "x": 1168,
+          "y": 1701,
+          "name": "Concept label 25",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "25 · Study buddies",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "NCN45",
+          "x": 48,
+          "y": 1748,
+          "name": "26 · Say hello",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-26.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "XJZoX",
+          "x": 48,
+          "y": 2019,
+          "name": "Concept label 26",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "26 · Say hello",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "VWtqn",
+          "x": 328,
+          "y": 1748,
+          "name": "27 · Campus network",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-27.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "K0Jjcq",
+          "x": 328,
+          "y": 2019,
+          "name": "Concept label 27",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "27 · Campus network",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "Ocq98",
+          "x": 608,
+          "y": 1748,
+          "name": "28 · City stories",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-28.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "g8oEbv",
+          "x": 608,
+          "y": 2019,
+          "name": "Concept label 28",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "28 · City stories",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "dR4Yq",
+          "x": 888,
+          "y": 1748,
+          "name": "29 · Go together",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-29.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "zAkNF",
+          "x": 888,
+          "y": 2019,
+          "name": "Concept label 29",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "29 · Go together",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "W8reWR",
+          "x": 1168,
+          "y": 1748,
+          "name": "30 · Common ground",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-30.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "OTpsB",
+          "x": 1168,
+          "y": 2019,
+          "name": "Concept label 30",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "30 · Common ground",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "nqvvx",
+          "x": 48,
+          "y": 2337,
+          "name": "Concept label 31",
+          "fill": "#263451",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "31  New chapter",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "QkXjC",
+          "x": 328,
+          "y": 2066,
+          "name": "32 · Shared notes",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-32.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "i032k",
+          "x": 328,
+          "y": 2337,
+          "name": "Concept label 32",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "32 · Shared notes",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "qPUe9",
+          "x": 608,
+          "y": 2066,
+          "name": "33 · After class",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-33.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "ZTphh",
+          "x": 608,
+          "y": 2337,
+          "name": "Concept label 33",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "33 · After class",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "I5pUZY",
+          "x": 888,
+          "y": 2066,
+          "name": "34 · Community map",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-34.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "RFZtM",
+          "x": 888,
+          "y": 2337,
+          "name": "Concept label 34",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "34 · Community map",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "d5ol9w",
+          "x": 1168,
+          "y": 2066,
+          "name": "35 · Meet and make",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-35.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "C30D22",
+          "x": 1168,
+          "y": 2337,
+          "name": "Concept label 35",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "35 · Meet and make",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "rcZeu",
+          "x": 48,
+          "y": 2384,
+          "name": "36 · The student commons",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-36.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "NuZ9u",
+          "x": 48,
+          "y": 2655,
+          "name": "Concept label 36",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "36 · The student commons",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "u7fsJ9",
+          "x": 328,
+          "y": 2384,
+          "name": "37 · A campus of friends",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-37.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "oJw9p",
+          "x": 328,
+          "y": 2655,
+          "name": "Concept label 37",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "37 · A campus of friends",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "QyX7S",
+          "x": 608,
+          "y": 2384,
+          "name": "38 · Connection point",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-38.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "U3aC6",
+          "x": 608,
+          "y": 2655,
+          "name": "Concept label 38",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "38 · Connection point",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "LeDj2",
+          "x": 888,
+          "y": 2384,
+          "name": "39 · Find your way in",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-39.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "W2AqK",
+          "x": 888,
+          "y": 2655,
+          "name": "Concept label 39",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "39 · Find your way in",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "SzYn1",
+          "x": 1168,
+          "y": 2655,
+          "name": "Concept label 40",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "40 · The meetup",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "jftC5",
+          "x": 48,
+          "y": 2702,
+          "name": "41 · Everyone welcome",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-41.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "nN0oy",
+          "x": 48,
+          "y": 2973,
+          "name": "Concept label 41",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "41 · Everyone welcome",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "QaHyK",
+          "x": 328,
+          "y": 2702,
+          "name": "42 · Weekend plans",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-42.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "AeOQN",
+          "x": 328,
+          "y": 2973,
+          "name": "Concept label 42",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "42 · Weekend plans",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "iPzBc",
+          "x": 608,
+          "y": 2702,
+          "name": "43 · Student connection",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-43.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "w1UUPX",
+          "x": 608,
+          "y": 2973,
+          "name": "Concept label 43",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "43 · Student connection",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "tSxxF",
+          "x": 888,
+          "y": 2702,
+          "name": "44 · Talk and meet",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-44.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "qz0MF",
+          "x": 888,
+          "y": 2973,
+          "name": "Concept label 44",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "44 · Talk and meet",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "sU0ef",
+          "x": 1168,
+          "y": 2702,
+          "name": "45 · Campus doorway",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-45.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "dzNDE",
+          "x": 1168,
+          "y": 2973,
+          "name": "Concept label 45",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "45 · Campus doorway",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "nKPJp",
+          "x": 48,
+          "y": 3020,
+          "name": "46 · Make a plan",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-46.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "EbZCt",
+          "x": 48,
+          "y": 3291,
+          "name": "Concept label 46",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "46 · Make a plan",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "i1QMr5",
+          "x": 328,
+          "y": 3020,
+          "name": "47 · Together in Lublin",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-47.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "xCnUw",
+          "x": 328,
+          "y": 3291,
+          "name": "Concept label 47",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "47 · Together in Lublin",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "TNusc",
+          "x": 608,
+          "y": 3020,
+          "name": "48 · The familiar face",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-48.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "ijcw7",
+          "x": 608,
+          "y": 3291,
+          "name": "Concept label 48",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "48 · The familiar face",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "gwHJK",
+          "x": 888,
+          "y": 3020,
+          "name": "49 · People first",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-49.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "ImcTy",
+          "x": 888,
+          "y": 3291,
+          "name": "Concept label 49",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "49 · People first",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "nYk9c",
+          "x": 1168,
+          "y": 3020,
+          "name": "50 · A bigger circle",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-50.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "rd4O8",
+          "x": 1168,
+          "y": 3291,
+          "name": "Concept label 50",
+          "fill": "#63708A",
+          "textGrowth": "fixed-width",
+          "width": 256,
+          "content": "50 · A bigger circle",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "VhAtb",
+          "x": 48,
+          "y": 158,
+          "name": "01 · Together",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-01.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "frame",
+          "id": "n7zgzC",
+          "x": 608,
+          "y": 158,
+          "name": "03 · Common ground",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-03.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "frame",
+          "id": "B7soM",
+          "x": 328,
+          "y": 476,
+          "name": "07 · Open circle",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-07.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "frame",
+          "id": "bFNpR",
+          "x": 608,
+          "y": 476,
+          "name": "08 · Cross paths",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-08.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "frame",
+          "id": "r6ayk",
+          "x": 48,
+          "y": 794,
+          "name": "11 · Doorway",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-11.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "frame",
+          "id": "ZR4Pf",
+          "x": 48,
+          "y": 2066,
+          "name": "31 · New chapter",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-31.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "frame",
+          "id": "ghlvA",
+          "x": 1168,
+          "y": 2384,
+          "name": "40 · The meetup",
+          "width": 256,
+          "height": 256,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "logos/512/logo-40.png",
+            "mode": "contain"
+          },
+          "layout": "none"
+        }
+      ]
     }
   ],
   "variables": {
