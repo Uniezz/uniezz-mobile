@@ -42,9 +42,9 @@ export const useOtpScreen = () => {
   };
 
   const onCodeChange = (value: string) => {
-    setValue("code", value, {
-      shouldValidate: isSubmitted && !isEmailStep,
-    });
+    // validate only on submit; typing just clears the previous error
+    setValue("code", value);
+    if (errors.code) clearErrors("code");
   };
 
   const onButtonPress = handleSubmit(async (data) => {
