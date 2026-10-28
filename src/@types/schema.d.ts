@@ -21,6 +21,46 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/auth/otp/request": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Email a one-time login code
+     * @description Sends a 6-digit code to the university email. The code is valid for 10 minutes and a new request replaces the previous code.
+     */
+    post: operations["requestOtpCode"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/auth/otp/verify": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Log in with an emailed code
+     * @description Returns a session. A code allows 5 attempts; after that, or after it expires, request a new one.
+     */
+    post: operations["verifyOtpCode"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/auth/universities": {
     parameters: {
       query?: never;
@@ -105,6 +145,35 @@ export interface components {
       /** @description token to be used in Authorization header for subsequent requests */
       token: string;
     };
+    OtpRequestInputBody: {
+      /**
+       * @description University email address
+       * @example jan.kowalski@student.kul.pl
+       */
+      email: string;
+      /**
+       * @description University to log in to
+       * @example kul
+       */
+      university: string;
+    };
+    OtpVerifyInputBody: {
+      /**
+       * @description Code from the email
+       * @example 123456
+       */
+      code: string;
+      /**
+       * @description Email the code was sent to
+       * @example jan.kowalski@student.kul.pl
+       */
+      email: string;
+      /**
+       * @description University to log in to
+       * @example kul
+       */
+      university: string;
+    };
     UniversityDTO: {
       /**
        * @description Authentication method used by the university
@@ -148,6 +217,133 @@ export interface operations {
     requestBody: {
       content: {
         "application/json": components["schemas"]["ExchangeInputBody"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["IssuedSession"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  requestOtpCode: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["OtpRequestInputBody"];
+      };
+    };
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Too Many Requests */
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Bad Gateway */
+      502: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  verifyOtpCode: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["OtpVerifyInputBody"];
       };
     };
     responses: {

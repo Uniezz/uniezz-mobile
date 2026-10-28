@@ -1,4 +1,6 @@
-import { $api } from "@/api";
+import { $api, requestOtpCode, verifyOtpCode } from "@/api";
+import { useMutation } from "@tanstack/react-query";
+import type { IssuedSession } from "@/@types/auth";
 import { useSession } from "@/contexts";
 import { router } from "expo-router";
 import Toast from "react-native-toast-message";
@@ -16,21 +18,31 @@ function showLoginError(message: string): void {
   });
 }
 
-export function useExchangeLoginCode() {
+function useStartSession() {
   const { saveSession } = useSession();
 
-  return $api.useMutation("post", "/auth/exchange", {
-    onSuccess: async (session) => {
-      try {
-        await saveSession(session);
-      } catch {
-        showLoginError("Couldn’t save your session. Please sign in again.");
-        router.replace("/(auth)");
-        return;
-      }
+  return async (session: IssuedSession) => {
+    try {
+      await saveSession(session);
+    } catch {
+      Toast.show({
+        type: "error",
+        text1: "Couldn’t sign in.",
+        text2: "Couldn’t save your session. Please sign in again.",
+      });
+      router.replace("/(auth)");
+      return;
+    }
 
-      router.replace("/feed");
-    },
+    router.replace("/feed");
+  };
+}
+
+export function useExchangeLoginCode() {
+  const startSession = useStartSession();
+
+  return $api.useMutation("post", "/auth/exchange", {
+    onSuccess: startSession,
     onError: (error) => {
       showLoginError(
         error instanceof Error
@@ -40,6 +52,16 @@ export function useExchangeLoginCode() {
       router.replace("/(auth)");
     },
   });
+}
+
+export function useRequestOtpCode() {
+  return useMutation({ mutationFn: requestOtpCode });
+}
+
+export function useVerifyOtpCode() {
+  const startSession = useStartSession();
+
+  return useMutation({ mutationFn: verifyOtpCode, onSuccess: startSession });
 }
 
 export function useFinishLogin(code?: string, error?: string): void {

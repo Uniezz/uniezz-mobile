@@ -1,10 +1,13 @@
 import { UIGlass, UIText } from "@/ui";
-import { View, Pressable } from "react-native";
+import { Image } from "expo-image";
+import { ImageSourcePropType, View, Pressable } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { StyleSheet } from "react-native-unistyles";
 
 export type RowItem = {
   topText: string;
+  iconText: string;
+  image?: ImageSourcePropType;
 };
 
 type RowPickerProps = {
@@ -37,6 +40,19 @@ export const RowPicker = ({
               accessibilityState={{ selected: isItemSelected }}
               style={styles.item(isItemSelected, isLast)}
             >
+              <View style={styles.logo(Boolean(item.image))}>
+                {item.image ? (
+                  <Image
+                    source={item.image}
+                    style={styles.logoImage}
+                    contentFit="contain"
+                  />
+                ) : (
+                  <UIText weight="bold" size="xs">
+                    {item.iconText}
+                  </UIText>
+                )}
+              </View>
               <View style={styles.textContainer}>
                 <UIText weight="semibold" size="rg">
                   {item.topText}
@@ -59,6 +75,19 @@ const styles = StyleSheet.create((theme) => ({
   },
   textContainer: {
     flex: 1,
+  },
+  logo: (hasImage: boolean) => ({
+    width: theme.vs(36),
+    height: theme.vs(36),
+    borderRadius: theme.vs(8),
+    padding: hasImage ? theme.vs(4) : 0,
+    backgroundColor: hasImage ? theme.colors.white : theme.colors.blue20,
+    justifyContent: "center",
+    alignItems: "center",
+  }),
+  logoImage: {
+    width: "100%",
+    height: "100%",
   },
   item: (isItemSelected: boolean, isLast: boolean) => ({
     alignItems: "center",

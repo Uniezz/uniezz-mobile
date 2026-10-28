@@ -14,6 +14,7 @@ export default function OtpScreen() {
     emailPlaceholder,
     props,
     code,
+    codeError,
     onCodeChange,
     getCellOnLayoutHandler,
     cellCount,
@@ -22,6 +23,7 @@ export default function OtpScreen() {
     topText,
     bottomText,
     buttonText,
+    backText,
     iconName,
     isEmailStep,
     isButtonDisabled,
@@ -46,29 +48,36 @@ export default function OtpScreen() {
           errorText={emailError}
         />
       ) : (
-        <CodeField
-          {...props}
-          value={code}
-          autoFocus
-          onChangeText={onCodeChange}
-          cellCount={cellCount}
-          keyboardType="number-pad"
-          textContentType="oneTimeCode"
-          autoComplete={autoComplete}
-          renderCell={({ index, symbol, isFocused }) => {
-            const isEntered = symbol.length !== 0;
-            return (
-              <UIText
-                key={index}
-                weight="semibold"
-                style={styles.cell(isFocused, isEntered)}
-                onLayout={getCellOnLayoutHandler(index)}
-              >
-                {symbol}
-              </UIText>
-            );
-          }}
-        />
+        <View style={styles.codeField}>
+          <CodeField
+            {...props}
+            value={code}
+            autoFocus
+            onChangeText={onCodeChange}
+            cellCount={cellCount}
+            keyboardType="number-pad"
+            textContentType="oneTimeCode"
+            autoComplete={autoComplete}
+            renderCell={({ index, symbol, isFocused }) => {
+              const isEntered = symbol.length !== 0;
+              return (
+                <UIText
+                  key={index}
+                  weight="semibold"
+                  style={styles.cell(isFocused, isEntered)}
+                  onLayout={getCellOnLayoutHandler(index)}
+                >
+                  {symbol}
+                </UIText>
+              );
+            }}
+          />
+          {codeError ? (
+            <UIText size="sm" weight="semibold" color="error">
+              {codeError}
+            </UIText>
+          ) : null}
+        </View>
       )}
       <View style={styles.actionButtons}>
         <UIButton
@@ -98,7 +107,7 @@ export default function OtpScreen() {
             uniProps={(theme) => ({ color: theme.colors.white60 })}
           />
           <UIText weight="semibold" color="secondary">
-            Back to universities
+            {backText}
           </UIText>
         </UIButton>
       </View>
@@ -120,6 +129,9 @@ const styles = StyleSheet.create((theme) => ({
     borderRadius: theme.vs(16),
     backgroundColor: isEntered ? theme.colors.white10 : theme.colors.white5,
   }),
+  codeField: {
+    gap: theme.vs(8),
+  },
   button: {
     flexDirection: "row",
     gap: theme.s(8),

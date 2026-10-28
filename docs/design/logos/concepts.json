@@ -1,0 +1,402 @@
+[
+  {
+    "id": 1,
+    "name": "Together",
+    "concept": "Two chunky sculptural interlocking rounded loops joined diagonally, compact friendship emblem, beautiful negative space.",
+    "palette": "cobalt and periwinkle on midnight navy",
+    "file": "512/logo-01.png",
+    "kept": true
+  },
+  {
+    "id": 2,
+    "name": "Twin hello",
+    "concept": "Two bold rounded speech marks approach each other and lock together in a clear compact symbol for a first conversation.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-02.png",
+    "kept": false
+  },
+  {
+    "id": 3,
+    "name": "Common ground",
+    "concept": "Four asymmetric rounded petals lean inward around one crisp star-shaped negative-space opening, symbol of a lively gathering.",
+    "palette": "electric cobalt on very pale blue",
+    "file": "512/logo-03.png",
+    "kept": true
+  },
+  {
+    "id": 4,
+    "name": "Campus welcome",
+    "concept": "Three distinct rounded campus arches share one continuous base, with two small people dots arriving through the center arch.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-04.png",
+    "kept": false
+  },
+  {
+    "id": 5,
+    "name": "Find your people",
+    "concept": "A simple map pin made from one thick loop; inside, two small person dots connect through one short curved line.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-05.png",
+    "kept": false
+  },
+  {
+    "id": 6,
+    "name": "Open invitation",
+    "concept": "A broad open circular path with two rounded endpoints facing one another, and a shared meeting dot in the opening.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-06.png",
+    "kept": false
+  },
+  {
+    "id": 7,
+    "name": "Open circle",
+    "concept": "Three broad rounded tabs fan outward from a common circular center, an open inviting social pinwheel.",
+    "palette": "midnight navy and cobalt on icy white",
+    "file": "512/logo-07.png",
+    "kept": true
+  },
+  {
+    "id": 8,
+    "name": "Cross paths",
+    "concept": "Two interwoven thick arching tracks meet in a central square void, playful over-under connection, beautifully resolved geometry.",
+    "palette": "white and periwinkle on cobalt",
+    "file": "512/logo-08.png",
+    "kept": true
+  },
+  {
+    "id": 9,
+    "name": "Meet in the middle",
+    "concept": "Two curved paths arrive from opposite corners and meet at one central round point, clean motion and strong negative space.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-09.png",
+    "kept": false
+  },
+  {
+    "id": 10,
+    "name": "People in orbit",
+    "concept": "Three large human dots orbit one open center, connected by a single friendly arc, social network without tiny details.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-10.png",
+    "kept": false
+  },
+  {
+    "id": 11,
+    "name": "Doorway",
+    "concept": "A thick rounded portal frame with a small bright orb entering its open lower corner, welcoming belonging symbol.",
+    "palette": "periwinkle and white on navy",
+    "file": "512/logo-11.png",
+    "kept": true
+  },
+  {
+    "id": 12,
+    "name": "Shared table",
+    "concept": "Top-down social table as a rounded central shape with three bold person dots around it, minimal and recognizable.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-12.png",
+    "kept": false
+  },
+  {
+    "id": 13,
+    "name": "Study then say hi",
+    "concept": "Two pages of an open book rise into a pair of simple person dots, joining study and friendship in one solid emblem.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-13.png",
+    "kept": false
+  },
+  {
+    "id": 14,
+    "name": "Campus crossroads",
+    "concept": "Four thick path ends enter from each edge and meet at a small open square in the center, like meeting on campus.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-14.png",
+    "kept": false
+  },
+  {
+    "id": 15,
+    "name": "Chat link",
+    "concept": "One rounded chat bubble folds through a thick link loop; distinct silhouette, no tiny strokes.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-15.png",
+    "kept": false
+  },
+  {
+    "id": 16,
+    "name": "Nearby friends",
+    "concept": "Two clean person dots and two broad shoulder arcs overlap into a single balanced community mark.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-16.png",
+    "kept": false
+  },
+  {
+    "id": 17,
+    "name": "Shared room",
+    "concept": "A welcoming doorway encloses three person dots arranged in a loose group, simple campus commons symbol.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-17.png",
+    "kept": false
+  },
+  {
+    "id": 18,
+    "name": "Coffee after class",
+    "concept": "A bold compact coffee cup with two rising curved steam lines that meet like two friends greeting; no saucer or details.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-18.png",
+    "kept": false
+  },
+  {
+    "id": 19,
+    "name": "City plan",
+    "concept": "A location pin and two conversation dots combine into a clean single mark for finding plans around town.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-19.png",
+    "kept": false
+  },
+  {
+    "id": 20,
+    "name": "A place to belong",
+    "concept": "Three rounded human dots sit under one broad protective arch with a deliberate opening at its base.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-20.png",
+    "kept": false
+  },
+  {
+    "id": 21,
+    "name": "Lublin together",
+    "concept": "A minimal abstract city skyline of three connected rounded building blocks with two people dots in the open center.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-21.png",
+    "kept": false
+  },
+  {
+    "id": 22,
+    "name": "Group chat",
+    "concept": "Two overlapping bold speech bubbles create a clear third shared shape in the middle, crisp thick forms.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-22.png",
+    "kept": false
+  },
+  {
+    "id": 23,
+    "name": "Student circle",
+    "concept": "Four simple person dots arranged around an open central circle with one continuous surrounding arc.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-23.png",
+    "kept": false
+  },
+  {
+    "id": 24,
+    "name": "Meet here",
+    "concept": "A sturdy location marker contains two connected human dots, compact geometry, no map or pin details.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-24.png",
+    "kept": false
+  },
+  {
+    "id": 25,
+    "name": "Study buddies",
+    "concept": "Two open book-page curves face one another and share one small central meeting dot, friendly and simple.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-25.png",
+    "kept": false
+  },
+  {
+    "id": 26,
+    "name": "Say hello",
+    "concept": "A single strong chat bubble has two large connected people dots cut into its center as negative space.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-26.png",
+    "kept": false
+  },
+  {
+    "id": 27,
+    "name": "Campus network",
+    "concept": "Three rounded campus arches are linked by one bold path, with a single node at each entrance.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-27.png",
+    "kept": false
+  },
+  {
+    "id": 28,
+    "name": "City stories",
+    "concept": "Three rounded photo-window shapes overlap into one lively compact community symbol, no camera lens details.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-28.png",
+    "kept": false
+  },
+  {
+    "id": 29,
+    "name": "Go together",
+    "concept": "Two parallel bold paths curve inward and become one shared path, smooth graphic symbol for making plans together.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-29.png",
+    "kept": false
+  },
+  {
+    "id": 30,
+    "name": "Common ground",
+    "concept": "A large central gathering circle with three short rounded paths approaching from different directions.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-30.png",
+    "kept": false
+  },
+  {
+    "id": 31,
+    "name": "New chapter",
+    "concept": "A dimensional rounded doorway seen at a slight angle with luminous inner opening, no letters, bold solid compact silhouette.",
+    "palette": "cobalt and periwinkle on midnight navy",
+    "file": "512/logo-31.png",
+    "kept": true
+  },
+  {
+    "id": 32,
+    "name": "Shared notes",
+    "concept": "Two overlapping rounded note sheets with three large joined dots in the lower corner, no writing or lines.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-32.png",
+    "kept": false
+  },
+  {
+    "id": 33,
+    "name": "After class",
+    "concept": "A campus entrance and a tiny upward route dot combine into an optimistic open doorway mark.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-33.png",
+    "kept": false
+  },
+  {
+    "id": 34,
+    "name": "Community map",
+    "concept": "Three city-route paths converge at a round meetup point; use very few thick strokes and no map grid.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-34.png",
+    "kept": false
+  },
+  {
+    "id": 35,
+    "name": "Meet and make",
+    "concept": "Two simplified person dots connect through a strong sideways bridge shape, upbeat interlocking geometry.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-35.png",
+    "kept": false
+  },
+  {
+    "id": 36,
+    "name": "The student commons",
+    "concept": "An open circular table with three broad abstract chair lobes, graphic and legible at small sizes.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-36.png",
+    "kept": false
+  },
+  {
+    "id": 37,
+    "name": "A campus of friends",
+    "concept": "Three abstract person shapes nest inside a single bold arch, friendly without faces or detail.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-37.png",
+    "kept": false
+  },
+  {
+    "id": 38,
+    "name": "Connection point",
+    "concept": "Two thick curved links form a compact knot around one clear central opening, distinct uncomplicated silhouette.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-38.png",
+    "kept": false
+  },
+  {
+    "id": 39,
+    "name": "Find your way in",
+    "concept": "A pin-shaped open doorway contains one small group of three connected dots, compact and bold.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-39.png",
+    "kept": false
+  },
+  {
+    "id": 40,
+    "name": "The meetup",
+    "concept": "Four large rounded person dots arrange around one shared square center, balanced simple community sign.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-40.png",
+    "kept": false
+  },
+  {
+    "id": 41,
+    "name": "Everyone welcome",
+    "concept": "Three different rounded person silhouettes meet on one shared baseline under an open arch; inclusive clear silhouette.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-41.png",
+    "kept": false
+  },
+  {
+    "id": 42,
+    "name": "Weekend plans",
+    "concept": "A bold rounded ticket shape with three connected dots and a single corner notch; no numbers, text, or perforation details.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-42.png",
+    "kept": false
+  },
+  {
+    "id": 43,
+    "name": "Student connection",
+    "concept": "A tiny central dot joins three broad petal-like paths that each end in a larger person dot, clear network motif.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-43.png",
+    "kept": false
+  },
+  {
+    "id": 44,
+    "name": "Talk and meet",
+    "concept": "A pair of thick chat shapes create a compact interlocking link with a clear open center.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-44.png",
+    "kept": false
+  },
+  {
+    "id": 45,
+    "name": "Campus doorway",
+    "concept": "A single rounded university courtyard arch with two connected people dots at the threshold; no crest or academic cap.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-45.png",
+    "kept": false
+  },
+  {
+    "id": 46,
+    "name": "Make a plan",
+    "concept": "Three thick route segments lead toward one friendly central meetup point, like paths crossing in a city.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-46.png",
+    "kept": false
+  },
+  {
+    "id": 47,
+    "name": "Together in Lublin",
+    "concept": "Two bold buildings frame an open center where three person dots meet, reduced to simple geometry.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-47.png",
+    "kept": false
+  },
+  {
+    "id": 48,
+    "name": "The familiar face",
+    "concept": "Two friendly abstract profile curves face one another and join as one continuous bold mark, no facial features.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-48.png",
+    "kept": false
+  },
+  {
+    "id": 49,
+    "name": "People first",
+    "concept": "Two large circle heads over a single linked shoulder curve form a highly legible pair mark.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-49.png",
+    "kept": false
+  },
+  {
+    "id": 50,
+    "name": "A bigger circle",
+    "concept": "Three thick arcs and three person dots almost close into an open community circle, energetic welcoming motion.",
+    "palette": "Cobalt, periwinkle, white and midnight navy",
+    "file": "512/logo-50.png",
+    "kept": false
+  }
+]
