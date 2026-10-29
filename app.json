@@ -4,17 +4,19 @@
     "slug": "Uniezz",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/app-icon.png",
     "scheme": "uniezz",
     "userInterfaceStyle": "dark",
     "ios": {
-      "icon": "./assets/images/icon.png",
+      "icon": "./assets/images/app-icon.png",
       "bundleIdentifier": "com.uniezz"
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/icon.png"
+        "backgroundColor": "#232A5C",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "backgroundImage": "./assets/images/android-icon-background.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
       "package": "com.uniezz"
@@ -28,12 +30,9 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#208AEF",
-          "android": {
-            "image": "./assets/images/splash-screen.png",
-            "imageWidth": 76
-          },
-          "image": "./assets/images/splash-screen.png"
+          "backgroundColor": "#232A5C",
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 200
         }
       ],
       "expo-localization",
@@ -62,9 +61,6 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    },
-    "splash": {
-      "image": "./assets/images/splash-screen.png"
     }
   }
 }
