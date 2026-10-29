@@ -121,10 +121,130 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/media/uploads": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Start a media upload
+     * @description Creates a pending media item owned by the caller and returns a presigned URL to upload the file to.
+     */
+    post: operations["createMediaUpload"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/profile/avatar": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * Remove the logged-in student's avatar
+     * @description Clears the avatar and deletes its file. Succeeds when there is no avatar.
+     */
+    delete: operations["deleteMyAvatar"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/profile/me": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get the logged-in student's profile
+     * @description Same shape for every university and login method. Read from our database only.
+     */
+    get: operations["getMyProfile"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /**
+     * Update the logged-in student's profile
+     * @description Changes only the fields that are present. Returns the updated profile.
+     */
+    patch: operations["updateMyProfile"];
+    trace?: never;
+  };
+  "/profile/programmes": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List the logged-in student's study programmes */
+    get: operations["listMyProgrammes"];
+    put?: never;
+    /** Add a study programme */
+    post: operations["createMyProgramme"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/profile/programmes/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /**
+     * Replace a study programme
+     * @description Overwrites every field; omitted optional fields become null.
+     */
+    put: operations["replaceMyProgramme"];
+    post?: never;
+    /** Delete a study programme */
+    delete: operations["deleteMyProgramme"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
+    CreateUploadInputBody: {
+      /**
+       * @description MIME type the file will be uploaded with
+       * @enum {string}
+       */
+      contentType: "image/jpeg" | "image/png" | "image/webp";
+      /**
+       * @description What the file will be used for
+       * @enum {string}
+       */
+      kind: "avatar" | "feed" | "chat";
+      /**
+       * Format: int64
+       * @description Exact file size in bytes; 5 MiB max for avatars, 10 MiB for feed and chat
+       */
+      size: number;
+    };
     ErrorBody: {
       /**
        * @description Machine-readable error code
@@ -136,6 +256,34 @@ export interface components {
       /** @description One-time login code from the auth redirect */
       code: string;
     };
+    FacultyDTO: {
+      /**
+       * @description Street address of the faculty building
+       * @example pl. Marii Curie-Skłodowskiej 2
+       */
+      address: string;
+      /** @description Geographic location of the faculty building */
+      location: components["schemas"]["GeoPointDTO"];
+      /**
+       * @description Display name of the faculty
+       * @example Wydział Chemii
+       */
+      name: string;
+    };
+    GeoPointDTO: {
+      /**
+       * Format: double
+       * @description Latitude in decimal degrees (WGS 84)
+       * @example 51.24513
+       */
+      latitude: number;
+      /**
+       * Format: double
+       * @description Longitude in decimal degrees (WGS 84)
+       * @example 22.54247
+       */
+      longitude: number;
+    };
     IssuedSession: {
       /**
        * Format: date-time
@@ -144,6 +292,9 @@ export interface components {
       expiresAt: string;
       /** @description token to be used in Authorization header for subsequent requests */
       token: string;
+    };
+    ListProgrammesOutputBody: {
+      programmes: components["schemas"]["Programme"][] | null;
     };
     OtpRequestInputBody: {
       /**
@@ -174,6 +325,78 @@ export interface components {
        */
       university: string;
     };
+    Profile: {
+      /** @description URL of the avatar image, null when the student has none */
+      avatarUrl: string | null;
+      /** Format: date-time */
+      createdAt: string;
+      /**
+       * @description University email, null when USOS did not share it
+       * @example jan.kowalski@umcs.pl
+       */
+      email: string | null;
+      /** @example Jan */
+      firstName: string | null;
+      /**
+       * Format: uuid
+       * @description User ID
+       */
+      id: string;
+      /** @example Kowalski */
+      lastName: string | null;
+      /** @description Study programmes, primary first; empty when the student has none */
+      programmes: components["schemas"]["Programme"][] | null;
+      /** @example umcs */
+      universityId: string;
+    };
+    Programme: {
+      /** @example Wydział Matematyki, Fizyki i Informatyki */
+      faculty: string;
+      /** Format: uuid */
+      id: string;
+      isPrimary: boolean;
+      /** @enum {string|null} */
+      level:
+        | "first_cycle"
+        | "second_cycle"
+        | "long_cycle"
+        | "third_cycle"
+        | "phd_school"
+        | null;
+      /** @enum {string|null} */
+      modeOfStudies: "full_time" | "part_time" | null;
+      /** @example Informatyka */
+      programme: string;
+      /** @enum {string} */
+      status: "active" | "graduated" | "suspended" | "cancelled";
+      /**
+       * Format: int64
+       * @example 2
+       */
+      yearOfStudy: number | null;
+    };
+    ProgrammeRequest: {
+      faculty: string;
+      /** @description Making a programme primary clears the flag on the others */
+      isPrimary?: boolean;
+      /** @enum {string} */
+      level?:
+        | "first_cycle"
+        | "second_cycle"
+        | "long_cycle"
+        | "third_cycle"
+        | "phd_school";
+      /** @enum {string} */
+      modeOfStudies?: "full_time" | "part_time";
+      programme: string;
+      /**
+       * @default active
+       * @enum {string}
+       */
+      status: "active" | "graduated" | "suspended" | "cancelled";
+      /** Format: int64 */
+      yearOfStudy?: number;
+    };
     UniversityDTO: {
       /**
        * @description Authentication method used by the university
@@ -187,6 +410,8 @@ export interface components {
        *     ]
        */
       domains?: string[] | null;
+      /** @description Faculties of the university with their locations */
+      faculties: components["schemas"]["FacultyDTO"][] | null;
       /**
        * @description Unique identifier of the university
        * @example umcs
@@ -197,6 +422,29 @@ export interface components {
        * @example Uniwersytet Marii Curie-Skłodowskiej
        */
       name: string;
+    };
+    UpdateMeInputBody: {
+      /**
+       * Format: uuid
+       * @description mediaId of an avatar uploaded through createMediaUpload; the previous avatar is deleted
+       */
+      avatarMediaId?: string;
+      firstName?: string;
+      lastName?: string;
+    };
+    Upload: {
+      /**
+       * Format: date-time
+       * @description When the upload URL stops working
+       */
+      expiresAt: string;
+      /**
+       * Format: uuid
+       * @description ID to pass to the endpoint that uses the file, e.g. avatarMediaId
+       */
+      mediaId: string;
+      /** @description Presigned URL to PUT the file to, with the same Content-Type and Content-Length */
+      uploadUrl: string;
     };
   };
   responses: never;
@@ -498,6 +746,425 @@ export interface operations {
       };
       /** @description Bad Request */
       400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  createMediaUpload: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CreateUploadInputBody"];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Upload"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  deleteMyAvatar: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  getMyProfile: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Profile"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  updateMyProfile: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UpdateMeInputBody"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Profile"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  listMyProgrammes: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ListProgrammesOutputBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  createMyProgramme: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ProgrammeRequest"];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Programme"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  replaceMyProgramme: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ProgrammeRequest"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Programme"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  deleteMyProgramme: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
         headers: {
           [name: string]: unknown;
         };
