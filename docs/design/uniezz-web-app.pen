@@ -37409,16 +37409,6 @@
                   "name": "Spacer",
                   "width": "fill_container",
                   "height": 1
-                },
-                {
-                  "type": "text",
-                  "id": "Q4wHu6",
-                  "name": "Edit profile",
-                  "fill": "$blue",
-                  "content": "Edit",
-                  "fontFamily": "$font",
-                  "fontSize": 15,
-                  "fontWeight": "600"
                 }
               ]
             },
