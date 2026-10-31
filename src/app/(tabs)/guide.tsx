@@ -2,8 +2,11 @@ import { useSession } from "@/contexts";
 import { UIButton, UIPage, UIText } from "@/ui";
 import Toast from "react-native-toast-message";
 import { StyleSheet } from "react-native-unistyles";
+import { useTranslation } from "react-i18next";
+import { ScreenHeader } from "@/components";
 
 export default function GuideScreen() {
+  const { t } = useTranslation();
   const { clearSession } = useSession();
 
   const handleLogout = async () => {
@@ -12,17 +15,17 @@ export default function GuideScreen() {
     } catch {
       Toast.show({
         type: "error",
-        text1: "Couldn’t log out. Please try again.",
+        text1: t("auth.logoutError"),
       });
     }
   };
 
   return (
     <UIPage backdrop="city" style={styles.page}>
-      <UIText>Guide Screen</UIText>
+      <ScreenHeader title={t("tabs.guide")} style={styles.header} />
       <UIButton onPress={handleLogout} type="danger">
         <UIText color="white" weight="semibold">
-          Log out
+          {t("auth.logOut")}
         </UIText>
       </UIButton>
     </UIPage>
@@ -33,5 +36,9 @@ const styles = StyleSheet.create((theme) => ({
   page: {
     paddingHorizontal: theme.s(20),
     gap: theme.vs(20),
+  },
+  header: {
+    paddingHorizontal: 0,
+    paddingTop: 0,
   },
 }));

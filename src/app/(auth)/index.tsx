@@ -7,10 +7,12 @@ import { useState } from "react";
 import { ScrollView } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { StyleSheet } from "react-native-unistyles";
+import { useTranslation } from "react-i18next";
 
 const buttonEntering = FadeInDown.duration(380).delay(400);
 
 export default function WelcomeScreen() {
+  const { t } = useTranslation();
   const [selected, setSelected] = useState<number>(0);
   const {
     data: universities = [],
@@ -38,17 +40,17 @@ export default function WelcomeScreen() {
   };
   return (
     <AuthPage
-      topText="Sign in"
-      bottomText="Choose your university to sign in with USOS or a university email code."
+      topText={t("auth.signIn")}
+      bottomText={t("auth.chooseUniversity")}
     >
       {isPending ? (
-        <UIText color="gray">Loading universities...</UIText>
+        <UIText color="gray">{t("auth.loadingUniversities")}</UIText>
       ) : isError ? (
         <UIButton onPress={() => void refetch()} type="secondary">
-          <UIText>Couldn’t load universities. Try again.</UIText>
+          <UIText>{t("auth.universitiesLoadError")}</UIText>
         </UIButton>
       ) : items.length === 0 ? (
-        <UIText color="gray">No universities available.</UIText>
+        <UIText color="gray">{t("auth.noUniversities")}</UIText>
       ) : (
         <ScrollView style={styles.list} showsVerticalScrollIndicator={false}>
           <RowPicker
@@ -71,12 +73,17 @@ export default function WelcomeScreen() {
             uniProps={(theme) => ({ color: theme.colors.ink })}
           />
           <UIText weight="semibold" size="md" color="black">
-            {`Continue with ${selectedAuthMethod === "OTP" ? "Email code" : (selectedAuthMethod ?? "university")}`}
+            {t("auth.continueWith", {
+              method:
+                selectedAuthMethod === "OTP"
+                  ? t("auth.emailCode")
+                  : (selectedAuthMethod ?? t("auth.university")),
+            })}
           </UIText>
         </UIButton>
       </Animated.View>
       <UIText size="sm" color="gray" style={styles.note}>
-        Uniezz never sees your university password.
+        {t("auth.passwordPrivacy")}
       </UIText>
     </AuthPage>
   );
