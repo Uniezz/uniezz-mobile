@@ -1,5 +1,6 @@
 import { $api, requestOtpCode, verifyOtpCode } from "@/api";
-import { useMutation } from "@tanstack/react-query";
+import { clearMyProfileCache } from "@/hooks/profile";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { IssuedSession } from "@/@types/auth";
 import { useSession } from "@/contexts";
 import { router } from "expo-router";
@@ -21,9 +22,11 @@ function showLoginError(messageKey: string): void {
 
 function useStartSession() {
   const { saveSession } = useSession();
+  const queryClient = useQueryClient();
 
   return async (session: IssuedSession) => {
     try {
+      await clearMyProfileCache(queryClient);
       await saveSession(session);
     } catch {
       Toast.show({
