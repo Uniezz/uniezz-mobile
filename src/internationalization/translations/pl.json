@@ -1,7 +1,64 @@
 {
+  "language": {
+    "select": "Wybierz język aplikacji"
+  },
   "common": {
-    "welcome": "Welcome",
-    "home": "Home",
-    "settings": "Settings"
+    "tryAgain": "Spróbuj ponownie."
+  },
+  "auth": {
+    "signIn": "Zaloguj się",
+    "chooseUniversity": "Wybierz uczelnię, aby zalogować się przez USOS lub kod wysłany na uczelniany adres e-mail.",
+    "loadingUniversities": "Wczytywanie uczelni...",
+    "universitiesLoadError": "Nie udało się wczytać uczelni. Spróbuj ponownie.",
+    "noUniversities": "Brak dostępnych uczelni.",
+    "continueWith": "Kontynuuj przez {{method}}",
+    "emailCode": "kod e-mail",
+    "university": "uczelnię",
+    "passwordPrivacy": "Uniezz nigdy nie widzi Twojego hasła do uczelni.",
+    "backToUniversities": "Wróć do wyboru uczelni",
+    "logoutError": "Nie udało się wylogować. Spróbuj ponownie.",
+    "logOut": "Wyloguj się",
+    "usosSignInError": "Nie udało się zalogować przez USOS.",
+    "signInError": "Nie udało się zalogować.",
+    "sessionSaveError": "Nie udało się zapisać sesji. Zaloguj się ponownie.",
+    "missingLoginCode": "Przekierowanie logowania nie zawierało kodu."
+  },
+  "otp": {
+    "provideUniversityEmail": "Podaj uczelniany adres e-mail",
+    "checkInbox": "Sprawdź swoją skrzynkę uczelnianą",
+    "emailInstructions": "Wyślemy sześciocyfrowy kod na ten adres. Użyj adresu otrzymanego od uczelni.",
+    "codeSent": "Wysłaliśmy sześciocyfrowy kod na adres {{email}}. Kod wygaśnie za 10 minut.",
+    "sendCode": "Wyślij kod",
+    "verifyAndContinue": "Zweryfikuj i kontynuuj",
+    "changeEmail": "Zmień adres e-mail",
+    "emailPlaceholder": "ty@uczelnia.edu.pl",
+    "email": "E-mail",
+    "tooManyRequests": "Wysłano zbyt wiele próśb o kod. Odczekaj chwilę i spróbuj ponownie.",
+    "codeExpired": "Nieprawidłowy lub wygasły kod. Po 5 próbach poproś o nowy.",
+    "sendFailed": "Nie udało się wysłać kodu. Spróbuj ponownie.",
+    "verifyFailed": "Nie udało się zweryfikować kodu. Spróbuj ponownie."
+  },
+  "validation": {
+    "emailRequired": "Podaj uczelniany adres e-mail.",
+    "emailInvalid": "Podaj prawidłowy adres e-mail.",
+    "codeInvalid": "Wpisz wysłany sześciocyfrowy kod.",
+    "universityEmailRequired": "Użyj adresu e-mail otrzymanego od uczelni."
+  },
+  "tabs": {
+    "feed": "Aktualności",
+    "chat": "Czat",
+    "meet": "Poznaj",
+    "study": "Nauka",
+    "guide": "Przewodnik"
+  },
+  "feed": {
+    "search": "Szukaj...",
+    "filters": {
+      "all": "Wszystko",
+      "events": "Wydarzenia",
+      "people": "Osoby",
+      "news": "Wiadomości",
+      "campus": "Kampus"
+    }
   }
 }

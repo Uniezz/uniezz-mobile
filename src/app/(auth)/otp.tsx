@@ -4,8 +4,10 @@ import { Icon, UIButton, UIInput, UIText } from "@/ui";
 import { View } from "react-native";
 import { CodeField } from "react-native-confirmation-code-field";
 import { StyleSheet } from "react-native-unistyles";
+import { useTranslation } from "react-i18next";
 
 export default function OtpScreen() {
+  const { t } = useTranslation();
   const {
     onBackPress,
     email,
@@ -41,7 +43,7 @@ export default function OtpScreen() {
               uniProps={(theme) => ({ color: theme.colors.white40 })}
             />
           }
-          captionText="Email"
+          captionText={t("otp.email")}
           placeholder={emailPlaceholder}
           value={email}
           onChangeText={onEmailChange}

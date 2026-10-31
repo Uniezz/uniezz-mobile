@@ -7,14 +7,15 @@ import Toast from "react-native-toast-message";
 import * as Linking from "expo-linking";
 import { useCallback, useEffect, useRef } from "react";
 import type { WebViewNavigation } from "react-native-webview";
+import i18n from "@/internationalization";
 
 const USOS_REDIRECT_URL = new URL(Linking.createURL("auth/callback"));
 
-function showLoginError(message: string): void {
+function showLoginError(messageKey: string): void {
   Toast.show({
     type: "error",
-    text1: "Couldn’t sign in with USOS.",
-    text2: message,
+    text1: i18n.t("auth.usosSignInError"),
+    text2: i18n.t(messageKey),
   });
 }
 
@@ -27,8 +28,8 @@ function useStartSession() {
     } catch {
       Toast.show({
         type: "error",
-        text1: "Couldn’t sign in.",
-        text2: "Couldn’t save your session. Please sign in again.",
+        text1: i18n.t("auth.signInError"),
+        text2: i18n.t("auth.sessionSaveError"),
       });
       router.replace("/(auth)");
       return;
@@ -43,12 +44,8 @@ export function useExchangeLoginCode() {
 
   return $api.useMutation("post", "/auth/exchange", {
     onSuccess: startSession,
-    onError: (error) => {
-      showLoginError(
-        error instanceof Error
-          ? error.message
-          : error?.error || "Please try again.",
-      );
+    onError: () => {
+      showLoginError("common.tryAgain");
       router.replace("/(auth)");
     },
   });
@@ -75,7 +72,7 @@ export function useFinishLogin(code?: string, error?: string): void {
     hasHandledCallback.current = true;
 
     if (error || !code) {
-      showLoginError(error || "The sign-in redirect did not include a code.");
+      showLoginError(error ? "auth.usosSignInError" : "auth.missingLoginCode");
       router.replace("/(auth)");
       return;
     }

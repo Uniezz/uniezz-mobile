@@ -2,6 +2,9 @@ import { createMMKV } from "react-native-mmkv";
 import { create } from "zustand";
 import { createJSONStorage, persist, StateStorage } from "zustand/middleware";
 
+export const LANGUAGES = ["pl", "uk", "ru", "en"] as const;
+export type Language = (typeof LANGUAGES)[number];
+
 const storage = createMMKV();
 
 const mmkvStorage: StateStorage = {
@@ -18,8 +21,8 @@ const mmkvStorage: StateStorage = {
 };
 
 interface LanguageState {
-  language: string | null;
-  setLanguage: (lang: string) => void;
+  language: Language | null;
+  setLanguage: (lang: Language) => void;
 }
 
 export const useLanguageStore = create<LanguageState>()(
