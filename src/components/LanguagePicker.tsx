@@ -1,16 +1,13 @@
-import { LANGUAGES, useLanguageStore } from "@/store/languageStore";
+import {
+  LANGUAGES,
+  LANGUAGE_OPTIONS,
+  useLanguageStore,
+} from "@/store/languageStore";
 import { Icon, UIText } from "@/ui";
 import { useTranslation } from "react-i18next";
 import { Pressable, View } from "react-native";
 import { useState } from "react";
 import { StyleSheet } from "react-native-unistyles";
-
-const LANGUAGE_OPTIONS = [
-  { code: "pl", flag: "🇵🇱", label: "Polski" },
-  { code: "uk", flag: "🇺🇦", label: "Українська" },
-  { code: "ru", flag: "🇷🇺", label: "Русский" },
-  { code: "en", flag: "🇬🇧", label: "English" },
-] as const;
 
 export const LanguagePicker = () => {
   const { t, i18n } = useTranslation();
