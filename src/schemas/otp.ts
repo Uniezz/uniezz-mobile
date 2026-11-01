@@ -1,9 +1,7 @@
 import * as z from "zod";
 
 const emailError = (iss: { input: unknown }) =>
-  !iss.input
-    ? "Enter your university email address."
-    : "Please, provide correct email address";
+  !iss.input ? "validation.emailRequired" : "validation.emailInvalid";
 
 export const emailOtpSchema = z.object({
   step: z.literal("email"),
@@ -15,7 +13,7 @@ export const codeOtpSchema = z.object({
   step: z.literal("code"),
   email: z.email({ error: emailError }),
   code: z.string().regex(/^\d{6}$/, {
-    error: "Enter the 6-digit code we sent you.",
+    error: "validation.codeInvalid",
   }),
 });
 

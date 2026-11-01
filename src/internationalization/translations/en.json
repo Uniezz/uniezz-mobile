@@ -1,7 +1,64 @@
 {
+  "language": {
+    "select": "Select app language"
+  },
   "common": {
-    "welcome": "Welcome",
-    "home": "Home",
-    "settings": "Settings"
+    "tryAgain": "Please try again."
+  },
+  "auth": {
+    "signIn": "Sign in",
+    "chooseUniversity": "Choose your university to sign in with USOS or a university email code.",
+    "loadingUniversities": "Loading universities...",
+    "universitiesLoadError": "Couldn’t load universities. Try again.",
+    "noUniversities": "No universities are available.",
+    "continueWith": "Continue with {{method}}",
+    "emailCode": "Email code",
+    "university": "university",
+    "passwordPrivacy": "Uniezz never sees your university password.",
+    "backToUniversities": "Back to universities",
+    "logoutError": "Couldn’t log out. Please try again.",
+    "logOut": "Log out",
+    "usosSignInError": "Couldn’t sign in with USOS.",
+    "signInError": "Couldn’t sign in.",
+    "sessionSaveError": "Couldn’t save your session. Please sign in again.",
+    "missingLoginCode": "The sign-in redirect did not include a code."
+  },
+  "otp": {
+    "provideUniversityEmail": "Enter your university email",
+    "checkInbox": "Check your university inbox",
+    "emailInstructions": "We’ll send a six-digit code to this inbox. Use the address issued by your university.",
+    "codeSent": "We sent a six-digit code to {{email}}. It expires in 10 minutes.",
+    "sendCode": "Send code",
+    "verifyAndContinue": "Verify and continue",
+    "changeEmail": "Change email",
+    "emailPlaceholder": "you@university.edu",
+    "email": "Email",
+    "tooManyRequests": "Too many code requests. Wait a moment and try again.",
+    "codeExpired": "Wrong or expired code. After 5 attempts, request a new one.",
+    "sendFailed": "Couldn’t send the code. Try again.",
+    "verifyFailed": "Couldn’t verify the code. Try again."
+  },
+  "validation": {
+    "emailRequired": "Enter your university email address.",
+    "emailInvalid": "Enter a valid email address.",
+    "codeInvalid": "Enter the six-digit code we sent you.",
+    "universityEmailRequired": "Use the email address issued by your university."
+  },
+  "tabs": {
+    "feed": "Feed",
+    "chat": "Chat",
+    "meet": "Meet",
+    "study": "Study",
+    "guide": "Guide"
+  },
+  "feed": {
+    "search": "Search...",
+    "filters": {
+      "all": "All",
+      "events": "Events",
+      "people": "People",
+      "news": "News",
+      "campus": "Campus"
+    }
   }
 }

@@ -5,8 +5,10 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useForm, useWatch } from "react-hook-form";
 import { useClearByFocusCell } from "react-native-confirmation-code-field";
 import { useRequestOtpCode, useVerifyOtpCode } from "./auth";
+import { useTranslation } from "react-i18next";
 
 export const useOtpScreen = () => {
+  const { t, i18n } = useTranslation();
   const { university = "" } = useLocalSearchParams<{ university?: string }>();
   const { mutateAsync: requestCode, isPending: isRequesting } =
     useRequestOtpCode();
@@ -62,8 +64,12 @@ export const useOtpScreen = () => {
         await verifyCode({ code: data.code, email: data.email, university });
       }
     } catch (error) {
+      const errorMessage =
+        error instanceof Error && i18n.exists(error.message)
+          ? error.message
+          : "common.tryAgain";
       setError(data.step, {
-        message: error instanceof Error ? error.message : "Please try again.",
+        message: errorMessage,
       });
     }
   });
@@ -84,13 +90,17 @@ export const useOtpScreen = () => {
   });
 
   const topText = isEmailStep
-    ? "Provide your university email"
-    : "Check your university inbox";
+    ? t("otp.provideUniversityEmail")
+    : t("otp.checkInbox");
   const bottomText = isEmailStep
-    ? "We’ll send a six-digit code to this inbox. Use the address your university issued."
-    : `We sent a six-digit code to ${email}. It expires in 10 minutes.`;
-  const buttonText = isEmailStep ? "Send code" : "Verify and continue";
-  const backText = isEmailStep ? "Back to universities" : "Change email";
+    ? t("otp.emailInstructions")
+    : t("otp.codeSent", { email });
+  const buttonText = isEmailStep
+    ? t("otp.sendCode")
+    : t("otp.verifyAndContinue");
+  const backText = isEmailStep
+    ? t("auth.backToUniversities")
+    : t("otp.changeEmail");
   const iconName: "send" | "check" = isEmailStep ? "send" : "check";
   const isButtonDisabled =
     isPending || (!isEmailStep && code.length !== CELL_COUNT);
@@ -99,10 +109,10 @@ export const useOtpScreen = () => {
     form,
     email,
     onEmailChange,
-    emailError: errors.email?.message,
-    emailPlaceholder: "you@university.edu",
+    emailError: errors.email?.message ? t(errors.email.message) : undefined,
+    emailPlaceholder: t("otp.emailPlaceholder"),
     code,
-    codeError: errors.code?.message,
+    codeError: errors.code?.message ? t(errors.code.message) : undefined,
     onCodeChange,
     onButtonPress,
     onBackPress,

@@ -1,4 +1,5 @@
 import { AuthWordmark } from "./AuthWordmark";
+import { LanguagePicker } from "@/components/LanguagePicker";
 import { UIPage, UIText } from "@/ui";
 import { ReactNode } from "react";
 import { View } from "react-native";
@@ -17,7 +18,10 @@ type AuthPageProps = {
 export const AuthPage = ({ children, topText, bottomText }: AuthPageProps) => {
   return (
     <UIPage backdrop="glow" style={styles.page}>
-      <AuthWordmark />
+      <View style={styles.topBar}>
+        <AuthWordmark />
+        <LanguagePicker />
+      </View>
       <KeyboardAvoidingView behavior="padding" style={styles.body}>
         <View style={styles.grow} />
         <Animated.View entering={headlineEntering} style={styles.head}>
@@ -41,6 +45,11 @@ const styles = StyleSheet.create((theme, rt) => ({
   },
   body: {
     flex: 1,
+  },
+  topBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   grow: {
     flex: 1,

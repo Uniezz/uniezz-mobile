@@ -2,8 +2,8 @@ import type { OtpRequestInputBody, OtpVerifyInputBody } from "@/@types/auth";
 import { OTP_REQUEST_ERRORS, OTP_VERIFY_ERRORS } from "@/utils";
 import { api } from "./client";
 
-const SEND_FALLBACK = "Couldn’t send the code. Try again.";
-const VERIFY_FALLBACK = "Couldn’t verify the code. Try again.";
+const SEND_FALLBACK = "otp.sendFailed";
+const VERIFY_FALLBACK = "otp.verifyFailed";
 
 export async function requestOtpCode(body: OtpRequestInputBody) {
   const { response } = await api
