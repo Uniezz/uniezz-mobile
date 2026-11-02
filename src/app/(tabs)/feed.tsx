@@ -1,67 +1,111 @@
-import { UIPage, UIInput, UIChip, Icon } from "@/ui";
+import { router } from "expo-router";
 import { useState } from "react";
-import { ScrollView, View } from "react-native";
+import { Pressable, ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { useTranslation } from "react-i18next";
-import { ScreenHeader } from "@/components";
+import type { FeedPost, FeedView } from "@/@types/feed";
+import { FeedList, PostComposer, PostDetails } from "@/components/feed";
+import { UIAvatar, UIPage, UIText } from "@/ui";
 
-const FILTERS = ["all", "events", "people", "news", "campus"] as const;
+const initialPosts: FeedPost[] = [
+  {
+    type: "EVENT",
+    title: "Autumn Welcome Party",
+    detail: "Olena Kovalenko, KUL · 9h",
+    body: "Meet new people and start the semester together.",
+  },
+  {
+    type: "QUESTION",
+    title: "Statistics with dr hab. Nowak: written or oral final?",
+    detail: "Campus discussion",
+    body: "Does anyone know what the exam format will be this year?",
+  },
+];
 
 export default function FeedScreen() {
-  const { t } = useTranslation();
-  const [querry, setQuerry] = useState("");
-  const [selected, setSelected] = useState(0);
-
+  const [posts, setPosts] = useState(initialPosts);
+  const [view, setView] = useState<FeedView>({ screen: "list" });
+  const [comments, setComments] = useState<Record<string, string[]>>({});
+  const active =
+    view.screen === "post"
+      ? posts.find((post) => post.title === view.title)
+      : undefined;
+  const header = (
+    <View style={styles.header}>
+      <View style={styles.title}>
+        <UIText size="sm" color="secondary">
+          Today on campus
+        </UIText>
+        <UIText size="xl" weight="bold">
+          What’s happening in Lublin
+        </UIText>
+      </View>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Open profile"
+        onPress={() => router.push("/profile")}
+      >
+        <UIAvatar imageSrc={require("../../../assets/profile-cat.png")} />
+      </Pressable>
+    </View>
+  );
   return (
     <UIPage backdrop="city">
-      <View style={styles.header}>
-        <ScreenHeader title={t("tabs.feed")} style={styles.titleRow} />
-
-        <UIInput
-          placeholder={t("feed.search")}
-          value={querry}
-          onChangeText={setQuerry}
-          leftIcon={
-            <Icon
-              name="search"
-              size={16}
-              uniProps={(theme) => ({ color: theme.colors.white40 })}
-            />
-          }
+      {view.screen === "list" ? (
+        <FeedList
+          header={header}
+          posts={posts}
+          onOpen={(title) => setView({ screen: "post", title })}
+          onCreate={() => setView({ screen: "compose" })}
         />
-
+      ) : (
         <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.chips}
+          contentContainerStyle={styles.page}
+          showsVerticalScrollIndicator={false}
         >
-          {FILTERS.map((filter, index) => (
-            <UIChip
-              key={filter}
-              label={t(`feed.filters.${filter}`)}
-              selected={selected === index}
-              onPress={() => setSelected(index)}
+          {header}
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => setView({ screen: "list" })}
+          >
+            <UIText color="link">‹ Back to feed</UIText>
+          </Pressable>
+          {view.screen === "compose" ? (
+            <PostComposer
+              onPublish={(post) => {
+                setPosts((current) => [post, ...current]);
+                setView({ screen: "list" });
+              }}
             />
-          ))}
+          ) : active ? (
+            <PostDetails
+              key={active.title}
+              post={active}
+              comments={comments[active.title] ?? []}
+              onComment={(comment) =>
+                setComments((current) => ({
+                  ...current,
+                  [active.title]: [...(current[active.title] ?? []), comment],
+                }))
+              }
+            />
+          ) : null}
         </ScrollView>
-      </View>
+      )}
     </UIPage>
   );
 }
 
 const styles = StyleSheet.create((theme) => ({
-  header: {
-    gap: theme.vs(12),
+  page: {
     paddingHorizontal: theme.s(16),
+    paddingBottom: theme.vs(100),
+    gap: theme.vs(18),
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: theme.s(12),
     paddingTop: theme.vs(8),
   },
-  chips: {
-    flexDirection: "row",
-    gap: theme.s(8),
-    paddingVertical: theme.vs(4),
-  },
-  titleRow: {
-    paddingHorizontal: 0,
-    paddingTop: 0,
-  },
+  title: { flex: 1, gap: theme.vs(4) },
 }));

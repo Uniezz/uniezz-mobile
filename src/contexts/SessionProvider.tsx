@@ -7,7 +7,12 @@ import {
 } from "react";
 import type { IssuedSession } from "@/@types/auth";
 import { setApiAccessToken } from "@/api";
-import { deleteStoredSession, loadStoredSession, storeSession } from "@/store";
+import {
+  deleteStoredSession,
+  loadStoredSession,
+  storeSession,
+  useChatStore,
+} from "@/store";
 
 type SessionContextValue = {
   session: IssuedSession | null;
@@ -44,11 +49,13 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
 
   const saveSession = useCallback(async (nextSession: IssuedSession) => {
     await storeSession(nextSession);
+    useChatStore.getState().reset();
     setSession(nextSession);
     setApiAccessToken(nextSession.token);
   }, []);
 
   const clearSession = useCallback(async () => {
+    useChatStore.getState().reset();
     setApiAccessToken(null);
     setSession(null);
     await deleteStoredSession();

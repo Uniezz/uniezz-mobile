@@ -67,6 +67,7 @@
     "react-native": "0.86.3",
     "react-native-confirmation-code-field": "^9.0.0",
     "react-native-gesture-handler": "~2.32.0",
+    "react-native-gifted-chat": "^3.4.0",
     "react-native-keyboard-controller": "1.21.9",
     "react-native-mmkv": "^4.3.2",
     "react-native-nano-icons": "1.0.0-nightly-20260930-72cdd6ae4",

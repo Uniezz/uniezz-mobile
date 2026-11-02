@@ -21,6 +21,8 @@ function RootNavigator(): React.JSX.Element {
       </Stack.Protected>
       <Stack.Protected guard={!!session}>
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="chat/[id]" />
+        <Stack.Screen name="profile" />
       </Stack.Protected>
     </Stack>
   );

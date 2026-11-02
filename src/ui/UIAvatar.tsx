@@ -4,7 +4,7 @@ import { StyleSheet, UnistylesVariants } from "react-native-unistyles";
 import { UIText } from "./UIText";
 
 type UIAvatarProps = UnistylesVariants<typeof styles> & {
-  imageSrc?: string;
+  imageSrc?: string | number;
   placeholderText?: string;
 } & ViewProps;
 
@@ -25,7 +25,7 @@ export const UIAvatar = ({
           style={styles.container}
           cachePolicy={"memory-disk"}
           contentFit="cover"
-          source={{ uri: imageSrc }}
+          source={typeof imageSrc === "number" ? imageSrc : { uri: imageSrc }}
         />
       ) : (
         <UIText weight="bold" style={styles.initials}>
