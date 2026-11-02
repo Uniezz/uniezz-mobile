@@ -1,41 +1,18 @@
-This is an Expo/React Native mobile application. Prioritize mobile-first patterns, performance, and cross-platform compatibility.
+# Agent instructions
 
-## Expo has changed — do not trust your training data
+## Code style
 
-Expo ships breaking changes every SDK release. APIs you remember are likely renamed, moved, or removed. Before writing any code that touches an Expo, EAS, or React Native API:
+- Read and follow `docs/csg.md` for React code, including web code. Adapt React Native-specific APIs and examples to their web equivalents while preserving the guide's component, hook, typing, organization, and separation-of-concerns principles; also follow this codebase's established patterns.
+- Inspect nearby components and hooks before changing structure. Prefer the smallest change that fits the established pattern.
+- Destructure hook results to the values a component uses. Call shared TanStack Query hooks in the components that need them; rely on the query cache instead of adding context or prop plumbing for cached server data.
+- Keep components responsible for their own UI and local interaction state. Put feature-specific components in separate files under `src/components/features/<feature>`. Put components intended for reuse across features in `src/ui/components`. Do not create catch-all component modules just to shorten a file.
+- Every `src/components/features/<feature>` folder must have an `index.ts` that exports its public components and types.
+- Follow the UI component folder pattern in `src/ui/components/UISegmented`: give each UI component its own folder, a component file, an `index.ts` that exports its public API, and an export from `src/ui/components/index.ts`. Keep public prop types explicit and export them from the folder index.
+- When multiple reasonable component structures or style conventions remain, ask the user which they prefer before refactoring. Do not ask about formatting choices already settled by Prettier or the surrounding code.
 
-1. Read the major version of the `expo` package in `package.json`.
-2. Fetch the matching versioned docs: `https://docs.expo.dev/versions/v<major>.0.0/`
-3. For anything else, fetch https://docs.expo.dev/llms.txt — an index of all Expo docs with corrections to common LLM misconceptions. Follow its links to the specific page you need; never answer from memory.
+## Project conventions
 
-## Commands
-
-Use `bunx` instead of `npx` if the project uses bun (`bun.lock` present).
-
-```bash
-npx expo install <package>  # ALWAYS use instead of npm/yarn/pnpm/bun add — resolves SDK-compatible versions
-npx expo start              # start the dev server
-npx expo lint               # lint
-npx tsc --noEmit            # typecheck
-npx expo-doctor             # diagnose dependency and config issues
-npx expo install --fix      # fix incompatible package versions
-```
-
-Run lint and typecheck before declaring any task done.
-
-## Navigation & Routing
-
-- Use **Expo Router** for all navigation. Routes live in `src/app/` — every file there is a screen, `_layout.tsx` files define navigators. Keep non-route code (components, hooks, utils) outside `src/app/`.
-- Import `Link`, `router`, and `useLocalSearchParams` from `expo-router`.
-- Docs: https://docs.expo.dev/router/introduction.md
-
-## Building with EAS
-
-Use EAS to build, sign, and submit the app in the cloud (`eas build`, `eas submit`) and to ship over-the-air updates (`eas update`) — no local Xcode or Android Studio required. Run EAS CLI as `bunx eas-cli <command>` in Bun projects, or `npx eas-cli@latest <command>` otherwise; substitute that for bare `eas` in docs examples.
-Docs: https://docs.expo.dev/eas/index.md
-
-## Rules
-
-- If `ios/` and `android/` directories do not exist, they are generated (Continuous Native Generation). Never create or edit them by hand — configure native behavior in `app.json` and config plugins.
-- Expo Go only includes its bundled native modules. After adding a library with native code, the app needs a development build: `npx expo run:ios|android` locally, or `eas build --profile development`.
-- Prefer recommended Expo modules over third-party libraries, and check your available skills before adding dependencies. Docs: https://docs.expo.dev/versions/latest/index.md
+- Reuse existing UI components, hooks, API functions, schemas, and query patterns.
+- Keep API calls in `src/api`, query and mutation logic in `src/hooks`, route composition in `src/routes`, and feature UI in `src/components/features`.
+- Preserve existing behavior unless the request calls for changing it.
+- Do not start a development server unless the user explicitly asks.
