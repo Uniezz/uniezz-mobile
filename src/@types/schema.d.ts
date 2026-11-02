@@ -121,6 +121,162 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/feed/comments/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * Delete your comment
+     * @description A root comment with replies stays in the thread as deleted, without content or author.
+     */
+    delete: operations["deleteFeedComment"];
+    options?: never;
+    head?: never;
+    /** Edit your comment */
+    patch: operations["updateFeedComment"];
+    trace?: never;
+  };
+  "/feed/comments/{id}/like": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /**
+     * Like a comment
+     * @description Idempotent: repeating it changes nothing.
+     */
+    put: operations["likeFeedComment"];
+    post?: never;
+    /**
+     * Remove your like from a comment
+     * @description Idempotent: repeating it changes nothing.
+     */
+    delete: operations["unlikeFeedComment"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/feed/comments/{id}/replies": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List replies to a root comment
+     * @description Oldest first.
+     */
+    get: operations["listFeedCommentReplies"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/feed/posts": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List feed posts
+     * @description Newest first, paginated by cursor.
+     */
+    get: operations["listFeedPosts"];
+    put?: never;
+    /** Create a feed post */
+    post: operations["createFeedPost"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/feed/posts/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get a feed post */
+    get: operations["getFeedPost"];
+    put?: never;
+    post?: never;
+    /**
+     * Delete your feed post
+     * @description Deletes the post with its comments, likes and media.
+     */
+    delete: operations["deleteFeedPost"];
+    options?: never;
+    head?: never;
+    /**
+     * Edit your feed post
+     * @description Only fields that are sent change. Type, target university and media cannot change.
+     */
+    patch: operations["updateFeedPost"];
+    trace?: never;
+  };
+  "/feed/posts/{id}/comments": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List root comments of a post
+     * @description Oldest first. Replies are listed per root comment.
+     */
+    get: operations["listFeedComments"];
+    put?: never;
+    /** Comment on a post or reply to a comment */
+    post: operations["createFeedComment"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/feed/posts/{id}/like": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /**
+     * Like a post
+     * @description Idempotent: repeating it changes nothing.
+     */
+    put: operations["likeFeedPost"];
+    post?: never;
+    /**
+     * Remove your like from a post
+     * @description Idempotent: repeating it changes nothing.
+     */
+    delete: operations["unlikeFeedPost"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/media/uploads": {
     parameters: {
       query?: never;
@@ -224,10 +380,144 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/profiles": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List students
+     * @description Newest accounts first, paginated by cursor.
+     */
+    get: operations["listProfiles"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/profiles/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get a student's public profile
+     * @description Fields the student hides through privacy settings are null.
+     */
+    get: operations["getProfile"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/reports": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Report a post, comment or student
+     * @description One report per target and reporter; at most 5 reports per clock hour (UTC).
+     */
+    post: operations["createReport"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
+    Author: {
+      avatarUrl: string | null;
+      /** @example Jan */
+      firstName: string | null;
+      /** Format: uuid */
+      id: string;
+      /** @example Kowalski */
+      lastName: string | null;
+      /** @example umcs */
+      universityId: string;
+    };
+    Comment: {
+      /** @description Missing when deleted */
+      author?: components["schemas"]["Author"];
+      /** @description Null when deleted */
+      content: string | null;
+      /** Format: date-time */
+      createdAt: string;
+      /** @description A deleted comment is listed only while it still has replies */
+      deleted: boolean;
+      /** Format: date-time */
+      editedAt: string | null;
+      /** Format: uuid */
+      id: string;
+      likedByMe: boolean;
+      /** Format: int64 */
+      likesCount: number;
+      /** @description Root comment of the thread; null for a root comment */
+      parentId: string | null;
+      /** Format: uuid */
+      postId: string;
+      /** Format: int64 */
+      repliesCount: number;
+      /** @description Comment this reply answers; null for a root comment or when that comment was deleted */
+      replyToCommentId: string | null;
+    };
+    CreateCommentInputBody: {
+      /** @description 1–1000 characters after HTML is stripped */
+      content: string;
+      /** @description Comment to reply to; a reply to a reply joins the same thread */
+      replyToCommentId?: string;
+    };
+    CreatePostInputBody: {
+      /** @description 10–5000 characters after HTML is stripped */
+      content: string;
+      /**
+       * Format: date-time
+       * @description Required for event posts, not allowed for others
+       */
+      eventDate?: string;
+      /** @description Uploads of kind feed, shown in this order */
+      mediaIds?: string[] | null;
+      /** @description Up to 10 tags of up to 30 characters */
+      tags?: string[] | null;
+      /** @description 3–150 characters after HTML is stripped */
+      title: string;
+      /** @enum {string} */
+      type: "announcement" | "event" | "question";
+      /**
+       * @description Your own university, or all
+       * @example umcs
+       */
+      university: string;
+    };
+    CreateReportInputBody: {
+      /** @description Up to 1000 characters after HTML is stripped */
+      details?: string;
+      /** @enum {string} */
+      reason: "spam" | "harassment" | "inappropriate" | "hate_speech" | "other";
+      /** Format: uuid */
+      targetId: string;
+      /** @enum {string} */
+      targetType: "post" | "comment" | "user";
+    };
     CreateUploadInputBody: {
       /**
        * @description MIME type the file will be uploaded with
@@ -293,6 +583,26 @@ export interface components {
       /** @description token to be used in Authorization header for subsequent requests */
       token: string;
     };
+    LikeState: {
+      liked: boolean;
+      /** Format: int64 */
+      likesCount: number;
+    };
+    ListCommentsOutputBody: {
+      items: components["schemas"]["Comment"][] | null;
+      /** @description Pass as cursor to get the next page; null on the last page */
+      nextCursor: string | null;
+    };
+    ListPostsOutputBody: {
+      items: components["schemas"]["Post"][] | null;
+      /** @description Pass as cursor to get the next page; null on the last page */
+      nextCursor: string | null;
+    };
+    ListProfilesOutputBody: {
+      items: components["schemas"]["ProfileSummary"][] | null;
+      /** @description Pass as cursor to get the next page; null on the last page */
+      nextCursor: string | null;
+    };
     ListProgrammesOutputBody: {
       programmes: components["schemas"]["Programme"][] | null;
     };
@@ -325,9 +635,41 @@ export interface components {
        */
       university: string;
     };
+    Post: {
+      author: components["schemas"]["Author"];
+      /** Format: int64 */
+      commentsCount: number;
+      content: string;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      editedAt: string | null;
+      /** Format: date-time */
+      eventDate: string | null;
+      /** Format: uuid */
+      id: string;
+      likedByMe: boolean;
+      /** Format: int64 */
+      likesCount: number;
+      mediaUrls: string[] | null;
+      tags: string[] | null;
+      title: string;
+      /** @enum {string} */
+      type: "announcement" | "event" | "question";
+      /**
+       * @description Target university, or all
+       * @example umcs
+       */
+      university: string;
+    };
     Profile: {
       /** @description URL of the avatar image, null when the student has none */
       avatarUrl: string | null;
+      /**
+       * @description Plain text, up to 500 characters
+       * @example Second-year CS student, into climbing.
+       */
+      bio: string | null;
       /** Format: date-time */
       createdAt: string;
       /**
@@ -342,10 +684,47 @@ export interface components {
        * @description User ID
        */
       id: string;
+      /**
+       * @description Up to 10 tags
+       * @example [
+       *       "climbing",
+       *       "go"
+       *     ]
+       */
+      interests: string[] | null;
       /** @example Kowalski */
       lastName: string | null;
+      /** @description Which profile fields other students see. A missing setting keeps its current value. */
+      privacy: {
+        /**
+         * @description Show the university email to other students
+         * @default false
+         */
+        showEmail: boolean;
+        /**
+         * @description Show the faculty of each study programme
+         * @default true
+         */
+        showFaculty: boolean;
+        /**
+         * @description Show the year of study of each study programme
+         * @default true
+         */
+        showYear: boolean;
+      };
       /** @description Study programmes, primary first; empty when the student has none */
       programmes: components["schemas"]["Programme"][] | null;
+      /** @example umcs */
+      universityId: string;
+    };
+    ProfileSummary: {
+      avatarUrl: string | null;
+      /** @example Jan */
+      firstName: string | null;
+      /** Format: uuid */
+      id: string;
+      /** @example Kowalski */
+      lastName: string | null;
       /** @example umcs */
       universityId: string;
     };
@@ -397,6 +776,62 @@ export interface components {
       /** Format: int64 */
       yearOfStudy?: number;
     };
+    PublicProfile: {
+      avatarUrl: string | null;
+      bio: string | null;
+      /** @description Null unless the student shows it */
+      email: string | null;
+      /** @example Jan */
+      firstName: string | null;
+      /** Format: uuid */
+      id: string;
+      interests: string[] | null;
+      /** @example Kowalski */
+      lastName: string | null;
+      /** @description Primary first */
+      programmes: components["schemas"]["PublicProgramme"][] | null;
+      /** @example umcs */
+      universityId: string;
+    };
+    PublicProgramme: {
+      /** @description Null when the student hides it */
+      faculty: string | null;
+      isPrimary: boolean;
+      /** @enum {string|null} */
+      level:
+        | "first_cycle"
+        | "second_cycle"
+        | "long_cycle"
+        | "third_cycle"
+        | "phd_school"
+        | null;
+      /** @enum {string|null} */
+      modeOfStudies: "full_time" | "part_time" | null;
+      /** @example Informatyka */
+      programme: string;
+      /** @enum {string} */
+      status: "active" | "graduated" | "suspended" | "cancelled";
+      /**
+       * Format: int64
+       * @description Null when unknown or hidden by the student
+       */
+      yearOfStudy: number | null;
+    };
+    Report: {
+      /** Format: date-time */
+      createdAt: string;
+      details: string | null;
+      /** Format: uuid */
+      id: string;
+      /** @enum {string} */
+      reason: "spam" | "harassment" | "inappropriate" | "hate_speech" | "other";
+      /** @enum {string} */
+      status: "pending" | "reviewed" | "dismissed";
+      /** Format: uuid */
+      targetId: string;
+      /** @enum {string} */
+      targetType: "post" | "comment" | "user";
+    };
     UniversityDTO: {
       /**
        * @description Authentication method used by the university
@@ -423,14 +858,49 @@ export interface components {
        */
       name: string;
     };
+    UpdateCommentInputBody: {
+      content: string;
+    };
     UpdateMeInputBody: {
       /**
        * Format: uuid
        * @description mediaId of an avatar uploaded through createMediaUpload; the previous avatar is deleted
        */
       avatarMediaId?: string;
+      /** @description Plain text; HTML is stripped and the result may be up to 500 characters. An empty string clears it. */
+      bio?: string;
       firstName?: string;
+      /** @description Replaces all interests: up to 10 tags of up to 30 characters, duplicates ignored */
+      interests?: string[];
       lastName?: string;
+      /** @description Which profile fields other students see. A missing setting keeps its current value. */
+      privacy?: {
+        /**
+         * @description Show the university email to other students
+         * @default false
+         */
+        showEmail: boolean;
+        /**
+         * @description Show the faculty of each study programme
+         * @default true
+         */
+        showFaculty: boolean;
+        /**
+         * @description Show the year of study of each study programme
+         * @default true
+         */
+        showYear: boolean;
+      };
+    };
+    UpdatePostInputBody: {
+      content?: string;
+      /**
+       * Format: date-time
+       * @description Only for event posts
+       */
+      eventDate?: string;
+      tags?: string[];
+      title?: string;
     };
     Upload: {
       /**
@@ -438,12 +908,16 @@ export interface components {
        * @description When the upload URL stops working
        */
       expiresAt: string;
+      /** @description Headers the PUT must send exactly as given; If-None-Match makes the URL write the file only once */
+      headers: {
+        [key: string]: string;
+      };
       /**
        * Format: uuid
        * @description ID to pass to the endpoint that uses the file, e.g. avatarMediaId
        */
       mediaId: string;
-      /** @description Presigned URL to PUT the file to, with the same Content-Type and Content-Length */
+      /** @description Presigned URL to PUT the file to, with the headers below */
       uploadUrl: string;
     };
   };
@@ -746,6 +1220,955 @@ export interface operations {
       };
       /** @description Bad Request */
       400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  deleteFeedComment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  updateFeedComment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UpdateCommentInputBody"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Comment"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  likeFeedComment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LikeState"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  unlikeFeedComment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LikeState"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  listFeedCommentReplies: {
+    parameters: {
+      query?: {
+        /** @description nextCursor from the previous page; omit for the first page */
+        cursor?: string;
+        /** @description Maximum number of items in the page */
+        limit?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ListCommentsOutputBody"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  listFeedPosts: {
+    parameters: {
+      query?: {
+        /** @description nextCursor from the previous page; omit for the first page */
+        cursor?: string;
+        /** @description Maximum number of items in the page */
+        limit?: number;
+        /** @description Posts targeted to this university or to all; all alone returns only posts targeted to everyone */
+        university?: string;
+        type?: "announcement" | "event" | "question";
+        /** @description Created at or after this time */
+        from?: string;
+        /** @description Created before this time */
+        to?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ListPostsOutputBody"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  createFeedPost: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Repeating a request with the same key returns the resource the first one created instead of creating another. Keys are kept for at least 24 hours. */
+        "Idempotency-Key"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CreatePostInputBody"];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          "Idempotent-Replayed"?: string;
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Post"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Gone */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  getFeedPost: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Post"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  deleteFeedPost: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  updateFeedPost: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UpdatePostInputBody"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Post"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  listFeedComments: {
+    parameters: {
+      query?: {
+        /** @description nextCursor from the previous page; omit for the first page */
+        cursor?: string;
+        /** @description Maximum number of items in the page */
+        limit?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ListCommentsOutputBody"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  createFeedComment: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Repeating a request with the same key returns the comment the first one created instead of creating another. Keys are kept for at least 24 hours. */
+        "Idempotency-Key"?: string;
+      };
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CreateCommentInputBody"];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          "Idempotent-Replayed"?: string;
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Comment"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Gone */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  likeFeedPost: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LikeState"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  unlikeFeedPost: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LikeState"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
         headers: {
           [name: string]: unknown;
         };
@@ -1174,6 +2597,216 @@ export interface operations {
       };
       /** @description Unprocessable Entity */
       422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  listProfiles: {
+    parameters: {
+      query?: {
+        /** @description nextCursor from the previous page; omit for the first page */
+        cursor?: string;
+        /** @description Maximum number of items in the page */
+        limit?: number;
+        /** @description Only students of this university */
+        university?: string;
+        /** @description Case-insensitive match on first and last name */
+        name?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ListProfilesOutputBody"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  getProfile: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PublicProfile"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  createReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CreateReportInputBody"];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Report"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Too Many Requests */
+      429: {
         headers: {
           [name: string]: unknown;
         };
