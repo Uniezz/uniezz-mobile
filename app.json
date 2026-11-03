@@ -38,6 +38,14 @@
       ],
       "expo-localization",
       [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow Uniezz to select a profile photo.",
+          "cameraPermission": false,
+          "microphonePermission": false
+        }
+      ],
+      [
         "expo-font",
         {
           "fonts": ["./assets/fonts/Geist-VariableFont_wght.ttf"]

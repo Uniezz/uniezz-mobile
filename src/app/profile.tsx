@@ -5,11 +5,18 @@ import {
   useReplaceMyProgramme,
   useUpdateMyProfile,
 } from "@/hooks/profile";
-import type { Programme, ProgrammeInput } from "@/api/profile";
+import {
+  uploadMyAvatar,
+  type AvatarContentType,
+  type Programme,
+  type ProgrammeInput,
+  MAX_AVATAR_SIZE_BYTES,
+} from "@/api/profile";
 import { Icon, UIButton, UIAvatar, UIInput, UIPage, UIText } from "@/ui";
+import { File } from "expo-file-system";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Pressable, ScrollView, View } from "react-native";
+import { Pressable, ScrollView, Switch, View } from "react-native";
 import Toast from "react-native-toast-message";
 import { useTranslation } from "react-i18next";
 import { StyleSheet } from "react-native-unistyles";
@@ -59,9 +66,13 @@ export default function ProfileScreen() {
   const deleteProgramme = useDeleteMyProgramme();
   const profile = profileQuery.data;
 
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [firstName, setFirstName] = useState<string | null>(null);
+  const [lastName, setLastName] = useState<string | null>(null);
+  const [avatarDraft, setAvatarDraft] = useState<{
+    uri: string;
+    contentType: AvatarContentType;
+  } | null>(null);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const [formMode, setFormMode] = useState<ProgrammeFormMode | null>(null);
   const [draft, setDraft] = useState<ProgrammeDraft>(emptyDraft());
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
@@ -70,22 +81,100 @@ export default function ProfileScreen() {
     Toast.show({ type: "error", text1, text2: t("common.tryAgain") });
   };
 
-  const openProfileEdit = () => {
-    setFirstName(profile?.firstName ?? "");
-    setLastName(profile?.lastName ?? "");
-    setIsEditingProfile(true);
-  };
+  const currentFirstName = profile?.firstName ?? "";
+  const currentLastName = profile?.lastName ?? "";
+  const firstNameValue = firstName ?? currentFirstName;
+  const lastNameValue = lastName ?? currentLastName;
+  const hasProfileChanges =
+    (firstName !== null && firstName.trim() !== currentFirstName) ||
+    (lastName !== null && lastName.trim() !== currentLastName) ||
+    avatarDraft !== null;
 
   const handleSaveProfile = async () => {
+    const input: {
+      firstName?: string;
+      lastName?: string;
+      avatarMediaId?: string;
+    } = {};
+    if (firstName !== null && firstName.trim() !== currentFirstName) {
+      input.firstName = firstName.trim();
+    }
+    if (lastName !== null && lastName.trim() !== currentLastName) {
+      input.lastName = lastName.trim();
+    }
+
     try {
-      await updateProfile.mutateAsync({
-        firstName: firstName.trim(),
-        lastName: lastName.trim(),
-      });
-      setIsEditingProfile(false);
+      if (avatarDraft) {
+        setIsUploadingAvatar(true);
+        input.avatarMediaId = await uploadMyAvatar(
+          avatarDraft.uri,
+          avatarDraft.contentType,
+        );
+      }
+      await updateProfile.mutateAsync(input);
+      setFirstName(null);
+      setLastName(null);
+      setAvatarDraft(null);
       Toast.show({ type: "success", text1: t("profile.profileSaved") });
     } catch {
       showError(t("profile.profileSaveError"));
+    } finally {
+      setIsUploadingAvatar(false);
+    }
+  };
+
+  const handlePickAvatar = async () => {
+    let imagePicker: typeof import("expo-image-picker");
+    try {
+      imagePicker = await import("expo-image-picker");
+    } catch {
+      showError(t("profile.avatarPickerUnavailable"));
+      return;
+    }
+
+    try {
+      const result = await imagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.85,
+      });
+      if (result.canceled) {
+        return;
+      }
+
+      const asset = result.assets[0];
+      if (!asset) {
+        showError(t("profile.avatarPickError"));
+        return;
+      }
+
+      if (new File(asset.uri).size > MAX_AVATAR_SIZE_BYTES) {
+        showError(t("profile.avatarTooLarge"));
+        return;
+      }
+
+      const assetMimeType = asset.mimeType?.toLowerCase();
+      const assetName = (asset.fileName ?? asset.uri).toLowerCase();
+      const contentType =
+        assetMimeType === "image/png" ||
+        (!assetMimeType && assetName.endsWith(".png"))
+          ? "image/png"
+          : assetMimeType === "image/webp" ||
+              (!assetMimeType && assetName.endsWith(".webp"))
+            ? "image/webp"
+            : assetMimeType === "image/jpeg" ||
+                (!assetMimeType && /\.(jpe?g)$/.test(assetName))
+              ? "image/jpeg"
+              : null;
+      if (!contentType) {
+        showError(t("profile.avatarFormatError"));
+        return;
+      }
+
+      setAvatarDraft({ uri: asset.uri, contentType });
+    } catch {
+      showError(t("profile.avatarPickError"));
     }
   };
 
@@ -167,7 +256,26 @@ export default function ProfileScreen() {
         <UIText size="lg" weight="bold">
           {t("profile.title")}
         </UIText>
-        <View style={styles.backButton} />
+        <Pressable
+          accessibilityRole="button"
+          accessibilityState={{
+            disabled:
+              !hasProfileChanges ||
+              updateProfile.isPending ||
+              isUploadingAvatar,
+          }}
+          disabled={
+            !hasProfileChanges || updateProfile.isPending || isUploadingAvatar
+          }
+          onPress={handleSaveProfile}
+          style={styles.saveButton}
+        >
+          <UIText color={hasProfileChanges ? "link" : "soft"} weight="semibold">
+            {isUploadingAvatar || updateProfile.isPending
+              ? t("profile.saving")
+              : t("profile.saveChanges")}
+          </UIText>
+        </Pressable>
       </View>
 
       {profileQuery.isPending ? (
@@ -192,93 +300,91 @@ export default function ProfileScreen() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.identity}>
+          <View style={[styles.identity, styles.panel]}>
             <UIAvatar
               size="xl"
-              imageSrc={profile.avatarUrl ?? undefined}
+              imageSrc={avatarDraft?.uri ?? profile.avatarUrl ?? undefined}
               placeholderText={
-                `${profile.firstName?.[0] ?? ""}${profile.lastName?.[0] ?? ""}`.toUpperCase() ||
+                `${firstNameValue[0] ?? ""}${lastNameValue[0] ?? ""}`.toUpperCase() ||
                 "U"
               }
             />
             <UIText size="lg" weight="bold" style={styles.name}>
-              {[profile.firstName, profile.lastName]
-                .filter(Boolean)
-                .join(" ") || t("profile.nameMissing")}
+              {[firstNameValue, lastNameValue].filter(Boolean).join(" ") ||
+                t("profile.nameMissing")}
             </UIText>
+            <Pressable
+              accessibilityRole="button"
+              disabled={isUploadingAvatar || updateProfile.isPending}
+              onPress={handlePickAvatar}
+              style={styles.photoButton}
+            >
+              <UIText color="link" weight="semibold">
+                {t("profile.changePhoto")}
+              </UIText>
+            </Pressable>
           </View>
 
-          <View style={styles.section}>
+          <View style={[styles.section, styles.panel]}>
             <View style={styles.sectionHeading}>
               <UIText size="md" weight="bold">
                 {t("profile.personalInfo")}
               </UIText>
-              {!isEditingProfile ? (
-                <Pressable accessibilityRole="button" onPress={openProfileEdit}>
-                  <UIText color="link" weight="semibold">
-                    {t("profile.edit")}
-                  </UIText>
-                </Pressable>
-              ) : null}
             </View>
-            {isEditingProfile ? (
-              <>
-                <UIInput
-                  captionText={t("profile.firstName")}
-                  value={firstName}
-                  onChangeText={setFirstName}
-                  autoCapitalize="words"
-                  returnKeyType="next"
-                />
-                <UIInput
-                  captionText={t("profile.lastName")}
-                  value={lastName}
-                  onChangeText={setLastName}
-                  autoCapitalize="words"
-                  returnKeyType="done"
-                />
-                <UIButton
-                  type="brand"
-                  onPress={handleSaveProfile}
-                  disabled={updateProfile.isPending}
-                  accessibilityRole="button"
-                >
-                  <UIText weight="semibold">{t("profile.saveProfile")}</UIText>
-                </UIButton>
-                <Pressable
-                  accessibilityRole="button"
-                  onPress={() => setIsEditingProfile(false)}
-                  style={styles.cancelForm}
-                >
-                  <UIText color="secondary">{t("profile.cancel")}</UIText>
-                </Pressable>
-              </>
-            ) : (
-              <View style={styles.personalInfo}>
-                <View style={styles.personalField}>
-                  <UIText size="sm" color="secondary">
-                    {t("profile.firstName")}
-                  </UIText>
-                  <UIText>
-                    {profile.firstName || t("profile.nameMissing")}
-                  </UIText>
-                </View>
-                <View style={styles.personalField}>
-                  <UIText size="sm" color="secondary">
-                    {t("profile.lastName")}
-                  </UIText>
-                  <UIText>{profile.lastName || "-"}</UIText>
-                </View>
-              </View>
-            )}
+            <UIInput
+              captionText={t("profile.firstName")}
+              value={firstNameValue}
+              onChangeText={setFirstName}
+              editable={!isUploadingAvatar && !updateProfile.isPending}
+              autoCapitalize="words"
+              returnKeyType="next"
+            />
+            <UIInput
+              captionText={t("profile.lastName")}
+              value={lastNameValue}
+              onChangeText={setLastName}
+              editable={!isUploadingAvatar && !updateProfile.isPending}
+              autoCapitalize="words"
+              returnKeyType="done"
+            />
           </View>
 
-          <View style={styles.section}>
+          <View style={[styles.section, styles.panel]}>
             <UIText size="md" weight="bold">
               {t("profile.privacy")}
             </UIText>
+            <View style={styles.visibilityList}>
+              {[
+                t("profile.showEmail"),
+                t("profile.showFaculty"),
+                t("profile.showYear"),
+              ].map((label) => (
+                <View key={label} style={styles.visibilityRow}>
+                  <UIText>{label}</UIText>
+                  <Switch accessibilityLabel={label} value={false} disabled />
+                </View>
+              ))}
+            </View>
             <View style={styles.notice}>
               <UIText color="soft">{t("profile.privacyUnavailable")}</UIText>
+            </View>
+          </View>
+
+          <View style={[styles.section, styles.panel]}>
+            <UIText size="md" weight="bold">
+              {t("profile.about")}
+            </UIText>
+            <View style={styles.disabledField}>
+              <UIText color="soft">{t("profile.unavailableField")}</UIText>
+            </View>
+            <UIText size="md" weight="bold">
+              {t("profile.interests")}
+            </UIText>
+            <View style={styles.disabledField}>
+              <UIText color="soft">{t("profile.unavailableField")}</UIText>
+            </View>
+            <View style={styles.notice}>
+              <UIText color="soft">{t("profile.fieldsUnavailable")}</UIText>
             </View>
           </View>
 
@@ -494,13 +600,43 @@ const styles = StyleSheet.create((theme) => ({
   section: {
     gap: theme.vs(12),
   },
-  personalInfo: {
-    flexDirection: "row",
-    gap: theme.s(16),
+  saveButton: {
+    minWidth: theme.s(72),
+    minHeight: theme.vs(36),
+    alignItems: "flex-end",
+    justifyContent: "center",
   },
-  personalField: {
-    flex: 1,
-    gap: theme.vs(4),
+  panel: {
+    gap: theme.vs(12),
+    padding: theme.s(16),
+    borderRadius: theme.vs(18),
+    borderWidth: 1,
+    borderColor: theme.colors.white10,
+    backgroundColor: theme.colors.white5,
+  },
+  photoButton: {
+    minHeight: theme.vs(36),
+    justifyContent: "center",
+    paddingHorizontal: theme.s(12),
+  },
+  visibilityList: {
+    gap: theme.vs(8),
+  },
+  visibilityRow: {
+    minHeight: theme.vs(42),
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: theme.s(12),
+  },
+  disabledField: {
+    minHeight: theme.vs(68),
+    justifyContent: "center",
+    paddingHorizontal: theme.s(12),
+    borderRadius: theme.vs(12),
+    borderWidth: 1,
+    borderColor: theme.colors.white10,
+    backgroundColor: theme.colors.white5,
   },
   notice: {
     padding: theme.s(14),
