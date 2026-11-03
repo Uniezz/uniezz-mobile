@@ -41,7 +41,7 @@
         "expo-image-picker",
         {
           "photosPermission": "Allow Uniezz to select a profile photo.",
-          "cameraPermission": false,
+          "cameraPermission": "Allow Uniezz to take a profile photo.",
           "microphonePermission": false
         }
       ],

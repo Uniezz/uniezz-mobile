@@ -5,7 +5,7 @@ import {
   replaceMyProgramme,
   updateMyProfile,
 } from "@/api/profile";
-import type { ProgrammeInput, ProfileInput } from "@/api/profile";
+import type { ProgrammeInput, ProfileInput } from "@/@types/profile";
 import {
   useMutation,
   useQuery,
@@ -18,6 +18,7 @@ export const MY_PROFILE_QUERY_KEY = ["profile", "me"] as const;
 export async function clearMyProfileCache(
   queryClient: QueryClient,
 ): Promise<void> {
+  // A new session may belong to another account; don't reuse the previous profile.
   await queryClient.cancelQueries({ queryKey: MY_PROFILE_QUERY_KEY });
   queryClient.removeQueries({ queryKey: MY_PROFILE_QUERY_KEY });
 }
@@ -26,7 +27,7 @@ export function useMyProfile() {
   return useQuery({
     queryKey: MY_PROFILE_QUERY_KEY,
     queryFn: getMyProfile,
-    staleTime: 60 * 1000,
+    staleTime: 5 * 60 * 1000,
   });
 }
 

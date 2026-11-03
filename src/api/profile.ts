@@ -1,38 +1,23 @@
-import type { components } from "@/@types/schema";
+import type {
+  AvatarContentType,
+  Profile,
+  ProfileInput,
+  Programme,
+  ProgrammeInput,
+} from "@/@types/profile";
 import { File } from "expo-file-system";
 import { fetch as expoFetch } from "expo/fetch";
+import { MAX_AVATAR_SIZE_BYTES, requireApiData } from "@/utils";
 import { api } from "./client";
-
-export type Profile = components["schemas"]["Profile"];
-export type Programme = components["schemas"]["Programme"];
-export type ProgrammeInput = components["schemas"]["ProgrammeRequest"];
-export type ProfileInput = components["schemas"]["UpdateMeInputBody"];
-export type AvatarContentType =
-  components["schemas"]["CreateUploadInputBody"]["contentType"];
-
-export const MAX_AVATAR_SIZE_BYTES = 5 * 1024 * 1024;
-
-function requireData<T>(
-  data: T | undefined,
-  error: { error: string } | undefined,
-): T {
-  if (error) {
-    throw new Error(error.error);
-  }
-  if (data === undefined) {
-    throw new Error("The profile API returned no data.");
-  }
-  return data;
-}
 
 export async function getMyProfile(): Promise<Profile> {
   const { data, error } = await api.GET("/profile/me");
-  return requireData(data, error);
+  return requireApiData(data, error, "profile");
 }
 
 export async function updateMyProfile(input: ProfileInput): Promise<Profile> {
   const { data, error } = await api.PATCH("/profile/me", { body: input });
-  return requireData(data, error);
+  return requireApiData(data, error, "profile update");
 }
 
 export async function uploadMyAvatar(
@@ -48,7 +33,7 @@ export async function uploadMyAvatar(
   const { data, error } = await api.POST("/media/uploads", {
     body: { kind: "avatar", contentType, size },
   });
-  const upload = requireData(data, error);
+  const upload = requireApiData(data, error, "avatar upload");
   const response = await expoFetch(upload.uploadUrl, {
     method: "PUT",
     headers: { "Content-Type": contentType },
@@ -68,7 +53,7 @@ export async function createMyProgramme(
   const { data, error } = await api.POST("/profile/programmes", {
     body: input,
   });
-  return requireData(data, error);
+  return requireApiData(data, error, "programme creation");
 }
 
 export async function replaceMyProgramme(
@@ -79,7 +64,7 @@ export async function replaceMyProgramme(
     params: { path: { id } },
     body: input,
   });
-  return requireData(data, error);
+  return requireApiData(data, error, "programme update");
 }
 
 export async function deleteMyProgramme(id: string): Promise<void> {

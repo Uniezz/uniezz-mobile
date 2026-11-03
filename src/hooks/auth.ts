@@ -9,6 +9,7 @@ import * as Linking from "expo-linking";
 import { useCallback, useEffect, useRef } from "react";
 import type { WebViewNavigation } from "react-native-webview";
 import i18n from "@/internationalization";
+import { useTranslation } from "react-i18next";
 
 const USOS_REDIRECT_URL = new URL(Linking.createURL("auth/callback"));
 
@@ -62,6 +63,25 @@ export function useVerifyOtpCode() {
   const startSession = useStartSession();
 
   return useMutation({ mutationFn: verifyOtpCode, onSuccess: startSession });
+}
+
+export function useLogout() {
+  const { clearSession } = useSession();
+  const queryClient = useQueryClient();
+  const { t } = useTranslation();
+
+  return useCallback(async () => {
+    try {
+      await clearSession();
+    } catch {
+      Toast.show({
+        type: "error",
+        text1: t("auth.logoutError"),
+      });
+    } finally {
+      await clearMyProfileCache(queryClient);
+    }
+  }, [clearSession, queryClient, t]);
 }
 
 export function useFinishLogin(code?: string, error?: string): void {

@@ -1,29 +1,12 @@
-import { useSession } from "@/contexts";
-import { clearMyProfileCache } from "@/hooks/profile";
+import { useLogout } from "@/hooks/auth";
 import { UIButton, UIPage, UIText } from "@/ui";
-import { useQueryClient } from "@tanstack/react-query";
-import Toast from "react-native-toast-message";
 import { StyleSheet } from "react-native-unistyles";
 import { useTranslation } from "react-i18next";
 import { ScreenHeader } from "@/components";
 
 export default function GuideScreen() {
   const { t } = useTranslation();
-  const { clearSession } = useSession();
-  const queryClient = useQueryClient();
-
-  const handleLogout = async () => {
-    try {
-      await clearSession();
-    } catch {
-      Toast.show({
-        type: "error",
-        text1: t("auth.logoutError"),
-      });
-    } finally {
-      await clearMyProfileCache(queryClient);
-    }
-  };
+  const handleLogout = useLogout();
 
   return (
     <UIPage backdrop="city" style={styles.page}>
