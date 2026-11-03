@@ -8,7 +8,7 @@ export default function FaqScreen() {
 
   return (
     <UIPage>
-      <ScreenHeader title={t("faq.title")} />
+      <ScreenHeader title={t("tabs.faq")} />
       <UIGlass style={styles.empty}>
         <UIText color="secondary">{t("faq.empty")}</UIText>
       </UIGlass>

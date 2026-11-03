@@ -21,3 +21,4 @@ export * from "./UISwitch";
 export * from "./UICheckbox";
 export * from "./UISlider";
 export * from "./UIUniversityLogo";
+export * from "./UIBottomSheet";

@@ -29,7 +29,7 @@ export function ConversationList({
     <>
       <View style={styles.header}>
         <View style={styles.title}>
-          <ScreenHeader title={t("chat.title")} style={styles.screenHeader} />
+          <ScreenHeader title={t("tabs.chat")} style={styles.screenHeader} />
         </View>
         <Pressable
           accessibilityRole="button"

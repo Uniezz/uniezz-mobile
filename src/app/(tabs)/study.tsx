@@ -48,7 +48,7 @@ export default function StudyScreen() {
     <>
       <View style={styles.header}>
         <View style={styles.title}>
-          <ScreenHeader title={t("exams.title")} style={styles.screenHeader} />
+          <ScreenHeader title={t("tabs.exams")} style={styles.screenHeader} />
         </View>
         <Pressable
           accessibilityRole="button"

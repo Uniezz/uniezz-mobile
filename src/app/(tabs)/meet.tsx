@@ -38,7 +38,7 @@ export default function MeetScreen() {
         <View style={styles.header}>
           <View style={styles.title}>
             <ScreenHeader
-              title={t("connections.title")}
+              title={t("tabs.connections")}
               style={styles.screenHeader}
             />
           </View>

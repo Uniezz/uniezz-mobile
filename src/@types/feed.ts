@@ -25,3 +25,5 @@ export type FeedFilters = Omit<
   NonNullable<operations["listFeedPosts"]["parameters"]["query"]>,
   "cursor"
 >;
+export type EditPostFormValues = Pick<NewPostFormValues, "title" | "content">;
+export type CommentFormValues = { content: string };

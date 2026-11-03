@@ -6,3 +6,12 @@ export const newPostSchema = z.object({
   content: z.string().trim().min(10, "postComposer.detailsLength").max(5000),
   audience: z.enum(["all", "university"]),
 });
+
+export const editPostSchema = newPostSchema.pick({
+  title: true,
+  content: true,
+});
+
+export const commentSchema = z.object({
+  content: z.string().trim().min(1).max(1000),
+});

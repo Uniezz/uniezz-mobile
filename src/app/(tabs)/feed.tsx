@@ -58,7 +58,7 @@ export default function FeedScreen() {
         ListHeaderComponent={
           <View style={styles.header}>
             <UIText size="xl" weight="bold">
-              {t("feed.title")}
+              {t("tabs.feed")}
             </UIText>
             <UISearch
               placeholder="Search posts"
