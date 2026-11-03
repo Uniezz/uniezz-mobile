@@ -6,6 +6,7 @@ import { useForm, useWatch } from "react-hook-form";
 import { useClearByFocusCell } from "react-native-confirmation-code-field";
 import { useRequestOtpCode, useVerifyOtpCode } from "./auth";
 import { useTranslation } from "react-i18next";
+import { ApiRequestError } from "@/api";
 
 export const useOtpScreen = () => {
   const { t, i18n } = useTranslation();
@@ -65,8 +66,10 @@ export const useOtpScreen = () => {
       }
     } catch (error) {
       const errorMessage =
-        error instanceof Error && i18n.exists(error.message)
-          ? error.message
+        error instanceof ApiRequestError &&
+        error.translationKey &&
+        i18n.exists(error.translationKey)
+          ? error.translationKey
           : "common.tryAgain";
       setError(data.step, {
         message: errorMessage,

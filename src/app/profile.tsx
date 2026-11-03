@@ -1,8 +1,10 @@
 import { router } from "expo-router";
 import { useState } from "react";
 import { Alert, Pressable, ScrollView, View } from "react-native";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
+import { useTranslation } from "react-i18next";
 import { StyleSheet } from "react-native-unistyles";
+import type { Programme } from "@/@types/profile";
 import { useSession } from "@/contexts";
 import { AddProgrammeForm, PersonalDetailsForm } from "@/components/profile";
 import {
@@ -13,12 +15,30 @@ import {
 import { UIAvatar, UIButton, UIGlass, UIPage, UIText } from "@/ui";
 
 export default function ProfileScreen() {
+  const { t } = useTranslation();
   const { data: profile, isPending, isError, refetch } = useMyProfile();
-  const { mutateAsync: replaceProgramme } = useReplaceMyProgramme();
+  const { mutate: replaceProgramme } = useReplaceMyProgramme();
   const { mutateAsync: deleteProgramme } = useDeleteMyProgramme();
   const { clearSession } = useSession();
   const [editing, setEditing] = useState(false);
   const [addingProgramme, setAddingProgramme] = useState(false);
+
+  const makePrimary = (item: Programme) =>
+    replaceProgramme(
+      {
+        id: item.id,
+        body: {
+          programme: item.programme,
+          faculty: item.faculty,
+          status: item.status,
+          isPrimary: true,
+          yearOfStudy: item.yearOfStudy ?? undefined,
+          level: item.level ?? undefined,
+          modeOfStudies: item.modeOfStudies ?? undefined,
+        },
+      },
+      { onError: () => toast.error(t("apiState.profileSaveError")) },
+    );
 
   return (
     <UIPage backdrop="city">
@@ -38,7 +58,7 @@ export default function ProfileScreen() {
         {isPending ? (
           <UIText color="secondary">Loading profile…</UIText>
         ) : isError || !profile ? (
-          <UIButton type="secondary" onPress={() => void refetch()}>
+          <UIButton type="secondary" onPress={() => refetch()}>
             <UIText>Couldn’t load profile. Retry</UIText>
           </UIButton>
         ) : (
@@ -109,31 +129,7 @@ export default function ProfileScreen() {
                     <View style={styles.programmeActions}>
                       <Pressable
                         accessibilityRole="button"
-                        onPress={async () => {
-                          try {
-                            await replaceProgramme({
-                              id: item.id,
-                              body: {
-                                programme: item.programme,
-                                faculty: item.faculty,
-                                status: item.status,
-                                isPrimary: true,
-                                ...(item.yearOfStudy !== null
-                                  ? { yearOfStudy: item.yearOfStudy }
-                                  : {}),
-                                ...(item.level ? { level: item.level } : {}),
-                                ...(item.modeOfStudies
-                                  ? { modeOfStudies: item.modeOfStudies }
-                                  : {}),
-                              },
-                            });
-                          } catch {
-                            Toast.show({
-                              type: "error",
-                              text1: "Couldn’t update programme",
-                            });
-                          }
-                        }}
+                        onPress={() => makePrimary(item)}
                       >
                         <UIText color="link">Make primary</UIText>
                       </Pressable>
@@ -147,10 +143,7 @@ export default function ProfileScreen() {
                               style: "destructive",
                               onPress: () => {
                                 void deleteProgramme(item.id).catch(() =>
-                                  Toast.show({
-                                    type: "error",
-                                    text1: "Couldn’t remove programme",
-                                  }),
+                                  toast.error(t("apiState.profileSaveError")),
                                 );
                               },
                             },
@@ -182,7 +175,7 @@ export default function ProfileScreen() {
                 try {
                   await clearSession();
                 } catch {
-                  Toast.show({ type: "error", text1: "Couldn’t log out" });
+                  toast.error(t("auth.logoutError"));
                 }
               }}
             >

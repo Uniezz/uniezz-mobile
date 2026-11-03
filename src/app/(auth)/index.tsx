@@ -46,7 +46,7 @@ export default function WelcomeScreen() {
       {isPending ? (
         <UIText color="gray">{t("auth.loadingUniversities")}</UIText>
       ) : isError ? (
-        <UIButton onPress={() => void refetch()} type="secondary">
+        <UIButton onPress={() => refetch()} type="secondary">
           <UIText>{t("auth.universitiesLoadError")}</UIText>
         </UIButton>
       ) : items.length === 0 ? (

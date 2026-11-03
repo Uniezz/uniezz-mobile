@@ -9,6 +9,7 @@ export type Conversation = {
 };
 
 export type ChatMessage = IMessage;
+export type CreateGroupFormValues = { groupName: string; members: string[] };
 
 export type ChatStore = {
   conversations: Conversation[];

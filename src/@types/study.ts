@@ -5,3 +5,5 @@ export type Material = {
   author: string;
   rating: string;
 };
+
+export type AddMaterialFormValues = { subject: string; university: string };

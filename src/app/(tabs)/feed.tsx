@@ -1,111 +1,129 @@
 import { router } from "expo-router";
 import { useState } from "react";
-import { Pressable, ScrollView, View } from "react-native";
+import { Pressable, View } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import { StyleSheet } from "react-native-unistyles";
-import type { FeedPost, FeedView } from "@/@types/feed";
-import { FeedList, PostComposer, PostDetails } from "@/components/feed";
-import { UIAvatar, UIPage, UIText } from "@/ui";
-
-const initialPosts: FeedPost[] = [
-  {
-    type: "EVENT",
-    title: "Autumn Welcome Party",
-    detail: "Olena Kovalenko, KUL · 9h",
-    body: "Meet new people and start the semester together.",
-  },
-  {
-    type: "QUESTION",
-    title: "Statistics with dr hab. Nowak: written or oral final?",
-    detail: "Campus discussion",
-    body: "Does anyone know what the exam format will be this year?",
-  },
-];
+import { useFeedPosts } from "@/hooks/useFeed";
+import { FEED_TYPES, matchesSearch } from "@/utils";
+import {
+  UIChip,
+  UIGlass,
+  UIPage,
+  UIQueryError,
+  UISearch,
+  UISkeleton,
+  UIText,
+} from "@/ui";
 
 export default function FeedScreen() {
-  const [posts, setPosts] = useState(initialPosts);
-  const [view, setView] = useState<FeedView>({ screen: "list" });
-  const [comments, setComments] = useState<Record<string, string[]>>({});
-  const active =
-    view.screen === "post"
-      ? posts.find((post) => post.title === view.title)
-      : undefined;
-  const header = (
-    <View style={styles.header}>
-      <View style={styles.title}>
-        <UIText size="sm" color="secondary">
-          Today on campus
-        </UIText>
-        <UIText size="xl" weight="bold">
-          What’s happening in Lublin
-        </UIText>
-      </View>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="Open profile"
-        onPress={() => router.push("/profile")}
-      >
-        <UIAvatar imageSrc={require("../../../assets/profile-cat.png")} />
-      </Pressable>
-    </View>
+  const [search, setSearch] = useState("");
+  const [type, setType] = useState<(typeof FEED_TYPES)[number]>("all");
+  const {
+    data,
+    isPending,
+    isError,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isRefetching,
+  } = useFeedPosts(type === "all" ? {} : { type });
+  const posts = data?.pages.flatMap((page) => page.items ?? []) ?? [];
+  const visible = posts.filter((post) =>
+    matchesSearch(
+      search,
+      post.title,
+      post.content,
+      post.author.firstName ?? "",
+      post.author.lastName ?? "",
+      post.university,
+      ...(post.tags ?? []),
+    ),
   );
   return (
     <UIPage backdrop="city">
-      {view.screen === "list" ? (
-        <FeedList
-          header={header}
-          posts={posts}
-          onOpen={(title) => setView({ screen: "post", title })}
-          onCreate={() => setView({ screen: "compose" })}
-        />
-      ) : (
-        <ScrollView
-          contentContainerStyle={styles.page}
-          showsVerticalScrollIndicator={false}
-        >
-          {header}
+      <FlashList
+        data={visible}
+        masonry
+        numColumns={2}
+        keyExtractor={(post) => post.id}
+        contentContainerStyle={styles.list}
+        onRefresh={refetch}
+        refreshing={isRefetching}
+        onEndReached={() => {
+          if (hasNextPage && !isFetchingNextPage) return fetchNextPage();
+        }}
+        ListHeaderComponent={
+          <View style={styles.header}>
+            <UIText size="xl" weight="bold">
+              Feed
+            </UIText>
+            <UISearch
+              placeholder="Search posts"
+              value={search}
+              onChangeText={setSearch}
+            />
+            <View style={styles.filters}>
+              {FEED_TYPES.map((item) => (
+                <UIChip
+                  key={item}
+                  label={item}
+                  selected={type === item}
+                  onPress={() => setType(item)}
+                />
+              ))}
+            </View>
+          </View>
+        }
+        ListEmptyComponent={
+          isPending ? (
+            <UISkeleton height={180} />
+          ) : isError ? (
+            <UIQueryError message="Couldn’t load posts" onRetry={refetch} />
+          ) : (
+            <UIText color="secondary">No posts found</UIText>
+          )
+        }
+        ListFooterComponent={
+          isFetchingNextPage ? <UISkeleton height={110} /> : null
+        }
+        renderItem={({ item }) => (
           <Pressable
             accessibilityRole="button"
-            onPress={() => setView({ screen: "list" })}
+            onPress={() =>
+              router.push({
+                pathname: "/feed/post/[id]",
+                params: { id: item.id },
+              })
+            }
+            style={styles.cell}
           >
-            <UIText color="link">‹ Back to feed</UIText>
+            <UIGlass style={styles.card}>
+              <UIText size="xs" color="link">
+                {item.type.toUpperCase()}
+              </UIText>
+              <UIText size="md" weight="semibold">
+                {item.title}
+              </UIText>
+              <UIText size="sm" color="secondary" numberOfLines={4}>
+                {item.content}
+              </UIText>
+              <UIText size="xs" color="secondary">
+                {item.author.firstName} {item.author.lastName} ·{" "}
+                {item.university}
+              </UIText>
+            </UIGlass>
           </Pressable>
-          {view.screen === "compose" ? (
-            <PostComposer
-              onPublish={(post) => {
-                setPosts((current) => [post, ...current]);
-                setView({ screen: "list" });
-              }}
-            />
-          ) : active ? (
-            <PostDetails
-              key={active.title}
-              post={active}
-              comments={comments[active.title] ?? []}
-              onComment={(comment) =>
-                setComments((current) => ({
-                  ...current,
-                  [active.title]: [...(current[active.title] ?? []), comment],
-                }))
-              }
-            />
-          ) : null}
-        </ScrollView>
-      )}
+        )}
+      />
     </UIPage>
   );
 }
 
 const styles = StyleSheet.create((theme) => ({
-  page: {
-    paddingHorizontal: theme.s(16),
-    paddingBottom: theme.vs(100),
-    gap: theme.vs(18),
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: theme.s(12),
-    paddingTop: theme.vs(8),
-  },
-  title: { flex: 1, gap: theme.vs(4) },
+  list: { paddingHorizontal: theme.s(12), paddingBottom: theme.vs(100) },
+  header: { gap: theme.vs(14), padding: theme.s(8) },
+  filters: { flexDirection: "row", flexWrap: "wrap", gap: theme.s(8) },
+  cell: { padding: theme.s(5) },
+  card: { padding: theme.s(14), gap: theme.vs(8) },
 }));

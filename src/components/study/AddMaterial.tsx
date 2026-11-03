@@ -1,16 +1,30 @@
-import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Pressable } from "react-native";
 import { UIGlass, UIInput, UIText } from "@/ui";
 import { StyleSheet } from "react-native-unistyles";
-import type { Material } from "@/@types/study";
+import type { AddMaterialFormValues, Material } from "@/@types/study";
+import { addMaterialSchema } from "@/schemas";
+import { useTranslation } from "react-i18next";
 
 export function AddMaterial({
   onSave,
 }: {
   onSave: (material: Material) => void;
 }) {
-  const [subject, setSubject] = useState("");
-  const [university, setUniversity] = useState("");
+  const { t } = useTranslation();
+  const {
+    control,
+    handleSubmit,
+    formState: { isValid },
+  } = useForm<AddMaterialFormValues>({
+    resolver: zodResolver(addMaterialSchema),
+    defaultValues: { subject: "", university: "" },
+    mode: "onChange",
+  });
+  const onSubmit = handleSubmit(({ subject, university }) =>
+    onSave({ subject, university, type: "Exam", author: "You", rating: "—" }),
+  );
   return (
     <UIGlass style={styles.card}>
       <UIText size="md" weight="bold">
@@ -19,30 +33,38 @@ export function AddMaterial({
       <UIText size="sm" color="secondary">
         This saves details only. File upload is not available yet.
       </UIText>
-      <UIInput
-        captionText="Subject"
-        value={subject}
-        onChangeText={setSubject}
-        maxLength={120}
+      <Controller
+        control={control}
+        name="subject"
+        render={({ field, fieldState }) => (
+          <UIInput
+            captionText="Subject"
+            value={field.value}
+            onChangeText={field.onChange}
+            onBlur={field.onBlur}
+            errorText={fieldState.error?.message && t(fieldState.error.message)}
+            maxLength={120}
+          />
+        )}
       />
-      <UIInput
-        captionText="University"
-        value={university}
-        onChangeText={setUniversity}
-        maxLength={120}
+      <Controller
+        control={control}
+        name="university"
+        render={({ field, fieldState }) => (
+          <UIInput
+            captionText="University"
+            value={field.value}
+            onChangeText={field.onChange}
+            onBlur={field.onBlur}
+            errorText={fieldState.error?.message && t(fieldState.error.message)}
+            maxLength={120}
+          />
+        )}
       />
       <Pressable
         accessibilityRole="button"
-        disabled={!subject.trim() || !university.trim()}
-        onPress={() =>
-          onSave({
-            subject: subject.trim(),
-            university: university.trim(),
-            type: "Exam",
-            author: "You",
-            rating: "—",
-          })
-        }
+        disabled={!isValid}
+        onPress={() => onSubmit()}
       >
         <UIText color="link" weight="semibold">
           Save details

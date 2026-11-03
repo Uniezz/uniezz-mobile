@@ -1,85 +1,96 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Pressable, View } from "react-native";
+import { router } from "expo-router";
+import debounce from "lodash/debounce";
 import { StyleSheet } from "react-native-unistyles";
-import { UIAvatar, UIGlass, UIInput, UIText } from "@/ui";
-
-const students = [
-  {
-    name: "Anna Nowak",
-    meta: "KUL · Economics",
-    about: "Coffee and city walks",
-  },
-  {
-    name: "Piotr Lewandowski",
-    meta: "Przyrodniczy · Biology",
-    about: "Weekend hikes and photography",
-  },
-  {
-    name: "Julia Wójcik",
-    meta: "WSEI · Computer Science",
-    about: "Design and coding",
-  },
-];
+import { useProfileSearch } from "@/hooks/useProfiles";
+import { UIAvatar, UIGlass, UIQueryError, UISearch, UIText } from "@/ui";
 
 export function StudentDirectory({ onBack }: { onBack: () => void }) {
   const [search, setSearch] = useState("");
-  const [selected, setSelected] = useState<string | null>(null);
-  const profile = students.find((student) => student.name === selected);
+  const [query, setQuery] = useState("");
+  const updateQuery = useMemo(() => debounce(setQuery, 300), []);
+  useEffect(() => () => updateQuery.cancel(), [updateQuery]);
+  const {
+    data,
+    isPending,
+    isError,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useProfileSearch(query);
+  const students = data?.pages.flatMap((page) => page.items ?? []) ?? [];
   return (
     <View style={styles.container}>
-      <Pressable
-        accessibilityRole="button"
-        onPress={() => (selected ? setSelected(null) : onBack())}
-      >
-        <UIText color="link">‹ {selected ? "All students" : "Meet"}</UIText>
+      <Pressable accessibilityRole="button" onPress={onBack}>
+        <UIText color="link">‹ Connections</UIText>
       </Pressable>
       <UIText size="lg" weight="bold">
-        {profile ? profile.name : "All students"}
+        All students
       </UIText>
-      {profile ? (
-        <UIGlass style={styles.card}>
-          <UIAvatar size="xl" placeholderText={profile.name[0]} />
-          <UIText color="secondary">{profile.meta}</UIText>
-          <UIText>{profile.about}</UIText>
-        </UIGlass>
+      <UISearch
+        placeholder="Search students"
+        value={search}
+        onChangeText={(value) => {
+          setSearch(value);
+          updateQuery(value);
+        }}
+      />
+      {isPending ? (
+        <UIText color="secondary">Loading students…</UIText>
+      ) : isError ? (
+        <UIQueryError message="Couldn’t load students" onRetry={refetch} />
+      ) : students.length ? (
+        students.map((student) => (
+          <Pressable
+            key={student.id}
+            accessibilityRole="button"
+            onPress={() =>
+              router.push({
+                pathname: "/student/[id]",
+                params: { id: student.id },
+              })
+            }
+          >
+            <UIGlass style={styles.row}>
+              <UIAvatar
+                imageSrc={student.avatarUrl ?? undefined}
+                placeholderText={student.firstName?.[0] ?? "?"}
+              />
+              <View style={styles.label}>
+                <UIText weight="semibold">
+                  {[student.firstName, student.lastName]
+                    .filter(Boolean)
+                    .join(" ")}
+                </UIText>
+                <UIText size="sm" color="secondary">
+                  {student.universityId.toUpperCase()}
+                </UIText>
+              </View>
+              <UIText color="secondary">›</UIText>
+            </UIGlass>
+          </Pressable>
+        ))
       ) : (
-        <>
-          <UIInput
-            placeholder="Search students"
-            value={search}
-            onChangeText={setSearch}
-          />
-          {students
-            .filter((student) =>
-              student.name.toLowerCase().includes(search.toLowerCase()),
-            )
-            .map((student) => (
-              <Pressable
-                key={student.name}
-                accessibilityRole="button"
-                onPress={() => setSelected(student.name)}
-              >
-                <UIGlass style={styles.row}>
-                  <UIAvatar placeholderText={student.name[0]} />
-                  <View style={styles.label}>
-                    <UIText weight="semibold">{student.name}</UIText>
-                    <UIText size="sm" color="secondary">
-                      {student.meta}
-                    </UIText>
-                  </View>
-                  <UIText color="secondary">›</UIText>
-                </UIGlass>
-              </Pressable>
-            ))}
-        </>
+        <UIText color="secondary">No students found</UIText>
       )}
+      {hasNextPage ? (
+        <Pressable
+          accessibilityRole="button"
+          disabled={isFetchingNextPage}
+          onPress={() => fetchNextPage()}
+        >
+          <UIText color="link">
+            {isFetchingNextPage ? "Loading…" : "Load more"}
+          </UIText>
+        </Pressable>
+      ) : null}
     </View>
   );
 }
-
 const styles = StyleSheet.create((theme) => ({
   container: { gap: theme.vs(14) },
-  card: { padding: theme.s(18), gap: theme.vs(12) },
   row: {
     flexDirection: "row",
     alignItems: "center",

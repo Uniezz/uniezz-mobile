@@ -4,3 +4,5 @@ export * from "./otp";
 export * from "./auth";
 export * from "./backdrop";
 export * from "./universities";
+export * from "./search";
+export * from "./feed";

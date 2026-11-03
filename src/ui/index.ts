@@ -12,3 +12,12 @@ export * from "./UIBackdrop";
 
 export * from "./icons";
 export * from "./UIChip";
+export * from "./UISearch";
+export * from "./UIQueryError";
+export * from "./UIImage";
+export * from "./UIBadge";
+export * from "./UISkeleton";
+export * from "./UISwitch";
+export * from "./UICheckbox";
+export * from "./UISlider";
+export * from "./UIUniversityLogo";

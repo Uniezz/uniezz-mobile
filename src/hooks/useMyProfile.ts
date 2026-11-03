@@ -6,10 +6,15 @@ import {
   replaceMyProgramme,
   updateMyProfile,
 } from "@/api/profile";
-import type { components } from "@/@types/schema";
+import type { ProgrammeInput } from "@/@types/profile";
 
 export function useMyProfile() {
-  return useQuery({ queryKey: ["profile", "me"], queryFn: getMyProfile });
+  return useQuery({
+    staleTime: 5 * 60_000,
+    gcTime: 30 * 60_000,
+    queryKey: ["profile", "me"],
+    queryFn: getMyProfile,
+  });
 }
 
 export function useUpdateMyProfile() {
@@ -33,13 +38,8 @@ export function useAddMyProgramme() {
 export function useReplaceMyProgramme() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({
-      id,
-      body,
-    }: {
-      id: string;
-      body: components["schemas"]["ProgrammeRequest"];
-    }) => replaceMyProgramme(id, body),
+    mutationFn: ({ id, body }: { id: string; body: ProgrammeInput }) =>
+      replaceMyProgramme(id, body),
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: ["profile", "me"] }),
   });

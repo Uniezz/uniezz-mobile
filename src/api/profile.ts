@@ -1,49 +1,59 @@
-import type { components } from "@/@types/schema";
+import type {
+  Profile,
+  ProgrammeInput,
+  UpdateProfileInput,
+} from "@/@types/profile";
 import { api } from "./client";
 
-export async function getMyProfile(): Promise<
-  components["schemas"]["Profile"]
-> {
-  const { data, error } = await api.GET("/profile/me");
-  if (error) throw new Error(error.error);
-  if (!data) throw new Error("Missing profile response");
-  return data;
+export async function getMyProfile(): Promise<Profile> {
+  const { data } = await api.GET("/profile/me");
+  return data!;
 }
 
-export async function updateMyProfile(
-  body: components["schemas"]["UpdateMeInputBody"],
-) {
-  const { data, error } = await api.PATCH("/profile/me", { body });
-  if (error) throw new Error(error.error);
-  if (!data) throw new Error("Missing profile response");
-  return data;
+export async function updateMyProfile(body: UpdateProfileInput) {
+  const { data } = await api.PATCH("/profile/me", { body });
+  return data!;
 }
 
-export async function addMyProgramme(
-  body: components["schemas"]["ProgrammeRequest"],
-) {
-  const { data, error } = await api.POST("/profile/programmes", { body });
-  if (error) throw new Error(error.error);
-  if (!data) throw new Error("Missing programme response");
-  return data;
+export async function addMyProgramme(body: ProgrammeInput) {
+  const { data } = await api.POST("/profile/programmes", {
+    body,
+  });
+
+  return data!;
 }
 
-export async function replaceMyProgramme(
-  id: string,
-  body: components["schemas"]["ProgrammeRequest"],
-) {
-  const { data, error } = await api.PUT("/profile/programmes/{id}", {
+export async function replaceMyProgramme(id: string, body: ProgrammeInput) {
+  const { data } = await api.PUT("/profile/programmes/{id}", {
     params: { path: { id } },
     body,
   });
-  if (error) throw new Error(error.error);
-  if (!data) throw new Error("Missing programme response");
-  return data;
+
+  return data!;
 }
 
 export async function deleteMyProgramme(id: string) {
-  const { error, response } = await api.DELETE("/profile/programmes/{id}", {
+  await api.DELETE("/profile/programmes/{id}", {
     params: { path: { id } },
   });
-  if (error && response.status !== 404) throw new Error(error.error);
+}
+
+export async function getProfiles(name: string, cursor?: string) {
+  const { data } = await api.GET("/profiles", {
+    params: { query: { name: name || undefined, cursor } },
+  });
+
+  return data!;
+}
+
+export async function getPublicProfile(id: string) {
+  const { data } = await api.GET("/profiles/{id}", {
+    params: { path: { id } },
+  });
+
+  return data!;
+}
+
+export async function deleteMyAvatar() {
+  await api.DELETE("/profile/avatar");
 }
