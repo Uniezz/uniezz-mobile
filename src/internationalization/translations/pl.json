@@ -93,11 +93,11 @@
     "universityEmailRequired": "Użyj adresu e-mail otrzymanego od uczelni."
   },
   "tabs": {
-    "feed": "Aktualności",
+    "feed": "Tablica",
     "chat": "Czat",
-    "meet": "Poznaj",
-    "study": "Nauka",
-    "guide": "Przewodnik"
+    "connections": "Ludzie",
+    "exams": "Egzaminy",
+    "faq": "FAQ"
   },
   "feed": {
     "search": "Szukaj...",

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { LegendList } from "@legendapp/list/react-native";
 import { router } from "expo-router";
 import { useState } from "react";
@@ -16,6 +17,7 @@ export function ConversationList({
   onOpen: (id: string) => void;
   onCreate: () => void;
 }) {
+  const { t } = useTranslation();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("All");
   const visible = conversations.filter(
@@ -27,7 +29,7 @@ export function ConversationList({
     <>
       <View style={styles.header}>
         <View style={styles.title}>
-          <ScreenHeader title="Chat" style={styles.screenHeader} />
+          <ScreenHeader title={t("chat.title")} style={styles.screenHeader} />
         </View>
         <Pressable
           accessibilityRole="button"

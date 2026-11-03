@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Pressable, View } from "react-native";
@@ -16,6 +17,7 @@ import {
 } from "@/ui";
 
 export default function FeedScreen() {
+  const { t } = useTranslation();
   const [search, setSearch] = useState("");
   const [type, setType] = useState<(typeof FEED_TYPES)[number]>("all");
   const {
@@ -56,7 +58,7 @@ export default function FeedScreen() {
         ListHeaderComponent={
           <View style={styles.header}>
             <UIText size="xl" weight="bold">
-              Feed
+              {t("feed.title")}
             </UIText>
             <UISearch
               placeholder="Search posts"

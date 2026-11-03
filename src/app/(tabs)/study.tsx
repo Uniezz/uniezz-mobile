@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
@@ -39,6 +40,7 @@ const initialMaterials: Material[] = [
 ];
 
 export default function StudyScreen() {
+  const { t } = useTranslation();
   const [materials, setMaterials] = useState(initialMaterials);
   const [selected, setSelected] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
@@ -46,7 +48,7 @@ export default function StudyScreen() {
     <>
       <View style={styles.header}>
         <View style={styles.title}>
-          <ScreenHeader title="Study" style={styles.screenHeader} />
+          <ScreenHeader title={t("exams.title")} style={styles.screenHeader} />
         </View>
         <Pressable
           accessibilityRole="button"

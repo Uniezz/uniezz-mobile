@@ -95,9 +95,9 @@
   "tabs": {
     "feed": "Feed",
     "chat": "Chat",
-    "meet": "Meet",
-    "study": "Study",
-    "guide": "Guide"
+    "connections": "People",
+    "exams": "Exams",
+    "faq": "FAQ"
   },
   "feed": {
     "search": "Search...",

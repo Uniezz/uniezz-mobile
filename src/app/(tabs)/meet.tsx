@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { router } from "expo-router";
 import { Image } from "expo-image";
 import { useState } from "react";
@@ -25,6 +26,7 @@ const portraits = [
 ];
 
 export default function MeetScreen() {
+  const { t } = useTranslation();
   const [mode, setMode] = useState("Friends");
   const [index, setIndex] = useState(0);
   const [connected, setConnected] = useState(false);
@@ -35,7 +37,10 @@ export default function MeetScreen() {
       <ScrollView contentContainerStyle={styles.page}>
         <View style={styles.header}>
           <View style={styles.title}>
-            <ScreenHeader title="Meet" style={styles.screenHeader} />
+            <ScreenHeader
+              title={t("connections.title")}
+              style={styles.screenHeader}
+            />
           </View>
           <Pressable
             accessibilityRole="button"
