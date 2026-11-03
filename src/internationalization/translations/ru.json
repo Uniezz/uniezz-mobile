@@ -14,7 +14,7 @@
     "continueWith": "Продолжить через {{method}}",
     "emailCode": "код из письма",
     "university": "университет",
-    "passwordPrivacy": "Uniezz никогда не видит ваш пароль от университета.",
+    "passwordPrivacy": "uniezz никогда не видит ваш пароль от университета.",
     "backToUniversities": "Вернуться к выбору университета",
     "logoutError": "Не удалось выйти из аккаунта. Попробуйте ещё раз.",
     "logOut": "Выйти",

@@ -1,4 +1,4 @@
-# Uniezz — Задачи мобильного
+# uniezz — Задачи мобильного
 
 Expo. Табы: **Feed · Chat · Meet · Study · Guide**. Профиль и Saved за аватаром. Только Bun. Только Go API.
 
@@ -124,4 +124,4 @@ Expo. Табы: **Feed · Chat · Meet · Study · Guide**. Профиль и Sa
 
 ---
 
-_Документ: TASKS mobile (RU) · Uniezz · v1.1_
+_Документ: TASKS mobile (RU) · uniezz · v1.1_

@@ -1,4 +1,4 @@
-# Uniezz — Zadania mobile
+# uniezz — Zadania mobile
 
 Expo. Taby: **Feed · Chat · Meet · Study · Guide**. Profil i Saved za avatarem. Tylko Bun. Tylko Go API.
 
@@ -124,4 +124,4 @@ Szacunki: **0.5d albo 1d**. Sprint = dwa tygodnie, około 10d.
 
 ---
 
-_Dokument: TASKS mobile (PL) · Uniezz · v1.1_
+_Dokument: TASKS mobile (PL) · uniezz · v1.1_

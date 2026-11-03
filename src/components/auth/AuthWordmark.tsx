@@ -7,7 +7,7 @@ export const AuthWordmark = () => {
   return (
     <Animated.View entering={wordmarkEntering}>
       <UIText weight="semibold" size="lg">
-        Uniezz
+        uniezz
       </UIText>
     </Animated.View>
   );

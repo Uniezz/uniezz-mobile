@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Uniezz",
-    "slug": "Uniezz",
+    "name": "uniezz",
+    "slug": "uniezz",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -13,8 +13,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/icon.png"
+        "backgroundColor": "#5B7CFF",
+        "foregroundImage": "./assets/images/adaptive-icon.png"
       },
       "predictiveBackGestureEnabled": false,
       "package": "com.uniezz"
@@ -28,7 +28,7 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#208AEF",
+          "backgroundColor": "#5B7CFF",
           "android": {
             "image": "./assets/images/splash-screen.png",
             "imageWidth": 76
@@ -64,7 +64,8 @@
       "reactCompiler": true
     },
     "splash": {
-      "image": "./assets/images/splash-screen.png"
+      "image": "./assets/images/splash-screen.png",
+      "backgroundColor": "#5B7CFF"
     }
   }
 }

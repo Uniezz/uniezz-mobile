@@ -1,6 +1,6 @@
 # Proprietary Source-Available License
 
-Copyright (c) 2026 Kyrylo Kapinos / Uniezz
+Copyright (c) 2026 Kyrylo Kapinos / uniezz
 All rights reserved.
 
 ## 1. Definitions
@@ -9,7 +9,7 @@ For the purposes of this License:
 
 **"Software"** means the source code, object code, documentation, configuration, assets, scripts, tests, designs, and other materials contained in or distributed with this repository, except for materials expressly identified as being subject to a separate third-party license.
 
-**"Copyright Holder"** means Kyrylo Kapinos / Uniezz and any entity that owns or controls the copyright in the Software.
+**"Copyright Holder"** means Kyrylo Kapinos / uniezz and any entity that owns or controls the copyright in the Software.
 
 **"Organization"** means the organization controlled by the Copyright Holder through which the Software is developed and maintained.
 
@@ -243,7 +243,7 @@ A commercial license may permit activities otherwise prohibited by this License.
 
 For commercial licensing inquiries, contact:
 
-**Kyrylo Kapinos / Uniezz**
+**Kyrylo Kapinos / uniezz**
 **EMAIL:** [your-email@example.com](mailto:your-email@example.com)
 
 ## 19. Governing Law
@@ -262,4 +262,4 @@ If you do not agree to the terms of this License, you are not granted permission
 
 **PROPRIETARY SOFTWARE — SOURCE AVAILABLE FOR VIEWING**
 
-Copyright © 2026 Kyrylo Kapinos / Uniezz. All rights reserved.
+Copyright © 2026 Kyrylo Kapinos / uniezz. All rights reserved.

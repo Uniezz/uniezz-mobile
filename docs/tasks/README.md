@@ -1,4 +1,4 @@
-# Uniezz — Product plan
+# uniezz — Product plan
 
 What we build, in which order, and when it is done. Four teams work at the same time: backend, web, mobile, testing.
 
