@@ -1,8 +1,8 @@
-# Uniezz — Opis produktu
+# uniezz — Opis produktu
 
 ## Przegląd
 
-**Uniezz** to aplikacja webowa dla studentów lubelskich uczelni wyższych. Platforma łączy studentów pięciu wydziałów akademickich miasta w jednej przestrzeni: komunikacja, wymiana wiedzy, praktyczne informacje o życiu w Lublinie oraz poznawanie nowych osób.
+**uniezz** to aplikacja webowa dla studentów lubelskich uczelni wyższych. Platforma łączy studentów pięciu wydziałów akademickich miasta w jednej przestrzeni: komunikacja, wymiana wiedzy, praktyczne informacje o życiu w Lublinie oraz poznawanie nowych osób.
 
 ### Docelowe uczelnie
 
@@ -113,7 +113,7 @@ Aplikacja obsługuje cztery języki:
 
 ## Wartość dla studentów
 
-| Problem                                               | Rozwiązanie w Uniezz                              |
+| Problem                                               | Rozwiązanie w uniezz                              |
 | ----------------------------------------------------- | ------------------------------------------------- |
 | Rozproszone czaty i grupy w mediach społecznościowych | Jedna platforma dla wszystkich lubelskich uczelni |
 | Trudno znaleźć materiały do egzaminów                 | Archiwum egzaminów i opinie o przedmiotach        |
@@ -134,4 +134,4 @@ Aplikacja obsługuje cztery języki:
 
 ---
 
-_Dokument: PRODUCT_DESCRIPTION (PL) · Uniezz · v1.2_
+_Dokument: PRODUCT_DESCRIPTION (PL) · uniezz · v1.2_

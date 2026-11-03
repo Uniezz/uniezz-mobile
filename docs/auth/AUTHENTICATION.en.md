@@ -1,15 +1,15 @@
-# Uniezz — Authentication
+# uniezz — Authentication
 
 ## Overview
 
-Uniezz verifies that a user is a real, active student before granting access. Five universities, one entry point on the **Go API** for web and mobile. No Supabase.
+uniezz verifies that a user is a real, active student before granting access. Five universities, one entry point on the **Go API** for web and mobile. No Supabase.
 
 ### Designed sign-in UX
 
 | Selection                          | On **Continue**                                                                          | Then                                  |
 | ---------------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------- |
-| **UMCS**                           | Immediately open USOS auth (same idea as Google OAuth — leave Uniezz, finish at the IdP) | USOS redirect → feed                  |
-| **KUL · Politechnika · UP · WSEI** | Stay in Uniezz                                                                           | University email → 6-digit OTP → feed |
+| **UMCS**                           | Immediately open USOS auth (same idea as Google OAuth — leave uniezz, finish at the IdP) | USOS redirect → feed                  |
+| **KUL · Politechnika · UP · WSEI** | Stay in uniezz                                                                           | University email → 6-digit OTP → feed |
 
 | University                   | Provider in product UX | Verified data                      |
 | ---------------------------- | ---------------------- | ---------------------------------- |
@@ -57,19 +57,19 @@ USOS API uses OAuth 1.0a (three-legged), not OAuth 2.0. All request signing happ
 | Authorize     | `https://apps.umcs.pl/services/oauth/authorize`     |
 | Access token  | `https://apps.umcs.pl/services/oauth/access_token`  |
 
-1. **Request token** — backend calls `request_token` with the Consumer Key, the requested `scopes`, and an `oauth_callback` pointing at Uniezz
+1. **Request token** — backend calls `request_token` with the Consumer Key, the requested `scopes`, and an `oauth_callback` pointing at uniezz
 2. **Redirect** — the user is sent to `authorize` and logs in with their UMCS credentials on the university's own page
 3. **Consent** — the user approves the scopes; USOS redirects back with `oauth_token` and `oauth_verifier`
 4. **Access token** — backend exchanges the verifier for a long-lived access token and secret
-5. **Fetch profile** — backend calls the API with the signed token and creates or updates the Uniezz account
+5. **Fetch profile** — backend calls the API with the signed token and creates or updates the uniezz account
 
-The user's UMCS password is entered only on the UMCS page and is never visible to Uniezz.
+The user's UMCS password is entered only on the UMCS page and is never visible to uniezz.
 
 ### Scopes
 
 None of these require administrator approval.
 
-| Scope            | Purpose in Uniezz                                                             |
+| Scope            | Purpose in uniezz                                                             |
 | ---------------- | ----------------------------------------------------------------------------- |
 | _(default)_      | Basic identity — user ID, first and last name                                 |
 | `studies`        | Programmes, courses, group lists — the source of faculty, programme, and year |
@@ -78,9 +78,9 @@ None of these require administrator approval.
 | `personal`       | Date of birth — age gates, birthday features, age filters in Connections      |
 | `offline_access` | Long-lived token so the profile can be refreshed between sessions             |
 
-**On `personal`:** this scope is requested for the date of birth, which Uniezz needs for age gates and for age filters in the Connections module. The same scope also returns PESEL and other identifiers — those are discarded at read time and never written to the database or the logs.
+**On `personal`:** this scope is requested for the date of birth, which uniezz needs for age gates and for age filters in the Connections module. The same scope also returns PESEL and other identifiers — those are discarded at read time and never written to the database or the logs.
 
-**Deliberately not requested:** `grades`, `payments`, `mobile_numbers`. Uniezz has no use for them and requesting them lowers consent rates.
+**Deliberately not requested:** `grades`, `payments`, `mobile_numbers`. uniezz has no use for them and requesting them lowers consent rates.
 
 ### Data Retrieved
 
@@ -111,7 +111,7 @@ Register one **multi-tenant** application in Entra ID, then allow only the tenan
 
 ### Students Only
 
-Uniezz is a student platform — staff accounts must not be able to sign in. The tenant ID alone is not enough to enforce this, because Politechnika Lubelska, Uniwersytet Przyrodniczy, and WSEI keep students and staff in one tenant. Enforcement is layered:
+uniezz is a student platform — staff accounts must not be able to sign in. The tenant ID alone is not enough to enforce this, because Politechnika Lubelska, Uniwersytet Przyrodniczy, and WSEI keep students and staff in one tenant. Enforcement is layered:
 
 1. **Tenant allowlist** — settles KUL outright, since its students live in their own tenant
 2. **UPN domain** — where the university issues student mail on a subdomain (`student.`, `stud.`), only those addresses are accepted
@@ -168,7 +168,7 @@ Limits: 3 codes per email per hour, 10 per IP per hour, 5 attempts before the co
 
 ## Unified Authentication Endpoint
 
-Web and mobile never talk to USOS, Entra, or the mail provider. They talk to one Uniezz Go API, which dispatches to the right provider internally.
+Web and mobile never talk to USOS, Entra, or the mail provider. They talk to one uniezz Go API, which dispatches to the right provider internally.
 
 ### Public API
 
@@ -177,7 +177,7 @@ Web and mobile never talk to USOS, Entra, or the mail provider. They talk to one
 | `POST /auth/start`             | Body: `{ university, provider? }`. Returns the redirect URL for the chosen provider, or starts the OTP flow |
 | `GET /auth/callback/:provider` | Single callback surface. Handles the USOS verifier, the Entra authorization code, and OTP submission        |
 | `GET /auth/me`                 | Current session profile                                                                                     |
-| `POST /auth/logout`            | Clears the Uniezz session                                                                                   |
+| `POST /auth/logout`            | Clears the uniezz session                                                                                   |
 
 `:provider` is one of `usos`, `entra`, `otp`.
 
@@ -231,9 +231,9 @@ A new university needs a provider entry and a tenant or installation ID. Routes,
 ## Session Model
 
 - Provider tokens live in the backend only; the browser never sees them
-- The frontend holds a Uniezz session cookie — `HttpOnly`, `Secure`, `SameSite=Lax`
+- The frontend holds a uniezz session cookie — `HttpOnly`, `Secure`, `SameSite=Lax`
 - Profile data is refreshed on login and on demand, not on every request
-- Logout clears the Uniezz session; the provider authorization stays until the user revokes it at the source
+- Logout clears the uniezz session; the provider authorization stays until the user revokes it at the source
 
 ---
 
@@ -242,7 +242,7 @@ A new university needs a provider entry and a tenant or installation ID. Routes,
 - Consumer secrets, client secrets, and access tokens stored encrypted at rest, kept out of logs
 - Requested scopes are the minimum the product needs
 - PESEL and other identifiers returned alongside the date of birth are discarded on read and never stored
-- Users can disconnect a linked account and delete their Uniezz profile
+- Users can disconnect a linked account and delete their uniezz profile
 - Provider authorization is independently revocable by the user in USOSweb or in their Microsoft account
 - Personal data handling follows GDPR: stated purpose, minimal scope, deletion on request
 
@@ -282,4 +282,4 @@ A new university needs a provider entry and a tenant or installation ID. Routes,
 
 ---
 
-_Document: AUTHENTICATION (EN) · Uniezz · v2.3_
+_Document: AUTHENTICATION (EN) · uniezz · v2.3_

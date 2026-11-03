@@ -1,8 +1,8 @@
-# Uniezz — Autoryzacja
+# uniezz — Autoryzacja
 
 ## Przegląd
 
-Uniezz weryfikuje, czy użytkownik jest rzeczywistym, aktywnym studentem, zanim przyzna mu dostęp. Pięć uczelni, trzech dostawców tożsamości, jeden punkt wejścia na **Go API** dla webu i mobile.
+uniezz weryfikuje, czy użytkownik jest rzeczywistym, aktywnym studentem, zanim przyzna mu dostęp. Pięć uczelni, trzech dostawców tożsamości, jeden punkt wejścia na **Go API** dla webu i mobile.
 
 | Uczelnia                     | Dostawca                  | Zweryfikowane dane                                 |
 | ---------------------------- | ------------------------- | -------------------------------------------------- |
@@ -49,19 +49,19 @@ USOS API używa OAuth 1.0a (trójetapowego), nie OAuth 2.0. Podpisywanie żąda�
 | Authorize     | `https://apps.umcs.pl/services/oauth/authorize`     |
 | Access token  | `https://apps.umcs.pl/services/oauth/access_token`  |
 
-1. **Request token** — backend wywołuje `request_token` z Consumer Key, listą `scopes` oraz `oauth_callback` wskazującym na Uniezz
+1. **Request token** — backend wywołuje `request_token` z Consumer Key, listą `scopes` oraz `oauth_callback` wskazującym na uniezz
 2. **Przekierowanie** — użytkownik trafia na `authorize` i loguje się danymi UMCS na stronie uczelni
 3. **Zgoda** — użytkownik zatwierdza uprawnienia; USOS przekierowuje go z `oauth_token` i `oauth_verifier`
 4. **Access token** — backend wymienia verifier na długoterminowy token dostępu wraz z sekretem
-5. **Pobranie profilu** — backend wywołuje API podpisanym tokenem i tworzy lub aktualizuje konto Uniezz
+5. **Pobranie profilu** — backend wywołuje API podpisanym tokenem i tworzy lub aktualizuje konto uniezz
 
-Hasło do UMCS wpisywane jest wyłącznie na stronie UMCS i nigdy nie jest widoczne dla Uniezz.
+Hasło do UMCS wpisywane jest wyłącznie na stronie UMCS i nigdy nie jest widoczne dla uniezz.
 
 ### Zakresy uprawnień (scopes)
 
 Żaden z nich nie wymaga zgody administratora.
 
-| Scope            | Zastosowanie w Uniezz                                                             |
+| Scope            | Zastosowanie w uniezz                                                             |
 | ---------------- | --------------------------------------------------------------------------------- |
 | _(domyślny)_     | Podstawowa tożsamość — identyfikator, imię i nazwisko                             |
 | `studies`        | Programy, przedmioty, listy grup — źródło wydziału, kierunku i roku studiów       |
@@ -70,7 +70,7 @@ Hasło do UMCS wpisywane jest wyłącznie na stronie UMCS i nigdy nie jest widoc
 | `personal`       | Data urodzenia — ograniczenia wiekowe, urodziny, filtry wieku w module Znajomości |
 | `offline_access` | Długoterminowy token pozwalający odświeżać profil między sesjami                  |
 
-**O zakresie `personal`:** żądany jest ze względu na datę urodzenia, potrzebną Uniezz do ograniczeń wiekowych oraz filtrów wieku w module Znajomości. Ten sam zakres zwraca PESEL i inne identyfikatory — są one odrzucane przy odczycie i nigdy nie trafiają do bazy ani do logów.
+**O zakresie `personal`:** żądany jest ze względu na datę urodzenia, potrzebną uniezz do ograniczeń wiekowych oraz filtrów wieku w module Znajomości. Ten sam zakres zwraca PESEL i inne identyfikatory — są one odrzucane przy odczycie i nigdy nie trafiają do bazy ani do logów.
 
 **Świadomie nieżądane:** `grades`, `payments`, `mobile_numbers`. Produkt ich nie potrzebuje, a ich żądanie obniża odsetek udzielonych zgód.
 
@@ -103,7 +103,7 @@ Rejestrowana jest jedna aplikacja **multi-tenant** w Entra ID, a następnie dopu
 
 ### Wyłącznie studenci
 
-Uniezz to platforma studencka — konta pracownicze nie mogą się logować. Samo tenant ID tego nie zapewnia, ponieważ Politechnika Lubelska, Uniwersytet Przyrodniczy i WSEI trzymają studentów oraz pracowników w jednym tenancie. Ograniczenie jest warstwowe:
+uniezz to platforma studencka — konta pracownicze nie mogą się logować. Samo tenant ID tego nie zapewnia, ponieważ Politechnika Lubelska, Uniwersytet Przyrodniczy i WSEI trzymają studentów oraz pracowników w jednym tenancie. Ograniczenie jest warstwowe:
 
 1. **Biała lista tenantów** — całkowicie rozstrzyga sprawę KUL, którego studenci mają własny tenant
 2. **Domena UPN** — tam, gdzie uczelnia wydaje pocztę studencką na subdomenie (`student.`, `stud.`), dopuszczane są wyłącznie takie adresy
@@ -160,7 +160,7 @@ Limity: 3 kody na adres na godzinę, 10 na IP na godzinę, 5 prób przed uniewa�
 
 ## Jednolity endpoint autoryzacji
 
-Web i mobile nigdy nie komunikują się z USOS, Entra ani dostawcą poczty. Rozmawiają z jednym Go API Uniezz, które wewnętrznie kieruje żądanie do właściwego dostawcy.
+Web i mobile nigdy nie komunikują się z USOS, Entra ani dostawcą poczty. Rozmawiają z jednym Go API uniezz, które wewnętrznie kieruje żądanie do właściwego dostawcy.
 
 ### Publiczne API
 
@@ -169,7 +169,7 @@ Web i mobile nigdy nie komunikują się z USOS, Entra ani dostawcą poczty. Rozm
 | `POST /auth/start`             | Treść: `{ university, provider? }`. Zwraca URL przekierowania wybranego dostawcy lub rozpoczyna przepływ OTP |
 | `GET /auth/callback/:provider` | Jeden punkt zwrotny. Obsługuje verifier z USOS, kod autoryzacyjny Entra oraz wprowadzenie OTP                |
 | `GET /auth/me`                 | Profil bieżącej sesji                                                                                        |
-| `POST /auth/logout`            | Czyści sesję Uniezz                                                                                          |
+| `POST /auth/logout`            | Czyści sesję uniezz                                                                                          |
 
 `:provider` to jedno z `usos`, `entra`, `otp`.
 
@@ -223,9 +223,9 @@ Nowa uczelnia wymaga wpisu dostawcy oraz identyfikatora tenanta lub instalacji. 
 ## Model sesji
 
 - Tokeny dostawców przechowywane są wyłącznie w backendzie, przeglądarka ich nie widzi
-- Frontend korzysta z ciasteczka sesji Uniezz — `HttpOnly`, `Secure`, `SameSite=Lax`
+- Frontend korzysta z ciasteczka sesji uniezz — `HttpOnly`, `Secure`, `SameSite=Lax`
 - Dane profilu odświeżane są przy logowaniu i na żądanie, nie przy każdym zapytaniu
-- Wylogowanie czyści sesję Uniezz; autoryzacja u dostawcy pozostaje do czasu jej cofnięcia u źródła
+- Wylogowanie czyści sesję uniezz; autoryzacja u dostawcy pozostaje do czasu jej cofnięcia u źródła
 
 ---
 
@@ -234,7 +234,7 @@ Nowa uczelnia wymaga wpisu dostawcy oraz identyfikatora tenanta lub instalacji. 
 - Consumer secret, client secret i tokeny dostępu przechowywane w postaci zaszyfrowanej, nietrafiające do logów
 - Żądany jest minimalny zakres uprawnień potrzebny produktowi
 - PESEL i inne identyfikatory zwracane wraz z datą urodzenia są odrzucane przy odczycie i nigdy nieprzechowywane
-- Użytkownik może odłączyć powiązane konto i usunąć profil Uniezz
+- Użytkownik może odłączyć powiązane konto i usunąć profil uniezz
 - Autoryzację u dostawcy użytkownik może niezależnie cofnąć w USOSweb lub na swoim koncie Microsoft
 - Przetwarzanie danych osobowych zgodne z RODO: określony cel, minimalny zakres, usunięcie na żądanie
 
@@ -274,4 +274,4 @@ Nowa uczelnia wymaga wpisu dostawcy oraz identyfikatora tenanta lub instalacji. 
 
 ---
 
-_Dokument: AUTHENTICATION (PL) · Uniezz · v2.3_
+_Dokument: AUTHENTICATION (PL) · uniezz · v2.3_

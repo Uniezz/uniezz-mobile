@@ -1,4 +1,4 @@
-# Uniezz mobile
+# uniezz mobile
 
 Expo / React Native app. Package manager is **Bun** — use `bun` / `bunx`, not npm or npx.
 

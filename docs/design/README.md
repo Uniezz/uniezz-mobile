@@ -1,4 +1,4 @@
-# Uniezz — Design
+# uniezz — Design
 
 Source of truth: **`uniezz-web-app.pen`** (pen.dev). Everything below is exported from it — regenerate the exports rather than editing them by hand.
 
@@ -24,9 +24,9 @@ Also: [Web UI Kit](exports/kit/00-ui-kit.png) · [iOS UIKit](exports/kit/uikit.p
 | Selection                        | Continue                                   | Next steps                               |
 | -------------------------------- | ------------------------------------------ | ---------------------------------------- |
 | **UMCS** (USOS)                  | Opens USOS auth in the browser immediately | User finishes on USOS → redirect to feed |
-| **Any other university** (Email) | Stays in Uniezz                            | Email input → 6-digit OTP → feed         |
+| **Any other university** (Email) | Stays in uniezz                            | Email input → 6-digit OTP → feed         |
 
-Same pattern as any OAuth provider (USOS today; Google-style IdP would also leave the app on Continue). Non-USOS universities use university-domain email + OTP — no password on Uniezz.
+Same pattern as any OAuth provider (USOS today; Google-style IdP would also leave the app on Continue). Non-USOS universities use university-domain email + OTP — no password on uniezz.
 
 The web app uses a left sidebar; mobile collapses it to five bottom tabs — **Feed · Chat · Meet · Study · Guide**. Tab bar is **iOS 26 liquid glass** (`UITabBar`). Status bar is native (not drawn). `My Profile` and `Saved` have no tab; profile sits behind the avatar in the app bar.
 

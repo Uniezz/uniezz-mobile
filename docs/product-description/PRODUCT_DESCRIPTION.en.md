@@ -1,8 +1,8 @@
-# Uniezz — Product Description
+# uniezz — Product Description
 
 ## Overview
 
-**Uniezz** is a web application for students of Lublin universities. The platform brings together students from five institutions in one space: communication, knowledge sharing, practical information about life in Lublin, and finding new connections.
+**uniezz** is a web application for students of Lublin universities. The platform brings together students from five institutions in one space: communication, knowledge sharing, practical information about life in Lublin, and finding new connections.
 
 ### Target Universities
 
@@ -113,7 +113,7 @@ Strict content moderation is a core principle of the platform:
 
 ## Value for Students
 
-| Problem                                          | Uniezz Solution                            |
+| Problem                                          | uniezz Solution                            |
 | ------------------------------------------------ | ------------------------------------------ |
 | Scattered chats and groups across social media   | One platform for all Lublin universities   |
 | Hard to find exam materials                      | Exam archive and course reviews            |
@@ -134,4 +134,4 @@ Strict content moderation is a core principle of the platform:
 
 ---
 
-_Document: PRODUCT_DESCRIPTION (EN) · Uniezz · v1.2_
+_Document: PRODUCT_DESCRIPTION (EN) · uniezz · v1.2_

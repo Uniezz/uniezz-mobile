@@ -1,4 +1,4 @@
-# Uniezz — Mobile tasks
+# uniezz — Mobile tasks
 
 Expo app. Tabs: **Feed · Chat · Meet · Study · Guide**. Profile and Saved are behind the avatar. Use Bun (`bun` / `bunx`). Talks only to the Go API.
 
@@ -136,4 +136,4 @@ Estimates: **0.5d or 1d**. Sprint = two weeks, about 10d.
 
 ---
 
-_Document: TASKS mobile (EN) · Uniezz · v1.1_
+_Document: TASKS mobile (EN) · uniezz · v1.1_
