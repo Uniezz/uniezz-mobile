@@ -20,6 +20,7 @@ function RootNavigator(): React.JSX.Element {
         <Stack.Screen name="(auth)" />
       </Stack.Protected>
       <Stack.Protected guard={!!session}>
+        <Stack.Screen name="profile" />
         <Stack.Screen name="(tabs)" />
       </Stack.Protected>
     </Stack>
