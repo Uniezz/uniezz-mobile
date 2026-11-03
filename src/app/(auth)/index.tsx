@@ -2,7 +2,6 @@ import { AuthPage, RowPicker } from "@/components";
 import { useUniversities } from "@/hooks";
 import { Icon, UIButton, UIText } from "@/ui";
 import { router } from "expo-router";
-import { UNIVERSITY_LOGOS } from "@/utils";
 import { useState } from "react";
 import { ScrollView } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
@@ -22,10 +21,9 @@ export default function WelcomeScreen() {
   } = useUniversities();
   const selectedUniversity = universities[selected];
   const selectedAuthMethod = selectedUniversity?.authMethod;
-  const items = universities.map(({ id, name }) => ({
+  const items = universities.map(({ name, authMethod }) => ({
     topText: name,
-    iconText: id.toUpperCase().slice(0, 3),
-    image: UNIVERSITY_LOGOS[id],
+    rightText: authMethod === "OTP" ? t("auth.emailCode") : authMethod,
   }));
 
   const handleContinuePress = () => {
@@ -82,7 +80,7 @@ export default function WelcomeScreen() {
           </UIText>
         </UIButton>
       </Animated.View>
-      <UIText size="sm" color="gray" style={styles.note}>
+      <UIText size="sm" color="secondary" style={styles.note}>
         {t("auth.passwordPrivacy")}
       </UIText>
     </AuthPage>

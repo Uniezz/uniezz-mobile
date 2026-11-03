@@ -1,2 +1,9 @@
 export { PersonalDetailsForm } from "./PersonalDetailsForm";
 export { AddProgrammeForm } from "./AddProgrammeForm";
+export { ProfileHero } from "./ProfileHero";
+export { ProgrammeCard } from "./ProgrammeCard";
+export { UniversityCard } from "./UniversityCard";
+export { PrivacyCard } from "./PrivacyCard";
+export { ProgrammeEditForm } from "./ProgrammeEditForm";
+export { EditableProgramme } from "./EditableProgramme";
+export { InterestChips } from "./InterestChips";

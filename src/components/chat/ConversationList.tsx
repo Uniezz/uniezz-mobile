@@ -1,12 +1,17 @@
-import { useTranslation } from "react-i18next";
 import { LegendList } from "@legendapp/list/react-native";
 import { router } from "expo-router";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Pressable, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { ScreenHeader } from "@/components/ScreenHeader";
-import { UIAvatar, UIChip, UIInput, UIText } from "@/ui";
 import type { Conversation } from "@/@types/chat";
+import { Icon, UIAvatar, UIChip, UIIconButton, UISearch, UIText } from "@/ui";
+
+const FILTERS = [
+  ["all", "app.all"],
+  ["groups", "app.groups"],
+  ["requests", "chat.requests"],
+] as const;
 
 export function ConversationList({
   conversations,
@@ -19,58 +24,58 @@ export function ConversationList({
 }) {
   const { t } = useTranslation();
   const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState("All");
+  const [filter, setFilter] = useState<(typeof FILTERS)[number][0]>("all");
   const visible = conversations.filter(
     (item) =>
       item.name.toLowerCase().includes(search.toLowerCase()) &&
-      (filter !== "Groups" || item.group),
+      (filter !== "groups" || item.group),
   );
   return (
     <>
       <View style={styles.header}>
-        <View style={styles.title}>
-          <ScreenHeader title={t("tabs.chat")} style={styles.screenHeader} />
-        </View>
-        <Pressable
+        <UIText size="xl" weight="bold" style={styles.title}>
+          {t("tabs.chat")}
+        </UIText>
+        <UIIconButton
           accessibilityRole="button"
-          accessibilityLabel="Create group"
+          accessibilityLabel={t("app.createGroup")}
           onPress={onCreate}
         >
-          <UIText color="link" size="lg">
-            ＋
-          </UIText>
-        </Pressable>
+          <Icon name="square-pen" size={18} />
+        </UIIconButton>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Open profile"
+          accessibilityLabel={t("app.profile")}
           onPress={() => router.push("/profile")}
         >
-          <UIAvatar imageSrc={require("../../../assets/profile-cat.png")} />
+          <UIAvatar />
         </Pressable>
       </View>
-      <UIInput
-        placeholder="Search conversations"
+      <UISearch
+        placeholder={t("app.searchConversations")}
         value={search}
         onChangeText={setSearch}
       />
       <View style={styles.filters}>
-        {["All", "Groups", "Requests"].map((item) => (
+        {FILTERS.map(([value, label]) => (
           <UIChip
-            key={item}
-            label={item}
-            selected={filter === item}
-            onPress={() => setFilter(item)}
+            key={value}
+            label={t(label)}
+            selected={filter === value}
+            onPress={() => setFilter(value)}
           />
         ))}
       </View>
       <LegendList
         style={styles.list}
         contentContainerStyle={styles.listContent}
-        data={filter === "Requests" ? [] : visible}
+        data={filter === "requests" ? [] : visible}
         keyExtractor={(item) => item.id}
         ListEmptyComponent={
-          filter === "Requests" ? (
-            <UIText color="secondary">No message requests</UIText>
+          filter === "requests" ? (
+            <UIText color="secondary" style={styles.empty}>
+              {t("chat.noRequests")}
+            </UIText>
           ) : null
         }
         renderItem={({ item }) => (
@@ -79,20 +84,29 @@ export function ConversationList({
             accessibilityRole="button"
             onPress={() => onOpen(item.id)}
           >
-            <UIAvatar placeholderText={item.name[0]} />
+            <UIAvatar size="lg" />
             <View style={styles.rowText}>
-              <UIText weight="semibold">{item.name}</UIText>
-              <UIText size="sm" color="secondary" numberOfLines={1}>
-                {item.preview}
+              <UIText size="rg" weight="semibold" numberOfLines={1}>
+                {item.name}
               </UIText>
-            </View>
-            {item.unread > 0 && (
-              <View style={styles.badge}>
-                <UIText size="xs" color="black" weight="bold">
-                  {item.unread}
+              <View style={styles.bottom}>
+                <UIText
+                  size="body"
+                  color={item.unread > 0 ? "white" : "secondary"}
+                  numberOfLines={1}
+                  style={styles.preview}
+                >
+                  {item.preview}
                 </UIText>
+                {item.unread > 0 ? (
+                  <View style={styles.badge}>
+                    <UIText size="xs" weight="semibold">
+                      {item.unread}
+                    </UIText>
+                  </View>
+                ) : null}
               </View>
-            )}
+            </View>
           </Pressable>
         )}
       />
@@ -101,33 +115,55 @@ export function ConversationList({
 }
 
 const styles = StyleSheet.create((theme) => ({
-  header: { flexDirection: "row", alignItems: "center", gap: theme.s(8) },
-  title: { flex: 1 },
-  screenHeader: { paddingHorizontal: 0, paddingTop: 0 },
-  filters: { flexDirection: "row", gap: theme.s(7) },
+  header: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    gap: theme.s(8),
+  },
+  title: {
+    flex: 1,
+    lineHeight: theme.vs(30),
+  },
+  filters: {
+    flexDirection: "row",
+    gap: theme.s(6),
+  },
   list: {
     flex: 1,
     backgroundColor: theme.colors.surface60,
     borderRadius: theme.vs(24),
+    borderWidth: 1,
+    borderColor: theme.colors.white10,
   },
   listContent: {
     padding: theme.s(6),
     paddingBottom: theme.vs(90),
   },
+  empty: {
+    padding: theme.s(10),
+  },
   row: {
     flexDirection: "row",
     alignItems: "center",
-    minHeight: theme.vs(72),
     gap: theme.s(12),
-    paddingHorizontal: theme.s(8),
+    padding: theme.s(10),
   },
-  rowText: { flex: 1, gap: theme.vs(4) },
-  badge: {
-    width: theme.s(22),
-    height: theme.s(22),
-    borderRadius: 20,
+  rowText: {
+    flex: 1,
+    gap: theme.vs(3),
+  },
+  bottom: {
+    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: theme.colors.white,
+    gap: theme.s(8),
+  },
+  preview: {
+    flex: 1,
+  },
+  badge: {
+    paddingVertical: theme.vs(1),
+    paddingHorizontal: theme.s(7),
+    borderRadius: theme.vs(999),
+    backgroundColor: theme.colors.blue,
   },
 }));

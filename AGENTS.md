@@ -36,5 +36,6 @@
 - Keep authentication response handling in the existing API client and session provider lifecycle. When an API middleware needs to clear a session, register and eject it from the provider using the client's middleware API; do not add a module-level callback setter to bridge into React state.
 - Return or await query invalidation promises from mutation callbacks when subsequent work depends on them. Do not prefix `queryClient.invalidateQueries` with `void` to discard its promise.
 - Pass an existing callback directly when its argument signature matches, for example `onRefresh={refetch}`. Do not wrap it solely to write `() => void refetch()`. When the event handler passes an event or the callback needs a guard, use the smallest wrapper and return its promise without `void`.
+- Do not pass inline functions with logic to JSX props, such as `onPress={() => (router.canGoBack() ? router.back() : router.replace("/chat"))}`. Define a named handler in the component body, for example `const handleBackPress = () => { ... }`, and pass `onPress={handleBackPress}`. A direct callback reference such as `onRefresh={refetch}` stays as it is.
 - Preserve existing behavior unless the request calls for changing it.
 - Do not start a development server unless the user explicitly asks.

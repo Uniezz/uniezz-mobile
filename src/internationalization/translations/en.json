@@ -100,6 +100,10 @@
     "faq": "FAQ"
   },
   "feed": {
+    "allStudents": "All students",
+    "commentsCount_one": "{{count}} comment",
+    "commentsCount_other": "{{count}} comments",
+    "addEvent": "Add event",
     "search": "Search...",
     "filters": {
       "all": "All",
@@ -120,6 +124,8 @@
     "lastMonth": "Last 30 days"
   },
   "chat": {
+    "requests": "Requests",
+    "noRequests": "No message requests",
     "action": "New group",
     "subtitle": "Direct messages and group chats",
     "title": "Chat"
@@ -140,6 +146,9 @@
     "men": "Men"
   },
   "exams": {
+    "nextExam": "Your next exam",
+    "days_one": "day",
+    "days_other": "days",
     "action": "Upload material",
     "subtitle": "Past papers, course reviews and professor ratings",
     "title": "Exams & Courses"
@@ -150,6 +159,7 @@
     "title": "Guide"
   },
   "faq": {
+    "subtitle": "Answers from students in Lublin",
     "title": "FAQ",
     "empty": "No questions here yet."
   },
@@ -390,6 +400,10 @@
     "studyLevelDoctoral": "Doctoral"
   },
   "postComposer": {
+    "audience": "Who can see it",
+    "audienceAll": "Everyone on uniezz in Lublin",
+    "audienceUniversity": "Only {{university}}",
+    "editNote": "Post type and audience can't be changed after posting.",
     "duplicatePhoto": "This photo has already been added.",
     "photos": "Photos (optional)",
     "photosHint": "Up to 10 photos · JPG, PNG or WebP · 10 MB each",

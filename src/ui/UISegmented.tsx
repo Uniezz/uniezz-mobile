@@ -26,9 +26,9 @@ export const UISegmented = ({
             onPress={() => onPress(index)}
           >
             <UIText
-              size="sm"
-              color={isSelected ? "black" : "secondary"}
-              weight={isSelected ? "bold" : "semibold"}
+              size="body"
+              color={isSelected ? "black" : "soft"}
+              weight="semibold"
             >
               {item}
             </UIText>
@@ -41,9 +41,9 @@ export const UISegmented = ({
 
 const styles = StyleSheet.create((theme) => ({
   container: {
-    gap: theme.s(2),
+    gap: theme.s(3),
     borderRadius: theme.vs(999),
-    backgroundColor: theme.colors.white5,
+    backgroundColor: theme.colors.surface60,
     borderWidth: 1,
     borderColor: theme.colors.white10,
     flexDirection: "row",
@@ -58,7 +58,6 @@ const styles = StyleSheet.create((theme) => ({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: theme.vs(999),
-    height: theme.vs(33),
-    boxShadow: isSelected ? "0 1px 3px rgba(11, 22, 51, 0.08)" : undefined,
+    height: theme.vs(34),
   }),
 }));

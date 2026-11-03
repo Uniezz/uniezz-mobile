@@ -77,6 +77,14 @@ export const useOtpScreen = () => {
     }
   });
 
+  const onResendPress = async () => {
+    try {
+      await requestCode({ email, university });
+    } catch {
+      setError("code", { message: "otp.sendFailed" });
+    }
+  };
+
   const onBackPress = () => {
     if (isEmailStep) {
       router.back();
@@ -119,6 +127,8 @@ export const useOtpScreen = () => {
     onCodeChange,
     onButtonPress,
     onBackPress,
+    onResendPress,
+    isRequesting,
     props,
     getCellOnLayoutHandler,
     cellCount: CELL_COUNT,

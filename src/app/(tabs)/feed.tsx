@@ -1,25 +1,37 @@
-import { useTranslation } from "react-i18next";
+import { FlashList } from "@shopify/flash-list";
 import { router } from "expo-router";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Pressable, View } from "react-native";
-import { FlashList } from "@shopify/flash-list";
 import { StyleSheet } from "react-native-unistyles";
+import { EventStories, FeedFilters, FeedPostCard } from "@/components/feed";
+import type { FeedFilterValues } from "@/@types/feed";
 import { useFeedPosts } from "@/hooks/useFeed";
-import { FEED_TYPES, matchesSearch } from "@/utils";
+import { useMyProfile } from "@/hooks/useMyProfile";
 import {
-  UIChip,
-  UIGlass,
+  Icon,
+  UIAvatar,
+  UIIconButton,
   UIPage,
   UIQueryError,
   UISearch,
   UISkeleton,
   UIText,
 } from "@/ui";
+import { DATE_PRESETS, datePresetFrom, matchesSearch } from "@/utils";
 
 export default function FeedScreen() {
   const { t } = useTranslation();
   const [search, setSearch] = useState("");
-  const [type, setType] = useState<(typeof FEED_TYPES)[number]>("all");
+  const [isSearching, setIsSearching] = useState(false);
+  const [filters, setFilters] = useState<FeedFilterValues>({
+    type: "all",
+    university: null,
+    date: "any",
+  });
+  const { data: profile } = useMyProfile();
+  const handleToggleSearch = () => setIsSearching(!isSearching);
+  const handleProfilePress = () => router.push("/profile");
   const {
     data,
     isPending,
@@ -29,7 +41,13 @@ export default function FeedScreen() {
     hasNextPage,
     isFetchingNextPage,
     isRefetching,
-  } = useFeedPosts(type === "all" ? {} : { type });
+  } = useFeedPosts({
+    type: filters.type === "all" ? undefined : filters.type,
+    university: filters.university ?? undefined,
+    from: datePresetFrom(
+      DATE_PRESETS.find(([date]) => date === filters.date)?.[2] ?? null,
+    ),
+  });
   const posts = data?.pages.flatMap((page) => page.items ?? []) ?? [];
   const visible = posts.filter((post) =>
     matchesSearch(
@@ -42,6 +60,10 @@ export default function FeedScreen() {
       ...(post.tags ?? []),
     ),
   );
+  const events = posts.filter(
+    (post) => post.type === "event" && post.mediaUrls?.length,
+  );
+
   return (
     <UIPage backdrop="city">
       <FlashList
@@ -57,65 +79,60 @@ export default function FeedScreen() {
         }}
         ListHeaderComponent={
           <View style={styles.header}>
-            <UIText size="xl" weight="bold">
-              {t("tabs.feed")}
-            </UIText>
-            <UISearch
-              placeholder="Search posts"
-              value={search}
-              onChangeText={setSearch}
-            />
-            <View style={styles.filters}>
-              {FEED_TYPES.map((item) => (
-                <UIChip
-                  key={item}
-                  label={item}
-                  selected={type === item}
-                  onPress={() => setType(item)}
-                />
-              ))}
+            <View style={styles.titleRow}>
+              <View style={styles.title}>
+                <UIText size="sm" weight="medium" color="secondary">
+                  {t("app.feedSubtitle")}
+                </UIText>
+                <UIText size="title1" weight="bold" style={styles.h1}>
+                  {t("tabs.feed")}
+                </UIText>
+              </View>
+              <UIIconButton
+                accessibilityRole="button"
+                accessibilityLabel={t("topbar.search")}
+                onPress={handleToggleSearch}
+              >
+                <Icon name="search" size={18} />
+              </UIIconButton>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={t("app.profile")}
+                onPress={handleProfilePress}
+              >
+                <UIAvatar imageSrc={profile?.avatarUrl} />
+              </Pressable>
             </View>
+            {isSearching ? (
+              <View style={styles.searchPanel}>
+                <UISearch
+                  autoFocus
+                  placeholder={t("feed.search")}
+                  value={search}
+                  onChangeText={setSearch}
+                />
+                <FeedFilters value={filters} onChange={setFilters} />
+              </View>
+            ) : null}
+            {!isSearching ? <EventStories events={events} /> : null}
           </View>
         }
         ListEmptyComponent={
           isPending ? (
             <UISkeleton height={180} />
           ) : isError ? (
-            <UIQueryError message="Couldn’t load posts" onRetry={refetch} />
+            <UIQueryError message={t("apiState.error")} onRetry={refetch} />
           ) : (
-            <UIText color="secondary">No posts found</UIText>
+            <UIText color="secondary">{t("app.empty")}</UIText>
           )
         }
         ListFooterComponent={
           isFetchingNextPage ? <UISkeleton height={110} /> : null
         }
         renderItem={({ item }) => (
-          <Pressable
-            accessibilityRole="button"
-            onPress={() =>
-              router.push({
-                pathname: "/feed/post/[id]",
-                params: { id: item.id },
-              })
-            }
-            style={styles.cell}
-          >
-            <UIGlass style={styles.card}>
-              <UIText size="xs" color="link">
-                {item.type.toUpperCase()}
-              </UIText>
-              <UIText size="md" weight="semibold">
-                {item.title}
-              </UIText>
-              <UIText size="sm" color="secondary" numberOfLines={4}>
-                {item.content}
-              </UIText>
-              <UIText size="xs" color="secondary">
-                {item.author.firstName} {item.author.lastName} ·{" "}
-                {item.university}
-              </UIText>
-            </UIGlass>
-          </Pressable>
+          <View style={styles.cell}>
+            <FeedPostCard post={item} />
+          </View>
         )}
       />
     </UIPage>
@@ -123,9 +140,35 @@ export default function FeedScreen() {
 }
 
 const styles = StyleSheet.create((theme) => ({
-  list: { paddingHorizontal: theme.s(12), paddingBottom: theme.vs(100) },
-  header: { gap: theme.vs(14), padding: theme.s(8) },
-  filters: { flexDirection: "row", flexWrap: "wrap", gap: theme.s(8) },
-  cell: { padding: theme.s(5) },
-  card: { padding: theme.s(14), gap: theme.vs(8) },
+  list: {
+    paddingTop: theme.vs(4),
+    paddingHorizontal: theme.s(11),
+    paddingBottom: theme.vs(110),
+  },
+  header: {
+    gap: theme.vs(16),
+    paddingHorizontal: theme.s(5),
+    paddingBottom: theme.vs(16),
+  },
+  titleRow: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    gap: theme.s(8),
+  },
+  title: {
+    flex: 1,
+    gap: theme.vs(4),
+  },
+  h1: {
+    letterSpacing: -1,
+    lineHeight: theme.vs(26),
+  },
+  searchPanel: {
+    gap: theme.vs(12),
+  },
+  // masonry has no column gap prop: 5 + 5 cell padding makes the 10pt gap
+  cell: {
+    paddingHorizontal: theme.s(5),
+    paddingBottom: theme.vs(10),
+  },
 }));

@@ -100,6 +100,12 @@
     "faq": "FAQ"
   },
   "feed": {
+    "allStudents": "Все студенты",
+    "commentsCount_one": "{{count}} комментарий",
+    "commentsCount_few": "{{count}} комментария",
+    "commentsCount_many": "{{count}} комментариев",
+    "commentsCount_other": "{{count}} комментария",
+    "addEvent": "Добавить событие",
     "search": "Поиск...",
     "filters": {
       "all": "Все",
@@ -120,6 +126,8 @@
     "lastMonth": "Последние 30 дней"
   },
   "chat": {
+    "requests": "Запросы",
+    "noRequests": "Нет запросов на сообщения",
     "action": "Новая группа",
     "subtitle": "Личные сообщения и групповые чаты",
     "title": "Чат"
@@ -140,6 +148,11 @@
     "men": "Парней"
   },
   "exams": {
+    "nextExam": "Твой ближайший экзамен",
+    "days_one": "день",
+    "days_few": "дня",
+    "days_many": "дней",
+    "days_other": "дня",
     "action": "Загрузить материал",
     "subtitle": "Прошлые экзамены, отзывы о курсах и оценки преподавателей",
     "title": "Экзамены и курсы"
@@ -150,6 +163,7 @@
     "title": "Гид"
   },
   "faq": {
+    "subtitle": "Ответы от студентов в Люблине",
     "title": "Частые вопросы",
     "empty": "Здесь пока нет вопросов."
   },
@@ -390,6 +404,10 @@
     "studyLevelDoctoral": "Докторантура"
   },
   "postComposer": {
+    "audience": "Кто может видеть",
+    "audienceAll": "Все в uniezz в Люблине",
+    "audienceUniversity": "Только {{university}}",
+    "editNote": "Тип публикации и аудиторию нельзя изменить после публикации.",
     "duplicatePhoto": "Эта фотография уже добавлена.",
     "photos": "Фотографии (необязательно)",
     "photosHint": "До 10 фото · JPG, PNG или WebP · до 10 МБ каждое",

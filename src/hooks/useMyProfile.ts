@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   addMyProgramme,
+  deleteMyAvatar,
   deleteMyProgramme,
   getMyProfile,
   replaceMyProgramme,
@@ -49,6 +50,15 @@ export function useDeleteMyProgramme() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: deleteMyProgramme,
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["profile", "me"] }),
+  });
+}
+
+export function useDeleteMyAvatar() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteMyAvatar,
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: ["profile", "me"] }),
   });

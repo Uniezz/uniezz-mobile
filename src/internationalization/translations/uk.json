@@ -100,6 +100,12 @@
     "faq": "FAQ"
   },
   "feed": {
+    "allStudents": "Усі студенти",
+    "commentsCount_one": "{{count}} коментар",
+    "commentsCount_few": "{{count}} коментарі",
+    "commentsCount_many": "{{count}} коментарів",
+    "commentsCount_other": "{{count}} коментаря",
+    "addEvent": "Додати подію",
     "search": "Пошук...",
     "filters": {
       "all": "Усе",
@@ -120,6 +126,8 @@
     "lastMonth": "Останні 30 днів"
   },
   "chat": {
+    "requests": "Запити",
+    "noRequests": "Немає запитів на повідомлення",
     "action": "Нова група",
     "subtitle": "Особисті повідомлення та групові чати",
     "title": "Чат"
@@ -140,6 +148,11 @@
     "men": "Хлопців"
   },
   "exams": {
+    "nextExam": "Твій найближчий іспит",
+    "days_one": "день",
+    "days_few": "дні",
+    "days_many": "днів",
+    "days_other": "дня",
     "action": "Завантажити матеріал",
     "subtitle": "Минулі іспити, відгуки про курси та оцінки викладачів",
     "title": "Іспити та курси"
@@ -150,6 +163,7 @@
     "title": "Гід"
   },
   "faq": {
+    "subtitle": "Відповіді від студентів у Любліні",
     "title": "Поширені питання",
     "empty": "Тут ще немає запитань."
   },
@@ -390,6 +404,10 @@
     "studyLevelDoctoral": "Докторантура"
   },
   "postComposer": {
+    "audience": "Хто може бачити",
+    "audienceAll": "Усі в uniezz у Любліні",
+    "audienceUniversity": "Лише {{university}}",
+    "editNote": "Тип допису й аудиторію не можна змінити після публікації.",
     "duplicatePhoto": "Цю фотографію вже додано.",
     "photos": "Фотографії (необов’язково)",
     "photosHint": "До 10 фото · JPG, PNG або WebP · до 10 МБ кожне",

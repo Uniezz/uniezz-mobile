@@ -896,7 +896,7 @@
                       "id": "Skqcn",
                       "name": "H1",
                       "fill": "$white",
-                      "content": "Today on campus",
+                      "content": "Feed",
                       "lineHeight": 1,
                       "fontFamily": "$font",
                       "fontSize": 26,
@@ -1390,356 +1390,647 @@
             },
             {
               "type": "frame",
-              "id": "uB5SA",
-              "name": "Card · Event",
-              "clip": true,
+              "id": "K8tM3i",
+              "name": "Masonry",
               "width": "fill_container",
-              "fill": "$surface60",
-              "cornerRadius": 24,
-              "stroke": "$white10",
-              "strokeWidth": 1,
-              "effect": {
-                "type": "background_blur",
-                "radius": 40
-              },
-              "layout": "vertical",
+              "gap": 10,
               "children": [
                 {
                   "type": "frame",
-                  "id": "X3NuoP",
-                  "name": "Cover",
-                  "width": "fill_container",
-                  "height": 160,
-                  "fill": {
-                    "type": "image",
-                    "enabled": true,
-                    "url": "https://images.unsplash.com/photo-1659928005804-0ec9c656918f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTI5Mzc1MDN8&ixlib=rb-4.1.0&q=80&w=1080",
-                    "mode": "cover"
-                  },
-                  "gap": 6,
-                  "padding": 12,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "JchuL",
-                      "name": "Chip Tonight, 20:00",
-                      "fill": "$ink40",
-                      "cornerRadius": 999,
-                      "stroke": "$white20",
-                      "strokeWidth": 1,
-                      "effect": {
-                        "type": "background_blur",
-                        "radius": 16
-                      },
-                      "gap": 5,
-                      "padding": [
-                        5,
-                        10
-                      ],
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "icon",
-                          "id": "z4HltG",
-                          "name": "Icon",
-                          "width": 13,
-                          "height": 13,
-                          "icon": "calendar",
-                          "library": "lucide",
-                          "fill": "$white"
-                        },
-                        {
-                          "type": "text",
-                          "id": "bEBTM",
-                          "name": "Label",
-                          "fill": "$white",
-                          "content": "Tonight, 20:00",
-                          "fontFamily": "$font",
-                          "fontSize": 12,
-                          "fontWeight": "600"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "Qe0f5",
-                      "name": "Chip Politechnika",
-                      "fill": "$ink40",
-                      "cornerRadius": 999,
-                      "stroke": "$white20",
-                      "strokeWidth": 1,
-                      "effect": {
-                        "type": "background_blur",
-                        "radius": 16
-                      },
-                      "gap": 5,
-                      "padding": [
-                        5,
-                        10
-                      ],
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "lWSFB",
-                          "name": "Label",
-                          "fill": "$white",
-                          "content": "Politechnika",
-                          "fontFamily": "$font",
-                          "fontSize": 12,
-                          "fontWeight": "600"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "LncXw",
-                  "name": "Info",
+                  "id": "sRLZ3",
+                  "name": "Column 1",
                   "width": "fill_container",
                   "layout": "vertical",
                   "gap": 10,
-                  "padding": [
-                    14,
-                    16,
-                    16,
-                    16
-                  ],
                   "children": [
                     {
-                      "type": "text",
-                      "id": "r1MW2J",
-                      "name": "Title",
-                      "fill": "$white",
-                      "content": "Autumn Welcome Party",
-                      "fontFamily": "$font",
-                      "fontSize": 20,
-                      "fontWeight": "600",
-                      "letterSpacing": -0.5
-                    },
-                    {
                       "type": "frame",
-                      "id": "df76c",
-                      "name": "Footer",
+                      "id": "NEkka",
+                      "name": "Post · Autumn Welcome Party",
+                      "clip": true,
                       "width": "fill_container",
-                      "alignItems": "center",
+                      "fill": "$surface60",
+                      "cornerRadius": 20,
+                      "stroke": "$white10",
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "background_blur",
+                        "radius": 40
+                      },
+                      "layout": "vertical",
                       "children": [
                         {
                           "type": "frame",
-                          "id": "xVETI",
-                          "name": "Faces",
-                          "gap": -8,
+                          "id": "pNAaE",
+                          "name": "Cover",
+                          "width": "fill_container",
+                          "height": 120,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1659928005804-0ec9c656918f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTI5Mzc1MDN8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "cover"
+                          },
+                          "padding": 10,
                           "children": [
                             {
                               "type": "frame",
-                              "id": "wJpYg",
-                              "name": "Avatar",
-                              "metadata": {
-                                "type": "unsplash",
-                                "username": "mehrpouya",
-                                "link": "https://unsplash.com/@mehrpouya",
-                                "author": "Mehrpouya H"
-                              },
-                              "width": 24,
-                              "height": 24,
-                              "fill": {
-                                "type": "image",
-                                "enabled": true,
-                                "url": "https://images.unsplash.com/photo-1787100297497-abeb95855602?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTI5NDEwNDl8&ixlib=rb-4.1.0&q=80&w=1080",
-                                "mode": "cover"
-                              },
-                              "cornerRadius": 12,
-                              "stroke": "$surface60",
-                              "strokeWidth": 2
-                            },
-                            {
-                              "type": "frame",
-                              "id": "mr9CI",
-                              "name": "Avatar",
-                              "metadata": {
-                                "type": "unsplash",
-                                "username": "zahir_abbas_hossain",
-                                "link": "https://unsplash.com/@zahir_abbas_hossain",
-                                "author": "Zahir Abbas Hossain"
-                              },
-                              "width": 24,
-                              "height": 24,
-                              "fill": {
-                                "type": "image",
-                                "enabled": true,
-                                "url": "https://images.unsplash.com/photo-1776630982364-60bbcef71c27?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTI5NDEwNDl8&ixlib=rb-4.1.0&q=80&w=1080",
-                                "mode": "cover"
-                              },
-                              "cornerRadius": 12,
-                              "stroke": "$surface60",
-                              "strokeWidth": 2
-                            },
-                            {
-                              "type": "frame",
-                              "id": "bYYzo",
-                              "name": "Avatar",
-                              "metadata": {
-                                "type": "unsplash",
-                                "username": "vladek_zp",
-                                "link": "https://unsplash.com/@vladek_zp",
-                                "author": "Vlad Tamkin"
-                              },
-                              "width": 24,
-                              "height": 24,
-                              "fill": {
-                                "type": "image",
-                                "enabled": true,
-                                "url": "https://images.unsplash.com/photo-1734952859379-25a04e9a358c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTI5NDEwNTB8&ixlib=rb-4.1.0&q=80&w=1080",
-                                "mode": "cover"
-                              },
-                              "cornerRadius": 12,
-                              "stroke": "$surface60",
-                              "strokeWidth": 2
+                              "id": "K4ESN",
+                              "name": "Chip",
+                              "fill": "$ink40",
+                              "cornerRadius": 999,
+                              "stroke": "$white20",
+                              "strokeWidth": 1,
+                              "padding": [
+                                4,
+                                9
+                              ],
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "uW45G",
+                                  "name": "Label",
+                                  "fill": "$white",
+                                  "content": "Tonight, 20:00",
+                                  "fontFamily": "$font",
+                                  "fontSize": 12,
+                                  "fontWeight": "600"
+                                }
+                              ]
                             }
                           ]
                         },
                         {
-                          "type": "text",
-                          "id": "Olb3I",
-                          "name": "Going",
-                          "fill": "$white80",
-                          "content": "  142 going",
-                          "fontFamily": "$font",
-                          "fontSize": 13,
-                          "fontWeight": "normal"
-                        },
-                        {
                           "type": "frame",
-                          "id": "ccznb",
-                          "name": "Spacer",
+                          "id": "m2RBb2",
+                          "name": "Body",
                           "width": "fill_container",
-                          "height": 1
-                        },
-                        {
-                          "type": "frame",
-                          "id": "JvUDP",
-                          "name": "Going btn",
-                          "fill": "$white",
-                          "cornerRadius": 999,
-                          "gap": 6,
-                          "padding": [
-                            8,
-                            14
-                          ],
-                          "justifyContent": "center",
-                          "alignItems": "center",
+                          "layout": "vertical",
+                          "gap": 8,
+                          "padding": 12,
                           "children": [
                             {
-                              "type": "icon",
-                              "id": "PQlDQ",
-                              "name": "Lead icon",
-                              "width": 15,
-                              "height": 15,
-                              "icon": "check",
-                              "library": "lucide",
-                              "fill": "$ink"
+                              "type": "frame",
+                              "id": "YqWIl",
+                              "name": "Author",
+                              "width": "fill_container",
+                              "gap": 6,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "Y32IV",
+                                  "name": "Avatar",
+                                  "width": 20,
+                                  "height": 20,
+                                  "fill": {
+                                    "type": "image",
+                                    "enabled": true,
+                                    "url": "https://images.unsplash.com/photo-1787100297497-abeb95855602?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTI5NDEwNDl8&ixlib=rb-4.1.0&q=80&w=1080",
+                                    "mode": "cover"
+                                  },
+                                  "cornerRadius": 10
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "Iihei",
+                                  "name": "Name",
+                                  "fill": "$white80",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "Samorząd PL · 2h",
+                                  "fontFamily": "$font",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
                             },
                             {
                               "type": "text",
-                              "id": "f1Dgi",
-                              "name": "Label",
-                              "fill": "$ink",
-                              "content": "Going",
+                              "id": "GcewE",
+                              "name": "Title",
+                              "fill": "$white",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Autumn Welcome Party",
+                              "lineHeight": 1.3,
                               "fontFamily": "$font",
-                              "fontSize": 14,
+                              "fontSize": 15,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "vnmmX",
+                      "name": "Post · Statistics with dr hab. Nowak: written or oral final?",
+                      "clip": true,
+                      "width": "fill_container",
+                      "fill": "$surface60",
+                      "cornerRadius": 20,
+                      "stroke": "$white10",
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "background_blur",
+                        "radius": 40
+                      },
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "Bixdi",
+                          "name": "Body",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 8,
+                          "padding": 12,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "XovRd",
+                              "name": "Author",
+                              "width": "fill_container",
+                              "gap": 6,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "U91uHY",
+                                  "name": "Avatar",
+                                  "width": 20,
+                                  "height": 20,
+                                  "fill": {
+                                    "type": "image",
+                                    "enabled": true,
+                                    "url": "https://images.unsplash.com/photo-1759873911693-8f4c14cfa208?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTI5NDEwNDl8&ixlib=rb-4.1.0&q=80&w=1080",
+                                    "mode": "cover"
+                                  },
+                                  "cornerRadius": 10
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "z7DeDa",
+                                  "name": "Name",
+                                  "fill": "$white80",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "Olena K. · KUL · 9h",
+                                  "fontFamily": "$font",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "RXh1h",
+                              "name": "Title",
+                              "fill": "$white",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Statistics with dr hab. Nowak: written or oral final?",
+                              "lineHeight": 1.3,
+                              "fontFamily": "$font",
+                              "fontSize": 15,
                               "fontWeight": "600"
                             },
                             {
-                              "type": "icon",
-                              "id": "LZVwN",
-                              "x": 0,
-                              "y": 0,
-                              "name": "Trail icon",
-                              "enabled": false,
-                              "width": 15,
-                              "height": 15,
-                              "icon": "chevron-down",
-                              "library": "lucide",
-                              "fill": "$ink"
+                              "type": "text",
+                              "id": "WnMF3",
+                              "name": "Preview",
+                              "fill": "$white60",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Our group has the final in January and nobody knows the format yet.",
+                              "lineHeight": 1.4,
+                              "fontFamily": "$font",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "uSJQI",
+                      "name": "Post · Anyone selling a used drawing board?",
+                      "clip": true,
+                      "width": "fill_container",
+                      "fill": "$surface60",
+                      "cornerRadius": 20,
+                      "stroke": "$white10",
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "background_blur",
+                        "radius": 40
+                      },
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "HUJqZ",
+                          "name": "Body",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 8,
+                          "padding": 12,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "F4jsqz",
+                              "name": "Author",
+                              "width": "fill_container",
+                              "gap": 6,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "bjSj6",
+                                  "name": "Avatar",
+                                  "width": 20,
+                                  "height": 20,
+                                  "fill": {
+                                    "type": "image",
+                                    "enabled": true,
+                                    "url": "https://images.unsplash.com/photo-1787100297497-abeb95855602?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTI5NDEwNDl8&ixlib=rb-4.1.0&q=80&w=1080",
+                                    "mode": "cover"
+                                  },
+                                  "cornerRadius": 10
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "rnOIu",
+                                  "name": "Name",
+                                  "fill": "$white80",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "Michał W. · PL · 1d",
+                                  "fontFamily": "$font",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "B5ngGc",
+                              "name": "Title",
+                              "fill": "$white",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Anyone selling a used drawing board?",
+                              "lineHeight": 1.3,
+                              "fontFamily": "$font",
+                              "fontSize": 15,
+                              "fontWeight": "600"
                             }
                           ]
                         }
                       ]
                     }
                   ]
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "XB2um",
-              "name": "Card · Question",
-              "width": "fill_container",
-              "fill": "$surface60",
-              "cornerRadius": 24,
-              "stroke": "$white10",
-              "strokeWidth": 1,
-              "effect": {
-                "type": "background_blur",
-                "radius": 40
-              },
-              "layout": "vertical",
-              "gap": 10,
-              "padding": 16,
-              "children": [
+                },
                 {
                   "type": "frame",
-                  "id": "dtFvs",
-                  "name": "Author",
-                  "gap": 8,
-                  "alignItems": "center",
+                  "id": "e8MSdF",
+                  "name": "Column 2",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 10,
                   "children": [
                     {
                       "type": "frame",
-                      "id": "FzHTR",
-                      "name": "Avatar",
-                      "metadata": {
-                        "type": "unsplash",
-                        "username": "aminnaderloei",
-                        "link": "https://unsplash.com/@aminnaderloei",
-                        "author": "amin naderloei"
+                      "id": "EVHLa",
+                      "name": "Post · Library open 24/7 during the exam session",
+                      "clip": true,
+                      "width": "fill_container",
+                      "fill": "$surface60",
+                      "cornerRadius": 20,
+                      "stroke": "$white10",
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "background_blur",
+                        "radius": 40
                       },
-                      "width": 24,
-                      "height": 24,
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "https://images.unsplash.com/photo-1759873911693-8f4c14cfa208?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTI5NDEwNDl8&ixlib=rb-4.1.0&q=80&w=1080",
-                        "mode": "cover"
-                      },
-                      "cornerRadius": 12
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "C432SH",
+                          "name": "Body",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 8,
+                          "padding": 12,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "Xm2F0",
+                              "name": "Author",
+                              "width": "fill_container",
+                              "gap": 6,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "i1bCs",
+                                  "name": "Avatar",
+                                  "width": 20,
+                                  "height": 20,
+                                  "fill": {
+                                    "type": "image",
+                                    "enabled": true,
+                                    "url": "https://images.unsplash.com/photo-1776630982364-60bbcef71c27?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTI5NDEwNDl8&ixlib=rb-4.1.0&q=80&w=1080",
+                                    "mode": "cover"
+                                  },
+                                  "cornerRadius": 10
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "mjxTe",
+                                  "name": "Name",
+                                  "fill": "$white80",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "UMCS Library · 1h",
+                                  "fontFamily": "$font",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "zX9IW",
+                              "name": "Title",
+                              "fill": "$white",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Library open 24/7 during the exam session",
+                              "lineHeight": 1.3,
+                              "fontFamily": "$font",
+                              "fontSize": 15,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "T7LPw",
+                              "name": "Preview",
+                              "fill": "$white60",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "From 12 January the main reading room stays open all night. Bring your student ID.",
+                              "lineHeight": 1.4,
+                              "fontFamily": "$font",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
                     },
                     {
-                      "type": "text",
-                      "id": "l4tG9X",
-                      "name": "Name",
-                      "fill": "$white80",
-                      "content": "Olena Kovalenko, KUL · 9h",
-                      "fontFamily": "$font",
-                      "fontSize": 13,
-                      "fontWeight": "normal"
+                      "type": "frame",
+                      "id": "PLJH7",
+                      "name": "Post · Rowing open day on the Bystrzyca",
+                      "clip": true,
+                      "width": "fill_container",
+                      "fill": "$surface60",
+                      "cornerRadius": 20,
+                      "stroke": "$white10",
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "background_blur",
+                        "radius": 40
+                      },
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "yMV4g",
+                          "name": "Cover",
+                          "width": "fill_container",
+                          "height": 120,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1598266184650-35cf9b1b7429?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTI5NDEwNDl8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "cover"
+                          },
+                          "padding": 10,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "Wxole",
+                              "name": "Chip",
+                              "fill": "$ink40",
+                              "cornerRadius": 999,
+                              "stroke": "$white20",
+                              "strokeWidth": 1,
+                              "padding": [
+                                4,
+                                9
+                              ],
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "iYjSk",
+                                  "name": "Label",
+                                  "fill": "$white",
+                                  "content": "Sat, 13:00",
+                                  "fontFamily": "$font",
+                                  "fontSize": 12,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bIhyV",
+                          "name": "Body",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 8,
+                          "padding": 12,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "oekfu",
+                              "name": "Author",
+                              "width": "fill_container",
+                              "gap": 6,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "ACm9t",
+                                  "name": "Avatar",
+                                  "width": 20,
+                                  "height": 20,
+                                  "fill": {
+                                    "type": "image",
+                                    "enabled": true,
+                                    "url": "https://images.unsplash.com/photo-1734952859379-25a04e9a358c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTI5NDEwNTB8&ixlib=rb-4.1.0&q=80&w=1080",
+                                    "mode": "cover"
+                                  },
+                                  "cornerRadius": 10
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "bVC1L",
+                                  "name": "Name",
+                                  "fill": "$white80",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "AZS UMCS · 5h",
+                                  "fontFamily": "$font",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "Ynv4s",
+                              "name": "Title",
+                              "fill": "$white",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Rowing open day on the Bystrzyca",
+                              "lineHeight": 1.3,
+                              "fontFamily": "$font",
+                              "fontSize": 15,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "RDYL6",
+                      "name": "Post · Bread workshop",
+                      "clip": true,
+                      "width": "fill_container",
+                      "fill": "$surface60",
+                      "cornerRadius": 20,
+                      "stroke": "$white10",
+                      "strokeWidth": 1,
+                      "effect": {
+                        "type": "background_blur",
+                        "radius": 40
+                      },
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "vOXMW",
+                          "name": "Cover",
+                          "width": "fill_container",
+                          "height": 120,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1791318473564-3a0080581cc1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTI5NDEwNDl8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "cover"
+                          },
+                          "padding": 10,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "q5iF5",
+                              "name": "Chip",
+                              "fill": "$ink40",
+                              "cornerRadius": 999,
+                              "stroke": "$white20",
+                              "strokeWidth": 1,
+                              "padding": [
+                                4,
+                                9
+                              ],
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "yqP4n",
+                                  "name": "Label",
+                                  "fill": "$white",
+                                  "content": "Sun, 16:30",
+                                  "fontFamily": "$font",
+                                  "fontSize": 12,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "NG5L2",
+                          "name": "Body",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 8,
+                          "padding": 12,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "mo8vt",
+                              "name": "Author",
+                              "width": "fill_container",
+                              "gap": 6,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "iKGCj",
+                                  "name": "Avatar",
+                                  "width": 20,
+                                  "height": 20,
+                                  "fill": {
+                                    "type": "image",
+                                    "enabled": true,
+                                    "url": "https://images.unsplash.com/photo-1759873911693-8f4c14cfa208?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTI5NDEwNDl8&ixlib=rb-4.1.0&q=80&w=1080",
+                                    "mode": "cover"
+                                  },
+                                  "cornerRadius": 10
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "s6dULY",
+                                  "name": "Name",
+                                  "fill": "$white80",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "Kitchen Club · 1d",
+                                  "fontFamily": "$font",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "Us3kB",
+                              "name": "Title",
+                              "fill": "$white",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Bread workshop",
+                              "lineHeight": 1.3,
+                              "fontFamily": "$font",
+                              "fontSize": 15,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
                     }
                   ]
-                },
-                {
-                  "type": "text",
-                  "id": "tbZdz",
-                  "name": "Title",
-                  "fill": "$white",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "Statistics with dr hab. Nowak: written or oral final?",
-                  "lineHeight": 1.25,
-                  "fontFamily": "$font",
-                  "fontSize": 18,
-                  "fontWeight": "600",
-                  "letterSpacing": -0.4
                 }
               ]
             }
@@ -3439,7 +3730,7 @@
       "id": "Xvav3",
       "x": 3937,
       "y": 3038,
-      "name": "iOS · 04 Connections · v2",
+      "name": "iOS · 04 People · v2",
       "clip": true,
       "width": 393,
       "height": 852,
@@ -3634,7 +3925,7 @@
                       "id": "l5Z3vl",
                       "name": "H1",
                       "fill": "$white",
-                      "content": "Connections",
+                      "content": "People",
                       "lineHeight": 1,
                       "fontFamily": "$font",
                       "fontSize": 30,
@@ -9939,7 +10230,7 @@
                 {
                   "type": "frame",
                   "id": "i81sr",
-                  "name": "More",
+                  "name": "Delete",
                   "width": 44,
                   "height": 44,
                   "cornerRadius": 22,
@@ -9952,7 +10243,7 @@
                       "name": "Icon",
                       "width": 18,
                       "height": 18,
-                      "icon": "flag",
+                      "icon": "trash-2",
                       "library": "lucide",
                       "fill": "$white60"
                     }
@@ -10027,6 +10318,66 @@
                       ]
                     },
                     {
+                      "type": "frame",
+                      "id": "fXUkB",
+                      "name": "Media",
+                      "clip": true,
+                      "width": "fill_container",
+                      "height": 190,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "https://images.unsplash.com/photo-1659928005804-0ec9c656918f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTI5Mzc1MDN8&ixlib=rb-4.1.0&q=80&w=1080",
+                        "mode": "cover"
+                      },
+                      "cornerRadius": 16,
+                      "layout": "vertical",
+                      "padding": 10,
+                      "justifyContent": "end",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "Q9rUu",
+                          "name": "Dots",
+                          "fill": "$ink40",
+                          "cornerRadius": 999,
+                          "gap": 5,
+                          "padding": [
+                            5,
+                            8
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "S56J9",
+                              "name": "Dot",
+                              "fill": "$white",
+                              "width": 6,
+                              "height": 6
+                            },
+                            {
+                              "type": "ellipse",
+                              "id": "Eg9wU",
+                              "name": "Dot",
+                              "fill": "$white40",
+                              "width": 6,
+                              "height": 6
+                            },
+                            {
+                              "type": "ellipse",
+                              "id": "kDj5I",
+                              "name": "Dot",
+                              "fill": "$white40",
+                              "width": 6,
+                              "height": 6
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
                       "type": "text",
                       "id": "AfKu5",
                       "name": "Title",
@@ -10055,6 +10406,34 @@
                     },
                     {
                       "type": "frame",
+                      "id": "vEvmO",
+                      "name": "Tags",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ooRSn",
+                          "name": "Tag",
+                          "fill": "$sky",
+                          "content": "#statistics",
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "e0j4B",
+                          "name": "Tag",
+                          "fill": "$sky",
+                          "content": "#exams",
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
                       "id": "eCBc3",
                       "name": "Stats",
                       "gap": 14,
@@ -10066,6 +10445,35 @@
                       ],
                       "alignItems": "center",
                       "children": [
+                        {
+                          "type": "frame",
+                          "id": "f6tkO",
+                          "name": "Like",
+                          "gap": 5,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "fdzxA",
+                              "name": "Icon",
+                              "width": 14,
+                              "height": 14,
+                              "icon": "heart",
+                              "library": "lucide",
+                              "fill": "$red"
+                            },
+                            {
+                              "type": "text",
+                              "id": "WSNuu",
+                              "name": "Label",
+                              "fill": "$red",
+                              "content": "24",
+                              "fontFamily": "$font",
+                              "fontSize": 13,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
                         {
                           "type": "frame",
                           "id": "w5yuQ",

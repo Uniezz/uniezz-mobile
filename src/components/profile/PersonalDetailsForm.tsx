@@ -1,20 +1,19 @@
-import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner-native";
+import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { StyleSheet } from "react-native-unistyles";
+import { toast } from "sonner-native";
+import type { PersonalDetailsFormValues, Profile } from "@/@types/profile";
 import { useUpdateMyProfile } from "@/hooks/useMyProfile";
-import type { PersonalDetailsFormValues } from "@/@types/profile";
 import { personalDetailsSchema } from "@/schemas";
 import { UIButton, UIGlass, UIInput, UIText } from "@/ui";
+import { splitInterests } from "@/utils";
 
 export function PersonalDetailsForm({
-  firstName,
-  lastName,
+  profile,
   onSaved,
 }: {
-  firstName: string;
-  lastName: string;
+  profile: Profile;
   onSaved: () => void;
 }) {
   const { t } = useTranslation();
@@ -25,25 +24,32 @@ export function PersonalDetailsForm({
     formState: { isValid },
   } = useForm<PersonalDetailsFormValues>({
     resolver: zodResolver(personalDetailsSchema),
-    defaultValues: { firstName, lastName },
+    defaultValues: {
+      firstName: profile.firstName ?? "",
+      lastName: profile.lastName ?? "",
+      bio: profile.bio ?? "",
+      interests: (profile.interests ?? []).join(", "),
+    },
     mode: "onChange",
   });
-  const onSubmit = handleSubmit(async (values) => {
+  const onSubmit = handleSubmit(async ({ interests, ...values }) => {
     try {
-      await update(values);
+      await update({ ...values, interests: splitInterests(interests) });
       onSaved();
     } catch {
       toast.error(t("apiState.profileSaveError"));
     }
   });
+  const handleSavePress = () => onSubmit();
+
   return (
-    <UIGlass style={styles.editor}>
+    <UIGlass radius={24} style={styles.editor}>
       <Controller
         control={control}
         name="firstName"
         render={({ field, fieldState }) => (
           <UIInput
-            captionText="First name"
+            captionText={t("app.firstName")}
             value={field.value}
             onChangeText={field.onChange}
             onBlur={field.onBlur}
@@ -57,7 +63,7 @@ export function PersonalDetailsForm({
         name="lastName"
         render={({ field, fieldState }) => (
           <UIInput
-            captionText="Last name"
+            captionText={t("app.lastName")}
             value={field.value}
             onChangeText={field.onChange}
             onBlur={field.onBlur}
@@ -66,9 +72,38 @@ export function PersonalDetailsForm({
           />
         )}
       />
-      <UIButton disabled={isPending || !isValid} onPress={() => onSubmit()}>
+      <Controller
+        control={control}
+        name="bio"
+        render={({ field, fieldState }) => (
+          <UIInput
+            captionText={t("students.bio")}
+            value={field.value}
+            onChangeText={field.onChange}
+            onBlur={field.onBlur}
+            errorText={fieldState.error?.message && t(fieldState.error.message)}
+            maxLength={500}
+            multiline
+          />
+        )}
+      />
+      <Controller
+        control={control}
+        name="interests"
+        render={({ field, fieldState }) => (
+          <UIInput
+            captionText={t("students.interests")}
+            placeholder={t("students.interestsHint")}
+            value={field.value}
+            onChangeText={field.onChange}
+            onBlur={field.onBlur}
+            errorText={fieldState.error?.message && t(fieldState.error.message)}
+          />
+        )}
+      />
+      <UIButton disabled={!isValid || isPending} onPress={handleSavePress}>
         <UIText color="black" weight="semibold">
-          Save changes
+          {t("app.saveChanges")}
         </UIText>
       </UIButton>
     </UIGlass>
@@ -76,5 +111,8 @@ export function PersonalDetailsForm({
 }
 
 const styles = StyleSheet.create((theme) => ({
-  editor: { padding: theme.s(16), gap: theme.vs(12) },
+  editor: {
+    padding: theme.s(16),
+    gap: theme.vs(12),
+  },
 }));

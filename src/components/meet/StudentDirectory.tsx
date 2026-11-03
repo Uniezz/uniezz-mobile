@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Pressable, View } from "react-native";
 import { router } from "expo-router";
 import debounce from "lodash/debounce";
@@ -7,6 +8,7 @@ import { useProfileSearch } from "@/hooks/useProfiles";
 import { UIAvatar, UIGlass, UIQueryError, UISearch, UIText } from "@/ui";
 
 export function StudentDirectory({ onBack }: { onBack: () => void }) {
+  const { t } = useTranslation();
   const [search, setSearch] = useState("");
   const [query, setQuery] = useState("");
   const updateQuery = useMemo(() => debounce(setQuery, 300), []);
@@ -24,13 +26,13 @@ export function StudentDirectory({ onBack }: { onBack: () => void }) {
   return (
     <View style={styles.container}>
       <Pressable accessibilityRole="button" onPress={onBack}>
-        <UIText color="link">‹ Connections</UIText>
+        <UIText color="link">{t("app.back")}</UIText>
       </Pressable>
-      <UIText size="lg" weight="bold">
-        All students
+      <UIText size="lg" weight="semibold">
+        {t("students.allStudents")}
       </UIText>
       <UISearch
-        placeholder="Search students"
+        placeholder={t("students.search")}
         value={search}
         onChangeText={(value) => {
           setSearch(value);
@@ -38,9 +40,9 @@ export function StudentDirectory({ onBack }: { onBack: () => void }) {
         }}
       />
       {isPending ? (
-        <UIText color="secondary">Loading students…</UIText>
+        <UIText color="secondary">{t("apiState.loading")}</UIText>
       ) : isError ? (
-        <UIQueryError message="Couldn’t load students" onRetry={refetch} />
+        <UIQueryError message={t("apiState.error")} onRetry={refetch} />
       ) : students.length ? (
         students.map((student) => (
           <Pressable
@@ -54,10 +56,7 @@ export function StudentDirectory({ onBack }: { onBack: () => void }) {
             }
           >
             <UIGlass style={styles.row}>
-              <UIAvatar
-                imageSrc={student.avatarUrl ?? undefined}
-                placeholderText={student.firstName?.[0] ?? "?"}
-              />
+              <UIAvatar imageSrc={student.avatarUrl ?? undefined} />
               <View style={styles.label}>
                 <UIText weight="semibold">
                   {[student.firstName, student.lastName]
@@ -73,7 +72,7 @@ export function StudentDirectory({ onBack }: { onBack: () => void }) {
           </Pressable>
         ))
       ) : (
-        <UIText color="secondary">No students found</UIText>
+        <UIText color="secondary">{t("students.noResults")}</UIText>
       )}
       {hasNextPage ? (
         <Pressable
@@ -82,7 +81,9 @@ export function StudentDirectory({ onBack }: { onBack: () => void }) {
           onPress={() => fetchNextPage()}
         >
           <UIText color="link">
-            {isFetchingNextPage ? "Loading…" : "Load more"}
+            {isFetchingNextPage
+              ? t("apiState.loading")
+              : t("apiState.loadMore")}
           </UIText>
         </Pressable>
       ) : null}

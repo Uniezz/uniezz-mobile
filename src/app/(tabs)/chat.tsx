@@ -41,7 +41,7 @@ const styles = StyleSheet.create((theme) => ({
   page: {
     flex: 1,
     paddingHorizontal: theme.s(16),
-    paddingTop: theme.vs(8),
+    paddingTop: theme.vs(4),
     gap: theme.vs(16),
   },
 }));

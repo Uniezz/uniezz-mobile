@@ -1,16 +1,15 @@
 import { Image } from "expo-image";
 import { View, ViewProps } from "react-native";
 import { StyleSheet, UnistylesVariants } from "react-native-unistyles";
-import { UIText } from "./UIText";
 
 type UIAvatarProps = UnistylesVariants<typeof styles> & {
-  imageSrc?: string | number;
-  placeholderText?: string;
+  imageSrc?: string | number | null;
 } & ViewProps;
+
+const FALLBACK_AVATAR = require("../../assets/profile-cat.png");
 
 export const UIAvatar = ({
   imageSrc,
-  placeholderText,
   color,
   size,
   style,
@@ -20,18 +19,18 @@ export const UIAvatar = ({
   styles.useVariants({ size, color, rounded });
   return (
     <View style={[styles.avatar, styles.container, style]} {...props}>
-      {imageSrc ? (
-        <Image
-          style={styles.container}
-          cachePolicy={"memory-disk"}
-          contentFit="cover"
-          source={typeof imageSrc === "number" ? imageSrc : { uri: imageSrc }}
-        />
-      ) : (
-        <UIText weight="bold" style={styles.initials}>
-          {placeholderText}
-        </UIText>
-      )}
+      <Image
+        style={styles.container}
+        cachePolicy={"memory-disk"}
+        contentFit="cover"
+        source={
+          !imageSrc
+            ? FALLBACK_AVATAR
+            : typeof imageSrc === "number"
+              ? imageSrc
+              : { uri: imageSrc }
+        }
+      />
     </View>
   );
 };
@@ -47,11 +46,13 @@ const styles = StyleSheet.create((theme) => ({
       },
       size: {
         //unistyles asks to do so :( https://unistyl.es/v3/references/variants/#defining-the-same-variant-across-multiple-styles
+        xxs: {},
         xs: {},
         sm: {},
         default: {},
         lg: {},
         xl: {},
+        xxl: {},
       },
       color: {
         default: {
@@ -65,6 +66,10 @@ const styles = StyleSheet.create((theme) => ({
   container: {
     variants: {
       size: {
+        xxs: {
+          width: theme.vs(20),
+          height: theme.vs(20),
+        },
         xs: {
           width: theme.vs(24),
           height: theme.vs(24),
@@ -85,6 +90,10 @@ const styles = StyleSheet.create((theme) => ({
           width: theme.vs(64),
           height: theme.vs(64),
         },
+        xxl: {
+          width: theme.vs(112),
+          height: theme.vs(112),
+        },
       },
       color: {
         // here too :(  https://unistyl.es/v3/references/variants/#defining-the-same-variant-across-multiple-styles
@@ -94,20 +103,6 @@ const styles = StyleSheet.create((theme) => ({
         default: { borderRadius: theme.vs(999) },
         lg: { borderRadius: theme.vs(10) },
       },
-    },
-  },
-  initials: {
-    variants: {
-      size: {
-        xs: { fontSize: theme.vs(9) },
-        sm: { fontSize: theme.vs(11) },
-        default: { fontSize: theme.vs(14) },
-        lg: { fontSize: theme.vs(17) },
-        xl: { fontSize: theme.vs(22) },
-      },
-      // same-variant rule again: https://unistyl.es/v3/references/variants/#defining-the-same-variant-across-multiple-styles
-      color: { default: {} },
-      rounded: { default: {}, lg: {} },
     },
   },
 }));

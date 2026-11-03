@@ -71,7 +71,7 @@ export function CreateGroup({
                   )
                 }
               >
-                <UIAvatar placeholderText={name[0]} />
+                <UIAvatar />
                 <UIText style={styles.name}>{name}</UIText>
                 <UIText color="link">
                   {field.value.includes(name) ? "✓" : "+"}

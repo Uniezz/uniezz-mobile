@@ -100,6 +100,12 @@
     "faq": "FAQ"
   },
   "feed": {
+    "allStudents": "Wszyscy studenci",
+    "commentsCount_one": "{{count}} komentarz",
+    "commentsCount_few": "{{count}} komentarze",
+    "commentsCount_many": "{{count}} komentarzy",
+    "commentsCount_other": "{{count}} komentarza",
+    "addEvent": "Dodaj wydarzenie",
     "search": "Szukaj...",
     "filters": {
       "all": "Wszystko",
@@ -120,6 +126,8 @@
     "lastMonth": "Ostatnie 30 dni"
   },
   "chat": {
+    "requests": "Prośby",
+    "noRequests": "Brak próśb o wiadomość",
     "action": "Nowa grupa",
     "subtitle": "Wiadomości prywatne i czaty grupowe",
     "title": "Czat"
@@ -140,6 +148,11 @@
     "men": "Mężczyzn"
   },
   "exams": {
+    "nextExam": "Twój najbliższy egzamin",
+    "days_one": "dzień",
+    "days_few": "dni",
+    "days_many": "dni",
+    "days_other": "dnia",
     "action": "Dodaj materiał",
     "subtitle": "Dawne egzaminy, opinie o kursach i oceny wykładowców",
     "title": "Egzaminy i kursy"
@@ -150,6 +163,7 @@
     "title": "Przewodnik"
   },
   "faq": {
+    "subtitle": "Odpowiedzi od studentów w Lublinie",
     "title": "FAQ",
     "empty": "Nie ma tu jeszcze pytań."
   },
@@ -390,6 +404,10 @@
     "studyLevelDoctoral": "Doktoranckie"
   },
   "postComposer": {
+    "audience": "Kto może to zobaczyć",
+    "audienceAll": "Wszyscy w uniezz w Lublinie",
+    "audienceUniversity": "Tylko {{university}}",
+    "editNote": "Typu posta i odbiorców nie można zmienić po publikacji.",
     "duplicatePhoto": "To zdjęcie zostało już dodane.",
     "photos": "Zdjęcia (opcjonalnie)",
     "photosHint": "Do 10 zdjęć · JPG, PNG lub WebP · do 10 MB każde",

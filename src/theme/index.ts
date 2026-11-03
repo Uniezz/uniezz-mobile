@@ -35,6 +35,10 @@ const colors = {
   green: "rgb(61, 214, 140)",
   green15: "rgba(61, 214, 140, 0.15)",
   red: "rgb(229, 72, 77)",
+  accent: "rgb(109, 91, 245)",
+  brand: "rgb(45, 65, 149)",
+  ember: "rgb(240, 112, 58)",
+  teal: "rgb(18, 165, 148)",
 };
 
 export const darkTheme = {

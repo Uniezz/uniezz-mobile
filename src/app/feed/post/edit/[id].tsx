@@ -2,20 +2,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { router, useLocalSearchParams } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { ScrollView } from "react-native";
+import { View } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import type { EditPostFormValues } from "@/@types/feed";
+import { ComposerHeader, PostField, PostTagsField } from "@/components/feed";
 import { useFeedPost, useUpdateFeedPost } from "@/hooks/useFeed";
 import { editPostSchema } from "@/schemas";
-import {
-  UIButton,
-  UIInput,
-  UIPage,
-  UIQueryError,
-  UISkeleton,
-  UIText,
-} from "@/ui";
+import { Icon, UIPage, UIQueryError, UISkeleton, UIText } from "@/ui";
 
 export default function EditPostScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -28,7 +23,11 @@ export default function EditPostScreen() {
     formState: { errors, isDirty },
   } = useForm<EditPostFormValues>({
     resolver: zodResolver(editPostSchema),
-    values: post && { title: post.title, content: post.content },
+    values: post && {
+      title: post.title,
+      content: post.content,
+      tags: post.tags ?? [],
+    },
   });
 
   const onSubmit = handleSubmit(async (values) => {
@@ -41,12 +40,19 @@ export default function EditPostScreen() {
     }
   });
 
+  const handleSubmitPress = () => onSubmit();
+
   return (
     <UIPage backdrop="city">
-      <ScrollView contentContainerStyle={styles.content}>
-        <UIText size="lg" weight="bold">
-          {t("apiState.editPost")}
-        </UIText>
+      <View style={styles.header}>
+        <ComposerHeader
+          title={t("apiState.editPost")}
+          actionLabel={t("app.saveChanges")}
+          disabled={isSaving || !isDirty}
+          onAction={handleSubmitPress}
+        />
+      </View>
+      <KeyboardAwareScrollView contentContainerStyle={styles.content}>
         {isPending ? (
           <UISkeleton height={180} />
         ) : isError || !post ? (
@@ -57,13 +63,13 @@ export default function EditPostScreen() {
               control={control}
               name="title"
               render={({ field }) => (
-                <UIInput
-                  captionText={t("postComposer.title")}
-                  value={field.value}
+                <PostField
+                  label={t("postComposer.title")}
+                  value={field.value ?? ""}
                   onChangeText={field.onChange}
                   onBlur={field.onBlur}
-                  errorText={errors.title?.message && t(errors.title.message)}
                   maxLength={150}
+                  errorText={errors.title?.message && t(errors.title.message)}
                 />
               )}
             />
@@ -71,35 +77,61 @@ export default function EditPostScreen() {
               control={control}
               name="content"
               render={({ field }) => (
-                <UIInput
-                  captionText={t("postComposer.details")}
-                  value={field.value}
+                <PostField
+                  tall
+                  label={t("postComposer.details")}
+                  value={field.value ?? ""}
                   onChangeText={field.onChange}
                   onBlur={field.onBlur}
+                  maxLength={5000}
                   errorText={
                     errors.content?.message && t(errors.content.message)
                   }
-                  maxLength={5000}
-                  multiline
                 />
               )}
             />
-            <UIButton
-              disabled={isSaving || !isDirty}
-              onPress={() => onSubmit()}
-            >
-              <UIText color="black">{t("app.saveChanges")}</UIText>
-            </UIButton>
+            <Controller
+              control={control}
+              name="tags"
+              render={({ field }) => (
+                <PostTagsField value={field.value} onChange={field.onChange} />
+              )}
+            />
+            <View style={styles.note}>
+              <Icon
+                name="info"
+                size={15}
+                uniProps={(theme) => ({ color: theme.colors.white60 })}
+              />
+              <UIText size="sm" color="secondary" style={styles.noteText}>
+                {t("postComposer.editNote")}
+              </UIText>
+            </View>
           </>
         )}
-      </ScrollView>
+      </KeyboardAwareScrollView>
     </UIPage>
   );
 }
 
 const styles = StyleSheet.create((theme) => ({
+  header: {
+    paddingTop: theme.vs(8),
+    paddingHorizontal: theme.s(16),
+  },
   content: {
-    padding: theme.s(20),
-    gap: theme.vs(16),
+    gap: theme.vs(20),
+    paddingTop: theme.vs(20),
+    paddingHorizontal: theme.s(16),
+    paddingBottom: theme.vs(24),
+  },
+  note: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: theme.s(8),
+    paddingHorizontal: theme.s(4),
+  },
+  noteText: {
+    flex: 1,
   },
 }));

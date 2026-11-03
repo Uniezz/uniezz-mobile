@@ -1,13 +1,12 @@
 import { UIGlass, UIText } from "@/ui";
-import { Image } from "expo-image";
-import { ImageSourcePropType, View, Pressable } from "react-native";
+import { View, Pressable } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { StyleSheet } from "react-native-unistyles";
 
 export type RowItem = {
   topText: string;
-  iconText: string;
-  image?: ImageSourcePropType;
+  bottomText?: string;
+  rightText?: string;
 };
 
 type RowPickerProps = {
@@ -40,24 +39,21 @@ export const RowPicker = ({
               accessibilityState={{ selected: isItemSelected }}
               style={styles.item(isItemSelected, isLast)}
             >
-              <View style={styles.logo(Boolean(item.image))}>
-                {item.image ? (
-                  <Image
-                    source={item.image}
-                    style={styles.logoImage}
-                    contentFit="contain"
-                  />
-                ) : (
-                  <UIText weight="bold" size="xs">
-                    {item.iconText}
-                  </UIText>
-                )}
-              </View>
               <View style={styles.textContainer}>
                 <UIText weight="semibold" size="rg">
                   {item.topText}
                 </UIText>
+                {item.bottomText ? (
+                  <UIText size="sm" color="secondary">
+                    {item.bottomText}
+                  </UIText>
+                ) : null}
               </View>
+              {item.rightText ? (
+                <UIText size="sm" color="secondary">
+                  {item.rightText}
+                </UIText>
+              ) : null}
               <View style={styles.radio(isItemSelected)}>
                 {isItemSelected ? <View style={styles.radioDot} /> : null}
               </View>
@@ -72,22 +68,11 @@ export const RowPicker = ({
 const styles = StyleSheet.create((theme) => ({
   group: {
     backgroundColor: theme.colors.ink70,
+    borderRadius: theme.vs(24),
   },
   textContainer: {
     flex: 1,
-  },
-  logo: (hasImage: boolean) => ({
-    width: theme.vs(36),
-    height: theme.vs(36),
-    borderRadius: theme.vs(8),
-    padding: hasImage ? theme.vs(4) : 0,
-    backgroundColor: hasImage ? theme.colors.white : theme.colors.blue20,
-    justifyContent: "center",
-    alignItems: "center",
-  }),
-  logoImage: {
-    width: "100%",
-    height: "100%",
+    gap: theme.vs(2),
   },
   item: (isItemSelected: boolean, isLast: boolean) => ({
     alignItems: "center",

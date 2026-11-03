@@ -2,7 +2,7 @@ import createFetchClient, { type Middleware } from "openapi-fetch";
 import createQueryClient from "openapi-react-query";
 import type { paths } from "@/@types/schema";
 import { env } from "@/schemas/env";
-import { OTP_REQUEST_ERRORS, OTP_VERIFY_ERRORS } from "@/utils/otp";
+import { ENDPOINT_ERRORS } from "@/utils/apiErrors";
 
 export const API_BASE_URL = env.EXPO_PUBLIC_API_URL;
 
@@ -97,12 +97,9 @@ const apiMiddleware: Middleware = {
       typeof body.error === "string"
         ? body.error
         : undefined;
+    const errors = ENDPOINT_ERRORS[schemaPath];
     const translationKey =
-      schemaPath === "/auth/otp/request"
-        ? (OTP_REQUEST_ERRORS[response.status] ?? "otp.sendFailed")
-        : schemaPath === "/auth/otp/verify"
-          ? (OTP_VERIFY_ERRORS[response.status] ?? "otp.verifyFailed")
-          : undefined;
+      errors?.statuses[response.status] ?? errors?.fallback;
     throw apiError(
       `${request.method} ${schemaPath}`,
       response,
@@ -111,12 +108,7 @@ const apiMiddleware: Middleware = {
     );
   },
   onError({ request, schemaPath, error }) {
-    const translationKey =
-      schemaPath === "/auth/otp/request"
-        ? "otp.sendFailed"
-        : schemaPath === "/auth/otp/verify"
-          ? "otp.verifyFailed"
-          : undefined;
+    const translationKey = ENDPOINT_ERRORS[schemaPath]?.fallback;
     return new ApiRequestError(
       `${request.method} ${schemaPath}`,
       `request failed before an HTTP response: ${error instanceof Error ? error.message : String(error)}`,

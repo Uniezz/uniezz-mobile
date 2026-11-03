@@ -1,44 +1,86 @@
 import { router } from "expo-router";
 import { useState } from "react";
-import { Alert, Pressable, ScrollView, View } from "react-native";
-import { toast } from "sonner-native";
 import { useTranslation } from "react-i18next";
+import { Pressable, ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import type { Programme } from "@/@types/profile";
+import { toast } from "sonner-native";
 import { useSession } from "@/contexts";
-import { AddProgrammeForm, PersonalDetailsForm } from "@/components/profile";
 import {
-  useDeleteMyProgramme,
+  AddProgrammeForm,
+  EditableProgramme,
+  InterestChips,
+  PersonalDetailsForm,
+  PrivacyCard,
+  ProfileHero,
+  UniversityCard,
+} from "@/components/profile";
+import { launchImageLibraryAsync } from "expo-image-picker";
+import { ApiRequestError } from "@/api";
+import { useUploadImages } from "@/hooks/useMedia";
+import {
+  useDeleteMyAvatar,
   useMyProfile,
-  useReplaceMyProgramme,
+  useUpdateMyProfile,
 } from "@/hooks/useMyProfile";
-import { UIAvatar, UIButton, UIGlass, UIPage, UIText } from "@/ui";
+import { Icon, UIGlass, UIPage, UIQueryError, UISkeleton, UIText } from "@/ui";
+import { authorName } from "@/utils";
 
 export default function ProfileScreen() {
   const { t } = useTranslation();
   const { data: profile, isPending, isError, refetch } = useMyProfile();
-  const { mutate: replaceProgramme } = useReplaceMyProgramme();
-  const { mutateAsync: deleteProgramme } = useDeleteMyProgramme();
+  const { mutateAsync: deleteAvatar, isPending: isRemovingPhoto } =
+    useDeleteMyAvatar();
+  const { mutateAsync: uploadImages, isPending: isUploadingPhoto } =
+    useUploadImages("avatar");
+  const { mutateAsync: updateProfile } = useUpdateMyProfile();
   const { clearSession } = useSession();
   const [editing, setEditing] = useState(false);
   const [addingProgramme, setAddingProgramme] = useState(false);
 
-  const makePrimary = (item: Programme) =>
-    replaceProgramme(
-      {
-        id: item.id,
-        body: {
-          programme: item.programme,
-          faculty: item.faculty,
-          status: item.status,
-          isPrimary: true,
-          yearOfStudy: item.yearOfStudy ?? undefined,
-          level: item.level ?? undefined,
-          modeOfStudies: item.modeOfStudies ?? undefined,
-        },
-      },
-      { onError: () => toast.error(t("apiState.profileSaveError")) },
-    );
+  const handleBackPress = () => router.back();
+  const handleToggleEditing = () => setEditing(!editing);
+  const handleDetailsSaved = () => setEditing(false);
+  const handleToggleAddProgramme = () => setAddingProgramme(!addingProgramme);
+  const handleProgrammeAdded = () => setAddingProgramme(false);
+
+  const handleRemovePhotoPress = async () => {
+    try {
+      await deleteAvatar();
+    } catch {
+      toast.error(t("apiState.profileSaveError"));
+    }
+  };
+
+  const handleChangePhotoPress = async () => {
+    const result = await launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+    if (result.canceled || !result.assets[0]) return;
+    const { uri, mimeType, fileSize } = result.assets[0];
+    try {
+      const [avatarMediaId] = await uploadImages([{ uri, mimeType, fileSize }]);
+      await updateProfile({ avatarMediaId });
+    } catch (error) {
+      toast.error(
+        t(
+          error instanceof ApiRequestError && error.translationKey
+            ? error.translationKey
+            : "apiState.profileSaveError",
+        ),
+      );
+    }
+  };
+
+  const handleLogoutPress = async () => {
+    try {
+      await clearSession();
+    } catch {
+      toast.error(t("auth.logoutError"));
+    }
+  };
 
   return (
     <UIPage backdrop="city">
@@ -46,141 +88,127 @@ export default function ProfileScreen() {
         <View style={styles.header}>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Go back"
-            onPress={() => router.back()}
+            accessibilityLabel={t("app.back")}
+            onPress={handleBackPress}
+            style={styles.back}
           >
-            <UIText size="lg">‹</UIText>
+            <Icon name="arrow-left" size={18} />
           </Pressable>
-          <UIText size="lg" weight="bold">
-            Profile
-          </UIText>
+          {profile ? (
+            <Pressable
+              accessibilityRole="button"
+              onPress={handleToggleEditing}
+              hitSlop={8}
+            >
+              <UIText size="sm" weight="semibold" color="brand">
+                {editing ? t("postComposer.cancel") : t("app.edit")}
+              </UIText>
+            </Pressable>
+          ) : null}
         </View>
         {isPending ? (
-          <UIText color="secondary">Loading profile…</UIText>
+          <UISkeleton height={220} />
         ) : isError || !profile ? (
-          <UIButton type="secondary" onPress={() => refetch()}>
-            <UIText>Couldn’t load profile. Retry</UIText>
-          </UIButton>
+          <UIQueryError message={t("apiState.error")} onRetry={refetch} />
         ) : (
           <>
-            <View style={styles.identity}>
-              <UIAvatar
-                size="xl"
-                imageSrc={
-                  profile.avatarUrl ?? require("../../assets/profile-cat.png")
-                }
-                placeholderText={`${profile.firstName?.[0] ?? ""}${profile.lastName?.[0] ?? ""}`}
-              />
-              <View style={styles.identityText}>
-                <UIText size="lg" weight="bold">
-                  {[profile.firstName, profile.lastName]
-                    .filter(Boolean)
-                    .join(" ") || "Student"}
+            <ProfileHero
+              avatar={profile.avatarUrl}
+              name={authorName(profile) || t("apiState.student")}
+              subtitle={profile.email}
+            >
+              {editing ? (
+                <View style={styles.photoActions}>
+                  <Pressable
+                    accessibilityRole="button"
+                    disabled={isUploadingPhoto}
+                    onPress={handleChangePhotoPress}
+                  >
+                    <UIText size="sm" weight="semibold" color="link">
+                      {t("app.changePhoto")}
+                    </UIText>
+                  </Pressable>
+                  {profile.avatarUrl ? (
+                    <Pressable
+                      accessibilityRole="button"
+                      disabled={isRemovingPhoto}
+                      onPress={handleRemovePhotoPress}
+                    >
+                      <UIText size="sm" weight="semibold" color="error">
+                        {t("students.removePhoto")}
+                      </UIText>
+                    </Pressable>
+                  ) : null}
+                </View>
+              ) : null}
+              {!editing && profile.bio ? (
+                <UIText color="soft" style={styles.bio}>
+                  {profile.bio}
                 </UIText>
-                <UIText color="secondary">
-                  {profile.email ?? "University student"}
+              ) : null}
+              {!editing && profile.interests?.length ? (
+                <InterestChips interests={profile.interests} />
+              ) : null}
+            </ProfileHero>
+            {editing ? (
+              <View style={styles.section}>
+                <UIText size="md" weight="semibold">
+                  {t("app.personalDetails")}
                 </UIText>
-              </View>
-            </View>
-            <View style={styles.section}>
-              <UIText size="md" weight="bold">
-                University
-              </UIText>
-              <UIText color="soft">{profile.universityId.toUpperCase()}</UIText>
-            </View>
-            <View style={styles.section}>
-              <View style={styles.sectionHeader}>
-                <UIText size="md" weight="bold">
-                  Personal details
-                </UIText>
-                <Pressable
-                  accessibilityRole="button"
-                  onPress={() => setEditing(!editing)}
-                >
-                  <UIText color="link">{editing ? "Cancel" : "Edit"}</UIText>
-                </Pressable>
-              </View>
-              {editing && (
                 <PersonalDetailsForm
-                  firstName={profile.firstName ?? ""}
-                  lastName={profile.lastName ?? ""}
-                  onSaved={() => setEditing(false)}
+                  profile={profile}
+                  onSaved={handleDetailsSaved}
                 />
-              )}
-            </View>
+              </View>
+            ) : null}
+            <UniversityCard universityId={profile.universityId} />
             <View style={styles.section}>
-              <UIText size="md" weight="bold">
-                Study programmes
+              <UIText size="md" weight="semibold">
+                {t("app.studyProgrammes")}
               </UIText>
               {(profile.programmes ?? []).map((item) => (
-                <UIGlass key={item.id} style={styles.programme}>
-                  <View style={styles.sectionHeader}>
-                    <UIText weight="semibold">{item.programme}</UIText>
-                    {item.isPrimary && (
-                      <UIText size="xs" color="link">
-                        PRIMARY
-                      </UIText>
-                    )}
-                  </View>
-                  <UIText size="sm" color="secondary">
-                    {item.faculty}
-                  </UIText>
-                  {!item.isPrimary && (
-                    <View style={styles.programmeActions}>
-                      <Pressable
-                        accessibilityRole="button"
-                        onPress={() => makePrimary(item)}
-                      >
-                        <UIText color="link">Make primary</UIText>
-                      </Pressable>
-                      <Pressable
-                        accessibilityRole="button"
-                        onPress={() =>
-                          Alert.alert("Remove programme?", item.programme, [
-                            { text: "Cancel", style: "cancel" },
-                            {
-                              text: "Remove",
-                              style: "destructive",
-                              onPress: () => {
-                                void deleteProgramme(item.id).catch(() =>
-                                  toast.error(t("apiState.profileSaveError")),
-                                );
-                              },
-                            },
-                          ])
-                        }
-                      >
-                        <UIText color="error">Remove</UIText>
-                      </Pressable>
-                    </View>
-                  )}
-                </UIGlass>
+                <EditableProgramme
+                  key={item.id}
+                  programme={item}
+                  editing={editing}
+                />
               ))}
               <Pressable
                 accessibilityRole="button"
-                onPress={() => setAddingProgramme(!addingProgramme)}
+                onPress={handleToggleAddProgramme}
+                style={styles.addProgramme}
               >
-                <UIText color="link">+ Add study programme</UIText>
+                <Icon
+                  name={addingProgramme ? "x" : "plus"}
+                  size={16}
+                  uniProps={(theme) => ({ color: theme.colors.blue })}
+                />
+                <UIText size="body" weight="semibold" color="brand">
+                  {addingProgramme
+                    ? t("postComposer.cancel")
+                    : t("app.addProgramme")}
+                </UIText>
               </Pressable>
-              {addingProgramme && (
+              {addingProgramme ? (
                 <AddProgrammeForm
                   isPrimary={!profile.programmes?.length}
-                  onSaved={() => setAddingProgramme(false)}
+                  onSaved={handleProgrammeAdded}
                 />
-              )}
+              ) : null}
             </View>
-            <UIButton
-              type="secondary"
-              onPress={async () => {
-                try {
-                  await clearSession();
-                } catch {
-                  toast.error(t("auth.logoutError"));
-                }
-              }}
-            >
-              <UIText>Log out</UIText>
-            </UIButton>
+            {editing ? <PrivacyCard privacy={profile.privacy} /> : null}
+            <Pressable accessibilityRole="button" onPress={handleLogoutPress}>
+              <UIGlass radius={999} style={styles.logout}>
+                <Icon
+                  name="log-out"
+                  size={17}
+                  uniProps={(theme) => ({ color: theme.colors.red })}
+                />
+                <UIText weight="semibold" color="error">
+                  {t("auth.logOut")}
+                </UIText>
+              </UIGlass>
+            </Pressable>
           </>
         )}
       </ScrollView>
@@ -190,28 +218,47 @@ export default function ProfileScreen() {
 
 const styles = StyleSheet.create((theme) => ({
   page: {
+    paddingTop: theme.vs(8),
     paddingHorizontal: theme.s(20),
     paddingBottom: theme.vs(60),
     gap: theme.vs(20),
   },
   header: {
-    height: theme.vs(52),
-    flexDirection: "row",
-    alignItems: "center",
-    gap: theme.s(16),
-  },
-  identity: { flexDirection: "row", alignItems: "center", gap: theme.s(16) },
-  identityText: { flex: 1, gap: theme.vs(5) },
-  section: { gap: theme.vs(12) },
-  sectionHeader: {
+    height: theme.vs(44),
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
   },
-  programme: { padding: theme.s(16), gap: theme.vs(8) },
-  programmeActions: {
+  photoActions: {
     flexDirection: "row",
     gap: theme.s(20),
-    paddingTop: theme.vs(4),
+  },
+  bio: {
+    width: theme.s(300),
+    textAlign: "center",
+    lineHeight: theme.vs(15 * 1.45),
+  },
+  back: {
+    width: theme.vs(44),
+    height: theme.vs(44),
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  section: {
+    gap: theme.vs(12),
+  },
+  addProgramme: {
+    height: theme.vs(44),
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: theme.s(8),
+  },
+  logout: {
+    height: theme.vs(48),
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: theme.s(8),
   },
 }));
