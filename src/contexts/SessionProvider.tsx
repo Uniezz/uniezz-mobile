@@ -6,8 +6,14 @@ import {
   useState,
 } from "react";
 import type { IssuedSession } from "@/@types/auth";
-import { setApiAccessToken } from "@/api";
-import { deleteStoredSession, loadStoredSession, storeSession } from "@/store";
+import { api, setApiAccessToken } from "@/api";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  deleteStoredSession,
+  loadStoredSession,
+  storeSession,
+  useChatStore,
+} from "@/store";
 
 type SessionContextValue = {
   session: IssuedSession | null;
@@ -19,6 +25,7 @@ type SessionContextValue = {
 export const SessionContext = createContext<SessionContextValue | null>(null);
 
 export function SessionProvider({ children }: { children: React.ReactNode }) {
+  const queryClient = useQueryClient();
   const [session, setSession] = useState<IssuedSession | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -44,15 +51,41 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
 
   const saveSession = useCallback(async (nextSession: IssuedSession) => {
     await storeSession(nextSession);
+    useChatStore.getState().reset();
     setSession(nextSession);
     setApiAccessToken(nextSession.token);
   }, []);
 
   const clearSession = useCallback(async () => {
+    useChatStore.getState().reset();
     setApiAccessToken(null);
     setSession(null);
+    queryClient.clear();
     await deleteStoredSession();
-  }, []);
+  }, [queryClient]);
+
+  useEffect(() => {
+    if (!session?.token) return;
+    const token = session.token;
+    const middleware = {
+      onResponse({
+        request,
+        response,
+      }: {
+        request: Request;
+        response: Response;
+      }) {
+        if (
+          response.status === 401 &&
+          request.headers.get("Authorization") === `Bearer ${token}`
+        ) {
+          return clearSession();
+        }
+      },
+    };
+    api.use(middleware);
+    return () => api.eject(middleware);
+  }, [session?.token, clearSession]);
 
   return (
     <SessionContext.Provider

@@ -46,6 +46,10 @@ const styles = StyleSheet.create((theme) => ({
           height: theme.vs(44),
           width: theme.vs(44),
         },
+        xl: {
+          height: theme.vs(56),
+          width: theme.vs(56),
+        },
       },
     },
     opacity: pressed ? 0.8 : 1,

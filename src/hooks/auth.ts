@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import type { IssuedSession } from "@/@types/auth";
 import { useSession } from "@/contexts";
 import { router } from "expo-router";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
 import * as Linking from "expo-linking";
 import { useCallback, useEffect, useRef } from "react";
 import type { WebViewNavigation } from "react-native-webview";
@@ -12,10 +12,8 @@ import i18n from "@/internationalization";
 const USOS_REDIRECT_URL = new URL(Linking.createURL("auth/callback"));
 
 function showLoginError(messageKey: string): void {
-  Toast.show({
-    type: "error",
-    text1: i18n.t("auth.usosSignInError"),
-    text2: i18n.t(messageKey),
+  toast.error(i18n.t("auth.usosSignInError"), {
+    description: i18n.t(messageKey),
   });
 }
 
@@ -26,10 +24,8 @@ function useStartSession() {
     try {
       await saveSession(session);
     } catch {
-      Toast.show({
-        type: "error",
-        text1: i18n.t("auth.signInError"),
-        text2: i18n.t("auth.sessionSaveError"),
+      toast.error(i18n.t("auth.signInError"), {
+        description: i18n.t("auth.sessionSaveError"),
       });
       router.replace("/(auth)");
       return;

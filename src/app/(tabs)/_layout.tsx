@@ -22,21 +22,26 @@ export default function TabLayout() {
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="meet">
         <NativeTabs.Trigger.Icon sf="sparkles" md="auto_awesome" />
-        <NativeTabs.Trigger.Label>{t("tabs.meet")}</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>
+          {t("tabs.connections")}
+        </NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="study">
         <NativeTabs.Trigger.Icon
           sf={{ default: "books.vertical", selected: "books.vertical.fill" }}
           md="local_library"
         />
-        <NativeTabs.Trigger.Label>{t("tabs.study")}</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>{t("tabs.exams")}</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="guide">
+      <NativeTabs.Trigger name="faq">
         <NativeTabs.Trigger.Icon
-          sf={{ default: "mappin", selected: "mappin.circle.fill" }}
-          md="location_on"
+          sf={{
+            default: "questionmark.circle",
+            selected: "questionmark.circle.fill",
+          }}
+          md="help"
         />
-        <NativeTabs.Trigger.Label>{t("tabs.guide")}</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>{t("tabs.faq")}</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );

@@ -1,11 +1,13 @@
 import "@/schemas";
 import "@/internationalization";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import Toast from "react-native-toast-message";
+import { Toaster } from "sonner-native";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SessionProvider, useSession } from "@/contexts";
 import { Stack } from "expo-router";
 import { KeyboardProvider } from "react-native-keyboard-controller";
+import { StyleSheet } from "react-native-unistyles";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +23,10 @@ function RootNavigator(): React.JSX.Element {
       </Stack.Protected>
       <Stack.Protected guard={!!session}>
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="chat/[id]" />
+        <Stack.Screen name="profile" />
+        <Stack.Screen name="feed" />
+        <Stack.Screen name="student/[id]" />
       </Stack.Protected>
     </Stack>
   );
@@ -30,13 +36,26 @@ export default function RootLayout() {
   return (
     <KeyboardProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <SessionProvider>
-          <QueryClientProvider client={queryClient}>
-            <RootNavigator />
-          </QueryClientProvider>
-        </SessionProvider>
-        <Toast />
+        <QueryClientProvider client={queryClient}>
+          <SessionProvider>
+            <BottomSheetModalProvider>
+              <RootNavigator />
+              <Toaster theme="dark" styles={styles} />
+            </BottomSheetModalProvider>
+          </SessionProvider>
+        </QueryClientProvider>
       </GestureHandlerRootView>
     </KeyboardProvider>
   );
 }
+
+const styles = StyleSheet.create((theme) => ({
+  toast: {
+    backgroundColor: theme.colors.surface,
+    borderColor: theme.colors.white10,
+    borderWidth: 1,
+    borderRadius: theme.vs(16),
+  },
+  title: { color: theme.colors.white },
+  description: { color: theme.colors.white60 },
+}));
