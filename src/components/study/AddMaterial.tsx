@@ -1,3 +1,5 @@
+import { usePostHog } from "posthog-react-native";
+import { captureAction } from "@/utils/analytics";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Pressable } from "react-native";
@@ -22,8 +24,27 @@ export function AddMaterial({
     defaultValues: { subject: "", university: "" },
     mode: "onChange",
   });
-  const onSubmit = handleSubmit(({ subject, university }) =>
-    onSave({ subject, university, type: "Exam", author: "You", rating: "—" }),
+  const posthog = usePostHog();
+  const onSubmit = handleSubmit(
+    ({ subject, university }) => {
+      captureAction(posthog, "material_add", "attempted", { storage: "local" });
+      try {
+        onSave({
+          subject,
+          university,
+          type: "Exam",
+          author: "You",
+          rating: "—",
+        });
+        captureAction(posthog, "material_add", "succeeded", {
+          storage: "local",
+        });
+      } catch (error) {
+        captureAction(posthog, "material_add", "failed", { storage: "local" });
+        throw error;
+      }
+    },
+    () => captureAction(posthog, "material_form", "validation_failed"),
   );
   return (
     <UIGlass style={styles.card}>

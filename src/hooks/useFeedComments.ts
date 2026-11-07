@@ -38,6 +38,7 @@ export function useCommentReplies(id: string, enabled: boolean) {
 export function useUpdateFeedComment() {
   const queryClient = useQueryClient();
   return useMutation({
+    meta: { analyticsAction: "comment_update" },
     mutationFn: updateFeedComment,
     onSuccess: (comment) => patchFeedItem(queryClient, comment.id, comment),
   });
@@ -46,6 +47,7 @@ export function useUpdateFeedComment() {
 export function useDeleteFeedComment() {
   const queryClient = useQueryClient();
   return useMutation({
+    meta: { analyticsAction: "comment_delete" },
     mutationFn: deleteFeedComment,
     onSuccess: () =>
       Promise.all([
@@ -60,6 +62,7 @@ export function useCreateComment() {
   const queryClient = useQueryClient();
   const { mutateAsync, variables, isError, isPending } = useMutation({
     mutationKey: ["feed", "create-comment"],
+    meta: { analyticsAction: "comment_create" },
     mutationFn: createFeedComment,
     onSuccess: (_, { id, replyToCommentId }) =>
       Promise.all([

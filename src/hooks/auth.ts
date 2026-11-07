@@ -1,3 +1,5 @@
+import { usePostHog } from "posthog-react-native";
+import { captureAction } from "@/utils/analytics";
 import { $api, requestOtpCode, verifyOtpCode } from "@/api";
 import { useMutation } from "@tanstack/react-query";
 import type { IssuedSession } from "@/@types/auth";
@@ -39,6 +41,7 @@ export function useExchangeLoginCode() {
   const startSession = useStartSession();
 
   return $api.useMutation("post", "/auth/exchange", {
+    meta: { analyticsAction: "login_exchange" },
     onSuccess: startSession,
     onError: () => {
       showLoginError("common.tryAgain");
@@ -48,16 +51,24 @@ export function useExchangeLoginCode() {
 }
 
 export function useRequestOtpCode() {
-  return useMutation({ mutationFn: requestOtpCode });
+  return useMutation({
+    meta: { analyticsAction: "otp_request" },
+    mutationFn: requestOtpCode,
+  });
 }
 
 export function useVerifyOtpCode() {
   const startSession = useStartSession();
 
-  return useMutation({ mutationFn: verifyOtpCode, onSuccess: startSession });
+  return useMutation({
+    meta: { analyticsAction: "otp_verify" },
+    mutationFn: verifyOtpCode,
+    onSuccess: startSession,
+  });
 }
 
 export function useFinishLogin(code?: string, error?: string): void {
+  const posthog = usePostHog();
   const { mutate: exchangeLoginCode } = useExchangeLoginCode();
   const hasHandledCallback = useRef(false);
 
@@ -68,13 +79,14 @@ export function useFinishLogin(code?: string, error?: string): void {
     hasHandledCallback.current = true;
 
     if (error || !code) {
+      captureAction(posthog, "login_callback", "failed");
       showLoginError(error ? "auth.usosSignInError" : "auth.missingLoginCode");
       router.replace("/(auth)");
       return;
     }
 
     exchangeLoginCode({ body: { code } });
-  }, [code, error, exchangeLoginCode]);
+  }, [code, error, exchangeLoginCode, posthog]);
 }
 
 export function useUsosLogin(): (navigation: WebViewNavigation) => boolean {

@@ -1,3 +1,5 @@
+import { usePostHog } from "posthog-react-native";
+import { captureAction } from "@/utils/analytics";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router, useLocalSearchParams } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
@@ -30,15 +32,19 @@ export default function EditPostScreen() {
     },
   });
 
-  const onSubmit = handleSubmit(async (values) => {
-    try {
-      await updatePost({ id, body: values });
-      toast.success(t("app.saved"));
-      router.back();
-    } catch {
-      toast.error(t("apiState.error"));
-    }
-  });
+  const posthog = usePostHog();
+  const onSubmit = handleSubmit(
+    async (values) => {
+      try {
+        await updatePost({ id, body: values });
+        toast.success(t("app.saved"));
+        router.back();
+      } catch {
+        toast.error(t("apiState.error"));
+      }
+    },
+    () => captureAction(posthog, "post_update_form", "validation_failed"),
+  );
 
   const handleSubmitPress = () => onSubmit();
 

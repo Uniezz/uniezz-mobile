@@ -1,3 +1,5 @@
+import { usePostHog } from "posthog-react-native";
+import { captureAction } from "@/utils/analytics";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "expo-router";
 import { Controller, useForm, useWatch } from "react-hook-form";
@@ -73,32 +75,38 @@ export default function NewPostScreen() {
     },
   ] as const;
 
-  const onSubmit = handleSubmit(async (values) => {
-    if (!profile) return;
-    try {
-      const mediaIds = await uploadImages(values.photos);
-      await createPost({
-        type: values.type,
-        title: values.title,
-        content: values.content,
-        university: values.audience === "all" ? "all" : profile.universityId,
-        eventDate:
-          values.type === "event" ? values.eventDate?.toISOString() : undefined,
-        tags: values.tags.length ? values.tags : undefined,
-        mediaIds: mediaIds.length ? mediaIds : undefined,
-      });
-      toast.success(t("postComposer.published"));
-      router.back();
-    } catch (error) {
-      toast.error(
-        t(
-          error instanceof ApiRequestError && error.translationKey
-            ? error.translationKey
-            : "apiState.error",
-        ),
-      );
-    }
-  });
+  const posthog = usePostHog();
+  const onSubmit = handleSubmit(
+    async (values) => {
+      if (!profile) return;
+      try {
+        const mediaIds = await uploadImages(values.photos);
+        await createPost({
+          type: values.type,
+          title: values.title,
+          content: values.content,
+          university: values.audience === "all" ? "all" : profile.universityId,
+          eventDate:
+            values.type === "event"
+              ? values.eventDate?.toISOString()
+              : undefined,
+          tags: values.tags.length ? values.tags : undefined,
+          mediaIds: mediaIds.length ? mediaIds : undefined,
+        });
+        toast.success(t("postComposer.published"));
+        router.back();
+      } catch (error) {
+        toast.error(
+          t(
+            error instanceof ApiRequestError && error.translationKey
+              ? error.translationKey
+              : "apiState.error",
+          ),
+        );
+      }
+    },
+    () => captureAction(posthog, "post_create_form", "validation_failed"),
+  );
   const handleSubmitPress = () => onSubmit();
 
   return (

@@ -1,3 +1,5 @@
+import { usePostHog } from "posthog-react-native";
+import { captureAction } from "@/utils/analytics";
 import {
   BottomSheetTextInput,
   BottomSheetView,
@@ -39,29 +41,33 @@ export const ReportSheet = ({
     },
   );
 
-  const onSubmit = handleSubmit(async ({ reason, details }) => {
-    try {
-      await report({
-        targetId,
-        targetType,
-        reason,
-        details: details || undefined,
-      });
-      toast.success(t("report.sent"));
-      reset();
-      dismiss();
-    } catch (error) {
-      toast.error(
-        t(
-          error instanceof ApiRequestError &&
-            error.translationKey &&
-            i18n.exists(error.translationKey)
-            ? error.translationKey
-            : "apiState.error",
-        ),
-      );
-    }
-  });
+  const posthog = usePostHog();
+  const onSubmit = handleSubmit(
+    async ({ reason, details }) => {
+      try {
+        await report({
+          targetId,
+          targetType,
+          reason,
+          details: details || undefined,
+        });
+        toast.success(t("report.sent"));
+        reset();
+        dismiss();
+      } catch (error) {
+        toast.error(
+          t(
+            error instanceof ApiRequestError &&
+              error.translationKey &&
+              i18n.exists(error.translationKey)
+              ? error.translationKey
+              : "apiState.error",
+          ),
+        );
+      }
+    },
+    () => captureAction(posthog, "report_form", "validation_failed"),
+  );
 
   return (
     <UIBottomSheet

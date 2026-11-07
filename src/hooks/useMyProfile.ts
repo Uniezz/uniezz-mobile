@@ -21,6 +21,7 @@ export function useMyProfile() {
 export function useUpdateMyProfile() {
   const queryClient = useQueryClient();
   return useMutation({
+    meta: { analyticsAction: "profile_update" },
     mutationFn: updateMyProfile,
     onSuccess: (profile) =>
       queryClient.setQueryData(["profile", "me"], profile),
@@ -30,6 +31,7 @@ export function useUpdateMyProfile() {
 export function useAddMyProgramme() {
   const queryClient = useQueryClient();
   return useMutation({
+    meta: { analyticsAction: "programme_add" },
     mutationFn: addMyProgramme,
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: ["profile", "me"] }),
@@ -39,6 +41,7 @@ export function useAddMyProgramme() {
 export function useReplaceMyProgramme() {
   const queryClient = useQueryClient();
   return useMutation({
+    meta: { analyticsAction: "programme_update" },
     mutationFn: ({ id, body }: { id: string; body: ProgrammeInput }) =>
       replaceMyProgramme(id, body),
     onSuccess: () =>
@@ -49,6 +52,7 @@ export function useReplaceMyProgramme() {
 export function useDeleteMyProgramme() {
   const queryClient = useQueryClient();
   return useMutation({
+    meta: { analyticsAction: "programme_delete" },
     mutationFn: deleteMyProgramme,
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: ["profile", "me"] }),
@@ -58,6 +62,7 @@ export function useDeleteMyProgramme() {
 export function useDeleteMyAvatar() {
   const queryClient = useQueryClient();
   return useMutation({
+    meta: { analyticsAction: "avatar_delete" },
     mutationFn: deleteMyAvatar,
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: ["profile", "me"] }),

@@ -8,6 +8,8 @@ import {
 import type { IssuedSession } from "@/@types/auth";
 import { api, setApiAccessToken } from "@/api";
 import { useQueryClient } from "@tanstack/react-query";
+import { usePostHog } from "posthog-react-native";
+import { captureAction } from "@/utils/analytics";
 import {
   deleteStoredSession,
   loadStoredSession,
@@ -26,6 +28,7 @@ export const SessionContext = createContext<SessionContextValue | null>(null);
 
 export function SessionProvider({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient();
+  const posthog = usePostHog();
   const [session, setSession] = useState<IssuedSession | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -49,20 +52,43 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  const saveSession = useCallback(async (nextSession: IssuedSession) => {
-    await storeSession(nextSession);
-    useChatStore.getState().reset();
-    setSession(nextSession);
-    setApiAccessToken(nextSession.token);
-  }, []);
+  const saveSession = useCallback(
+    async (nextSession: IssuedSession) => {
+      captureAction(posthog, "session_save", "attempted");
+      try {
+        await storeSession(nextSession);
+        useChatStore.getState().reset();
+        setSession(nextSession);
+        setApiAccessToken(nextSession.token);
+        captureAction(posthog, "session_save", "succeeded");
+      } catch (error) {
+        captureAction(posthog, "session_save", "failed");
+        throw error;
+      }
+    },
+    [posthog],
+  );
 
   const clearSession = useCallback(async () => {
+    captureAction(posthog, "session_clear", "attempted");
     useChatStore.getState().reset();
     setApiAccessToken(null);
     setSession(null);
     queryClient.clear();
-    await deleteStoredSession();
-  }, [queryClient]);
+    try {
+      await deleteStoredSession();
+      captureAction(posthog, "session_clear", "succeeded");
+    } catch (error) {
+      captureAction(posthog, "session_clear", "failed");
+      throw error;
+    } finally {
+      try {
+        posthog.reset();
+      } catch {
+        // Analytics must not mask a session storage failure.
+      }
+    }
+  }, [queryClient, posthog]);
 
   useEffect(() => {
     if (!session?.token) return;

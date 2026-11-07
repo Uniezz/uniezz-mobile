@@ -1,3 +1,5 @@
+import { usePostHog } from "posthog-react-native";
+import { captureAction } from "@/utils/analytics";
 import { otpDefaultValues, otpSchema, type OtpSchema } from "@/schemas";
 import { autoComplete, CELL_COUNT } from "@/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -50,32 +52,36 @@ export const useOtpScreen = () => {
     if (errors.code) clearErrors("code");
   };
 
-  const onButtonPress = handleSubmit(async (data) => {
-    if (!university) {
-      router.replace("/(auth)");
-      return;
-    }
-
-    try {
-      if (data.step === "email") {
-        await requestCode({ email: data.email, university });
-        setValue("step", "code");
-        setValue("code", "");
-      } else {
-        await verifyCode({ code: data.code, email: data.email, university });
+  const posthog = usePostHog();
+  const onButtonPress = handleSubmit(
+    async (data) => {
+      if (!university) {
+        router.replace("/(auth)");
+        return;
       }
-    } catch (error) {
-      const errorMessage =
-        error instanceof ApiRequestError &&
-        error.translationKey &&
-        i18n.exists(error.translationKey)
-          ? error.translationKey
-          : "common.tryAgain";
-      setError(data.step, {
-        message: errorMessage,
-      });
-    }
-  });
+
+      try {
+        if (data.step === "email") {
+          await requestCode({ email: data.email, university });
+          setValue("step", "code");
+          setValue("code", "");
+        } else {
+          await verifyCode({ code: data.code, email: data.email, university });
+        }
+      } catch (error) {
+        const errorMessage =
+          error instanceof ApiRequestError &&
+          error.translationKey &&
+          i18n.exists(error.translationKey)
+            ? error.translationKey
+            : "common.tryAgain";
+        setError(data.step, {
+          message: errorMessage,
+        });
+      }
+    },
+    () => captureAction(posthog, "otp_form", "validation_failed"),
+  );
 
   const onResendPress = async () => {
     try {

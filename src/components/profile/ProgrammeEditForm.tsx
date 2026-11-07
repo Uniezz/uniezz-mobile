@@ -1,3 +1,5 @@
+import { usePostHog } from "posthog-react-native";
+import { captureAction } from "@/utils/analytics";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -31,25 +33,29 @@ export const ProgrammeEditForm = ({
     },
   });
 
-  const onSubmit = handleSubmit(async (values) => {
-    try {
-      await replace({
-        id: programme.id,
-        body: {
-          programme: programme.programme,
-          faculty: programme.faculty,
-          isPrimary: programme.isPrimary,
-          status: values.status,
-          yearOfStudy: values.yearOfStudy ?? undefined,
-          level: values.level ?? undefined,
-          modeOfStudies: values.modeOfStudies ?? undefined,
-        },
-      });
-      onDone();
-    } catch {
-      toast.error(t("apiState.profileSaveError"));
-    }
-  });
+  const posthog = usePostHog();
+  const onSubmit = handleSubmit(
+    async (values) => {
+      try {
+        await replace({
+          id: programme.id,
+          body: {
+            programme: programme.programme,
+            faculty: programme.faculty,
+            isPrimary: programme.isPrimary,
+            status: values.status,
+            yearOfStudy: values.yearOfStudy ?? undefined,
+            level: values.level ?? undefined,
+            modeOfStudies: values.modeOfStudies ?? undefined,
+          },
+        });
+        onDone();
+      } catch {
+        toast.error(t("apiState.profileSaveError"));
+      }
+    },
+    () => captureAction(posthog, "programme_update_form", "validation_failed"),
+  );
   const handleSavePress = () => onSubmit();
 
   return (

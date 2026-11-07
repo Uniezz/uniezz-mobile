@@ -3,16 +3,16 @@ import "@/internationalization";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Toaster } from "sonner-native";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { SessionProvider, useSession } from "@/contexts";
+import { QueryProvider, SessionProvider, useSession } from "@/contexts";
 import { Stack } from "expo-router";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { StyleSheet } from "react-native-unistyles";
-
-const queryClient = new QueryClient();
+import { PostHogProvider } from "posthog-react-native";
+import { useScreenTracking } from "@/hooks/useScreenTracking";
 
 function RootNavigator(): React.JSX.Element {
   const { session } = useSession();
+  useScreenTracking();
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
@@ -34,18 +34,30 @@ function RootNavigator(): React.JSX.Element {
 
 export default function RootLayout() {
   return (
-    <KeyboardProvider>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <QueryClientProvider client={queryClient}>
-          <SessionProvider>
-            <BottomSheetModalProvider>
-              <RootNavigator />
-              <Toaster theme="dark" styles={styles} />
-            </BottomSheetModalProvider>
-          </SessionProvider>
-        </QueryClientProvider>
-      </GestureHandlerRootView>
-    </KeyboardProvider>
+    <PostHogProvider
+      autocapture={{
+        captureTouches: true,
+        captureScreens: false,
+        propsToCapture: ["testID", "ph-label"],
+      }}
+      projectToken="phc_pSPCwUwaLeA8xTLn6Y5XWS6Kq3TXEbBa3W3DNnoLPHsJ"
+      options={{
+        host: "https://us.i.posthog.com",
+      }}
+    >
+      <KeyboardProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <QueryProvider>
+            <SessionProvider>
+              <BottomSheetModalProvider>
+                <RootNavigator />
+                <Toaster theme="dark" styles={styles} />
+              </BottomSheetModalProvider>
+            </SessionProvider>
+          </QueryProvider>
+        </GestureHandlerRootView>
+      </KeyboardProvider>
+    </PostHogProvider>
   );
 }
 
