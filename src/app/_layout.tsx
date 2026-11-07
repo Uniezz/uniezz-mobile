@@ -8,6 +8,7 @@ import { SessionProvider, useSession } from "@/contexts";
 import { Stack } from "expo-router";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { StyleSheet } from "react-native-unistyles";
+import { PostHogProvider } from "posthog-react-native";
 
 const queryClient = new QueryClient();
 
@@ -34,18 +35,25 @@ function RootNavigator(): React.JSX.Element {
 
 export default function RootLayout() {
   return (
-    <KeyboardProvider>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <QueryClientProvider client={queryClient}>
-          <SessionProvider>
-            <BottomSheetModalProvider>
-              <RootNavigator />
-              <Toaster theme="dark" styles={styles} />
-            </BottomSheetModalProvider>
-          </SessionProvider>
-        </QueryClientProvider>
-      </GestureHandlerRootView>
-    </KeyboardProvider>
+    <PostHogProvider
+      projectToken="phc_pSPCwUwaLeA8xTLn6Y5XWS6Kq3TXEbBa3W3DNnoLPHsJ"
+      options={{
+        host: "https://us.i.posthog.com",
+      }}
+    >
+      <KeyboardProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <QueryClientProvider client={queryClient}>
+            <SessionProvider>
+              <BottomSheetModalProvider>
+                <RootNavigator />
+                <Toaster theme="dark" styles={styles} />
+              </BottomSheetModalProvider>
+            </SessionProvider>
+          </QueryClientProvider>
+        </GestureHandlerRootView>
+      </KeyboardProvider>
+    </PostHogProvider>
   );
 }
 
