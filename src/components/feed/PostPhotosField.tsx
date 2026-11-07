@@ -1,3 +1,5 @@
+import { usePostHog } from "posthog-react-native";
+import { captureAction } from "@/utils/analytics";
 import { Image } from "expo-image";
 import { launchImageLibraryAsync } from "expo-image-picker";
 import { useTranslation } from "react-i18next";
@@ -15,15 +17,24 @@ type PostPhotosFieldProps = {
 
 export const PostPhotosField = ({ value, onChange }: PostPhotosFieldProps) => {
   const { t } = useTranslation();
+  const posthog = usePostHog();
 
   const handleAddPress = async () => {
+    captureAction(posthog, "post_photos_pick", "attempted");
     const result = await launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsMultipleSelection: true,
       selectionLimit: MAX_POST_PHOTOS - value.length,
       quality: 0.8,
+    }).catch((error: unknown) => {
+      captureAction(posthog, "post_photos_pick", "failed");
+      throw error;
     });
-    if (result.canceled) return;
+    if (result.canceled) {
+      captureAction(posthog, "post_photos_pick", "cancelled");
+      return;
+    }
+    captureAction(posthog, "post_photos_pick", "succeeded");
     const picked = result.assets.map(({ uri, mimeType, fileSize }) => ({
       uri,
       mimeType,
@@ -35,8 +46,10 @@ export const PostPhotosField = ({ value, onChange }: PostPhotosFieldProps) => {
         (photo.fileSize ?? 0) <= MAX_IMAGE_MB.feed * 1024 * 1024 &&
         !value.some((existing) => existing.uri === photo.uri),
     );
-    if (valid.length < picked.length)
+    if (valid.length < picked.length) {
+      captureAction(posthog, "post_photos", "validation_failed");
       toast.error(t("postComposer.photosError"));
+    }
     onChange([...value, ...valid].slice(0, MAX_POST_PHOTOS));
   };
 

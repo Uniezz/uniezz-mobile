@@ -6,6 +6,7 @@ export function useCreateFeedPost() {
   const queryClient = useQueryClient();
   const { mutateAsync, isPending, isError, variables } = useMutation({
     mutationKey: ["feed", "create-post"],
+    meta: { analyticsAction: "post_create" },
     mutationFn: ({ body, key }: { body: CreatePostInput; key: string }) =>
       createFeedPost(body, key),
     onSuccess: (post) => {

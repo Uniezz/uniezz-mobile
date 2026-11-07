@@ -18,6 +18,7 @@ import { patchFeedItem } from "./patchFeedItem";
 export function useUpdateFeedPost() {
   const queryClient = useQueryClient();
   return useMutation({
+    meta: { analyticsAction: "post_update" },
     mutationFn: updateFeedPost,
     onSuccess: (post) => {
       queryClient.setQueryData(["feed", "post", post.id], post);
@@ -29,6 +30,7 @@ export function useUpdateFeedPost() {
 export function useDeleteFeedPost() {
   const queryClient = useQueryClient();
   return useMutation({
+    meta: { analyticsAction: "post_delete" },
     mutationFn: deleteFeedPost,
     onSuccess: (_, id) => {
       queryClient.removeQueries({
@@ -43,6 +45,7 @@ export function useDeleteFeedPost() {
 export function useFeedLike() {
   const queryClient = useQueryClient();
   return useMutation({
+    meta: { analyticsAction: "post_like_set" },
     mutationFn: setFeedLike,
     onSuccess: ({ liked, likesCount }, { id }) =>
       patchFeedItem(queryClient, id, { likedByMe: liked, likesCount }),

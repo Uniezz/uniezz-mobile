@@ -1,3 +1,5 @@
+import { usePostHog } from "posthog-react-native";
+import { captureAction } from "@/utils/analytics";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner-native";
@@ -26,14 +28,18 @@ export function AddProgrammeForm({
     defaultValues: { programme: "", faculty: "" },
     mode: "onChange",
   });
-  const onSubmit = handleSubmit(async (values) => {
-    try {
-      await addProgramme({ ...values, status: "active", isPrimary });
-      onSaved();
-    } catch {
-      toast.error(t("apiState.profileSaveError"));
-    }
-  });
+  const posthog = usePostHog();
+  const onSubmit = handleSubmit(
+    async (values) => {
+      try {
+        await addProgramme({ ...values, status: "active", isPrimary });
+        onSaved();
+      } catch {
+        toast.error(t("apiState.profileSaveError"));
+      }
+    },
+    () => captureAction(posthog, "programme_add_form", "validation_failed"),
+  );
   return (
     <UIGlass style={styles.editor}>
       <Controller

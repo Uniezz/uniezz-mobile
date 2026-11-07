@@ -1,3 +1,5 @@
+import { usePostHog } from "posthog-react-native";
+import { captureAction } from "@/utils/analytics";
 import {
   BottomSheetFooter,
   BottomSheetTextInput,
@@ -45,19 +47,23 @@ export const CommentsSheet = ({ postId, ref }: CommentsSheetProps) => {
   });
   const comments = data?.pages.flatMap((page) => page.items ?? []) ?? [];
 
-  const onSend = handleSubmit(async ({ content }) => {
-    try {
-      await createComment({
-        id: postId,
-        content,
-        replyToCommentId: replyTo?.id,
-      });
-      reset();
-      setReplyTo(null);
-    } catch {
-      toast.error(t("apiState.error"));
-    }
-  });
+  const posthog = usePostHog();
+  const onSend = handleSubmit(
+    async ({ content }) => {
+      try {
+        await createComment({
+          id: postId,
+          content,
+          replyToCommentId: replyTo?.id,
+        });
+        reset();
+        setReplyTo(null);
+      } catch {
+        toast.error(t("apiState.error"));
+      }
+    },
+    () => captureAction(posthog, "comment_form", "validation_failed"),
+  );
 
   const handleSendPress = () => onSend();
   const handleCancelReply = () => setReplyTo(null);

@@ -1,3 +1,5 @@
+import { usePostHog } from "posthog-react-native";
+import { captureAction } from "@/utils/analytics";
 import { router } from "expo-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -27,6 +29,7 @@ import { authorName } from "@/utils";
 
 export default function ProfileScreen() {
   const { t } = useTranslation();
+  const posthog = usePostHog();
   const { data: profile, isPending, isError, refetch } = useMyProfile();
   const { mutateAsync: deleteAvatar, isPending: isRemovingPhoto } =
     useDeleteMyAvatar();
@@ -52,13 +55,22 @@ export default function ProfileScreen() {
   };
 
   const handleChangePhotoPress = async () => {
+    captureAction(posthog, "avatar_pick", "attempted");
     const result = await launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsEditing: true,
       aspect: [1, 1],
       quality: 0.8,
+    }).catch((error: unknown) => {
+      captureAction(posthog, "avatar_pick", "failed");
+      throw error;
     });
-    if (result.canceled || !result.assets[0]) return;
+    if (result.canceled) {
+      captureAction(posthog, "avatar_pick", "cancelled");
+      return;
+    }
+    captureAction(posthog, "avatar_pick", "succeeded");
+    if (!result.assets[0]) return;
     const { uri, mimeType, fileSize } = result.assets[0];
     try {
       const [avatarMediaId] = await uploadImages([{ uri, mimeType, fileSize }]);

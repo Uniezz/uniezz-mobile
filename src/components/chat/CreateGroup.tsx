@@ -1,3 +1,5 @@
+import { usePostHog } from "posthog-react-native";
+import { captureAction } from "@/utils/analytics";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Pressable } from "react-native";
@@ -26,8 +28,21 @@ export function CreateGroup({
     defaultValues: { groupName: "", members: [] },
     mode: "onChange",
   });
-  const onSubmit = handleSubmit(({ groupName, members }) =>
-    onCreate(groupName, members),
+  const posthog = usePostHog();
+  const onSubmit = handleSubmit(
+    ({ groupName, members }) => {
+      captureAction(posthog, "group_create", "attempted", { storage: "local" });
+      try {
+        onCreate(groupName, members);
+        captureAction(posthog, "group_create", "succeeded", {
+          storage: "local",
+        });
+      } catch (error) {
+        captureAction(posthog, "group_create", "failed", { storage: "local" });
+        throw error;
+      }
+    },
+    () => captureAction(posthog, "group_form", "validation_failed"),
   );
   return (
     <>

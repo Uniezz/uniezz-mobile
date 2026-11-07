@@ -1,3 +1,5 @@
+import { usePostHog } from "posthog-react-native";
+import { captureAction } from "@/utils/analytics";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -32,14 +34,18 @@ export function PersonalDetailsForm({
     },
     mode: "onChange",
   });
-  const onSubmit = handleSubmit(async ({ interests, ...values }) => {
-    try {
-      await update({ ...values, interests: splitInterests(interests) });
-      onSaved();
-    } catch {
-      toast.error(t("apiState.profileSaveError"));
-    }
-  });
+  const posthog = usePostHog();
+  const onSubmit = handleSubmit(
+    async ({ interests, ...values }) => {
+      try {
+        await update({ ...values, interests: splitInterests(interests) });
+        onSaved();
+      } catch {
+        toast.error(t("apiState.profileSaveError"));
+      }
+    },
+    () => captureAction(posthog, "profile_form", "validation_failed"),
+  );
   const handleSavePress = () => onSubmit();
 
   return (

@@ -1,3 +1,5 @@
+import { usePostHog } from "posthog-react-native";
+import { captureAction } from "@/utils/analytics";
 import { router, useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { Pressable, View } from "react-native";
@@ -12,11 +14,23 @@ const emptyMessages: ChatMessage[] = [];
 export default function ConversationScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { t } = useTranslation();
+  const posthog = usePostHog();
   const conversation = useChatStore((state) =>
     state.conversations.find((item) => item.id === id),
   );
   const messages = useChatStore((state) => state.messages[id] ?? emptyMessages);
   const sendMessages = useChatStore((state) => state.sendMessages);
+
+  const handleSend = (sent: ChatMessage[]) => {
+    captureAction(posthog, "message_send", "attempted", { storage: "local" });
+    try {
+      sendMessages(id, sent);
+      captureAction(posthog, "message_send", "succeeded", { storage: "local" });
+    } catch (error) {
+      captureAction(posthog, "message_send", "failed", { storage: "local" });
+      throw error;
+    }
+  };
 
   const handleBackPress = () => {
     if (router.canGoBack()) {
@@ -55,10 +69,7 @@ export default function ConversationScreen() {
           ) : null}
         </View>
         {conversation ? (
-          <ChatThread
-            messages={messages}
-            onSend={(sent) => sendMessages(id, sent)}
-          />
+          <ChatThread messages={messages} onSend={handleSend} />
         ) : (
           <UIText color="secondary">{t("app.empty")}</UIText>
         )}
