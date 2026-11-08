@@ -1,21 +1,32 @@
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import {
+  MenuAction,
+  MenuView,
+  NativeActionEvent,
+} from "@react-native-menu/menu";
 import { usePostHog } from "posthog-react-native";
 import { captureAction } from "@/utils/analytics";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FlashList } from "@shopify/flash-list";
-import { Pressable, View } from "react-native";
+import {
+  LayoutChangeEvent,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  View,
+} from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import { useSession } from "@/contexts";
 import {
-  AddProgrammeForm,
-  EditableProgramme,
   InterestChips,
-  PersonalDetailsForm,
-  PrivacyCard,
+  PersonalDetailsSheet,
+  PrivacySheet,
+  ProfileHeader,
   ProfileHero,
-  UniversityCard,
+  ProgrammeCard,
+  ProgrammesSheet,
 } from "@/components/profile";
 import { FeedPostCard } from "@/components/feed";
 import { useFeedPosts } from "@/hooks/useFeed";
@@ -28,7 +39,7 @@ import {
   useUpdateMyProfile,
 } from "@/hooks/useMyProfile";
 import { Icon, UIGlass, UIPage, UIQueryError, UISkeleton, UIText } from "@/ui";
-import { authorName } from "@/utils";
+import { authorName, FEED_HEADER_COMPACT_OFFSET } from "@/utils";
 
 export default function ProfileScreen() {
   const { t } = useTranslation();
@@ -40,8 +51,9 @@ export default function ProfileScreen() {
     useUploadImages("avatar");
   const { mutateAsync: updateProfile } = useUpdateMyProfile();
   const { clearSession } = useSession();
-  const [editing, setEditing] = useState(false);
-  const [addingProgramme, setAddingProgramme] = useState(false);
+  const programmesRef = useRef<BottomSheetModal>(null);
+  const detailsRef = useRef<BottomSheetModal>(null);
+  const privacyRef = useRef<BottomSheetModal>(null);
   const postFilters = { authorId: profile?.id };
   const {
     data: postPages,
@@ -54,23 +66,33 @@ export default function ProfileScreen() {
   } = useFeedPosts(postFilters, {
     enabled: Boolean(profile),
   });
-  const posts =
-    profile && !editing
-      ? (postPages?.pages.flatMap((page) => page.items ?? []) ?? [])
-      : [];
+  const posts = profile
+    ? (postPages?.pages.flatMap((page) => page.items ?? []) ?? [])
+    : [];
   const handleEndReached = () => {
     if (hasNextPage && !isFetchingNextPage) return fetchNextPage();
   };
 
+  // the header floats over the list; scrolling blurs it and swaps its title for the name
+  const [headerHeight, setHeaderHeight] = useState(0);
+  // a boolean, so a scroll only re-renders when it flips
+  const [isScrolled, setIsScrolled] = useState(false);
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    setIsScrolled(
+      event.nativeEvent.contentOffset.y > FEED_HEADER_COMPACT_OFFSET,
+    );
+  };
+  const handleHeaderLayout = (event: LayoutChangeEvent) => {
+    setHeaderHeight(event.nativeEvent.layout.height);
+  };
   const handleBackPress = () => router.back();
-  const handleToggleEditing = () => setEditing(!editing);
-  const handleDetailsSaved = () => setEditing(false);
-  const handleToggleAddProgramme = () => setAddingProgramme(!addingProgramme);
-  const handleProgrammeAdded = () => setAddingProgramme(false);
+  const handleDetailsSaved = () => detailsRef.current?.dismiss();
+  const handlePrivacySaved = () => privacyRef.current?.dismiss();
 
   const handleRemovePhotoPress = async () => {
     try {
       await deleteAvatar();
+      toast.success(t("app.saved"));
     } catch {
       toast.error(t("apiState.profileSaveError"));
     }
@@ -97,6 +119,7 @@ export default function ProfileScreen() {
     try {
       const [avatarMediaId] = await uploadImages([{ uri, mimeType, fileSize }]);
       await updateProfile({ avatarMediaId });
+      toast.success(t("app.saved"));
     } catch (error) {
       toast.error(
         t(
@@ -116,32 +139,65 @@ export default function ProfileScreen() {
     }
   };
 
+  const handleMenuAction = ({ nativeEvent }: NativeActionEvent) => {
+    if (nativeEvent.event === "details") return detailsRef.current?.present();
+    if (nativeEvent.event === "privacy") return privacyRef.current?.present();
+    if (nativeEvent.event === "programmes")
+      return programmesRef.current?.present();
+    if (nativeEvent.event === "removePhoto") return handleRemovePhotoPress();
+    if (nativeEvent.event === "logout") return handleLogoutPress();
+  };
+  const menuActions: MenuAction[] = [
+    { id: "details", title: t("app.personalDetails") },
+    { id: "programmes", title: t("app.studyProgrammes") },
+    { id: "privacy", title: t("app.profileVisibility") },
+    ...(profile?.avatarUrl && !isRemovingPhoto
+      ? [
+          {
+            id: "removePhoto",
+            title: t("students.removePhoto"),
+            attributes: { destructive: true },
+          },
+        ]
+      : []),
+    {
+      id: "logout",
+      title: t("auth.logOut"),
+      attributes: { destructive: true },
+    },
+  ];
+  const headerAction = profile ? (
+    <MenuView actions={menuActions} onPressAction={handleMenuAction}>
+      <UIGlass
+        radius={12}
+        accessible
+        accessibilityRole="button"
+        accessibilityLabel={t("app.moreOptions")}
+        style={styles.more}
+      >
+        <Icon name="ellipsis" size={18} />
+      </UIGlass>
+    </MenuView>
+  ) : null;
+
   return (
     <UIPage>
+      <ProfileHeader
+        title={t("app.profile")}
+        name={profile ? authorName(profile) || t("apiState.student") : ""}
+        avatarUrl={profile?.avatarUrl}
+        universityId={profile?.universityId}
+        isScrolled={isScrolled}
+        action={headerAction}
+        onLayout={handleHeaderLayout}
+        onBackPress={handleBackPress}
+      />
       <FlashList
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+        showsVerticalScrollIndicator={false}
         ListHeaderComponent={
           <View style={styles.page}>
-            <View style={styles.header}>
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel={t("app.back")}
-                onPress={handleBackPress}
-                style={styles.back}
-              >
-                <Icon name="arrow-left" size={18} />
-              </Pressable>
-              {profile ? (
-                <Pressable
-                  accessibilityRole="button"
-                  onPress={handleToggleEditing}
-                  hitSlop={8}
-                >
-                  <UIText size="sm" weight="semibold" color="brand">
-                    {editing ? t("postComposer.cancel") : t("app.edit")}
-                  </UIText>
-                </Pressable>
-              ) : null}
-            </View>
             {isPending ? (
               <UISkeleton height={220} />
             ) : isError || !profile ? (
@@ -152,119 +208,41 @@ export default function ProfileScreen() {
                   avatar={profile.avatarUrl}
                   name={authorName(profile) || t("apiState.student")}
                   subtitle={profile.email}
+                  universityId={profile.universityId}
+                  onAvatarPress={handleChangePhotoPress}
+                  avatarLabel={t("app.changePhoto")}
+                  isAvatarDisabled={isUploadingPhoto}
                 >
-                  {editing ? (
-                    <View style={styles.photoActions}>
-                      <Pressable
-                        accessibilityRole="button"
-                        disabled={isUploadingPhoto}
-                        onPress={handleChangePhotoPress}
-                      >
-                        <UIText size="sm" weight="semibold" color="link">
-                          {t("app.changePhoto")}
-                        </UIText>
-                      </Pressable>
-                      {profile.avatarUrl ? (
-                        <Pressable
-                          accessibilityRole="button"
-                          disabled={isRemovingPhoto}
-                          onPress={handleRemovePhotoPress}
-                        >
-                          <UIText size="sm" weight="semibold" color="error">
-                            {t("students.removePhoto")}
-                          </UIText>
-                        </Pressable>
-                      ) : null}
-                    </View>
-                  ) : null}
-                  {!editing && profile.bio ? (
-                    <UIText color="soft" style={styles.bio}>
+                  {profile.bio ? (
+                    <UIText size="rg" color="soft" style={styles.bio}>
                       {profile.bio}
                     </UIText>
                   ) : null}
-                  {!editing && profile.interests?.length ? (
+                  {profile.interests?.length ? (
                     <InterestChips interests={profile.interests} />
                   ) : null}
                 </ProfileHero>
-                {editing ? (
-                  <View style={styles.section}>
-                    <UIText size="md" weight="semibold">
-                      {t("app.personalDetails")}
-                    </UIText>
-                    <PersonalDetailsForm
-                      profile={profile}
-                      onSaved={handleDetailsSaved}
-                    />
-                  </View>
-                ) : null}
-                <UniversityCard universityId={profile.universityId} />
                 <View style={styles.section}>
                   <UIText size="md" weight="semibold">
                     {t("app.studyProgrammes")}
                   </UIText>
                   {(profile.programmes ?? []).map((item) => (
-                    <EditableProgramme
-                      key={item.id}
-                      programme={item}
-                      editing={editing}
-                    />
+                    <ProgrammeCard key={item.id} programme={item} />
                   ))}
-                  <Pressable
-                    accessibilityRole="button"
-                    onPress={handleToggleAddProgramme}
-                    style={styles.addProgramme}
-                  >
-                    <Icon
-                      name={addingProgramme ? "x" : "plus"}
-                      size={16}
-                      uniProps={(theme) => ({ color: theme.colors.blue })}
-                    />
-                    <UIText size="body" weight="semibold" color="brand">
-                      {addingProgramme
-                        ? t("postComposer.cancel")
-                        : t("app.addProgramme")}
-                    </UIText>
-                  </Pressable>
-                  {addingProgramme ? (
-                    <AddProgrammeForm
-                      isPrimary={!profile.programmes?.length}
-                      onSaved={handleProgrammeAdded}
-                    />
-                  ) : null}
                 </View>
-                {editing ? <PrivacyCard privacy={profile.privacy} /> : null}
-                <Pressable
-                  accessibilityRole="button"
-                  onPress={handleLogoutPress}
-                >
-                  <UIGlass radius={999} style={styles.logout}>
-                    <Icon
-                      name="log-out"
-                      size={17}
-                      uniProps={(theme) => ({ color: theme.colors.red })}
-                    />
-                    <UIText weight="semibold" color="error">
-                      {t("auth.logOut")}
-                    </UIText>
-                  </UIGlass>
-                </Pressable>
-                {editing ? null : (
-                  <UIText size="md" weight="semibold">
-                    {t("students.posts")}
-                  </UIText>
-                )}
+                <UIText size="md" weight="semibold">
+                  {t("students.posts")}
+                </UIText>
               </>
             )}
           </View>
         }
         data={posts}
-        masonry
-        numColumns={2}
         keyExtractor={(post) => post.id}
-        contentContainerStyle={styles.list}
+        contentContainerStyle={styles.list(headerHeight)}
         onEndReached={handleEndReached}
         ListEmptyComponent={
-          editing || !profile ? null : arePostsPending ? (
+          !profile ? null : arePostsPending ? (
             <UISkeleton height={120} />
           ) : arePostsError ? (
             <UIQueryError
@@ -284,62 +262,53 @@ export default function ProfileScreen() {
           </View>
         )}
       />
+      {profile ? (
+        <>
+          <PersonalDetailsSheet
+            ref={detailsRef}
+            profile={profile}
+            onSaved={handleDetailsSaved}
+          />
+          <PrivacySheet
+            ref={privacyRef}
+            privacy={profile.privacy}
+            onSaved={handlePrivacySaved}
+          />
+        </>
+      ) : null}
+      <ProgrammesSheet
+        ref={programmesRef}
+        programmes={profile?.programmes ?? []}
+        universityId={profile?.universityId ?? ""}
+      />
     </UIPage>
   );
 }
 
-const styles = StyleSheet.create((theme) => ({
-  list: {
-    paddingHorizontal: theme.s(15),
+const styles = StyleSheet.create((theme, rt) => ({
+  // UIPage already pads the status bar; the rest of the header height is added here
+  list: (headerHeight: number) => ({
+    paddingTop: Math.max(headerHeight - rt.insets.top, 0),
+    paddingHorizontal: theme.s(20),
     paddingBottom: theme.vs(60),
-  },
+  }),
   page: {
-    paddingTop: theme.vs(8),
-    paddingHorizontal: theme.s(5),
     paddingBottom: theme.vs(12),
     gap: theme.vs(20),
   },
-  // masonry has no column gap prop: 5 + 5 cell padding makes the 10pt gap
   cell: {
-    paddingHorizontal: theme.s(5),
-    paddingBottom: theme.vs(10),
-  },
-  header: {
-    height: theme.vs(44),
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  photoActions: {
-    flexDirection: "row",
-    gap: theme.s(20),
+    paddingBottom: theme.vs(16),
   },
   bio: {
-    width: theme.s(300),
-    textAlign: "center",
-    lineHeight: theme.vs(15 * 1.45),
-  },
-  back: {
-    width: theme.vs(44),
-    height: theme.vs(44),
-    alignItems: "center",
-    justifyContent: "center",
+    lineHeight: theme.vs(24),
   },
   section: {
     gap: theme.vs(12),
   },
-  addProgramme: {
+  more: {
+    width: theme.vs(44),
     height: theme.vs(44),
-    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: theme.s(8),
-  },
-  logout: {
-    height: theme.vs(48),
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: theme.s(8),
   },
 }));

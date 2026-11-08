@@ -37,6 +37,18 @@ const styles = StyleSheet.create((theme) => ({
     backgroundColor: hasImage ? theme.colors.white : theme.colors.blue20,
     variants: {
       size: {
+        xxs: {
+          width: theme.s(16),
+          height: theme.s(16),
+          padding: theme.vs(1),
+          borderRadius: theme.vs(4),
+        },
+        xs: {
+          width: theme.s(24),
+          height: theme.s(24),
+          padding: theme.vs(2),
+          borderRadius: theme.vs(6),
+        },
         sm: { width: theme.s(32), height: theme.s(32) },
         default: { width: theme.s(40), height: theme.s(40) },
         lg: { width: theme.s(56), height: theme.s(56) },

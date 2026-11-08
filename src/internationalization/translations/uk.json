@@ -377,7 +377,7 @@
     "lastName": "Прізвище",
     "studyProgrammes": "Освітні програми",
     "addProgramme": "Додати програму",
-    "primary": "Основна",
+    "primary": "Основна програма",
     "makePrimary": "Зробити основною",
     "faculty": "Факультет",
     "yearOfStudy": "Рік навчання",
@@ -404,7 +404,8 @@
     "programme": "Напрям",
     "addProgrammeDescription": "Вкажіть напрям і факультет.",
     "allUniversitiesHint": "Бачать студенти всіх університетів",
-    "studyLevelDoctoral": "Докторантура"
+    "studyLevelDoctoral": "Докторантура",
+    "moreOptions": "Інші дії"
   },
   "postComposer": {
     "audience": "Хто може бачити",

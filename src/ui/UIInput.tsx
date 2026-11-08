@@ -1,3 +1,4 @@
+import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import { TextInput, TextInputProps, View } from "react-native";
 import { UIText } from "./UIText";
 import { UIGlass } from "./UIGlass";
@@ -8,21 +9,28 @@ import { ReactNode } from "react";
 const ThemedTextInput = withUnistyles(TextInput, (theme) => ({
   placeholderTextColor: theme.colors.white40,
 }));
+const ThemedSheetTextInput = withUnistyles(BottomSheetTextInput, (theme) => ({
+  placeholderTextColor: theme.colors.white40,
+}));
 
 type UIInputProps = {
   captionText?: string;
   leftIcon?: ReactNode;
   errorText?: string;
+  /** inside a bottom sheet: uses its input so the sheet moves above the keyboard */
+  isInSheet?: boolean;
 } & TextInputProps;
 
 export const UIInput = ({
   captionText,
   leftIcon,
   errorText,
+  isInSheet,
   editable = true,
   ...props
 }: UIInputProps) => {
   const isError = Boolean(errorText);
+  const Input = isInSheet ? ThemedSheetTextInput : ThemedTextInput;
   return (
     <View style={styles.container}>
       <UIText size="xs" weight="semibold" color="secondary">
@@ -31,7 +39,7 @@ export const UIInput = ({
 
       <UIGlass style={styles.inputContainer({ isError, editable })}>
         {leftIcon}
-        <ThemedTextInput
+        <Input
           {...props}
           hitSlop={{ top: vs(12), bottom: vs(12), left: s(12), right: s(12) }}
           style={styles.input}

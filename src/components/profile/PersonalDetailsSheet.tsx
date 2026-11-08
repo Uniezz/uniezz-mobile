@@ -1,6 +1,7 @@
-import { usePostHog } from "posthog-react-native";
-import { captureAction } from "@/utils/analytics";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { usePostHog } from "posthog-react-native";
+import type { Ref } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
@@ -9,43 +10,51 @@ import { toast } from "sonner-native";
 import type { PersonalDetailsFormValues, Profile } from "@/@types/profile";
 import { useUpdateMyProfile } from "@/hooks/useMyProfile";
 import { personalDetailsSchema } from "@/schemas";
-import { UIButton, UIChip, UIGlass, UIInput, UIText } from "@/ui";
-import { GENDER_LABELS, GENDERS, splitInterests } from "@/utils";
+import { UIChip, UIFormSheet, UIInput, UIText } from "@/ui";
+import {
+  GENDER_LABELS,
+  GENDERS,
+  splitInterests,
+  toDetailsValues,
+} from "@/utils";
+import { captureAction } from "@/utils/analytics";
 
-export function PersonalDetailsForm({
-  profile,
-  onSaved,
-}: {
+type PersonalDetailsSheetProps = {
+  ref: Ref<BottomSheetModal>;
   profile: Profile;
   onSaved: () => void;
-}) {
+};
+
+export function PersonalDetailsSheet({
+  ref,
+  profile,
+  onSaved,
+}: PersonalDetailsSheetProps) {
   const { t } = useTranslation();
-  const { mutateAsync: update, isPending } = useUpdateMyProfile();
+  const posthog = usePostHog();
+  const { mutateAsync: updateProfile, isPending } = useUpdateMyProfile();
   const {
     control,
     handleSubmit,
-    formState: { isValid },
+    reset,
+    formState: { isDirty, isValid },
   } = useForm<PersonalDetailsFormValues>({
     resolver: zodResolver(personalDetailsSchema),
-    defaultValues: {
-      firstName: profile.firstName ?? "",
-      lastName: profile.lastName ?? "",
-      bio: profile.bio ?? "",
-      interests: (profile.interests ?? []).join(", "),
-      gender: profile.gender,
-    },
+    // follows the saved profile, so the next opening starts from it
+    values: toDetailsValues(profile),
     mode: "onChange",
   });
-  const posthog = usePostHog();
-  const onSubmit = handleSubmit(
+  // the API rejects changing a saved gender (gender_immutable)
+  const isGenderLocked = Boolean(profile.gender);
+  const handleSavePress = handleSubmit(
     async ({ interests, gender, ...values }) => {
       try {
-        await update({
+        await updateProfile({
           ...values,
           interests: splitInterests(interests),
-          // The API rejects changing a saved gender (gender_immutable).
-          ...(!profile.gender && gender ? { gender } : {}),
+          ...(isGenderLocked || !gender ? {} : { gender }),
         });
+        toast.success(t("app.saved"));
         onSaved();
       } catch {
         toast.error(t("apiState.profileSaveError"));
@@ -53,15 +62,24 @@ export function PersonalDetailsForm({
     },
     () => captureAction(posthog, "profile_form", "validation_failed"),
   );
-  const handleSavePress = () => onSubmit();
+  // a closed sheet drops unsaved edits
+  const handleDismiss = () => reset();
 
   return (
-    <UIGlass radius={24} style={styles.editor}>
+    <UIFormSheet
+      ref={ref}
+      title={t("app.personalDetails")}
+      actionLabel={t("app.saveChanges")}
+      isActionDisabled={!isDirty || !isValid || isPending}
+      onActionPress={handleSavePress}
+      onDismiss={handleDismiss}
+    >
       <Controller
         control={control}
         name="firstName"
         render={({ field, fieldState }) => (
           <UIInput
+            isInSheet
             captionText={t("app.firstName")}
             value={field.value}
             onChangeText={field.onChange}
@@ -76,6 +94,7 @@ export function PersonalDetailsForm({
         name="lastName"
         render={({ field, fieldState }) => (
           <UIInput
+            isInSheet
             captionText={t("app.lastName")}
             value={field.value}
             onChangeText={field.onChange}
@@ -90,6 +109,7 @@ export function PersonalDetailsForm({
         name="bio"
         render={({ field, fieldState }) => (
           <UIInput
+            isInSheet
             captionText={t("students.bio")}
             value={field.value}
             onChangeText={field.onChange}
@@ -105,6 +125,7 @@ export function PersonalDetailsForm({
         name="interests"
         render={({ field, fieldState }) => (
           <UIInput
+            isInSheet
             captionText={t("students.interests")}
             placeholder={t("students.interestsHint")}
             value={field.value}
@@ -129,12 +150,12 @@ export function PersonalDetailsForm({
                   label={t(GENDER_LABELS[value])}
                   selected={field.value === value}
                   onPress={
-                    profile.gender ? undefined : () => field.onChange(value)
+                    isGenderLocked ? undefined : () => field.onChange(value)
                   }
                 />
               ))}
             </View>
-            {profile.gender ? null : (
+            {isGenderLocked ? null : (
               <UIText size="xs" color="secondary">
                 {t("students.genderHint")}
               </UIText>
@@ -142,20 +163,11 @@ export function PersonalDetailsForm({
           </View>
         )}
       />
-      <UIButton disabled={!isValid || isPending} onPress={handleSavePress}>
-        <UIText color="black" weight="semibold">
-          {t("app.saveChanges")}
-        </UIText>
-      </UIButton>
-    </UIGlass>
+    </UIFormSheet>
   );
 }
 
 const styles = StyleSheet.create((theme) => ({
-  editor: {
-    padding: theme.s(16),
-    gap: theme.vs(12),
-  },
   group: {
     gap: theme.vs(8),
   },

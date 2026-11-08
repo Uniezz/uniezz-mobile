@@ -377,7 +377,7 @@
     "lastName": "Фамилия",
     "studyProgrammes": "Образовательные программы",
     "addProgramme": "Добавить программу",
-    "primary": "Основная",
+    "primary": "Основная программа",
     "makePrimary": "Сделать основной",
     "faculty": "Факультет",
     "yearOfStudy": "Год обучения",
@@ -404,7 +404,8 @@
     "programme": "Направление",
     "addProgrammeDescription": "Укажите направление и факультет.",
     "allUniversitiesHint": "Видят студенты всех университетов",
-    "studyLevelDoctoral": "Докторантура"
+    "studyLevelDoctoral": "Докторантура",
+    "moreOptions": "Другие действия"
   },
   "postComposer": {
     "audience": "Кто может видеть",

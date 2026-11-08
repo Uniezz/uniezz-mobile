@@ -9,7 +9,6 @@ import {
   InterestChips,
   ProfileHero,
   ProgrammeCard,
-  UniversityCard,
 } from "@/components/profile";
 import { FeedPostCard } from "@/components/feed";
 import { ReportSheet } from "@/components/report";
@@ -83,6 +82,7 @@ export default function PublicProfileScreen() {
                   avatar={profile.avatarUrl}
                   name={authorName(profile) || t("apiState.student")}
                   subtitle={profile.email}
+                  universityId={profile.universityId}
                 >
                   {profile.gender ? (
                     <UIText size="sm" color="secondary">
@@ -90,7 +90,7 @@ export default function PublicProfileScreen() {
                     </UIText>
                   ) : null}
                   {profile.bio ? (
-                    <UIText color="soft" style={styles.bio}>
+                    <UIText size="rg" color="soft" style={styles.bio}>
                       {profile.bio}
                     </UIText>
                   ) : null}
@@ -112,7 +112,6 @@ export default function PublicProfileScreen() {
                     </UIText>
                   </Pressable>
                 </ProfileHero>
-                <UniversityCard universityId={profile.universityId} />
                 {profile.programmes?.length ? (
                   <View style={styles.section}>
                     <UIText size="md" weight="semibold">
@@ -134,8 +133,6 @@ export default function PublicProfileScreen() {
           </View>
         }
         data={posts}
-        masonry
-        numColumns={2}
         keyExtractor={(post) => post.id}
         contentContainerStyle={styles.list}
         onEndReached={handleEndReached}
@@ -167,19 +164,16 @@ export default function PublicProfileScreen() {
 
 const styles = StyleSheet.create((theme) => ({
   list: {
-    paddingHorizontal: theme.s(15),
+    paddingHorizontal: theme.s(20),
     paddingBottom: theme.vs(60),
   },
   page: {
     paddingTop: theme.vs(8),
-    paddingHorizontal: theme.s(5),
     paddingBottom: theme.vs(12),
     gap: theme.vs(20),
   },
-  // masonry has no column gap prop: 5 + 5 cell padding makes the 10pt gap
   cell: {
-    paddingHorizontal: theme.s(5),
-    paddingBottom: theme.vs(10),
+    paddingBottom: theme.vs(16),
   },
   header: {
     height: theme.vs(44),
@@ -194,9 +188,7 @@ const styles = StyleSheet.create((theme) => ({
     justifyContent: "center",
   },
   bio: {
-    width: theme.s(300),
-    textAlign: "center",
-    lineHeight: theme.vs(15 * 1.45),
+    lineHeight: theme.vs(24),
   },
   message: {
     height: theme.vs(48),

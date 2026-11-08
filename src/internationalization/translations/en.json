@@ -373,7 +373,7 @@
     "lastName": "Last name",
     "studyProgrammes": "Study programmes",
     "addProgramme": "Add programme",
-    "primary": "Primary",
+    "primary": "Primary programme",
     "makePrimary": "Make primary",
     "faculty": "Faculty",
     "yearOfStudy": "Year of study",
@@ -400,7 +400,8 @@
     "programme": "Programme",
     "addProgrammeDescription": "Enter your programme and faculty.",
     "allUniversitiesHint": "Visible to students of every university",
-    "studyLevelDoctoral": "Doctoral"
+    "studyLevelDoctoral": "Doctoral",
+    "moreOptions": "More options"
   },
   "postComposer": {
     "audience": "Who can see it",

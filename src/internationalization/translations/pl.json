@@ -377,7 +377,7 @@
     "lastName": "Nazwisko",
     "studyProgrammes": "Kierunki studiów",
     "addProgramme": "Dodaj kierunek",
-    "primary": "Główny",
+    "primary": "Główny kierunek",
     "makePrimary": "Ustaw jako główny",
     "faculty": "Wydział",
     "yearOfStudy": "Rok studiów",
@@ -404,7 +404,8 @@
     "programme": "Kierunek",
     "addProgrammeDescription": "Podaj kierunek i wydział.",
     "allUniversitiesHint": "Widoczne dla studentów wszystkich uczelni",
-    "studyLevelDoctoral": "Doktoranckie"
+    "studyLevelDoctoral": "Doktoranckie",
+    "moreOptions": "Więcej opcji"
   },
   "postComposer": {
     "audience": "Kto może to zobaczyć",
