@@ -45,7 +45,7 @@ export default function MeetScreen() {
   };
 
   return (
-    <UIPage backdrop="city">
+    <UIPage>
       <ScrollView contentContainerStyle={styles.page}>
         <View style={styles.header}>
           <UIText size="xl" weight="bold" style={styles.title}>

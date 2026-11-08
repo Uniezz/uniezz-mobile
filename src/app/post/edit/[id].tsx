@@ -49,7 +49,7 @@ export default function EditPostScreen() {
   const handleSubmitPress = () => onSubmit();
 
   return (
-    <UIPage backdrop="city">
+    <UIPage>
       <View style={styles.header}>
         <ComposerHeader
           title={t("apiState.editPost")}

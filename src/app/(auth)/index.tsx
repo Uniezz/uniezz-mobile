@@ -1,6 +1,7 @@
 import { AuthPage, RowPicker } from "@/components";
 import { useUniversities } from "@/hooks";
 import { Icon, UIButton, UIText } from "@/ui";
+import { UNIVERSITY_SHORT_NAMES } from "@/utils";
 import { router } from "expo-router";
 import { useState } from "react";
 import { ScrollView } from "react-native";
@@ -21,10 +22,13 @@ export default function WelcomeScreen() {
   } = useUniversities();
   const selectedUniversity = universities[selected];
   const selectedAuthMethod = selectedUniversity?.authMethod;
-  const items = universities.map(({ name, authMethod }) => ({
-    topText: name,
+  const items = universities.map(({ id, name, authMethod }) => ({
+    topText: UNIVERSITY_SHORT_NAMES[id] ?? name,
+    bottomText: UNIVERSITY_SHORT_NAMES[id] ? name : undefined,
     rightText: authMethod === "OTP" ? t("auth.emailCode") : authMethod,
   }));
+
+  const handleRetryPress = () => refetch();
 
   const handleContinuePress = () => {
     if (!selectedUniversity) {
@@ -44,7 +48,7 @@ export default function WelcomeScreen() {
       {isPending ? (
         <UIText color="gray">{t("auth.loadingUniversities")}</UIText>
       ) : isError ? (
-        <UIButton onPress={() => refetch()} type="secondary">
+        <UIButton onPress={handleRetryPress} type="secondary">
           <UIText>{t("auth.universitiesLoadError")}</UIText>
         </UIButton>
       ) : items.length === 0 ? (
@@ -52,6 +56,7 @@ export default function WelcomeScreen() {
       ) : (
         <ScrollView style={styles.list} showsVerticalScrollIndicator={false}>
           <RowPicker
+            appearance="inset"
             onItemPress={setSelected}
             items={items}
             selectedItem={selected}
@@ -64,6 +69,7 @@ export default function WelcomeScreen() {
           disabled={!selectedUniversity}
           style={styles.continueButton}
           size="rg"
+          radius="sm"
         >
           <Icon
             name="shield-check"
@@ -87,10 +93,7 @@ export default function WelcomeScreen() {
   );
 }
 
-const styles = StyleSheet.create((theme, rt) => ({
-  page: {
-    paddingTop: 0,
-  },
+const styles = StyleSheet.create((theme) => ({
   continueButton: {
     flexDirection: "row",
     gap: theme.s(8),

@@ -81,7 +81,7 @@ export default function PostScreen() {
     );
 
   return (
-    <UIPage backdrop="city">
+    <UIPage>
       <View style={styles.header}>
         <Pressable
           accessibilityRole="button"

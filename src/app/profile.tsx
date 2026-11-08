@@ -117,7 +117,7 @@ export default function ProfileScreen() {
   };
 
   return (
-    <UIPage backdrop="city">
+    <UIPage>
       <FlashList
         ListHeaderComponent={
           <View style={styles.page}>

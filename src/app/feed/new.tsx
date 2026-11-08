@@ -110,7 +110,7 @@ export default function NewPostScreen() {
   const handleSubmitPress = () => onSubmit();
 
   return (
-    <UIPage backdrop="city">
+    <UIPage>
       <View style={styles.header}>
         <ComposerHeader
           title={t("app.newPost")}

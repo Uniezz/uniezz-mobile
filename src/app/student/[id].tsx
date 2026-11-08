@@ -45,7 +45,7 @@ export default function PublicProfileScreen() {
   const handleMessagePress = () => router.push("/(tabs)/chat");
 
   return (
-    <UIPage backdrop="city">
+    <UIPage>
       <FlashList
         ListHeaderComponent={
           <View style={styles.page}>

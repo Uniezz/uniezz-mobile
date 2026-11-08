@@ -124,7 +124,7 @@ export default function StudyScreen() {
     </>
   );
   return (
-    <UIPage backdrop="city">
+    <UIPage>
       {selected ? (
         <ScrollView contentContainerStyle={styles.page}>
           {header}

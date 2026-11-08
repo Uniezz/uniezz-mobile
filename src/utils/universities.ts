@@ -1,5 +1,15 @@
 import { ImageSourcePropType } from "react-native";
 
+export const UNIVERSITY_SHORT_NAMES: Record<string, string> = {
+  umcs: "UMCS",
+  umlub: "UM",
+  kul: "KUL",
+  up: "Przyrodniczy",
+  pollub: "Politechnika Lubelska",
+  wspa: "WSPA",
+  wsei: "WSEI",
+};
+
 // Bundled logos by university id; ids without one fall back to letters.
 export const UNIVERSITY_LOGOS: Record<string, ImageSourcePropType> = {
   umcs: require("../../assets/images/universities/umcs.png"),

@@ -61,7 +61,7 @@ export default function FeedScreen() {
   const posts = data?.pages.flatMap((page) => page.items ?? []) ?? [];
 
   return (
-    <UIPage backdrop="city">
+    <UIPage>
       <FlashList
         data={posts}
         masonry
