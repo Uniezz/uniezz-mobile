@@ -1,9 +1,9 @@
 import { useTranslation } from "react-i18next";
-import { ScrollView, View } from "react-native";
+import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import type { FeedFilterValues } from "@/@types/feed";
 import { useUniversities } from "@/hooks/useUniversities";
-import { UIChip, UIText } from "@/ui";
+import { UIChip, UIFadeScrollView, UIText } from "@/ui";
 import { DATE_PRESETS, FEED_TYPE_LABELS, FEED_TYPES } from "@/utils";
 
 type FeedFiltersProps = {
@@ -56,11 +56,17 @@ export const FeedFilters = ({ value, onChange }: FeedFiltersProps) => {
     <View style={styles.container}>
       {rows.map((row) => (
         <View key={row.label} style={styles.row}>
-          <UIText size="xs" weight="semibold" color="secondary">
+          <UIText
+            size="xs"
+            weight="semibold"
+            color="secondary"
+            style={styles.label}
+          >
             {row.label}
           </UIText>
-          <ScrollView
+          <UIFadeScrollView
             horizontal
+            fadeColor="surface"
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.chips}
           >
@@ -72,7 +78,7 @@ export const FeedFilters = ({ value, onChange }: FeedFiltersProps) => {
                 onPress={() => onChange(option.next)}
               />
             ))}
-          </ScrollView>
+          </UIFadeScrollView>
         </View>
       ))}
     </View>
@@ -86,7 +92,12 @@ const styles = StyleSheet.create((theme) => ({
   row: {
     gap: theme.vs(6),
   },
+  // rows run edge to edge so chips scroll under the fades instead of being cut at the inset
+  label: {
+    paddingHorizontal: theme.s(16),
+  },
   chips: {
     gap: theme.s(6),
+    paddingHorizontal: theme.s(16),
   },
 }));

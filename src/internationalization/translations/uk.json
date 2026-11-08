@@ -107,6 +107,7 @@
     "commentsCount_other": "{{count}} коментаря",
     "addEvent": "Додати подію",
     "search": "Пошук...",
+    "filtersTitle": "Фільтри",
     "filters": {
       "all": "Усе",
       "events": "Події",

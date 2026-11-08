@@ -107,6 +107,7 @@
     "commentsCount_other": "{{count}} комментария",
     "addEvent": "Добавить событие",
     "search": "Поиск...",
+    "filtersTitle": "Фильтры",
     "filters": {
       "all": "Все",
       "events": "События",

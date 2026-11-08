@@ -14,8 +14,14 @@ type FeedPostCardProps = {
 
 export const FeedPostCard = ({ post, filters }: FeedPostCardProps) => {
   const { t, i18n } = useTranslation();
+  const locale = i18n.resolvedLanguage ?? "en";
   const cover = post.type === "question" ? undefined : post.mediaUrls?.[0];
-  const date = postDate(post, i18n.resolvedLanguage ?? "en");
+  const hasCover = Boolean(cover);
+  const createdAt = postDate(
+    { eventDate: null, createdAt: post.createdAt },
+    locale,
+  );
+  const eventDate = post.eventDate ? postDate(post, locale) : "";
   const handlePress = () =>
     router.push({
       pathname: "/post/[id]",
@@ -28,7 +34,24 @@ export const FeedPostCard = ({ post, filters }: FeedPostCardProps) => {
       accessibilityLabel={`${t("app.viewPost")}: ${post.title}`}
       onPress={handlePress}
     >
-      <UIGlass radius={20}>
+      <UIGlass radius={24} style={styles.card(hasCover)}>
+        <View style={styles.author}>
+          <UIAvatar size="sm" imageSrc={post.author.avatarUrl} />
+          <UIText size="sm" color="soft" numberOfLines={1} style={styles.name}>
+            {authorName(post.author) || t("apiState.student")} ·{" "}
+            {post.author.universityId.toUpperCase()} · {createdAt}
+          </UIText>
+        </View>
+        <View style={styles.body}>
+          <UIText weight="semibold" style={styles.title}>
+            {post.title}
+          </UIText>
+          {hasCover ? null : (
+            <UIText color="secondary" numberOfLines={4} style={styles.preview}>
+              {post.content}
+            </UIText>
+          )}
+        </View>
         {cover ? (
           <View style={styles.cover}>
             <UIImage
@@ -37,51 +60,58 @@ export const FeedPostCard = ({ post, filters }: FeedPostCardProps) => {
               contentFit="cover"
               style={StyleSheet.absoluteFill}
             />
-            <View style={styles.chip}>
-              <UIText size="xs" weight="semibold">
-                {date}
-              </UIText>
-            </View>
+            {eventDate ? (
+              <View style={styles.chip}>
+                <UIText size="xs" weight="semibold">
+                  {eventDate}
+                </UIText>
+              </View>
+            ) : null}
           </View>
         ) : null}
-        <View style={styles.body}>
-          <View style={styles.author}>
-            <UIAvatar size="xxs" imageSrc={post.author.avatarUrl} />
-            <UIText
-              size="xs"
-              color="soft"
-              numberOfLines={1}
-              style={styles.name}
-            >
-              {authorName(post.author) || t("apiState.student")} ·{" "}
-              {post.author.universityId.toUpperCase()}
-              {cover ? "" : ` · ${date}`}
-            </UIText>
-          </View>
-          <UIText weight="semibold" style={styles.title}>
-            {post.title}
-          </UIText>
-          {cover ? null : (
-            <UIText
-              size="sm"
-              color="secondary"
-              numberOfLines={4}
-              style={styles.preview}
-            >
-              {post.content}
-            </UIText>
-          )}
-        </View>
       </UIGlass>
     </Pressable>
   );
 };
 
 const styles = StyleSheet.create((theme) => ({
+  // the cover sits 6pt from the card edge; text is indented 10pt more, so every card's text lines up at 16pt
+  card: (hasCover: boolean) => ({
+    gap: theme.vs(16),
+    paddingTop: theme.vs(16),
+    paddingBottom: hasCover ? theme.s(6) : theme.vs(16),
+    paddingHorizontal: theme.s(6),
+    borderColor: theme.colors.white14,
+    backgroundColor: theme.colors.white3,
+    experimental_backgroundImage: `linear-gradient(to bottom, ${theme.colors.white5}, ${theme.colors.white0} 70%)`,
+  }),
+  author: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: theme.s(10),
+    paddingHorizontal: theme.s(10),
+  },
+  name: {
+    flex: 1,
+  },
+  body: {
+    gap: theme.vs(10),
+    paddingHorizontal: theme.s(10),
+  },
+  title: {
+    fontSize: theme.vs(19),
+    lineHeight: theme.vs(19 * 1.35),
+    letterSpacing: -0.2,
+  },
+  preview: {
+    lineHeight: theme.vs(15 * 1.5),
+  },
   cover: {
-    height: theme.vs(120),
+    height: theme.vs(208),
     padding: theme.s(10),
     alignItems: "flex-start",
+    borderRadius: theme.vs(12),
+    overflow: "hidden",
   },
   chip: {
     paddingVertical: theme.vs(4),
@@ -90,23 +120,5 @@ const styles = StyleSheet.create((theme) => ({
     borderWidth: 1,
     borderColor: theme.colors.white20,
     backgroundColor: theme.colors.ink40,
-  },
-  body: {
-    gap: theme.vs(8),
-    padding: theme.s(12),
-  },
-  author: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: theme.s(6),
-  },
-  name: {
-    flex: 1,
-  },
-  title: {
-    lineHeight: theme.vs(15 * 1.3),
-  },
-  preview: {
-    lineHeight: theme.vs(13 * 1.4),
   },
 }));

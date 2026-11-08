@@ -93,7 +93,7 @@
     "universityEmailRequired": "Użyj adresu e-mail otrzymanego od uczelni."
   },
   "tabs": {
-    "feed": "Tablica",
+    "feed": "Posty",
     "chat": "Czat",
     "connections": "Ludzie",
     "exams": "Egzaminy",
@@ -107,6 +107,7 @@
     "commentsCount_other": "{{count}} komentarza",
     "addEvent": "Dodaj wydarzenie",
     "search": "Szukaj...",
+    "filtersTitle": "Filtry",
     "filters": {
       "all": "Wszystko",
       "events": "Wydarzenia",

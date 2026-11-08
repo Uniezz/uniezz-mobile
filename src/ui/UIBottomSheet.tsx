@@ -3,9 +3,11 @@ import {
   BottomSheetHandle,
   BottomSheetModal,
   type BottomSheetBackdropProps,
+  type BottomSheetBackgroundProps,
   type BottomSheetHandleProps,
   type BottomSheetModalProps,
 } from "@gorhom/bottom-sheet";
+import { BlurView } from "expo-blur";
 import type { ReactNode, Ref } from "react";
 import { useWindowDimensions } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
@@ -27,6 +29,11 @@ const renderBackdrop = (props: BottomSheetBackdropProps) => (
     opacity={0.5}
     pressBehavior="close"
   />
+);
+
+// shortcut: Android shows only the translucent fill (no BlurTargetView behind the sheet), add one if Android needs real blur
+const renderBackground = ({ style }: BottomSheetBackgroundProps) => (
+  <BlurView intensity={80} tint="dark" style={[style, styles.background]} />
 );
 
 export const UIBottomSheet = ({
@@ -52,7 +59,7 @@ export const UIBottomSheet = ({
       ref={ref}
       backdropComponent={renderBackdrop}
       handleComponent={renderHandle}
-      backgroundStyle={styles.background}
+      backgroundComponent={renderBackground}
       maxDynamicContentSize={height * MAX_HEIGHT_RATIO}
       {...props}
     >
@@ -62,8 +69,10 @@ export const UIBottomSheet = ({
 };
 
 const styles = StyleSheet.create((theme) => ({
+  // strong blur of the screen behind, tinted so the sheet still reads as a surface
   background: {
-    backgroundColor: theme.colors.surface,
+    overflow: "hidden",
+    backgroundColor: theme.colors.surface60,
     borderTopLeftRadius: theme.vs(28),
     borderTopRightRadius: theme.vs(28),
   },

@@ -1,3 +1,6 @@
+import type { Transition } from "react-native-ease";
+import { vs } from "@/theme/scale";
+
 export const FEED_TYPES = ["all", "announcement", "question", "event"] as const;
 
 export const FEED_TYPE_LABELS = {
@@ -48,4 +51,21 @@ export const datePresetFrom = (days: number | null) => {
   const midnight = new Date();
   midnight.setHours(0, 0, 0, 0);
   return new Date(midnight.getTime() - days * DAY).toISOString();
+};
+
+// feed header: scroll offset past which it turns compact, in pt
+export const FEED_HEADER_COMPACT_OFFSET = vs(24);
+// the row may only rise into the room the subtitle leaves above the 40pt buttons (subtitle + gap + title − 40),
+// so it never moves into rt.insets.top; the bottom padding shrinks 4pt more
+export const FEED_HEADER_ROW_LIFT = vs(7);
+export const FEED_HEADER_COLLAPSE_HEIGHT = FEED_HEADER_ROW_LIFT + vs(4);
+// compact "Posty" (26pt line × 0.92) is bottom-aligned with 40pt buttons; lifting it this much centers it on them
+export const FEED_HEADER_TITLE_LIFT = vs(8);
+export const FEED_HEADER_TITLE_SCALE = 0.92;
+// shrinks from its left edge so it stays aligned with the subtitle
+export const FEED_HEADER_TITLE_ORIGIN = { x: 0, y: 1 };
+export const FEED_HEADER_TRANSITION: Transition = {
+  type: "timing",
+  duration: 220,
+  easing: "easeOut",
 };

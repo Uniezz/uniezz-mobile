@@ -105,6 +105,7 @@
     "commentsCount_other": "{{count}} comments",
     "addEvent": "Add event",
     "search": "Search...",
+    "filtersTitle": "Filters",
     "filters": {
       "all": "All",
       "events": "Events",
