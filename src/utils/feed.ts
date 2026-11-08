@@ -49,3 +49,6 @@ export const datePresetFrom = (days: number | null) => {
   midnight.setHours(0, 0, 0, 0);
   return new Date(midnight.getTime() - days * DAY).toISOString();
 };
+
+// tags may be stored with or without their "#"; shown with exactly one
+export const formatTag = (tag: string) => `#${tag.replace(/^#+/, "")}`;

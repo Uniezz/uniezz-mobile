@@ -500,7 +500,8 @@
     "detailsError": "Użyj 10–5000 znaków.",
     "imageError": "Wybierz poprawny obraz JPG, PNG lub WebP o rozmiarze poniżej 10 MB.",
     "postDeleted": "Post usunięty",
-    "commentDeleted": "Komentarz usunięty"
+    "commentDeleted": "Komentarz usunięty",
+    "commentSent": "Dodano komentarz"
   },
   "students": {
     "allStudents": "Wszyscy studenci",

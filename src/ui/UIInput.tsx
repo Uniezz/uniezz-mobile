@@ -97,12 +97,13 @@ const styles = StyleSheet.create((theme) => ({
     fontWeight: "400",
     color: theme.colors.white,
     flex: 1,
-    // a multiline input lays text out from the top, so padding centres its first line like a single-line one
+    // a multiline input grows from its content; the 48pt box (alignItems center) keeps its first line centred
     ...(isMultiline
       ? {
-          // no lineHeight: on iOS it makes a growing multiline input jump as lines are added
-          paddingTop: theme.vs(14),
-          paddingBottom: theme.vs(14),
+          // a fixed line height fits an emoji line, so adding or removing emoji doesn't change the height
+          lineHeight: theme.vs(21),
+          paddingTop: theme.vs(12),
+          paddingBottom: theme.vs(12),
           textAlignVertical: "top" as const,
         }
       : { height: theme.vs(46) }),

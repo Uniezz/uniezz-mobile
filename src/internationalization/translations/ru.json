@@ -500,7 +500,8 @@
     "detailsError": "Введите 10–5000 символов.",
     "imageError": "Выберите корректное изображение JPG, PNG или WebP до 10 МБ.",
     "postDeleted": "Пост удалён",
-    "commentDeleted": "Комментарий удалён"
+    "commentDeleted": "Комментарий удалён",
+    "commentSent": "Комментарий добавлен"
   },
   "students": {
     "allStudents": "Все студенты",

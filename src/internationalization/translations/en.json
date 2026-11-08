@@ -496,7 +496,8 @@
     "detailsError": "Use 10–5000 characters.",
     "imageError": "Choose a valid JPG, PNG or WebP image under 10 MB.",
     "postDeleted": "Post deleted",
-    "commentDeleted": "Comment deleted"
+    "commentDeleted": "Comment deleted",
+    "commentSent": "Comment added"
   },
   "students": {
     "allStudents": "All students",

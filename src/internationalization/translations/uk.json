@@ -500,7 +500,8 @@
     "detailsError": "Введіть 10–5000 символів.",
     "imageError": "Виберіть коректне зображення JPG, PNG або WebP до 10 МБ.",
     "postDeleted": "Допис видалено",
-    "commentDeleted": "Коментар видалено"
+    "commentDeleted": "Коментар видалено",
+    "commentSent": "Коментар додано"
   },
   "students": {
     "allStudents": "Усі студенти",

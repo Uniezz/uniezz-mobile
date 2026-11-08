@@ -1,7 +1,6 @@
 export { FeedList } from "./FeedList";
 export { PostComposer } from "./PostComposer";
 export { PostDetails } from "./PostDetails";
-export { CommentsSheet } from "./CommentsSheet";
 export { FeaturedPosts } from "./FeaturedPosts";
 export { FeedPostCard } from "./FeedPostCard";
 export { ComposerHeader } from "./ComposerHeader";
@@ -14,3 +13,6 @@ export { PostEventField } from "./PostEventField";
 export { PostPhotosField } from "./PostPhotosField";
 export { PostTagsField } from "./PostTagsField";
 export { AuthorRow } from "./AuthorRow";
+export { PostCard } from "./PostCard";
+export { PostSummary } from "./PostSummary";
+export { CommentComposer } from "./CommentComposer";

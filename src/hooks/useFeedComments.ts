@@ -1,3 +1,4 @@
+import { idempotencyKey } from "@/utils";
 import {
   useInfiniteQuery,
   useMutation,
@@ -84,7 +85,7 @@ export function useCreateComment() {
       variables.content === input.content &&
       variables.replyToCommentId === input.replyToCommentId
         ? variables.key
-        : crypto.randomUUID();
+        : idempotencyKey();
     return mutateAsync({ ...input, key });
   }
 

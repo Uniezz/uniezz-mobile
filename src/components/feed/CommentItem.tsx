@@ -1,11 +1,7 @@
 import { router } from "expo-router";
-import {
-  BottomSheetTextInput,
-  useBottomSheetModal,
-} from "@gorhom/bottom-sheet";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, Pressable, View } from "react-native";
+import { Alert, Pressable, TextInput, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import type { FeedComment } from "@/@types/feed";
@@ -45,11 +41,8 @@ export const CommentItem = ({
   const { mutateAsync: deleteComment } = useDeleteFeedComment();
   const name = authorName(comment.author) || t("apiState.student");
 
-  const { dismiss } = useBottomSheetModal();
-  // the comments sheet sits above the screens, so it closes before the profile opens
   const handleAuthorPress = () => {
     if (!comment.author) return;
-    dismiss();
     router.push(profileHref(comment.author.id, myId));
   };
   const handleReplyPress = () => onReply(comment);
@@ -64,6 +57,7 @@ export const CommentItem = ({
     try {
       await updateComment({ id: comment.id, content });
       setDraft(null);
+      toast.success(t("app.saved"));
     } catch {
       toast.error(t("apiState.error"));
     }
@@ -138,7 +132,7 @@ export const CommentItem = ({
             </UIText>
           ) : (
             <View style={styles.editor}>
-              <BottomSheetTextInput
+              <TextInput
                 value={draft}
                 onChangeText={setDraft}
                 maxLength={1000}
