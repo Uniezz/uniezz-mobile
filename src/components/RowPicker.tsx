@@ -97,14 +97,18 @@ const styles = StyleSheet.create((theme) => ({
         inset: {
           paddingVertical: theme.vs(11),
           paddingHorizontal: theme.s(10),
-          borderRadius: theme.vs(12),
+          // only the selected row is rounded, so the dividers on the others stay straight
+          borderRadius: isItemSelected ? theme.vs(12) : 0,
           backgroundColor: isItemSelected ? theme.colors.white5 : "transparent",
-          borderWidth: isItemSelected ? 1 : 0,
-          borderColor: theme.colors.white20,
-          borderBottomWidth: isItemSelected || !isLast ? 1 : 0,
+          // constant 1px border on every row so selecting one doesn't shift the content
+          borderWidth: 1,
+          borderBottomWidth: 1,
+          borderColor: isItemSelected ? theme.colors.white20 : "transparent",
           borderBottomColor: isItemSelected
             ? theme.colors.white20
-            : theme.colors.white5,
+            : isLast
+              ? "transparent"
+              : theme.colors.white5,
         },
       },
     },
