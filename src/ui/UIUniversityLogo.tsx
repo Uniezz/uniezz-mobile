@@ -9,22 +9,32 @@ type UIUniversityLogoProps = UnistylesVariants<typeof styles> & { id: string };
 export function UIUniversityLogo({ id, size }: UIUniversityLogoProps) {
   styles.useVariants({ size });
   const source = UNIVERSITY_LOGOS[id.toLowerCase()];
-  return source ? (
-    <Image
-      source={source}
-      contentFit="contain"
-      style={styles.logo}
-      accessibilityLabel={`${id} logo`}
-    />
-  ) : (
-    <View style={[styles.logo, styles.fallback]}>
-      <UIText weight="bold">{id.slice(0, 2).toUpperCase()}</UIText>
+  return (
+    <View style={styles.logo(Boolean(source))}>
+      {source ? (
+        <Image
+          source={source}
+          contentFit="contain"
+          style={styles.image}
+          accessibilityLabel={`${id} logo`}
+        />
+      ) : (
+        <UIText weight="bold" size="xs">
+          {id.slice(0, 2).toUpperCase()}
+        </UIText>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create((theme) => ({
-  logo: {
+  // logos are often dark on transparent, so they sit on a white tile
+  logo: (hasImage: boolean) => ({
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: theme.vs(8),
+    padding: hasImage ? theme.vs(4) : 0,
+    backgroundColor: hasImage ? theme.colors.white : theme.colors.blue20,
     variants: {
       size: {
         sm: { width: theme.s(32), height: theme.s(32) },
@@ -32,6 +42,6 @@ const styles = StyleSheet.create((theme) => ({
         lg: { width: theme.s(56), height: theme.s(56) },
       },
     },
-  },
-  fallback: { alignItems: "center", justifyContent: "center" },
+  }),
+  image: { width: "100%", height: "100%" },
 }));

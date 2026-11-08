@@ -1,6 +1,6 @@
 import { AuthPage, RowPicker } from "@/components";
 import { useUniversities } from "@/hooks";
-import { Icon, UIButton, UIText } from "@/ui";
+import { Icon, UIButton, UIText, UIUniversityLogo } from "@/ui";
 import { UNIVERSITY_SHORT_NAMES } from "@/utils";
 import { router } from "expo-router";
 import { useState } from "react";
@@ -22,10 +22,10 @@ export default function WelcomeScreen() {
   } = useUniversities();
   const selectedUniversity = universities[selected];
   const selectedAuthMethod = selectedUniversity?.authMethod;
-  const items = universities.map(({ id, name, authMethod }) => ({
+  const items = universities.map(({ id, name }) => ({
+    leading: <UIUniversityLogo id={id} size="sm" />,
     topText: UNIVERSITY_SHORT_NAMES[id] ?? name,
     bottomText: UNIVERSITY_SHORT_NAMES[id] ? name : undefined,
-    rightText: authMethod === "OTP" ? t("auth.emailCode") : authMethod,
   }));
 
   const handleRetryPress = () => refetch();

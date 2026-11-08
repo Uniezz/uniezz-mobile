@@ -1,12 +1,13 @@
+import { ReactNode } from "react";
 import { UIGlass, UIText } from "@/ui";
 import { View, Pressable } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { StyleSheet, UnistylesVariants } from "react-native-unistyles";
 
 export type RowItem = {
+  leading?: ReactNode;
   topText: string;
   bottomText?: string;
-  rightText?: string;
 };
 
 type RowPickerProps = {
@@ -41,21 +42,17 @@ export const RowPicker = ({
               accessibilityState={{ selected: isItemSelected }}
               style={styles.item(isItemSelected, isLast)}
             >
+              {item.leading}
               <View style={styles.textContainer}>
-                <UIText weight="semibold" size="rg">
+                <UIText weight="semibold" size="rg" numberOfLines={1}>
                   {item.topText}
                 </UIText>
                 {item.bottomText ? (
-                  <UIText size="sm" color="secondary">
+                  <UIText size="sm" color="secondary" numberOfLines={1}>
                     {item.bottomText}
                   </UIText>
                 ) : null}
               </View>
-              {item.rightText ? (
-                <UIText size="sm" color="secondary">
-                  {item.rightText}
-                </UIText>
-              ) : null}
               <View style={styles.radio(isItemSelected)}>
                 {isItemSelected ? <View style={styles.radioDot} /> : null}
               </View>
