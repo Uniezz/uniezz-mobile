@@ -1,6 +1,7 @@
 {
   "language": {
-    "select": "Обрати мову застосунку"
+    "select": "Обрати мову застосунку",
+    "title": "Мова"
   },
   "common": {
     "tryAgain": "Спробуйте ще раз.",
@@ -95,7 +96,7 @@
   "tabs": {
     "feed": "Стрічка",
     "chat": "Чат",
-    "connections": "Люди",
+    "connections": "Знайомства",
     "exams": "Іспити",
     "faq": "FAQ"
   },
@@ -405,7 +406,8 @@
     "addProgrammeDescription": "Вкажіть напрям і факультет.",
     "allUniversitiesHint": "Бачать студенти всіх університетів",
     "studyLevelDoctoral": "Докторантура",
-    "moreOptions": "Інші дії"
+    "moreOptions": "Інші дії",
+    "students": "Студенти"
   },
   "postComposer": {
     "audience": "Хто може бачити",

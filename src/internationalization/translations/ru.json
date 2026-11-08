@@ -1,6 +1,7 @@
 {
   "language": {
-    "select": "Выбрать язык приложения"
+    "select": "Выбрать язык приложения",
+    "title": "Язык"
   },
   "common": {
     "tryAgain": "Попробуйте ещё раз.",
@@ -95,7 +96,7 @@
   "tabs": {
     "feed": "Лента",
     "chat": "Чат",
-    "connections": "Люди",
+    "connections": "Знакомства",
     "exams": "Экзамены",
     "faq": "FAQ"
   },
@@ -405,7 +406,8 @@
     "addProgrammeDescription": "Укажите направление и факультет.",
     "allUniversitiesHint": "Видят студенты всех университетов",
     "studyLevelDoctoral": "Докторантура",
-    "moreOptions": "Другие действия"
+    "moreOptions": "Другие действия",
+    "students": "Студенты"
   },
   "postComposer": {
     "audience": "Кто может видеть",

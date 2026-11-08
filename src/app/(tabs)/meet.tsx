@@ -6,6 +6,7 @@ import { Pressable, ScrollView, View } from "react-native";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
 import { StudentDirectory } from "@/components/meet";
+import { useMyProfile } from "@/hooks/useMyProfile";
 import { Icon, UIAvatar, UIGlass, UIIconButton, UIPage, UIText } from "@/ui";
 
 const Shade = withUnistyles(Stop, (theme) => ({ stopColor: theme.colors.ink }));
@@ -39,6 +40,8 @@ export default function MeetScreen() {
   const [connected, setConnected] = useState(false);
   const [directory, setDirectory] = useState(false);
   const student = students[index];
+  const { data: profile } = useMyProfile();
+  const handleStudentsPress = () => setDirectory(!directory);
   const next = () => {
     setIndex(index + 1);
     setConnected(false);
@@ -49,21 +52,28 @@ export default function MeetScreen() {
       <ScrollView contentContainerStyle={styles.page}>
         <View style={styles.header}>
           <UIText size="xl" weight="bold" style={styles.title}>
-            {t("tabs.connections")}
+            {directory ? t("app.students") : t("tabs.connections")}
           </UIText>
-          <UIIconButton
+          <Pressable
             accessibilityRole="button"
             accessibilityLabel={t("app.searchStudents")}
-            onPress={() => setDirectory(!directory)}
+            accessibilityState={{ selected: directory }}
+            onPress={handleStudentsPress}
           >
-            <Icon name="sliders-horizontal" size={18} />
-          </UIIconButton>
+            <UIGlass radius={16} style={styles.students}>
+              {/* toggles between the cards and the directory, so it names the other view */}
+              <Icon name={directory ? "sparkles" : "search"} size={18} />
+              <UIText size="sm" weight="semibold">
+                {directory ? t("tabs.connections") : t("app.students")}
+              </UIText>
+            </UIGlass>
+          </Pressable>
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={t("app.profile")}
             onPress={() => router.push("/profile")}
           >
-            <UIAvatar />
+            <UIAvatar imageSrc={profile?.avatarUrl} />
           </Pressable>
         </View>
         {directory ? (
@@ -207,8 +217,17 @@ const styles = StyleSheet.create((theme) => ({
   },
   header: {
     flexDirection: "row",
-    alignItems: "flex-end",
+    alignItems: "center",
     gap: theme.s(8),
+  },
+  students: {
+    height: theme.vs(44),
+    flexDirection: "row",
+    alignItems: "center",
+    gap: theme.s(8),
+    paddingHorizontal: theme.s(12),
+    borderColor: theme.colors.white12,
+    backgroundColor: theme.colors.white3,
   },
   title: {
     flex: 1,

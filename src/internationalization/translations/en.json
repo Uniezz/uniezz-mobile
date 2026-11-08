@@ -1,6 +1,7 @@
 {
   "language": {
-    "select": "Select app language"
+    "select": "Select app language",
+    "title": "Language"
   },
   "common": {
     "tryAgain": "Please try again.",
@@ -95,7 +96,7 @@
   "tabs": {
     "feed": "Feed",
     "chat": "Chat",
-    "connections": "People",
+    "connections": "Meet",
     "exams": "Exams",
     "faq": "FAQ"
   },
@@ -401,7 +402,8 @@
     "addProgrammeDescription": "Enter your programme and faculty.",
     "allUniversitiesHint": "Visible to students of every university",
     "studyLevelDoctoral": "Doctoral",
-    "moreOptions": "More options"
+    "moreOptions": "More options",
+    "students": "Students"
   },
   "postComposer": {
     "audience": "Who can see it",

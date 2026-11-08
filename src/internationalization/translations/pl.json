@@ -1,6 +1,7 @@
 {
   "language": {
-    "select": "Wybierz język aplikacji"
+    "select": "Wybierz język aplikacji",
+    "title": "Język"
   },
   "common": {
     "tryAgain": "Spróbuj ponownie.",
@@ -95,7 +96,7 @@
   "tabs": {
     "feed": "Posty",
     "chat": "Czat",
-    "connections": "Ludzie",
+    "connections": "Poznaj",
     "exams": "Egzaminy",
     "faq": "FAQ"
   },
@@ -405,7 +406,8 @@
     "addProgrammeDescription": "Podaj kierunek i wydział.",
     "allUniversitiesHint": "Widoczne dla studentów wszystkich uczelni",
     "studyLevelDoctoral": "Doktoranckie",
-    "moreOptions": "Więcej opcji"
+    "moreOptions": "Więcej opcji",
+    "students": "Studenci"
   },
   "postComposer": {
     "audience": "Kto może to zobaczyć",

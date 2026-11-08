@@ -20,6 +20,12 @@ import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import { useSession } from "@/contexts";
 import {
+  type Language,
+  LANGUAGE_OPTIONS,
+  LANGUAGES,
+  useLanguageStore,
+} from "@/store/languageStore";
+import {
   InterestChips,
   PersonalDetailsSheet,
   PrivacySheet,
@@ -42,7 +48,7 @@ import { Icon, UIGlass, UIPage, UIQueryError, UISkeleton, UIText } from "@/ui";
 import { authorName, FEED_HEADER_COMPACT_OFFSET } from "@/utils";
 
 export default function ProfileScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const posthog = usePostHog();
   const { data: profile, isPending, isError, refetch } = useMyProfile();
   const { mutateAsync: deleteAvatar, isPending: isRemovingPhoto } =
@@ -139,7 +145,16 @@ export default function ProfileScreen() {
     }
   };
 
+  const setLanguage = useLanguageStore((state) => state.setLanguage);
+  const handleLanguagePress = (code: Language) => {
+    setLanguage(code);
+    updateProfile({ language: code }).catch(() =>
+      toast.error(t("apiState.profileSaveError")),
+    );
+  };
   const handleMenuAction = ({ nativeEvent }: NativeActionEvent) => {
+    const language = LANGUAGES.find((code) => nativeEvent.event === code);
+    if (language) return handleLanguagePress(language);
     if (nativeEvent.event === "details") return detailsRef.current?.present();
     if (nativeEvent.event === "privacy") return privacyRef.current?.present();
     if (nativeEvent.event === "programmes")
@@ -151,6 +166,15 @@ export default function ProfileScreen() {
     { id: "details", title: t("app.personalDetails") },
     { id: "programmes", title: t("app.studyProgrammes") },
     { id: "privacy", title: t("app.profileVisibility") },
+    {
+      id: "language",
+      title: t("language.title"),
+      subactions: LANGUAGE_OPTIONS.map(({ code, flag, label }) => ({
+        id: code,
+        title: `${flag} ${label}`,
+        state: code === i18n.resolvedLanguage ? "on" : "off",
+      })),
+    },
     ...(profile?.avatarUrl && !isRemovingPhoto
       ? [
           {

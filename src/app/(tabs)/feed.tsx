@@ -183,7 +183,11 @@ const styles = StyleSheet.create((theme, rt) => ({
   header: {
     paddingBottom: theme.vs(20),
   },
-  searchBackdrop: StyleSheet.absoluteFillObject,
+  // above the pinned header (zIndex 1), so search blurs the whole screen
+  searchBackdrop: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 2,
+  },
   // shortcut: Android shows only the ink tint (no BlurTargetView around the feed), add one if Android needs real blur
   searchBlur: {
     flex: 1,
@@ -192,6 +196,7 @@ const styles = StyleSheet.create((theme, rt) => ({
   // pinned to the bottom, so the keyboard lifts it to sit just above the keys
   searchBar: {
     position: "absolute",
+    zIndex: 3,
     left: theme.s(16),
     right: theme.s(16),
     bottom: theme.vs(8),
