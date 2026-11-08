@@ -14,3 +14,4 @@ export { FeedFilters } from "./FeedFilters";
 export { PostEventField } from "./PostEventField";
 export { PostPhotosField } from "./PostPhotosField";
 export { PostTagsField } from "./PostTagsField";
+export { AuthorRow } from "./AuthorRow";

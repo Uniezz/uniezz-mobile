@@ -3,8 +3,9 @@ import { useTranslation } from "react-i18next";
 import { Pressable, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import type { ApiFeedPost, FeedNavigationFilters } from "@/@types/feed";
-import { UIAvatar, UIGlass, UIImage, UIText } from "@/ui";
-import { authorName, postDate } from "@/utils";
+import { UIGlass, UIImage, UIText } from "@/ui";
+import { postDate } from "@/utils";
+import { AuthorRow } from "./AuthorRow";
 
 type FeedPostCardProps = {
   post: ApiFeedPost;
@@ -35,13 +36,11 @@ export const FeedPostCard = ({ post, filters }: FeedPostCardProps) => {
       onPress={handlePress}
     >
       <UIGlass radius={24} style={styles.card(hasCover)}>
-        <View style={styles.author}>
-          <UIAvatar size="sm" imageSrc={post.author.avatarUrl} />
-          <UIText size="sm" color="soft" numberOfLines={1} style={styles.name}>
-            {authorName(post.author) || t("apiState.student")} ·{" "}
-            {post.author.universityId.toUpperCase()} · {createdAt}
-          </UIText>
-        </View>
+        <AuthorRow
+          author={post.author}
+          meta={createdAt}
+          style={styles.author}
+        />
         <View style={styles.body}>
           <UIText weight="semibold" style={styles.title}>
             {post.title}
@@ -86,13 +85,7 @@ const styles = StyleSheet.create((theme) => ({
     experimental_backgroundImage: `linear-gradient(to bottom, ${theme.colors.white5}, ${theme.colors.white0} 70%)`,
   }),
   author: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: theme.s(10),
     paddingHorizontal: theme.s(10),
-  },
-  name: {
-    flex: 1,
   },
   body: {
     gap: theme.vs(10),

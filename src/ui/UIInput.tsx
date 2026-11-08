@@ -37,12 +37,18 @@ export const UIInput = ({
         {captionText}
       </UIText>
 
-      <UIGlass style={styles.inputContainer({ isError, editable })}>
+      <UIGlass
+        style={styles.inputContainer({
+          isError,
+          editable,
+          isMultiline: props.multiline,
+        })}
+      >
         {leftIcon}
         <Input
           {...props}
           hitSlop={{ top: vs(12), bottom: vs(12), left: s(12), right: s(12) }}
-          style={styles.input}
+          style={styles.input(props.multiline)}
           autoCorrect={false}
           autoCapitalize="none"
           editable={editable}
@@ -66,14 +72,17 @@ const styles = StyleSheet.create((theme) => ({
   inputContainer: ({
     isError,
     editable,
+    isMultiline,
   }: {
     isError?: boolean;
     editable?: boolean;
+    isMultiline?: boolean;
   }) => ({
     flexDirection: "row",
     borderWidth: 1,
     borderRadius: theme.vs(12),
-    height: theme.vs(48),
+    // multiline starts at one line and grows with the text
+    ...(isMultiline ? { minHeight: theme.vs(48) } : { height: theme.vs(48) }),
     alignItems: "center",
     paddingLeft: theme.s(14),
     paddingRight: theme.s(8),
@@ -82,14 +91,22 @@ const styles = StyleSheet.create((theme) => ({
     backgroundColor: theme.colors.white3,
     opacity: editable ? 1 : 0.5,
   }),
-  input: {
+  input: (isMultiline?: boolean) => ({
     fontFamily: theme.fonts.Geist,
     fontSize: theme.vs(15),
     fontWeight: "400",
     color: theme.colors.white,
     flex: 1,
-    height: theme.vs(46),
-  },
+    // a multiline input lays text out from the top, so padding centres its first line like a single-line one
+    ...(isMultiline
+      ? {
+          // no lineHeight: on iOS it makes a growing multiline input jump as lines are added
+          paddingTop: theme.vs(14),
+          paddingBottom: theme.vs(14),
+          textAlignVertical: "top" as const,
+        }
+      : { height: theme.vs(46) }),
+  }),
   errorText: {
     color: theme.colors.red,
   },

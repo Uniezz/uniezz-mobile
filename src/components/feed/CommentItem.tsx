@@ -1,4 +1,8 @@
-import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
+import { router } from "expo-router";
+import {
+  BottomSheetTextInput,
+  useBottomSheetModal,
+} from "@gorhom/bottom-sheet";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Alert, Pressable, View } from "react-native";
@@ -10,8 +14,8 @@ import {
   useDeleteFeedComment,
   useUpdateFeedComment,
 } from "@/hooks/useFeedComments";
-import { UIAvatar, UIText } from "@/ui";
-import { authorName, postDate } from "@/utils";
+import { UIAvatar, UIText, UIUniversityLogo } from "@/ui";
+import { authorName, postDate, profileHref } from "@/utils";
 import { LikeButton } from "./LikeButton";
 
 type CommentItemProps = {
@@ -41,6 +45,13 @@ export const CommentItem = ({
   const { mutateAsync: deleteComment } = useDeleteFeedComment();
   const name = authorName(comment.author) || t("apiState.student");
 
+  const { dismiss } = useBottomSheetModal();
+  // the comments sheet sits above the screens, so it closes before the profile opens
+  const handleAuthorPress = () => {
+    if (!comment.author) return;
+    dismiss();
+    router.push(profileHref(comment.author.id, myId));
+  };
   const handleReplyPress = () => onReply(comment);
   const handleReportPress = () => onReport(comment);
   const handleEditPress = () => setDraft(comment.content ?? "");
@@ -80,23 +91,44 @@ export const CommentItem = ({
   return (
     <View style={styles.item(isTopLevel)}>
       <View style={styles.comment}>
-        <UIAvatar
-          size={isTopLevel ? "sm" : "xs"}
-          imageSrc={comment.author?.avatarUrl}
-        />
+        <Pressable
+          accessibilityRole="link"
+          accessibilityLabel={name}
+          disabled={!comment.author}
+          onPress={handleAuthorPress}
+        >
+          <UIAvatar
+            size={isTopLevel ? "sm" : "xs"}
+            imageSrc={comment.author?.avatarUrl}
+          />
+        </Pressable>
         <View style={styles.content}>
-          <View style={styles.top}>
-            <UIText size="body" weight="semibold" numberOfLines={1}>
+          <Pressable
+            accessibilityRole="link"
+            accessibilityLabel={name}
+            disabled={!comment.author}
+            onPress={handleAuthorPress}
+            style={styles.top}
+          >
+            <UIText
+              size="body"
+              weight="semibold"
+              numberOfLines={1}
+              style={styles.name}
+            >
               {name}
             </UIText>
+            {comment.author ? (
+              <UIUniversityLogo id={comment.author.universityId} size="xxs" />
+            ) : null}
             <UIText size="xs" color="secondary">
-              {comment.author?.universityId.toUpperCase()} ·{" "}
+              ·{" "}
               {postDate(
                 { eventDate: null, createdAt: comment.createdAt },
                 i18n.resolvedLanguage ?? "en",
               )}
             </UIText>
-          </View>
+          </Pressable>
           {draft === null ? (
             <UIText
               color={comment.deleted ? "secondary" : "soft"}
@@ -241,6 +273,9 @@ const styles = StyleSheet.create((theme) => ({
     flexDirection: "row",
     alignItems: "center",
     gap: theme.s(6),
+  },
+  name: {
+    flexShrink: 1,
   },
   text: {
     lineHeight: theme.vs(15 * 1.4),

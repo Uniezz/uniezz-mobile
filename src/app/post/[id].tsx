@@ -5,7 +5,12 @@ import { useTranslation } from "react-i18next";
 import { Alert, Pressable, ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
-import { CommentsSheet, LikeButton, PostMedia } from "@/components/feed";
+import {
+  AuthorRow,
+  CommentsSheet,
+  LikeButton,
+  PostMedia,
+} from "@/components/feed";
 import { ReportSheet } from "@/components/report";
 import type { FeedNavigationFilters } from "@/@types/feed";
 import {
@@ -14,16 +19,8 @@ import {
   useFeedPostNavigation,
 } from "@/hooks/useFeed";
 import { useMyProfile } from "@/hooks/useMyProfile";
-import {
-  Icon,
-  UIAvatar,
-  UIGlass,
-  UIPage,
-  UIQueryError,
-  UISkeleton,
-  UIText,
-} from "@/ui";
-import { authorName, postDate } from "@/utils";
+import { Icon, UIGlass, UIPage, UIQueryError, UISkeleton, UIText } from "@/ui";
+import { postDate } from "@/utils";
 
 export default function PostScreen() {
   const { id, ...filters } = useLocalSearchParams<
@@ -164,13 +161,7 @@ export default function PostScreen() {
         ) : (
           <>
             <UIGlass radius={24} style={styles.card}>
-              <View style={styles.row}>
-                <UIAvatar size="xs" imageSrc={post.author.avatarUrl} />
-                <UIText size="sm" color="soft" numberOfLines={1}>
-                  {authorName(post.author) || t("apiState.student")},{" "}
-                  {post.author.universityId.toUpperCase()} · {date}
-                </UIText>
-              </View>
+              <AuthorRow author={post.author} meta={date} />
               {post.mediaUrls?.length ? (
                 <PostMedia urls={post.mediaUrls} />
               ) : null}

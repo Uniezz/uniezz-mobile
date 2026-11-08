@@ -1,3 +1,4 @@
+import type { Href } from "expo-router";
 import type {
   PersonalDetailsFormValues,
   Profile,
@@ -85,3 +86,9 @@ export const toProgrammeBody = (
   level: values.level ?? undefined,
   modeOfStudies: values.modeOfStudies ?? undefined,
 });
+
+// a tapped author opens your own profile, or theirs
+export const profileHref = (authorId: string, myId?: string): Href =>
+  authorId === myId
+    ? "/profile"
+    : { pathname: "/student/[id]", params: { id: authorId } };

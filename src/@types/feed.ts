@@ -1,6 +1,8 @@
 import type { PickedImage } from "./media";
 import type { components, operations } from "./schema";
 
+export type Author = components["schemas"]["Author"];
+
 export type FeedPost = {
   type: "EVENT" | "QUESTION";
   title: string;

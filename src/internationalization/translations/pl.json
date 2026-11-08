@@ -517,6 +517,7 @@
     "genderFemale": "Kobieta",
     "genderHint": "Można ustawić tylko raz",
     "posts": "Posty",
-    "noPosts": "Brak postów"
+    "noPosts": "Brak postów",
+    "profile": "Profil studenta"
   }
 }

@@ -1,12 +1,18 @@
 import type { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { router, useLocalSearchParams } from "expo-router";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FlashList } from "@shopify/flash-list";
-import { Pressable, View } from "react-native";
+import {
+  LayoutChangeEvent,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  View,
+} from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import {
   InterestChips,
+  ProfileHeader,
   ProfileHero,
   ProgrammeCard,
 } from "@/components/profile";
@@ -14,8 +20,16 @@ import { FeedPostCard } from "@/components/feed";
 import { ReportSheet } from "@/components/report";
 import { useFeedPosts } from "@/hooks/useFeed";
 import { usePublicProfile } from "@/hooks/useProfiles";
-import { Icon, UIPage, UIQueryError, UISkeleton, UIText } from "@/ui";
-import { authorName, GENDER_LABELS } from "@/utils";
+import {
+  Icon,
+  UIButton,
+  UIIconButton,
+  UIPage,
+  UIQueryError,
+  UISkeleton,
+  UIText,
+} from "@/ui";
+import { authorName, FEED_HEADER_COMPACT_OFFSET, GENDER_LABELS } from "@/utils";
 
 export default function PublicProfileScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -39,39 +53,50 @@ export default function PublicProfileScreen() {
     if (hasNextPage && !isFetchingNextPage) return fetchNextPage();
   };
 
+  // the header floats over the list; scrolling blurs it and swaps its title for the name
+  const [headerHeight, setHeaderHeight] = useState(0);
+  // a boolean, so a scroll only re-renders when it flips
+  const [isScrolled, setIsScrolled] = useState(false);
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    setIsScrolled(
+      event.nativeEvent.contentOffset.y > FEED_HEADER_COMPACT_OFFSET,
+    );
+  };
+  const handleHeaderLayout = (event: LayoutChangeEvent) => {
+    setHeaderHeight(event.nativeEvent.layout.height);
+  };
   const handleBackPress = () => router.back();
   const handleReportPress = () => reportRef.current?.present();
   const handleMessagePress = () => router.push("/(tabs)/chat");
 
+  const reportAction = profile ? (
+    <UIIconButton
+      accessibilityRole="button"
+      accessibilityLabel={t("report.user")}
+      onPress={handleReportPress}
+    >
+      <Icon name="flag" size={18} />
+    </UIIconButton>
+  ) : null;
+
   return (
     <UIPage>
+      <ProfileHeader
+        title={t("students.profile")}
+        name={profile ? authorName(profile) || t("apiState.student") : ""}
+        avatarUrl={profile?.avatarUrl}
+        universityId={profile?.universityId}
+        isScrolled={isScrolled}
+        action={reportAction}
+        onLayout={handleHeaderLayout}
+        onBackPress={handleBackPress}
+      />
       <FlashList
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+        showsVerticalScrollIndicator={false}
         ListHeaderComponent={
           <View style={styles.page}>
-            <View style={styles.header}>
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel={t("app.back")}
-                onPress={handleBackPress}
-                style={styles.headerButton}
-              >
-                <Icon name="arrow-left" size={18} />
-              </Pressable>
-              {profile ? (
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityLabel={t("report.user")}
-                  onPress={handleReportPress}
-                  style={styles.headerButton}
-                >
-                  <Icon
-                    name="flag"
-                    size={18}
-                    uniProps={(theme) => ({ color: theme.colors.white60 })}
-                  />
-                </Pressable>
-              ) : null}
-            </View>
             {isPending ? (
               <UISkeleton height={220} />
             ) : isError || !profile ? (
@@ -97,8 +122,9 @@ export default function PublicProfileScreen() {
                   {profile.interests?.length ? (
                     <InterestChips interests={profile.interests} />
                   ) : null}
-                  <Pressable
+                  <UIButton
                     accessibilityRole="button"
+                    radius="md"
                     onPress={handleMessagePress}
                     style={styles.message}
                   >
@@ -110,7 +136,7 @@ export default function PublicProfileScreen() {
                     <UIText size="rg" weight="semibold" color="black">
                       {t("app.message")}
                     </UIText>
-                  </Pressable>
+                  </UIButton>
                 </ProfileHero>
                 {profile.programmes?.length ? (
                   <View style={styles.section}>
@@ -134,7 +160,7 @@ export default function PublicProfileScreen() {
         }
         data={posts}
         keyExtractor={(post) => post.id}
-        contentContainerStyle={styles.list}
+        contentContainerStyle={styles.list(headerHeight)}
         onEndReached={handleEndReached}
         ListEmptyComponent={
           !profile ? null : arePostsPending ? (
@@ -162,41 +188,26 @@ export default function PublicProfileScreen() {
   );
 }
 
-const styles = StyleSheet.create((theme) => ({
-  list: {
+const styles = StyleSheet.create((theme, rt) => ({
+  // UIPage already pads the status bar; the rest of the header height is added here
+  list: (headerHeight: number) => ({
+    paddingTop: Math.max(headerHeight - rt.insets.top, 0),
     paddingHorizontal: theme.s(20),
     paddingBottom: theme.vs(60),
-  },
+  }),
   page: {
-    paddingTop: theme.vs(8),
     paddingBottom: theme.vs(12),
     gap: theme.vs(20),
   },
   cell: {
     paddingBottom: theme.vs(16),
   },
-  header: {
-    height: theme.vs(44),
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  headerButton: {
-    width: theme.vs(44),
-    height: theme.vs(44),
-    alignItems: "center",
-    justifyContent: "center",
-  },
   bio: {
     lineHeight: theme.vs(24),
   },
   message: {
-    height: theme.vs(48),
-    paddingHorizontal: theme.s(28),
-    borderRadius: theme.vs(999),
-    backgroundColor: theme.colors.white,
+    height: theme.vs(52),
     flexDirection: "row",
-    alignItems: "center",
     gap: theme.s(8),
   },
   section: {
