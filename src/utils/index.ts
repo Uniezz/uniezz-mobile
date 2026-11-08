@@ -9,3 +9,4 @@ export * from "./feed";
 export * from "./report";
 export * from "./profile";
 export * from "./media";
+export * from "./splash";
