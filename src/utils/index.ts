@@ -11,3 +11,4 @@ export * from "./profile";
 export * from "./media";
 export * from "./splash";
 export * from "./sheet";
+export * from "./header";

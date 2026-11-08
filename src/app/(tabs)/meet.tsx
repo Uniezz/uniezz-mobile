@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, View } from "react-native";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
-import { StudentDirectory } from "@/components/meet";
 import { useMyProfile } from "@/hooks/useMyProfile";
 import { Icon, UIAvatar, UIGlass, UIIconButton, UIPage, UIText } from "@/ui";
 
@@ -38,10 +37,9 @@ export default function MeetScreen() {
   const [mode, setMode] = useState<(typeof MODES)[number][0]>("friends");
   const [index, setIndex] = useState(0);
   const [connected, setConnected] = useState(false);
-  const [directory, setDirectory] = useState(false);
   const student = students[index];
   const { data: profile } = useMyProfile();
-  const handleStudentsPress = () => setDirectory(!directory);
+  const handleStudentsPress = () => router.push("/students");
   const next = () => {
     setIndex(index + 1);
     setConnected(false);
@@ -52,19 +50,17 @@ export default function MeetScreen() {
       <ScrollView contentContainerStyle={styles.page}>
         <View style={styles.header}>
           <UIText size="xl" weight="bold" style={styles.title}>
-            {directory ? t("app.students") : t("tabs.connections")}
+            {t("tabs.connections")}
           </UIText>
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={t("app.searchStudents")}
-            accessibilityState={{ selected: directory }}
             onPress={handleStudentsPress}
           >
             <UIGlass radius={16} style={styles.students}>
-              {/* toggles between the cards and the directory, so it names the other view */}
-              <Icon name={directory ? "sparkles" : "search"} size={18} />
+              <Icon name="search" size={18} />
               <UIText size="sm" weight="semibold">
-                {directory ? t("tabs.connections") : t("app.students")}
+                {t("app.students")}
               </UIText>
             </UIGlass>
           </Pressable>
@@ -76,133 +72,129 @@ export default function MeetScreen() {
             <UIAvatar imageSrc={profile?.avatarUrl} />
           </Pressable>
         </View>
-        {directory ? (
-          <StudentDirectory onBack={() => setDirectory(false)} />
-        ) : (
-          <>
-            <View style={styles.modes}>
-              {MODES.map(([value, label, icon]) => {
-                const selected = mode === value;
-                return (
-                  <Pressable
-                    key={value}
-                    accessibilityRole="button"
-                    accessibilityState={{ selected }}
-                    onPress={() => setMode(value)}
-                    style={styles.mode(selected)}
-                  >
-                    <Icon
-                      name={icon}
-                      size={14}
-                      uniProps={(theme) => ({
-                        color: selected ? theme.colors.ink : theme.colors.white,
-                      })}
-                    />
-                    <UIText
-                      size="sm"
-                      weight="semibold"
-                      color={selected ? "black" : "white"}
-                    >
-                      {t(label)}
-                    </UIText>
-                  </Pressable>
-                );
-              })}
-            </View>
-            {student ? (
-              <View style={styles.card}>
-                <Image
-                  source={student.portrait}
-                  contentFit="cover"
-                  style={StyleSheet.absoluteFill}
-                  accessibilityLabel={student.name}
-                />
-                <Svg style={styles.shade}>
-                  <Defs>
-                    <LinearGradient id="shade" x1="0" y1="0" x2="0" y2="1">
-                      <Shade offset="0" stopOpacity={0} />
-                      <Shade offset="1" stopOpacity={0.9} />
-                    </LinearGradient>
-                  </Defs>
-                  <Rect width="100%" height="100%" fill="url(#shade)" />
-                </Svg>
-                <View style={styles.details}>
-                  <UIText size="xl" weight="bold">
-                    {student.name}
-                  </UIText>
-                  <UIText size="body" weight="medium" color="soft">
-                    {student.study}
-                  </UIText>
-                  <View style={styles.answer}>
-                    <UIText size="xs" weight="semibold" color="link">
-                      {t("connections.lookingFor")}
-                    </UIText>
-                    <UIText weight="medium" style={styles.answerText}>
-                      {student.about}
-                    </UIText>
-                  </View>
-                </View>
-              </View>
-            ) : (
-              <UIGlass radius={24} style={styles.empty}>
-                <UIText size="lg" weight="semibold">
-                  {t("connections.emptyTitle")}
-                </UIText>
-                <UIText color="secondary">
-                  {t("connections.emptyDescription")}
-                </UIText>
+        <>
+          <View style={styles.modes}>
+            {MODES.map(([value, label, icon]) => {
+              const selected = mode === value;
+              return (
                 <Pressable
+                  key={value}
                   accessibilityRole="button"
-                  onPress={() => {
-                    setIndex(0);
-                    setConnected(false);
-                  }}
-                >
-                  <UIText color="link" weight="semibold">
-                    {t("connections.resetFilters")}
-                  </UIText>
-                </Pressable>
-              </UIGlass>
-            )}
-            {student ? (
-              <View style={styles.actions}>
-                <UIIconButton
-                  size="xl"
-                  accessibilityRole="button"
-                  accessibilityLabel={t("app.pass")}
-                  onPress={next}
-                >
-                  <Icon name="x" size={24} />
-                </UIIconButton>
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityLabel={t("app.connect")}
-                  onPress={() => setConnected(true)}
-                  style={styles.connect}
+                  accessibilityState={{ selected }}
+                  onPress={() => setMode(value)}
+                  style={styles.mode(selected)}
                 >
                   <Icon
-                    name={connected ? "check" : "heart"}
-                    size={28}
-                    uniProps={(theme) => ({ color: theme.colors.ink })}
+                    name={icon}
+                    size={14}
+                    uniProps={(theme) => ({
+                      color: selected ? theme.colors.ink : theme.colors.white,
+                    })}
                   />
+                  <UIText
+                    size="sm"
+                    weight="semibold"
+                    color={selected ? "black" : "white"}
+                  >
+                    {t(label)}
+                  </UIText>
                 </Pressable>
-                <UIIconButton
-                  size="xl"
-                  accessibilityRole="button"
-                  accessibilityLabel={t("app.message")}
-                  onPress={() => router.push("/(tabs)/chat")}
-                >
-                  <Icon name="message-circle" size={24} />
-                </UIIconButton>
+              );
+            })}
+          </View>
+          {student ? (
+            <View style={styles.card}>
+              <Image
+                source={student.portrait}
+                contentFit="cover"
+                style={StyleSheet.absoluteFill}
+                accessibilityLabel={student.name}
+              />
+              <Svg style={styles.shade}>
+                <Defs>
+                  <LinearGradient id="shade" x1="0" y1="0" x2="0" y2="1">
+                    <Shade offset="0" stopOpacity={0} />
+                    <Shade offset="1" stopOpacity={0.9} />
+                  </LinearGradient>
+                </Defs>
+                <Rect width="100%" height="100%" fill="url(#shade)" />
+              </Svg>
+              <View style={styles.details}>
+                <UIText size="xl" weight="bold">
+                  {student.name}
+                </UIText>
+                <UIText size="body" weight="medium" color="soft">
+                  {student.study}
+                </UIText>
+                <View style={styles.answer}>
+                  <UIText size="xs" weight="semibold" color="link">
+                    {t("connections.lookingFor")}
+                  </UIText>
+                  <UIText weight="medium" style={styles.answerText}>
+                    {student.about}
+                  </UIText>
+                </View>
               </View>
-            ) : null}
-            {connected ? (
-              <UIText color="success" style={styles.notice}>
-                {t("app.connected")}
+            </View>
+          ) : (
+            <UIGlass radius={24} style={styles.empty}>
+              <UIText size="lg" weight="semibold">
+                {t("connections.emptyTitle")}
               </UIText>
-            ) : null}
-          </>
-        )}
+              <UIText color="secondary">
+                {t("connections.emptyDescription")}
+              </UIText>
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => {
+                  setIndex(0);
+                  setConnected(false);
+                }}
+              >
+                <UIText color="link" weight="semibold">
+                  {t("connections.resetFilters")}
+                </UIText>
+              </Pressable>
+            </UIGlass>
+          )}
+          {student ? (
+            <View style={styles.actions}>
+              <UIIconButton
+                size="xl"
+                accessibilityRole="button"
+                accessibilityLabel={t("app.pass")}
+                onPress={next}
+              >
+                <Icon name="x" size={24} />
+              </UIIconButton>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={t("app.connect")}
+                onPress={() => setConnected(true)}
+                style={styles.connect}
+              >
+                <Icon
+                  name={connected ? "check" : "heart"}
+                  size={28}
+                  uniProps={(theme) => ({ color: theme.colors.ink })}
+                />
+              </Pressable>
+              <UIIconButton
+                size="xl"
+                accessibilityRole="button"
+                accessibilityLabel={t("app.message")}
+                onPress={() => router.push("/(tabs)/chat")}
+              >
+                <Icon name="message-circle" size={24} />
+              </UIIconButton>
+            </View>
+          ) : null}
+          {connected ? (
+            <UIText color="success" style={styles.notice}>
+              {t("app.connected")}
+            </UIText>
+          ) : null}
+        </>
       </ScrollView>
     </UIPage>
   );

@@ -45,7 +45,7 @@ import {
   useUpdateMyProfile,
 } from "@/hooks/useMyProfile";
 import { Icon, UIGlass, UIPage, UIQueryError, UISkeleton, UIText } from "@/ui";
-import { authorName, FEED_HEADER_COMPACT_OFFSET } from "@/utils";
+import { authorName, HEADER_COMPACT_OFFSET } from "@/utils";
 
 export default function ProfileScreen() {
   const { t, i18n } = useTranslation();
@@ -84,9 +84,7 @@ export default function ProfileScreen() {
   // a boolean, so a scroll only re-renders when it flips
   const [isScrolled, setIsScrolled] = useState(false);
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    setIsScrolled(
-      event.nativeEvent.contentOffset.y > FEED_HEADER_COMPACT_OFFSET,
-    );
+    setIsScrolled(event.nativeEvent.contentOffset.y > HEADER_COMPACT_OFFSET);
   };
   const handleHeaderLayout = (event: LayoutChangeEvent) => {
     setHeaderHeight(event.nativeEvent.layout.height);

@@ -17,5 +17,6 @@ export type ProgrammeFormValues = { programme: string; faculty: string } & Pick<
 >;
 /** programmes sheet: a programme's id to edit it, "new" for an empty form, null for the list */
 export type ProgrammeSelection = Programme["id"] | "new" | null;
+export type ProfileSummary = components["schemas"]["ProfileSummary"];
 export type PublicProfile = components["schemas"]["PublicProfile"];
 export type PublicProgramme = components["schemas"]["PublicProgramme"];

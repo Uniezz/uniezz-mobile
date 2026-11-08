@@ -1,1 +1,1 @@
-export { StudentDirectory } from "./StudentDirectory";
+export { StudentRow } from "./StudentRow";

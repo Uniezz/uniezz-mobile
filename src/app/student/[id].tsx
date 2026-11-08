@@ -29,7 +29,7 @@ import {
   UISkeleton,
   UIText,
 } from "@/ui";
-import { authorName, FEED_HEADER_COMPACT_OFFSET, GENDER_LABELS } from "@/utils";
+import { authorName, HEADER_COMPACT_OFFSET, GENDER_LABELS } from "@/utils";
 
 export default function PublicProfileScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -58,9 +58,7 @@ export default function PublicProfileScreen() {
   // a boolean, so a scroll only re-renders when it flips
   const [isScrolled, setIsScrolled] = useState(false);
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    setIsScrolled(
-      event.nativeEvent.contentOffset.y > FEED_HEADER_COMPACT_OFFSET,
-    );
+    setIsScrolled(event.nativeEvent.contentOffset.y > HEADER_COMPACT_OFFSET);
   };
   const handleHeaderLayout = (event: LayoutChangeEvent) => {
     setHeaderHeight(event.nativeEvent.layout.height);

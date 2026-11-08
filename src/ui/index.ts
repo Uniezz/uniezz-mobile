@@ -24,3 +24,5 @@ export * from "./UIUniversityLogo";
 export * from "./UIBottomSheet";
 export * from "./UIFadeScrollView";
 export * from "./UIFormSheet";
+export * from "./UICollapsingHeader";
+export * from "./UISearchOverlay";

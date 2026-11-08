@@ -3,7 +3,6 @@ export { PostComposer } from "./PostComposer";
 export { PostDetails } from "./PostDetails";
 export { CommentsSheet } from "./CommentsSheet";
 export { FeaturedPosts } from "./FeaturedPosts";
-export { FeedHeader } from "./FeedHeader";
 export { FeedPostCard } from "./FeedPostCard";
 export { ComposerHeader } from "./ComposerHeader";
 export { PostField } from "./PostField";

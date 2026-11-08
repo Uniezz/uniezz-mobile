@@ -8,33 +8,30 @@ import {
   LayoutChangeEvent,
   NativeScrollEvent,
   NativeSyntheticEvent,
+  Pressable,
   View,
 } from "react-native";
-import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
-import { BlurView } from "expo-blur";
-import { KeyboardStickyView } from "react-native-keyboard-controller";
 import { StyleSheet } from "react-native-unistyles";
-import {
-  FeaturedPosts,
-  FeedFilters,
-  FeedHeader,
-  FeedPostCard,
-} from "@/components/feed";
+import { FeaturedPosts, FeedFilters, FeedPostCard } from "@/components/feed";
 import type { FeedFilterValues } from "@/@types/feed";
 import { useFeedPosts } from "@/hooks/useFeed";
 import { useMyProfile } from "@/hooks/useMyProfile";
 import {
+  Icon,
+  UIAvatar,
   UIBottomSheet,
+  UICollapsingHeader,
+  UIIconButton,
   UIPage,
   UIQueryError,
-  UISearch,
+  UISearchOverlay,
   UISkeleton,
   UIText,
 } from "@/ui";
 import {
   DATE_PRESETS,
   datePresetFrom,
-  FEED_HEADER_COMPACT_OFFSET,
+  HEADER_COMPACT_OFFSET,
   toSearchQuery,
 } from "@/utils";
 
@@ -60,7 +57,7 @@ export default function FeedScreen() {
   const [isHeaderCompact, setIsHeaderCompact] = useState(false);
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     setIsHeaderCompact(
-      event.nativeEvent.contentOffset.y > FEED_HEADER_COMPACT_OFFSET,
+      event.nativeEvent.contentOffset.y > HEADER_COMPACT_OFFSET,
     );
   };
   const handleHeaderLayout = (event: LayoutChangeEvent) => {
@@ -91,15 +88,40 @@ export default function FeedScreen() {
   } = useFeedPosts(feedFilters);
   const posts = data?.pages.flatMap((page) => page.items ?? []) ?? [];
 
+  const headerActions = (
+    <>
+      <UIIconButton
+        accessibilityRole="button"
+        accessibilityLabel={t("topbar.search")}
+        onPress={handleSearchPress}
+      >
+        <Icon name="search" size={18} />
+      </UIIconButton>
+      <UIIconButton
+        accessibilityRole="button"
+        accessibilityLabel={t("feed.filtersTitle")}
+        onPress={handleFiltersPress}
+      >
+        <Icon name="sliders-horizontal" size={18} />
+      </UIIconButton>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={t("app.profile")}
+        onPress={handleProfilePress}
+      >
+        <UIAvatar imageSrc={profile?.avatarUrl} />
+      </Pressable>
+    </>
+  );
+
   return (
     <UIPage>
-      <FeedHeader
+      <UICollapsingHeader
+        title={t("tabs.feed")}
+        subtitle={t("app.feedSubtitle")}
         isCompact={isHeaderCompact}
-        avatarUrl={profile?.avatarUrl}
+        actions={headerActions}
         onLayout={handleHeaderLayout}
-        onSearchPress={handleSearchPress}
-        onFiltersPress={handleFiltersPress}
-        onProfilePress={handleProfilePress}
       />
       <FlashList
         onScroll={handleScroll}
@@ -139,31 +161,15 @@ export default function FeedScreen() {
           </View>
         )}
       />
-      {isSearching ? (
-        // blurs the feed while typing; touching it (tap or scroll) dismisses the keyboard
-        <Animated.View
-          entering={FadeIn}
-          exiting={FadeOut}
-          style={styles.searchBackdrop}
-          onTouchStart={Keyboard.dismiss}
-        >
-          <BlurView intensity={40} tint="dark" style={styles.searchBlur} />
-        </Animated.View>
-      ) : null}
-      {isSearching ? (
-        <KeyboardStickyView style={styles.searchBar}>
-          <UISearch
-            autoFocus
-            returnKeyType="search"
-            placeholder={t("feed.search")}
-            value={search}
-            onChangeText={setSearch}
-            onSubmit={handleSearchSubmit}
-            submitLabel={t("topbar.search")}
-            onBlur={handleSearchBlur}
-          />
-        </KeyboardStickyView>
-      ) : null}
+      <UISearchOverlay
+        isOpen={isSearching}
+        value={search}
+        onChangeText={setSearch}
+        onSubmit={handleSearchSubmit}
+        onClose={handleSearchBlur}
+        placeholder={t("feed.search")}
+        submitLabel={t("topbar.search")}
+      />
       <UIBottomSheet ref={filtersRef} title={t("feed.filtersTitle")}>
         <BottomSheetView style={styles.filtersSheet}>
           <FeedFilters value={filters} onChange={setFilters} />
@@ -182,24 +188,6 @@ const styles = StyleSheet.create((theme, rt) => ({
   }),
   header: {
     paddingBottom: theme.vs(20),
-  },
-  // above the pinned header (zIndex 1), so search blurs the whole screen
-  searchBackdrop: {
-    ...StyleSheet.absoluteFillObject,
-    zIndex: 2,
-  },
-  // shortcut: Android shows only the ink tint (no BlurTargetView around the feed), add one if Android needs real blur
-  searchBlur: {
-    flex: 1,
-    backgroundColor: theme.colors.ink40,
-  },
-  // pinned to the bottom, so the keyboard lifts it to sit just above the keys
-  searchBar: {
-    position: "absolute",
-    zIndex: 3,
-    left: theme.s(16),
-    right: theme.s(16),
-    bottom: theme.vs(8),
   },
   filtersSheet: {
     paddingBottom: rt.insets.bottom + theme.vs(16),

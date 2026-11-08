@@ -6,7 +6,7 @@ import { EaseView } from "react-native-ease";
 import { StyleSheet } from "react-native-unistyles";
 import { useUniversities } from "@/hooks/useUniversities";
 import { Icon, UIAvatar, UIIconButton, UIText, UIUniversityLogo } from "@/ui";
-import { FEED_HEADER_TRANSITION, PROFILE_HEADER_TITLE_SHIFT } from "@/utils";
+import { HEADER_TRANSITION, PROFILE_HEADER_TITLE_SHIFT } from "@/utils";
 
 type ProfileHeaderProps = {
   title: string;
@@ -44,7 +44,7 @@ export const ProfileHeader = ({
     <View style={styles.header} onLayout={onLayout}>
       <EaseView
         animate={{ opacity: isScrolled ? 1 : 0 }}
-        transition={FEED_HEADER_TRANSITION}
+        transition={HEADER_TRANSITION}
         style={styles.backdrop}
       >
         <BlurView intensity={50} tint="dark" style={styles.blur} />
@@ -63,7 +63,7 @@ export const ProfileHeader = ({
               opacity: isScrolled ? 0 : 1,
               translateY: isScrolled ? -PROFILE_HEADER_TITLE_SHIFT : 0,
             }}
-            transition={FEED_HEADER_TRANSITION}
+            transition={HEADER_TRANSITION}
             style={styles.title}
           >
             <UIText weight="semibold" numberOfLines={1}>
@@ -75,7 +75,7 @@ export const ProfileHeader = ({
               opacity: isScrolled ? 1 : 0,
               translateY: isScrolled ? 0 : PROFILE_HEADER_TITLE_SHIFT,
             }}
-            transition={FEED_HEADER_TRANSITION}
+            transition={HEADER_TRANSITION}
             style={[styles.title, styles.person]}
           >
             <UIAvatar size="sm" imageSrc={avatarUrl} />
