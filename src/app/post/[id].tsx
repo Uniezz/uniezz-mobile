@@ -1,6 +1,9 @@
 import type { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { FlashList, type FlashListRef } from "@shopify/flash-list";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { router, useLocalSearchParams } from "expo-router";
+import { usePostHog } from "posthog-react-native";
+import { useForm } from "react-hook-form";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -19,7 +22,11 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
-import type { FeedComment, FeedNavigationFilters } from "@/@types/feed";
+import type {
+  CommentFormValues,
+  FeedComment,
+  FeedNavigationFilters,
+} from "@/@types/feed";
 import {
   CommentComposer,
   CommentItem,
@@ -32,7 +39,9 @@ import {
   useFeedPost,
   useFeedPostNavigation,
 } from "@/hooks/useFeed";
-import { useFeedComments } from "@/hooks/useFeedComments";
+import { useCreateComment, useFeedComments } from "@/hooks/useFeedComments";
+import { commentSchema } from "@/schemas";
+import { captureAction } from "@/utils/analytics";
 import { useMyProfile } from "@/hooks/useMyProfile";
 import {
   Icon,
@@ -56,6 +65,7 @@ export default function PostScreen() {
     FeedNavigationFilters & { id: string }
   >();
   const { t } = useTranslation();
+  const posthog = usePostHog();
   const { data: post, isPending, isError, refetch } = useFeedPost(id);
   const { data: profile } = useMyProfile();
   const { data: navigation } = useFeedPostNavigation(id, filters);
@@ -68,6 +78,23 @@ export default function PostScreen() {
     fetchNextPage,
     isFetchingNextPage,
   } = useFeedComments(id);
+  // the posts behind the arrows load in the background, so switching shows them at once;
+  // their comments load after the switch, to keep each press to fewer requests
+  const previousId = navigation?.previousId ?? "";
+  const nextId = navigation?.nextId ?? "";
+  useFeedPost(previousId, Boolean(previousId));
+  useFeedPost(nextId, Boolean(nextId));
+  const { createComment, isPending: isSending } = useCreateComment();
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { isValid },
+  } = useForm<CommentFormValues>({
+    resolver: zodResolver(commentSchema),
+    defaultValues: { content: "" },
+    mode: "onChange",
+  });
   const comments =
     commentPages?.pages.flatMap((page) => page.items ?? []) ?? [];
   const { mutateAsync: deletePost, isPending: isDeleting } =
@@ -89,16 +116,16 @@ export default function PostScreen() {
   };
 
   const handleBackPress = () => router.back();
-  // replace, not push: back from any neighbour returns to the list.
-  const openPost = (postId: string) =>
-    router.replace({
-      pathname: "/post/[id]",
-      params: { ...filters, id: postId },
-    });
-  const handlePreviousPress = () =>
-    navigation?.previousId && openPost(navigation.previousId);
-  const handleNextPress = () =>
-    navigation?.nextId && openPost(navigation.nextId);
+  // swaps the post in place (no navigation), so back still returns to the list
+  const openPost = (postId: string) => {
+    router.setParams({ id: postId });
+    reset();
+    setReplyTo(null);
+    setIsSummaryShown(false);
+    listRef.current?.scrollToOffset({ offset: 0 });
+  };
+  const handlePreviousPress = () => openPost(previousId);
+  const handleNextPress = () => openPost(nextId);
   const handleEditPress = () =>
     router.push({ pathname: "/post/edit/[id]", params: { id } });
   const handleReportPress = () => postReportRef.current?.present();
@@ -107,6 +134,23 @@ export default function PostScreen() {
     commentReportRef.current?.present();
   };
   const handleCancelReply = () => setReplyTo(null);
+  const handleSendPress = handleSubmit(
+    async ({ content }) => {
+      try {
+        await createComment({
+          id,
+          content,
+          replyToCommentId: replyTo?.id,
+        });
+        reset();
+        setReplyTo(null);
+        toast.success(t("apiState.commentSent"));
+      } catch {
+        toast.error(t("apiState.error"));
+      }
+    },
+    () => captureAction(posthog, "comment_form", "validation_failed"),
+  );
 
   const handleCardLayout = (event: LayoutChangeEvent) => {
     setCardHeight(event.nativeEvent.layout.height);
@@ -175,28 +219,6 @@ export default function PostScreen() {
           <UIText size="md" weight="semibold" style={styles.grow}>
             {t("postComposer.post")}
           </UIText>
-          {navigation ? (
-            <UIIconButton
-              accessibilityRole="button"
-              accessibilityLabel={t("feed.previousPost")}
-              disabled={!navigation.previousId}
-              onPress={handlePreviousPress}
-              style={styles.navButton(Boolean(navigation.previousId))}
-            >
-              <Icon name="chevron-up" size={18} />
-            </UIIconButton>
-          ) : null}
-          {navigation ? (
-            <UIIconButton
-              accessibilityRole="button"
-              accessibilityLabel={t("feed.nextPost")}
-              disabled={!navigation.nextId}
-              onPress={handleNextPress}
-              style={styles.navButton(Boolean(navigation.nextId))}
-            >
-              <Icon name="chevron-down" size={18} />
-            </UIIconButton>
-          ) : null}
           {isAuthor ? (
             <UIIconButton
               accessibilityRole="button"
@@ -225,6 +247,25 @@ export default function PostScreen() {
               <Icon name="flag" size={18} />
             </UIIconButton>
           ) : null}
+          {/* last, so the arrows keep their place whether edit/delete or report is shown; disabled while the neighbours load */}
+          <UIIconButton
+            accessibilityRole="button"
+            accessibilityLabel={t("feed.previousPost")}
+            disabled={!previousId}
+            onPress={handlePreviousPress}
+            style={styles.navButton(Boolean(previousId))}
+          >
+            <Icon name="chevron-up" size={18} />
+          </UIIconButton>
+          <UIIconButton
+            accessibilityRole="button"
+            accessibilityLabel={t("feed.nextPost")}
+            disabled={!nextId}
+            onPress={handleNextPress}
+            style={styles.navButton(Boolean(nextId))}
+          >
+            <Icon name="chevron-down" size={18} />
+          </UIIconButton>
         </View>
         <View style={styles.grow}>
           <FlashList
@@ -286,7 +327,9 @@ export default function PostScreen() {
             onLayout={handleComposerLayout}
           >
             <CommentComposer
-              postId={id}
+              control={control}
+              isSendDisabled={isSending || !isValid}
+              onSendPress={handleSendPress}
               replyTo={replyTo}
               onCancelReply={handleCancelReply}
             />

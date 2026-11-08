@@ -1,23 +1,20 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { usePostHog } from "posthog-react-native";
-import { Controller, useForm } from "react-hook-form";
+import { Control, Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Pressable, TextInput, View } from "react-native";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
-import { toast } from "sonner-native";
 import type { CommentFormValues, FeedComment } from "@/@types/feed";
-import { useCreateComment } from "@/hooks/useFeedComments";
-import { commentSchema } from "@/schemas";
 import { Icon, UIText } from "@/ui";
 import { authorName } from "@/utils";
-import { captureAction } from "@/utils/analytics";
 
 const ThemedTextInput = withUnistyles(TextInput, (theme) => ({
   placeholderTextColor: theme.colors.white60,
 }));
 
 type CommentComposerProps = {
-  postId: string;
+  /** the post screen owns the form, so it can clear the draft when the post changes */
+  control: Control<CommentFormValues>;
+  isSendDisabled: boolean;
+  onSendPress: () => void;
   /** the comment being replied to, if any */
   replyTo: FeedComment | null;
   onCancelReply: () => void;
@@ -25,40 +22,13 @@ type CommentComposerProps = {
 
 // the comment field under a post; replies when a comment is picked
 export const CommentComposer = ({
-  postId,
+  control,
+  isSendDisabled,
+  onSendPress,
   replyTo,
   onCancelReply,
 }: CommentComposerProps) => {
   const { t } = useTranslation();
-  const posthog = usePostHog();
-  const { createComment, isPending } = useCreateComment();
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { isValid },
-  } = useForm<CommentFormValues>({
-    resolver: zodResolver(commentSchema),
-    defaultValues: { content: "" },
-    mode: "onChange",
-  });
-  const handleSendPress = handleSubmit(
-    async ({ content }) => {
-      try {
-        await createComment({
-          id: postId,
-          content,
-          replyToCommentId: replyTo?.id,
-        });
-        reset();
-        onCancelReply();
-        toast.success(t("apiState.commentSent"));
-      } catch {
-        toast.error(t("apiState.error"));
-      }
-    },
-    () => captureAction(posthog, "comment_form", "validation_failed"),
-  );
 
   return (
     <View style={styles.container}>
@@ -109,9 +79,9 @@ export const CommentComposer = ({
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={t("app.send")}
-          disabled={isPending || !isValid}
-          onPress={handleSendPress}
-          style={styles.send(isPending || !isValid)}
+          disabled={isSendDisabled}
+          onPress={onSendPress}
+          style={styles.send(isSendDisabled)}
         >
           <Icon
             name="arrow-up"

@@ -103,11 +103,13 @@ export function useFeaturedFeedPosts() {
   });
 }
 
-export function useFeedPost(id: string) {
+// `enabled: false` skips it, e.g. to prefetch a neighbour only once its id is known
+export function useFeedPost(id: string, enabled = true) {
   return useQuery({
     staleTime: 60_000,
     gcTime: 10 * 60_000,
     queryKey: ["feed", "post", id],
     queryFn: () => getFeedPost(id),
+    enabled,
   });
 }
