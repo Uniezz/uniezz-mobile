@@ -195,12 +195,32 @@ export interface paths {
     };
     /**
      * List feed posts
-     * @description Newest first, paginated by cursor.
+     * @description Newest first by createdAt, then ID descending. All signed-in students can browse posts across universities. Keep the same search and filters when following a cursor; results reflect current data.
      */
     get: operations["listFeedPosts"];
     put?: never;
     /** Create a feed post */
     post: operations["createFeedPost"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/feed/posts/featured": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get featured feed posts
+     * @description Up to five posts visible in the regular feed, ranked by likes received during the current calendar week (Monday 00:00 to next Monday 00:00, Europe/Warsaw). Posts of any age and type qualify with at least one remaining like from that week. Ties use createdAt and ID descending. Rankings update when likes are added or removed; posts leave on deletion, when outranked, or when the week changes. An empty section returns items: [].
+     */
+    get: operations["listFeaturedFeedPosts"];
+    put?: never;
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -272,6 +292,26 @@ export interface paths {
      * @description Idempotent: repeating it changes nothing.
      */
     delete: operations["unlikeFeedPost"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/feed/posts/{id}/navigation": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get previous and next feed post IDs
+     * @description Uses the regular feed visibility and createdAt/ID descending order. Pass the active feed q, authorId, university, type, from and to filters; omit them to navigate the whole feed. Returns 404 if the current post is deleted, inaccessible, or outside these filters. Both IDs are null for a single matching post.
+     */
+    get: operations["getFeedPostNavigation"];
+    put?: never;
+    post?: never;
+    delete?: never;
     options?: never;
     head?: never;
     patch?: never;
@@ -389,7 +429,7 @@ export interface paths {
     };
     /**
      * List students
-     * @description Newest accounts first, paginated by cursor.
+     * @description Newest accounts first, paginated by cursor. Gender is included (null until set) and has no privacy toggle.
      */
     get: operations["listProfiles"];
     put?: never;
@@ -409,7 +449,7 @@ export interface paths {
     };
     /**
      * Get a student's public profile
-     * @description Fields the student hides through privacy settings are null.
+     * @description Fields the student hides through privacy settings are null. Gender is always included (null until set) and has no privacy toggle.
      */
     get: operations["getProfile"];
     put?: never;
@@ -560,6 +600,19 @@ export interface components {
        */
       name: string;
     };
+    FeaturedPost: {
+      /** Format: date-time */
+      eventDate: string | null;
+      /** Format: uuid */
+      id: string;
+      /** @description First available post image, or null */
+      imageUrl: string | null;
+      title: string;
+      university: string;
+    };
+    FeaturedPostsOutputBody: {
+      items: components["schemas"]["FeaturedPost"][] | null;
+    };
     GeoPointDTO: {
       /**
        * Format: double
@@ -662,6 +715,18 @@ export interface components {
        */
       university: string;
     };
+    PostNavigation: {
+      /**
+       * Format: uuid
+       * @description Nearest older post, or null at the end
+       */
+      nextId: string | null;
+      /**
+       * Format: uuid
+       * @description Nearest newer post, or null at the start
+       */
+      previousId: string | null;
+    };
     Profile: {
       /** @description URL of the avatar image, null when the student has none */
       avatarUrl: string | null;
@@ -680,6 +745,11 @@ export interface components {
       /** @example Jan */
       firstName: string | null;
       /**
+       * @description Set once; null until set. Visible to other students, with no privacy toggle.
+       * @enum {string|null}
+       */
+      gender: "male" | "female" | null;
+      /**
        * Format: uuid
        * @description User ID
        */
@@ -692,6 +762,11 @@ export interface components {
        *     ]
        */
       interests: string[] | null;
+      /**
+       * @description Interface language; defaults to pl
+       * @enum {string}
+       */
+      language: "en" | "pl" | "uk" | "ru";
       /** @example Kowalski */
       lastName: string | null;
       /** @description Which profile fields other students see. A missing setting keeps its current value. */
@@ -721,6 +796,11 @@ export interface components {
       avatarUrl: string | null;
       /** @example Jan */
       firstName: string | null;
+      /**
+       * @description Null until set; always visible to other students, with no privacy toggle
+       * @enum {string|null}
+       */
+      gender: "male" | "female" | null;
       /** Format: uuid */
       id: string;
       /** @example Kowalski */
@@ -783,6 +863,11 @@ export interface components {
       email: string | null;
       /** @example Jan */
       firstName: string | null;
+      /**
+       * @description Null until set; always visible to other students, with no privacy toggle
+       * @enum {string|null}
+       */
+      gender: "male" | "female" | null;
       /** Format: uuid */
       id: string;
       interests: string[] | null;
@@ -870,8 +955,15 @@ export interface components {
       /** @description Plain text; HTML is stripped and the result may be up to 500 characters. An empty string clears it. */
       bio?: string;
       firstName?: string;
+      /**
+       * @description Can be set only once: when a gender is already saved, returns 400 gender_immutable
+       * @enum {string}
+       */
+      gender?: "male" | "female";
       /** @description Replaces all interests: up to 10 tags of up to 30 characters, duplicates ignored */
       interests?: string[];
+      /** @enum {string} */
+      language?: "en" | "pl" | "uk" | "ru";
       lastName?: string;
       /** @description Which profile fields other students see. A missing setting keeps its current value. */
       privacy?: {
@@ -1587,6 +1679,10 @@ export interface operations {
         cursor?: string;
         /** @description Maximum number of items in the page */
         limit?: number;
+        /** @description Up to 5 words of at least 3 characters. Every word must match the title, content, author name or target university ID or name, ignoring case and accents; blank means no search */
+        q?: string;
+        /** @description Only posts by this user */
+        authorId?: string;
         /** @description Posts targeted to this university or to all; all alone returns only posts targeted to everyone */
         university?: string;
         type?: "announcement" | "event" | "question";
@@ -1703,6 +1799,44 @@ export interface operations {
       };
       /** @description Unprocessable Entity */
       422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  listFeaturedFeedPosts: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["FeaturedPostsOutputBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
         headers: {
           [name: string]: unknown;
         };
@@ -2196,6 +2330,85 @@ export interface operations {
       };
     };
   };
+  getFeedPostNavigation: {
+    parameters: {
+      query?: {
+        /** @description Up to 5 words of at least 3 characters. Every word must match the title, content, author name or target university ID or name, ignoring case and accents; blank means no search */
+        q?: string;
+        /** @description Only posts by this user */
+        authorId?: string;
+        /** @description Posts targeted to this university or to all; all alone returns only posts targeted to everyone */
+        university?: string;
+        type?: "announcement" | "event" | "question";
+        /** @description Created at or after this time */
+        from?: string;
+        /** @description Created before this time */
+        to?: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PostNavigation"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
   createMediaUpload: {
     parameters: {
       query?: never;
@@ -2624,8 +2837,8 @@ export interface operations {
         limit?: number;
         /** @description Only students of this university */
         university?: string;
-        /** @description Case-insensitive match on first and last name */
-        name?: string;
+        /** @description Up to 5 words of at least 3 characters. Every word must match the name, university, programme, faculty (unless hidden) or interests, ignoring case and accents. Students whose name matches every word come first. */
+        q?: string;
       };
       header?: never;
       path?: never;

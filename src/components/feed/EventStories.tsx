@@ -3,18 +3,15 @@ import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, View } from "react-native";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
-import type { ApiFeedPost } from "@/@types/feed";
+import { useFeaturedFeedPosts } from "@/hooks/useFeed";
 import { Icon, UIImage, UIText } from "@/ui";
 import { isLive } from "@/utils";
 
 const Shade = withUnistyles(Stop, (theme) => ({ stopColor: theme.colors.ink }));
 
-type EventStoriesProps = {
-  events: ApiFeedPost[];
-};
-
-export const EventStories = ({ events }: EventStoriesProps) => {
+export const EventStories = () => {
   const { t, i18n } = useTranslation();
+  const { data: { items: events } = { items: [] } } = useFeaturedFeedPosts();
   const time = new Intl.DateTimeFormat(i18n.resolvedLanguage ?? "en", {
     hour: "2-digit",
     minute: "2-digit",
@@ -42,7 +39,7 @@ export const EventStories = ({ events }: EventStoriesProps) => {
           {t("feed.addEvent")}
         </UIText>
       </Pressable>
-      {events.map((event) => {
+      {events?.map((event) => {
         const live = isLive(event.eventDate);
         return (
           <Pressable
@@ -51,14 +48,14 @@ export const EventStories = ({ events }: EventStoriesProps) => {
             accessibilityLabel={event.title}
             onPress={() =>
               router.push({
-                pathname: "/feed/post/[id]",
+                pathname: "/post/[id]",
                 params: { id: event.id },
               })
             }
             style={styles.story}
           >
             <UIImage
-              source={{ uri: event.mediaUrls?.[0] }}
+              source={{ uri: event.imageUrl ?? undefined }}
               fallback={undefined}
               contentFit="cover"
               style={StyleSheet.absoluteFill}
@@ -72,15 +69,17 @@ export const EventStories = ({ events }: EventStoriesProps) => {
               </Defs>
               <Rect width="100%" height="100%" fill="url(#shade)" />
             </Svg>
-            <View style={styles.time(live)}>
-              <UIText size="xs" weight="semibold">
-                {live
-                  ? t("app.liveNow")
-                  : event.eventDate
-                    ? time.format(new Date(event.eventDate))
-                    : ""}
-              </UIText>
-            </View>
+            {event.eventDate ? (
+              <View style={styles.time(live)}>
+                <UIText size="xs" weight="semibold">
+                  {live
+                    ? t("app.liveNow")
+                    : time.format(new Date(event.eventDate))}
+                </UIText>
+              </View>
+            ) : (
+              <View />
+            )}
             <UIText
               size="xs"
               weight="semibold"

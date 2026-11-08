@@ -26,6 +26,7 @@ function RootNavigator(): React.JSX.Element {
         <Stack.Screen name="chat/[id]" />
         <Stack.Screen name="profile" />
         <Stack.Screen name="feed" />
+        <Stack.Screen name="post" />
         <Stack.Screen name="student/[id]" />
       </Stack.Protected>
     </Stack>

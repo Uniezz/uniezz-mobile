@@ -1,12 +1,14 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { getProfiles, getPublicProfile } from "@/api";
+import { toSearchQuery } from "@/utils";
 
-export function useProfileSearch(name: string) {
+export function useProfileSearch(search: string) {
+  const q = toSearchQuery(search);
   return useInfiniteQuery({
     staleTime: 60_000,
     gcTime: 5 * 60_000,
-    queryKey: ["profiles", "search", name],
-    queryFn: ({ pageParam }) => getProfiles(name, pageParam),
+    queryKey: ["profiles", "search", q],
+    queryFn: ({ pageParam }) => getProfiles(q, pageParam),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (page) => page.nextCursor ?? undefined,
   });

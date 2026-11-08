@@ -1,4 +1,7 @@
+import { useSession } from "@/contexts";
+import { useUpdateMyProfile } from "@/hooks/useMyProfile";
 import {
+  type Language,
   LANGUAGES,
   LANGUAGE_OPTIONS,
   useLanguageStore,
@@ -14,6 +17,8 @@ export const LanguagePicker = () => {
   const [isOpen, setIsOpen] = useState(false);
   const language = useLanguageStore((state) => state.language);
   const setLanguage = useLanguageStore((state) => state.setLanguage);
+  const { session } = useSession();
+  const { mutate: updateProfile } = useUpdateMyProfile();
   const currentLanguage =
     (language && LANGUAGES.includes(language) ? language : undefined) ??
     LANGUAGES.find((item) => item === i18n.resolvedLanguage) ??
@@ -21,6 +26,13 @@ export const LanguagePicker = () => {
   const currentOption = LANGUAGE_OPTIONS.find(
     (option) => option.code === currentLanguage,
   );
+
+  const handleSelect = (code: Language) => {
+    setLanguage(code);
+    setIsOpen(false);
+    // The picker also shows before sign-in, when there is no profile to update.
+    if (session) updateProfile({ language: code });
+  };
 
   return (
     <View style={styles.container}>
@@ -48,10 +60,7 @@ export const LanguagePicker = () => {
                 key={option.code}
                 accessibilityRole="button"
                 accessibilityState={{ selected: isSelected }}
-                onPress={() => {
-                  setLanguage(option.code);
-                  setIsOpen(false);
-                }}
+                onPress={() => handleSelect(option.code)}
                 style={styles.option(isSelected)}
               >
                 <UIText>{option.flag}</UIText>

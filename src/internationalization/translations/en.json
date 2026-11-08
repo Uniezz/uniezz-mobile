@@ -121,7 +121,9 @@
     "anyTime": "Any time",
     "today": "Today",
     "lastWeek": "Last 7 days",
-    "lastMonth": "Last 30 days"
+    "lastMonth": "Last 30 days",
+    "previousPost": "Previous post",
+    "nextPost": "Next post"
   },
   "chat": {
     "requests": "Requests",
@@ -503,6 +505,12 @@
     "interests": "Interests",
     "interestsHint": "Separate interests with commas",
     "interestsError": "Use up to 10 interests, each up to 30 characters.",
-    "removePhoto": "Remove photo"
+    "removePhoto": "Remove photo",
+    "gender": "Gender",
+    "genderMale": "Male",
+    "genderFemale": "Female",
+    "genderHint": "Can be set only once",
+    "posts": "Posts",
+    "noPosts": "No posts yet"
   }
 }

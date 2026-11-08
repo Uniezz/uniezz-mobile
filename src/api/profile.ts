@@ -38,9 +38,9 @@ export async function deleteMyProgramme(id: string) {
   });
 }
 
-export async function getProfiles(name: string, cursor?: string) {
+export async function getProfiles(q?: string, cursor?: string) {
   const { data } = await api.GET("/profiles", {
-    params: { query: { name: name || undefined, cursor } },
+    params: { query: { q, cursor } },
   });
 
   return data!;

@@ -7,7 +7,12 @@ import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import { CommentsSheet, LikeButton, PostMedia } from "@/components/feed";
 import { ReportSheet } from "@/components/report";
-import { useDeleteFeedPost, useFeedPost } from "@/hooks/useFeed";
+import type { FeedNavigationFilters } from "@/@types/feed";
+import {
+  useDeleteFeedPost,
+  useFeedPost,
+  useFeedPostNavigation,
+} from "@/hooks/useFeed";
 import { useMyProfile } from "@/hooks/useMyProfile";
 import {
   Icon,
@@ -21,10 +26,13 @@ import {
 import { authorName, postDate } from "@/utils";
 
 export default function PostScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, ...filters } = useLocalSearchParams<
+    FeedNavigationFilters & { id: string }
+  >();
   const { t, i18n } = useTranslation();
   const { data: post, isPending, isError, refetch } = useFeedPost(id);
   const { data: profile } = useMyProfile();
+  const { data: navigation } = useFeedPostNavigation(id, filters);
   const commentsRef = useRef<BottomSheetModal>(null);
   const reportRef = useRef<BottomSheetModal>(null);
   const { mutateAsync: deletePost, isPending: isDeleting } =
@@ -34,8 +42,19 @@ export default function PostScreen() {
 
   const handleBackPress = () => router.back();
 
+  // replace, not push: back from any neighbour returns to the list.
+  const openPost = (postId: string) =>
+    router.replace({
+      pathname: "/post/[id]",
+      params: { ...filters, id: postId },
+    });
+  const handlePreviousPress = () =>
+    navigation?.previousId && openPost(navigation.previousId);
+  const handleNextPress = () =>
+    navigation?.nextId && openPost(navigation.nextId);
+
   const handleEditPress = () =>
-    router.push({ pathname: "/feed/post/edit/[id]", params: { id } });
+    router.push({ pathname: "/post/edit/[id]", params: { id } });
 
   const handleReportPress = () => reportRef.current?.present();
 
@@ -75,6 +94,28 @@ export default function PostScreen() {
         <UIText size="md" weight="semibold" style={styles.grow}>
           {t("postComposer.post")}
         </UIText>
+        {navigation ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t("feed.previousPost")}
+            disabled={!navigation.previousId}
+            onPress={handlePreviousPress}
+            style={styles.navButton(Boolean(navigation.previousId))}
+          >
+            <Icon name="chevron-up" size={18} />
+          </Pressable>
+        ) : null}
+        {navigation ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t("feed.nextPost")}
+            disabled={!navigation.nextId}
+            onPress={handleNextPress}
+            style={styles.navButton(Boolean(navigation.nextId))}
+          >
+            <Icon name="chevron-down" size={18} />
+          </Pressable>
+        ) : null}
         {isAuthor ? (
           <Pressable
             accessibilityRole="button"
@@ -230,6 +271,13 @@ const styles = StyleSheet.create((theme) => ({
     alignItems: "center",
     justifyContent: "center",
   },
+  navButton: (enabled: boolean) => ({
+    width: theme.vs(44),
+    height: theme.vs(44),
+    alignItems: "center",
+    justifyContent: "center",
+    opacity: enabled ? 1 : 0.3,
+  }),
   grow: {
     flex: 1,
   },

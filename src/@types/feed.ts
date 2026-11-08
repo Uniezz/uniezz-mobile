@@ -14,6 +14,8 @@ export type FeedView =
   | { screen: "post"; title: string };
 
 export type ApiFeedPost = components["schemas"]["Post"];
+export type PostNavigation = components["schemas"]["PostNavigation"];
+export type FeaturedPost = components["schemas"]["FeaturedPost"];
 export type CreatePostInput = components["schemas"]["CreatePostInputBody"];
 export type NewPostFormValues = {
   type: "question" | "announcement" | "event";
@@ -28,6 +30,9 @@ export type UpdatePostInput = components["schemas"]["UpdatePostInputBody"];
 export type FeedFilters = Omit<
   NonNullable<operations["listFeedPosts"]["parameters"]["query"]>,
   "cursor"
+>;
+export type FeedNavigationFilters = NonNullable<
+  operations["getFeedPostNavigation"]["parameters"]["query"]
 >;
 export type EditPostFormValues = Pick<
   NewPostFormValues,

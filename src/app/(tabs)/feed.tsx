@@ -1,8 +1,9 @@
 import { FlashList } from "@shopify/flash-list";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, View } from "react-native";
+import debounce from "lodash/debounce";
 import { StyleSheet } from "react-native-unistyles";
 import { EventStories, FeedFilters, FeedPostCard } from "@/components/feed";
 import type { FeedFilterValues } from "@/@types/feed";
@@ -18,11 +19,18 @@ import {
   UISkeleton,
   UIText,
 } from "@/ui";
-import { DATE_PRESETS, datePresetFrom, matchesSearch } from "@/utils";
+import { DATE_PRESETS, datePresetFrom, toSearchQuery } from "@/utils";
 
 export default function FeedScreen() {
   const { t } = useTranslation();
   const [search, setSearch] = useState("");
+  const [query, setQuery] = useState("");
+  const updateQuery = useMemo(() => debounce(setQuery, 300), []);
+  useEffect(() => () => updateQuery.cancel(), [updateQuery]);
+  const handleSearchChange = (value: string) => {
+    setSearch(value);
+    updateQuery(value);
+  };
   const [isSearching, setIsSearching] = useState(false);
   const [filters, setFilters] = useState<FeedFilterValues>({
     type: "all",
@@ -32,6 +40,14 @@ export default function FeedScreen() {
   const { data: profile } = useMyProfile();
   const handleToggleSearch = () => setIsSearching(!isSearching);
   const handleProfilePress = () => router.push("/profile");
+  const feedFilters = {
+    q: toSearchQuery(query),
+    type: filters.type === "all" ? undefined : filters.type,
+    university: filters.university ?? undefined,
+    from: datePresetFrom(
+      DATE_PRESETS.find(([date]) => date === filters.date)?.[2] ?? null,
+    ),
+  };
   const {
     data,
     isPending,
@@ -41,33 +57,13 @@ export default function FeedScreen() {
     hasNextPage,
     isFetchingNextPage,
     isRefetching,
-  } = useFeedPosts({
-    type: filters.type === "all" ? undefined : filters.type,
-    university: filters.university ?? undefined,
-    from: datePresetFrom(
-      DATE_PRESETS.find(([date]) => date === filters.date)?.[2] ?? null,
-    ),
-  });
+  } = useFeedPosts(feedFilters);
   const posts = data?.pages.flatMap((page) => page.items ?? []) ?? [];
-  const visible = posts.filter((post) =>
-    matchesSearch(
-      search,
-      post.title,
-      post.content,
-      post.author.firstName ?? "",
-      post.author.lastName ?? "",
-      post.university,
-      ...(post.tags ?? []),
-    ),
-  );
-  const events = posts.filter(
-    (post) => post.type === "event" && post.mediaUrls?.length,
-  );
 
   return (
     <UIPage backdrop="city">
       <FlashList
-        data={visible}
+        data={posts}
         masonry
         numColumns={2}
         keyExtractor={(post) => post.id}
@@ -109,12 +105,12 @@ export default function FeedScreen() {
                   autoFocus
                   placeholder={t("feed.search")}
                   value={search}
-                  onChangeText={setSearch}
+                  onChangeText={handleSearchChange}
                 />
                 <FeedFilters value={filters} onChange={setFilters} />
               </View>
             ) : null}
-            {!isSearching ? <EventStories events={events} /> : null}
+            {!isSearching ? <EventStories /> : null}
           </View>
         }
         ListEmptyComponent={
@@ -131,7 +127,7 @@ export default function FeedScreen() {
         }
         renderItem={({ item }) => (
           <View style={styles.cell}>
-            <FeedPostCard post={item} />
+            <FeedPostCard post={item} filters={feedFilters} />
           </View>
         )}
       />

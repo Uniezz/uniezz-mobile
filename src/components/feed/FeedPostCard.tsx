@@ -2,26 +2,31 @@ import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { Pressable, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import type { ApiFeedPost } from "@/@types/feed";
+import type { ApiFeedPost, FeedNavigationFilters } from "@/@types/feed";
 import { UIAvatar, UIGlass, UIImage, UIText } from "@/ui";
 import { authorName, postDate } from "@/utils";
 
 type FeedPostCardProps = {
   post: ApiFeedPost;
+  // Active list filters, so previous/next on the post screen stays inside this list.
+  filters?: FeedNavigationFilters;
 };
 
-export const FeedPostCard = ({ post }: FeedPostCardProps) => {
+export const FeedPostCard = ({ post, filters }: FeedPostCardProps) => {
   const { t, i18n } = useTranslation();
   const cover = post.type === "question" ? undefined : post.mediaUrls?.[0];
   const date = postDate(post, i18n.resolvedLanguage ?? "en");
+  const handlePress = () =>
+    router.push({
+      pathname: "/post/[id]",
+      params: { ...filters, id: post.id },
+    });
 
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={`${t("app.viewPost")}: ${post.title}`}
-      onPress={() =>
-        router.push({ pathname: "/feed/post/[id]", params: { id: post.id } })
-      }
+      onPress={handlePress}
     >
       <UIGlass radius={20}>
         {cover ? (

@@ -7,12 +7,14 @@ import {
 } from "@tanstack/react-query";
 import {
   deleteFeedPost,
+  getFeaturedFeedPosts,
+  getFeedPostNavigation,
   getFeedPost,
   getFeedPosts,
   setFeedLike,
   updateFeedPost,
 } from "@/api";
-import type { FeedFilters } from "@/@types/feed";
+import type { FeedFilters, FeedNavigationFilters } from "@/@types/feed";
 import { patchFeedItem } from "./patchFeedItem";
 
 export function useUpdateFeedPost() {
@@ -37,7 +39,10 @@ export function useDeleteFeedPost() {
         queryKey: ["feed", "post", id],
         exact: true,
       });
-      return queryClient.invalidateQueries({ queryKey: ["feed", "posts"] });
+      return Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["feed", "posts"] }),
+        queryClient.invalidateQueries({ queryKey: ["feed", "featured"] }),
+      ]);
     },
   });
 }
@@ -47,13 +52,24 @@ export function useFeedLike() {
   return useMutation({
     meta: { analyticsAction: "post_like_set" },
     mutationFn: setFeedLike,
-    onSuccess: ({ liked, likesCount }, { id }) =>
-      patchFeedItem(queryClient, id, { likedByMe: liked, likesCount }),
+    onSuccess: ({ liked, likesCount }, { id, kind }) => {
+      patchFeedItem(queryClient, id, { likedByMe: liked, likesCount });
+      // Featured ranking follows this week's post likes.
+      if (kind === "post") {
+        return queryClient.invalidateQueries({
+          queryKey: ["feed", "featured"],
+        });
+      }
+    },
   });
 }
 
-export function useFeedPosts(filters: FeedFilters = {}) {
+export function useFeedPosts(
+  filters: FeedFilters = {},
+  { enabled = true } = {},
+) {
   return useInfiniteQuery({
+    enabled,
     staleTime: 60_000,
     gcTime: 10 * 60_000,
     queryKey: ["feed", "posts", filters],
@@ -62,6 +78,28 @@ export function useFeedPosts(filters: FeedFilters = {}) {
     placeholderData: keepPreviousData,
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (page) => page.nextCursor ?? undefined,
+  });
+}
+
+export function useFeedPostNavigation(
+  id: string,
+  filters: FeedNavigationFilters = {},
+) {
+  return useQuery({
+    staleTime: 60_000,
+    gcTime: 10 * 60_000,
+    // Under "posts" so post writes that refresh the feed also refresh neighbours.
+    queryKey: ["feed", "posts", "navigation", id, filters],
+    queryFn: () => getFeedPostNavigation(id, filters),
+  });
+}
+
+export function useFeaturedFeedPosts() {
+  return useQuery({
+    staleTime: 60_000,
+    gcTime: 10 * 60_000,
+    queryKey: ["feed", "featured"],
+    queryFn: getFeaturedFeedPosts,
   });
 }
 

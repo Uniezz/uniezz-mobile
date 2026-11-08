@@ -9,6 +9,7 @@ export const personalDetailsSchema = z.object({
     const items = splitInterests(value);
     return items.length <= 10 && items.every((item) => item.length <= 30);
   }, "students.interestsError"),
+  gender: z.enum(["male", "female"]).nullable(),
 });
 
 export const addProgrammeSchema = z.object({

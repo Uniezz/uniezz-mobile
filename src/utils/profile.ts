@@ -18,6 +18,13 @@ export const STUDY_STATUSES = [
   ["cancelled", "app.studyStatusCancelled"],
 ] as const;
 
+export const GENDERS = ["male", "female"] as const;
+
+export const GENDER_LABELS = {
+  male: "students.genderMale",
+  female: "students.genderFemale",
+} as const;
+
 export const PRIVACY_SETTINGS = [
   ["showEmail", "apiState.showEmail"],
   ["showFaculty", "apiState.showFaculty"],
