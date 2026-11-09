@@ -35,7 +35,7 @@ function RootNavigator(): React.JSX.Element {
       </Stack.Protected>
       <Stack.Protected guard={!!session}>
         <Stack.Screen name="(tabs)" options={{ animation: "fade" }} />
-        <Stack.Screen name="chat/[id]" />
+        <Stack.Screen name="chat" />
         <Stack.Screen name="profile" />
         <Stack.Screen name="feed" />
         <Stack.Screen name="post" />

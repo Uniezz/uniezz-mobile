@@ -130,6 +130,10 @@
     "nextPost": "Следующая публикация"
   },
   "chat": {
+    "selected_one": "{{count}} выбран",
+    "selected_few": "{{count}} выбрано",
+    "selected_many": "{{count}} выбрано",
+    "selected_other": "{{count}} выбрано",
     "requests": "Запросы",
     "noRequests": "Нет запросов на сообщения",
     "action": "Новая группа",

@@ -1,37 +1,25 @@
 import { router } from "expo-router";
-import { useState } from "react";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { ConversationList, CreateGroup } from "@/components/chat";
+import { ConversationList } from "@/components/chat";
 import { useChatStore } from "@/store/chat";
 import { UIPage } from "@/ui";
 
 export default function ChatScreen() {
   const conversations = useChatStore((state) => state.conversations);
-  const createGroup = useChatStore((state) => state.createGroup);
-  const [creatingGroup, setCreatingGroup] = useState(false);
+
+  const handleOpen = (id: string) =>
+    router.push({ pathname: "/chat/[id]", params: { id } });
+  const handleCreate = () => router.push("/chat/new");
 
   return (
     <UIPage>
       <View style={styles.page}>
-        {creatingGroup ? (
-          <CreateGroup
-            onBack={() => setCreatingGroup(false)}
-            onCreate={(name, members) => {
-              const id = createGroup(name, members);
-              setCreatingGroup(false);
-              router.push({ pathname: "/chat/[id]", params: { id } });
-            }}
-          />
-        ) : (
-          <ConversationList
-            conversations={conversations}
-            onOpen={(id) =>
-              router.push({ pathname: "/chat/[id]", params: { id } })
-            }
-            onCreate={() => setCreatingGroup(true)}
-          />
-        )}
+        <ConversationList
+          conversations={conversations}
+          onOpen={handleOpen}
+          onCreate={handleCreate}
+        />
       </View>
     </UIPage>
   );

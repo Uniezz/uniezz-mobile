@@ -130,6 +130,10 @@
     "nextPost": "Наступний допис"
   },
   "chat": {
+    "selected_one": "{{count}} вибрано",
+    "selected_few": "{{count}} вибрано",
+    "selected_many": "{{count}} вибрано",
+    "selected_other": "{{count}} вибрано",
     "requests": "Запити",
     "noRequests": "Немає запитів на повідомлення",
     "action": "Нова група",

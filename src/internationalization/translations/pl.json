@@ -130,6 +130,10 @@
     "nextPost": "Następny post"
   },
   "chat": {
+    "selected_one": "{{count}} wybrana",
+    "selected_few": "{{count}} wybrane",
+    "selected_many": "{{count}} wybranych",
+    "selected_other": "{{count}} wybranych",
     "requests": "Prośby",
     "noRequests": "Brak próśb o wiadomość",
     "action": "Nowa grupa",

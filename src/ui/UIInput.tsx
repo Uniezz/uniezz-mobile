@@ -94,7 +94,7 @@ const styles = StyleSheet.create((theme) => ({
   input: (isMultiline?: boolean) => ({
     fontFamily: theme.fonts.Geist,
     fontSize: theme.vs(15),
-    fontWeight: "400",
+    // no fontWeight: with a custom font, iOS resolves the placeholder to another face and draws it low
     color: theme.colors.white,
     flex: 1,
     // a multiline input grows from its content; the 48pt box (alignItems center) keeps its first line centred

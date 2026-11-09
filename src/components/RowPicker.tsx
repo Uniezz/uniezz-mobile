@@ -8,6 +8,8 @@ export type RowItem = {
   leading?: ReactNode;
   topText: string;
   bottomText?: string;
+  /** sits before `bottomText`, e.g. a university logo */
+  bottomLeading?: ReactNode;
 };
 
 type RowPickerProps = {
@@ -16,8 +18,62 @@ type RowPickerProps = {
   onItemPress: (idx: number) => void;
 } & UnistylesVariants<typeof styles>;
 
+type RowPickerItemProps = {
+  item: RowItem;
+  isSelected: boolean;
+  isLast: boolean;
+  onPress: () => void;
+  /** a checkbox for multi-select lists, a radio otherwise */
+  isMultiple?: boolean;
+} & UnistylesVariants<typeof styles>;
+
 const getRowEntering = (index: number) =>
   FadeInDown.duration(380).delay(index * 70);
+
+// one row of the picker; exported so long lists (FlashList) can render the same rows
+export const RowPickerItem = ({
+  item,
+  isSelected,
+  isLast,
+  onPress,
+  isMultiple = false,
+  appearance,
+}: RowPickerItemProps) => {
+  styles.useVariants({ appearance });
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole={isMultiple ? "checkbox" : "radio"}
+      accessibilityState={
+        isMultiple ? { checked: isSelected } : { selected: isSelected }
+      }
+      style={styles.item(isSelected, isLast)}
+    >
+      {item.leading}
+      <View style={styles.textContainer}>
+        <UIText weight="semibold" size="rg" numberOfLines={1}>
+          {item.topText}
+        </UIText>
+        {item.bottomText ? (
+          <View style={styles.bottom}>
+            {item.bottomLeading}
+            <UIText
+              size="sm"
+              color="secondary"
+              numberOfLines={1}
+              style={styles.bottomText}
+            >
+              {item.bottomText}
+            </UIText>
+          </View>
+        ) : null}
+      </View>
+      <View style={styles.radio(isSelected)}>
+        {isSelected ? <View style={styles.radioDot} /> : null}
+      </View>
+    </Pressable>
+  );
+};
 
 export const RowPicker = ({
   items,
@@ -29,34 +85,18 @@ export const RowPicker = ({
   return (
     <UIGlass style={styles.group}>
       {items.map((item, index) => {
-        const isItemSelected = selectedItem === index;
-        const isLast = index === items.length - 1;
         const handlePress = () => {
           onItemPress(index);
         };
         return (
           <Animated.View key={index} entering={getRowEntering(index)}>
-            <Pressable
+            <RowPickerItem
+              item={item}
+              isSelected={selectedItem === index}
+              isLast={index === items.length - 1}
               onPress={handlePress}
-              accessibilityRole="radio"
-              accessibilityState={{ selected: isItemSelected }}
-              style={styles.item(isItemSelected, isLast)}
-            >
-              {item.leading}
-              <View style={styles.textContainer}>
-                <UIText weight="semibold" size="rg" numberOfLines={1}>
-                  {item.topText}
-                </UIText>
-                {item.bottomText ? (
-                  <UIText size="sm" color="secondary" numberOfLines={1}>
-                    {item.bottomText}
-                  </UIText>
-                ) : null}
-              </View>
-              <View style={styles.radio(isItemSelected)}>
-                {isItemSelected ? <View style={styles.radioDot} /> : null}
-              </View>
-            </Pressable>
+              appearance={appearance}
+            />
           </Animated.View>
         );
       })}
@@ -82,6 +122,14 @@ const styles = StyleSheet.create((theme) => ({
   textContainer: {
     flex: 1,
     gap: theme.vs(2),
+  },
+  bottom: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: theme.s(6),
+  },
+  bottomText: {
+    flexShrink: 1,
   },
   item: (isItemSelected: boolean, isLast: boolean) => ({
     alignItems: "center",

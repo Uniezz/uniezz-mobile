@@ -147,6 +147,7 @@ const styles = StyleSheet.create((theme, rt) => ({
   },
   h1: {
     letterSpacing: -1,
-    lineHeight: theme.vs(26),
+    // ~1.2× the 26pt size: a line height equal to the font size makes iOS draw the glyphs high, off-centre from the buttons
+    lineHeight: theme.vs(32),
   },
 }));
