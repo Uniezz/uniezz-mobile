@@ -27,26 +27,28 @@ export const PostCard = ({ post }: PostCardProps) => {
   return (
     <View style={styles.card}>
       <AuthorRow author={post.author} meta={createdAt} style={styles.inset} />
-      <UIText weight="semibold" style={[styles.title, styles.inset]}>
-        {post.title}
-      </UIText>
-      {post.type === "event" && eventDate ? (
-        <View style={[styles.row, styles.inset]}>
-          <Icon
-            name="calendar"
-            size={14}
-            uniProps={(theme) => ({ color: theme.colors.white60 })}
-          />
-          <UIText size="sm" color="secondary">
-            {eventDate}
-          </UIText>
-        </View>
-      ) : null}
-      {post.content ? (
-        <UIText size="rg" color="soft" style={[styles.body, styles.inset]}>
-          {post.content}
+      <View style={styles.text}>
+        <UIText weight="semibold" style={[styles.title, styles.inset]}>
+          {post.title}
         </UIText>
-      ) : null}
+        {post.type === "event" && eventDate ? (
+          <View style={[styles.row, styles.inset]}>
+            <Icon
+              name="calendar"
+              size={14}
+              uniProps={(theme) => ({ color: theme.colors.white60 })}
+            />
+            <UIText size="sm" color="secondary">
+              {eventDate}
+            </UIText>
+          </View>
+        ) : null}
+        {post.content ? (
+          <UIText size="rg" color="soft" style={[styles.body, styles.inset]}>
+            {post.content}
+          </UIText>
+        ) : null}
+      </View>
       {post.mediaUrls?.length ? <PostMedia urls={post.mediaUrls} /> : null}
       {post.tags?.length ? (
         <View style={[styles.tags, styles.inset]}>
@@ -82,7 +84,7 @@ export const PostCard = ({ post }: PostCardProps) => {
 const styles = StyleSheet.create((theme) => ({
   // same surface as the feed cards: faint fill, top highlight, 24pt corners
   card: {
-    gap: theme.vs(20),
+    gap: theme.vs(16),
     paddingHorizontal: theme.s(6),
     paddingVertical: theme.vs(10),
     borderRadius: theme.vs(24),
@@ -95,6 +97,10 @@ const styles = StyleSheet.create((theme) => ({
   // text sits 10pt in from the card; media runs closer to its edge
   inset: {
     paddingHorizontal: theme.s(4),
+  },
+  // title, event date and body read as one block
+  text: {
+    gap: theme.vs(8),
   },
   title: {
     fontSize: theme.vs(26),
