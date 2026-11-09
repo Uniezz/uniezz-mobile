@@ -17,7 +17,7 @@ type AuthPageProps = {
 
 export const AuthPage = ({ children, topText, bottomText }: AuthPageProps) => {
   return (
-    <UIPage backdrop="glow" style={styles.page}>
+    <UIPage style={styles.page}>
       <View style={styles.topBar}>
         <AuthWordmark />
         <LanguagePicker />
@@ -40,13 +40,14 @@ export const AuthPage = ({ children, topText, bottomText }: AuthPageProps) => {
 
 const styles = StyleSheet.create((theme, rt) => ({
   page: {
-    paddingHorizontal: theme.s(20),
     paddingTop: rt.insets.top + theme.vs(12),
   },
   body: {
     flex: 1,
+    paddingHorizontal: theme.s(20),
   },
   topBar: {
+    paddingHorizontal: theme.s(20),
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",

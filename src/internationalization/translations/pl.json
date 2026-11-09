@@ -1,6 +1,7 @@
 {
   "language": {
-    "select": "Wybierz język aplikacji"
+    "select": "Wybierz język aplikacji",
+    "title": "Język"
   },
   "common": {
     "tryAgain": "Spróbuj ponownie.",
@@ -73,12 +74,12 @@
   },
   "otp": {
     "provideUniversityEmail": "Podaj uczelniany adres e-mail",
-    "checkInbox": "Sprawdź swoją skrzynkę uczelnianą",
+    "checkInbox": "Sprawdź skrzynkę",
     "emailInstructions": "Wyślemy sześciocyfrowy kod na ten adres. Użyj adresu otrzymanego od uczelni.",
-    "codeSent": "Wysłaliśmy sześciocyfrowy kod na adres {{email}}. Kod wygaśnie za 10 minut.",
+    "codeSent": "Wysłaliśmy 6-cyfrowy kod na Twój uczelniany adres e-mail. Kod wygaśnie za 10 minut.",
     "sendCode": "Wyślij kod",
-    "verifyAndContinue": "Zweryfikuj i kontynuuj",
-    "changeEmail": "Zmień adres e-mail",
+    "verifyAndContinue": "Zweryfikuj kod",
+    "changeEmail": "Zmień",
     "emailPlaceholder": "ty@uczelnia.edu.pl",
     "email": "E-mail",
     "tooManyRequests": "Wysłano zbyt wiele próśb o kod. Odczekaj chwilę i spróbuj ponownie.",
@@ -93,9 +94,9 @@
     "universityEmailRequired": "Użyj adresu e-mail otrzymanego od uczelni."
   },
   "tabs": {
-    "feed": "Tablica",
+    "feed": "Posty",
     "chat": "Czat",
-    "connections": "Ludzie",
+    "connections": "Poznaj",
     "exams": "Egzaminy",
     "faq": "FAQ"
   },
@@ -107,11 +108,12 @@
     "commentsCount_other": "{{count}} komentarza",
     "addEvent": "Dodaj wydarzenie",
     "search": "Szukaj...",
+    "filtersTitle": "Filtry",
     "filters": {
       "all": "Wszystko",
       "events": "Wydarzenia",
       "people": "Osoby",
-      "news": "Wiadomości",
+      "news": "Ogłoszenie",
       "campus": "Kampus"
     },
     "action": "Dodaj post",
@@ -376,7 +378,7 @@
     "lastName": "Nazwisko",
     "studyProgrammes": "Kierunki studiów",
     "addProgramme": "Dodaj kierunek",
-    "primary": "Główny",
+    "primary": "Główny kierunek",
     "makePrimary": "Ustaw jako główny",
     "faculty": "Wydział",
     "yearOfStudy": "Rok studiów",
@@ -403,7 +405,9 @@
     "programme": "Kierunek",
     "addProgrammeDescription": "Podaj kierunek i wydział.",
     "allUniversitiesHint": "Widoczne dla studentów wszystkich uczelni",
-    "studyLevelDoctoral": "Doktoranckie"
+    "studyLevelDoctoral": "Doktoranckie",
+    "moreOptions": "Więcej opcji",
+    "students": "Studenci"
   },
   "postComposer": {
     "audience": "Kto może to zobaczyć",
@@ -496,7 +500,8 @@
     "detailsError": "Użyj 10–5000 znaków.",
     "imageError": "Wybierz poprawny obraz JPG, PNG lub WebP o rozmiarze poniżej 10 MB.",
     "postDeleted": "Post usunięty",
-    "commentDeleted": "Komentarz usunięty"
+    "commentDeleted": "Komentarz usunięty",
+    "commentSent": "Dodano komentarz"
   },
   "students": {
     "allStudents": "Wszyscy studenci",
@@ -515,6 +520,7 @@
     "genderFemale": "Kobieta",
     "genderHint": "Można ustawić tylko raz",
     "posts": "Posty",
-    "noPosts": "Brak postów"
+    "noPosts": "Brak postów",
+    "profile": "Profil studenta"
   }
 }

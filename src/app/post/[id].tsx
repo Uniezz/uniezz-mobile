@@ -1,64 +1,147 @@
 import type { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { FlashList, type FlashListRef } from "@shopify/flash-list";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { router, useLocalSearchParams } from "expo-router";
-import { useRef } from "react";
+import { usePostHog } from "posthog-react-native";
+import { useForm } from "react-hook-form";
+import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, Pressable, ScrollView, View } from "react-native";
+import {
+  AccessibilityActionEvent,
+  Alert,
+  LayoutChangeEvent,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  useWindowDimensions,
+  View,
+} from "react-native";
+import { KeyboardStickyView } from "react-native-keyboard-controller";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
-import { CommentsSheet, LikeButton, PostMedia } from "@/components/feed";
+import type {
+  CommentFormValues,
+  FeedComment,
+  FeedFilters,
+} from "@/@types/feed";
+import { CommentComposer, PostPage } from "@/components/feed";
 import { ReportSheet } from "@/components/report";
-import type { FeedNavigationFilters } from "@/@types/feed";
-import {
-  useDeleteFeedPost,
-  useFeedPost,
-  useFeedPostNavigation,
-} from "@/hooks/useFeed";
+import { useDeleteFeedPost, useFeedPost, useFeedPosts } from "@/hooks/useFeed";
+import { useCreateComment } from "@/hooks/useFeedComments";
+import { commentSchema } from "@/schemas";
+import { captureAction } from "@/utils/analytics";
 import { useMyProfile } from "@/hooks/useMyProfile";
-import {
-  Icon,
-  UIAvatar,
-  UIGlass,
-  UIPage,
-  UIQueryError,
-  UISkeleton,
-  UIText,
-} from "@/ui";
-import { authorName, postDate } from "@/utils";
+import { Icon, UIIconButton, UIPage, UIText } from "@/ui";
 
 export default function PostScreen() {
   const { id, ...filters } = useLocalSearchParams<
-    FeedNavigationFilters & { id: string }
+    Omit<FeedFilters, "limit"> & { id: string }
   >();
-  const { t, i18n } = useTranslation();
-  const { data: post, isPending, isError, refetch } = useFeedPost(id);
+  const { t } = useTranslation();
+  const posthog = usePostHog();
+  const { width } = useWindowDimensions();
+  const { data: post } = useFeedPost(id);
   const { data: profile } = useMyProfile();
-  const { data: navigation } = useFeedPostNavigation(id, filters);
-  const commentsRef = useRef<BottomSheetModal>(null);
-  const reportRef = useRef<BottomSheetModal>(null);
+  // the pager pages through the list the post was opened from (its filters come along in the params),
+  // already cached by that screen; a post outside it (e.g. a featured event) gets a single page
+  const {
+    data: feedPages,
+    isPending: isFeedPending,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useFeedPosts(filters);
+  const feedIds =
+    feedPages?.pages.flatMap(
+      (page) => page.items?.map((item) => item.id) ?? [],
+    ) ?? [];
+  const ids = feedIds.includes(id) ? feedIds : [id];
+  const index = ids.indexOf(id);
+  const previousId = ids[index - 1] ?? "";
+  const nextId = ids[index + 1] ?? "";
+
+  const { createComment, isPending: isSending } = useCreateComment();
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { isValid },
+  } = useForm<CommentFormValues>({
+    resolver: zodResolver(commentSchema),
+    defaultValues: { content: "" },
+    mode: "onChange",
+  });
   const { mutateAsync: deletePost, isPending: isDeleting } =
     useDeleteFeedPost();
+  const pagerRef = useRef<FlashListRef<string>>(null);
+  const postReportRef = useRef<BottomSheetModal>(null);
+  const commentReportRef = useRef<BottomSheetModal>(null);
+  const [replyTo, setReplyTo] = useState<FeedComment | null>(null);
+  const [reportTarget, setReportTarget] = useState<FeedComment | null>(null);
   const isAuthor = Boolean(post && profile?.id === post.author.id);
-  const date = post ? postDate(post, i18n.resolvedLanguage ?? "en") : "";
+  const [composerHeight, setComposerHeight] = useState(0);
+  // a horizontal list doesn't stretch its pages, so each gets the pager's measured height
+  const [pagerHeight, setPagerHeight] = useState(0);
+  const handlePagerLayout = (event: LayoutChangeEvent) => {
+    setPagerHeight(event.nativeEvent.layout.height);
+  };
+  const { bottom: bottomInset } = useSafeAreaInsets();
+  const handleComposerLayout = (event: LayoutChangeEvent) => {
+    setComposerHeight(event.nativeEvent.layout.height);
+  };
 
   const handleBackPress = () => router.back();
-
-  // replace, not push: back from any neighbour returns to the list.
-  const openPost = (postId: string) =>
-    router.replace({
-      pathname: "/post/[id]",
-      params: { ...filters, id: postId },
-    });
-  const handlePreviousPress = () =>
-    navigation?.previousId && openPost(navigation.previousId);
-  const handleNextPress = () =>
-    navigation?.nextId && openPost(navigation.nextId);
-
+  // swaps the post in place (no navigation), so back still returns to the list
+  const openPost = (postId: string) => {
+    if (!postId || postId === id) return;
+    router.setParams({ id: postId });
+    reset();
+    setReplyTo(null);
+  };
+  const handlePagerEndReached = () => {
+    if (hasNextPage && !isFetchingNextPage) return fetchNextPage();
+  };
+  const handlePageSettled = (event: NativeSyntheticEvent<NativeScrollEvent>) =>
+    openPost(ids[Math.round(event.nativeEvent.contentOffset.x / width)] ?? "");
+  // VoiceOver/TalkBack can't swipe the pager, so the title offers the same moves as actions
+  const navigationActions = [
+    ...(previousId
+      ? [{ name: "previous", label: t("feed.previousPost") }]
+      : []),
+    ...(nextId ? [{ name: "next", label: t("feed.nextPost") }] : []),
+  ];
+  const handleNavigationAction = ({
+    nativeEvent,
+  }: AccessibilityActionEvent) => {
+    const toNext = nativeEvent.actionName === "next";
+    pagerRef.current?.scrollToIndex({ index: index + (toNext ? 1 : -1) });
+    openPost(toNext ? nextId : previousId);
+  };
   const handleEditPress = () =>
     router.push({ pathname: "/post/edit/[id]", params: { id } });
-
-  const handleReportPress = () => reportRef.current?.present();
-
-  const handleCommentsPress = () => commentsRef.current?.present();
+  const handleReportPress = () => postReportRef.current?.present();
+  const handleCommentReport = (comment: FeedComment) => {
+    setReportTarget(comment);
+    commentReportRef.current?.present();
+  };
+  const handleCancelReply = () => setReplyTo(null);
+  const handleSendPress = handleSubmit(
+    async ({ content }) => {
+      try {
+        await createComment({
+          id,
+          content,
+          replyToCommentId: replyTo?.id,
+        });
+        reset();
+        setReplyTo(null);
+        toast.success(t("apiState.commentSent"));
+      } catch {
+        toast.error(t("apiState.error"));
+      }
+    },
+    () => captureAction(posthog, "comment_form", "validation_failed"),
+  );
 
   const confirmDelete = async () => {
     try {
@@ -69,7 +152,6 @@ export default function PostScreen() {
       toast.error(t("apiState.error"));
     }
   };
-
   const handleDeletePress = () =>
     Alert.alert(
       t("apiState.deletePostTitle"),
@@ -81,241 +163,139 @@ export default function PostScreen() {
     );
 
   return (
-    <UIPage backdrop="city">
-      <View style={styles.header}>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={t("app.back")}
-          onPress={handleBackPress}
-          style={styles.headerButton}
-        >
-          <Icon name="arrow-left" size={18} />
-        </Pressable>
-        <UIText size="md" weight="semibold" style={styles.grow}>
-          {t("postComposer.post")}
-        </UIText>
-        {navigation ? (
-          <Pressable
+    <UIPage>
+      <View style={styles.screen}>
+        <View style={styles.header}>
+          <UIIconButton
             accessibilityRole="button"
-            accessibilityLabel={t("feed.previousPost")}
-            disabled={!navigation.previousId}
-            onPress={handlePreviousPress}
-            style={styles.navButton(Boolean(navigation.previousId))}
+            accessibilityLabel={t("app.back")}
+            onPress={handleBackPress}
           >
-            <Icon name="chevron-up" size={18} />
-          </Pressable>
-        ) : null}
-        {navigation ? (
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={t("feed.nextPost")}
-            disabled={!navigation.nextId}
-            onPress={handleNextPress}
-            style={styles.navButton(Boolean(navigation.nextId))}
+            <Icon name="arrow-left" size={18} />
+          </UIIconButton>
+          <UIText
+            size="md"
+            weight="semibold"
+            style={styles.grow}
+            accessibilityActions={navigationActions}
+            onAccessibilityAction={handleNavigationAction}
           >
-            <Icon name="chevron-down" size={18} />
-          </Pressable>
-        ) : null}
-        {isAuthor ? (
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={t("apiState.editPost")}
-            onPress={handleEditPress}
-            style={styles.headerButton}
-          >
-            <Icon name="pencil" size={18} />
-          </Pressable>
-        ) : null}
-        {isAuthor ? (
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={t("app.remove")}
-            disabled={isDeleting}
-            onPress={handleDeletePress}
-            style={styles.headerButton}
-          >
-            <Icon
-              name="trash"
-              size={18}
-              uniProps={(theme) => ({ color: theme.colors.white60 })}
+            {t("postComposer.post")}
+          </UIText>
+          {isAuthor ? (
+            <UIIconButton
+              accessibilityRole="button"
+              accessibilityLabel={t("apiState.editPost")}
+              onPress={handleEditPress}
+            >
+              <Icon name="pencil" size={18} />
+            </UIIconButton>
+          ) : null}
+          {isAuthor ? (
+            <UIIconButton
+              accessibilityRole="button"
+              accessibilityLabel={t("app.remove")}
+              disabled={isDeleting}
+              onPress={handleDeletePress}
+            >
+              <Icon name="trash" size={18} />
+            </UIIconButton>
+          ) : null}
+          {post && !isAuthor ? (
+            <UIIconButton
+              accessibilityRole="button"
+              accessibilityLabel={t("report.post")}
+              onPress={handleReportPress}
+            >
+              <Icon name="flag" size={18} />
+            </UIIconButton>
+          ) : null}
+        </View>
+        <View style={styles.grow} onLayout={handlePagerLayout}>
+          {/* waits for the list, so the pager opens on this post's page */}
+          {pagerHeight && !isFeedPending ? (
+            <FlashList
+              ref={pagerRef}
+              horizontal
+              pagingEnabled
+              data={ids}
+              initialScrollIndex={index}
+              onEndReached={handlePagerEndReached}
+              // in screen widths, i.e. posts: the next feed page starts loading 5 posts before the end
+              onEndReachedThreshold={5}
+              keyExtractor={(postId) => postId}
+              extraData={{ composerHeight, id }}
+              // renders the neighbour pages before they scroll into view
+              drawDistance={width}
+              showsHorizontalScrollIndicator={false}
+              onMomentumScrollEnd={handlePageSettled}
+              renderItem={({ item }) => (
+                // keyed so a page never shows another post's scroll position or summary state
+                <PostPage
+                  key={item}
+                  id={item}
+                  isCurrent={item === id}
+                  width={width}
+                  height={pagerHeight}
+                  composerHeight={composerHeight}
+                  onReply={setReplyTo}
+                  onReport={handleCommentReport}
+                />
+              )}
             />
-          </Pressable>
-        ) : null}
-        {post && !isAuthor ? (
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={t("report.post")}
-            onPress={handleReportPress}
-            style={styles.headerButton}
+          ) : null}
+        </View>
+        {post ? (
+          // UIPage already lifts the composer off the home indicator; above the keyboard that gap is dropped
+          <KeyboardStickyView
+            offset={{ opened: bottomInset }}
+            style={styles.composer}
+            onLayout={handleComposerLayout}
           >
-            <Icon
-              name="flag"
-              size={18}
-              uniProps={(theme) => ({ color: theme.colors.white60 })}
+            <CommentComposer
+              control={control}
+              isSendDisabled={isSending || !isValid}
+              onSendPress={handleSendPress}
+              replyTo={replyTo}
+              onCancelReply={handleCancelReply}
             />
-          </Pressable>
+          </KeyboardStickyView>
         ) : null}
       </View>
-      <ScrollView contentContainerStyle={styles.content}>
-        {isPending ? (
-          <UISkeleton height={180} />
-        ) : isError || !post ? (
-          <UIQueryError message={t("apiState.error")} onRetry={refetch} />
-        ) : (
-          <>
-            <UIGlass radius={24} style={styles.card}>
-              <View style={styles.row}>
-                <UIAvatar size="xs" imageSrc={post.author.avatarUrl} />
-                <UIText size="sm" color="soft" numberOfLines={1}>
-                  {authorName(post.author) || t("apiState.student")},{" "}
-                  {post.author.universityId.toUpperCase()} · {date}
-                </UIText>
-              </View>
-              {post.mediaUrls?.length ? (
-                <PostMedia urls={post.mediaUrls} />
-              ) : null}
-              <UIText size="title3" weight="semibold" style={styles.title}>
-                {post.title}
-              </UIText>
-              {post.type === "event" && post.eventDate ? (
-                <View style={styles.row}>
-                  <Icon
-                    name="calendar"
-                    size={14}
-                    uniProps={(theme) => ({ color: theme.colors.white60 })}
-                  />
-                  <UIText size="sm" color="secondary">
-                    {date}
-                  </UIText>
-                </View>
-              ) : null}
-              <UIText color="soft" style={styles.body}>
-                {post.content}
-              </UIText>
-              {post.tags?.length ? (
-                <View style={styles.tags}>
-                  {post.tags.map((tag) => (
-                    <UIText key={tag} size="sm" weight="medium" color="link">
-                      #{tag}
-                    </UIText>
-                  ))}
-                </View>
-              ) : null}
-              <View style={styles.stats}>
-                <LikeButton
-                  id={post.id}
-                  kind="post"
-                  liked={post.likedByMe}
-                  count={post.likesCount}
-                />
-                <View style={styles.row}>
-                  <Icon
-                    name="message-circle"
-                    size={14}
-                    uniProps={(theme) => ({ color: theme.colors.white60 })}
-                  />
-                  <UIText size="sm" color="secondary">
-                    {t("feed.commentsCount", { count: post.commentsCount })}
-                  </UIText>
-                </View>
-                <View style={styles.row}>
-                  <Icon
-                    name="users"
-                    size={14}
-                    uniProps={(theme) => ({ color: theme.colors.white60 })}
-                  />
-                  <UIText size="sm" color="secondary">
-                    {post.university === "all"
-                      ? t("feed.allStudents")
-                      : post.university.toUpperCase()}
-                  </UIText>
-                </View>
-              </View>
-            </UIGlass>
-            <Pressable accessibilityRole="button" onPress={handleCommentsPress}>
-              <UIGlass radius={999} style={styles.commentsButton}>
-                <Icon name="message-circle" size={18} />
-                <UIText size="rg" weight="semibold" style={styles.grow}>
-                  {t("app.comments")}
-                </UIText>
-                <UIText color="secondary">{post.commentsCount}</UIText>
-                <Icon
-                  name="chevron-up"
-                  size={16}
-                  uniProps={(theme) => ({ color: theme.colors.white60 })}
-                />
-              </UIGlass>
-            </Pressable>
-          </>
-        )}
-      </ScrollView>
-      <CommentsSheet postId={id} ref={commentsRef} />
-      <ReportSheet ref={reportRef} targetId={id} targetType="post" />
+      <ReportSheet ref={postReportRef} targetId={id} targetType="post" />
+      <ReportSheet
+        ref={commentReportRef}
+        targetId={reportTarget?.id ?? ""}
+        targetType="comment"
+      />
     </UIPage>
   );
 }
 
 const styles = StyleSheet.create((theme) => ({
+  screen: {
+    flex: 1,
+  },
   header: {
     flexDirection: "row",
     alignItems: "center",
     gap: theme.s(10),
     height: theme.vs(44),
     marginTop: theme.vs(8),
+    marginBottom: theme.vs(12),
     paddingHorizontal: theme.s(16),
   },
-  headerButton: {
-    width: theme.vs(44),
-    height: theme.vs(44),
-    borderRadius: theme.vs(22),
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  navButton: (enabled: boolean) => ({
-    width: theme.vs(44),
-    height: theme.vs(44),
-    alignItems: "center",
-    justifyContent: "center",
-    opacity: enabled ? 1 : 0.3,
-  }),
   grow: {
     flex: 1,
   },
-  content: {
+  composer: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: theme.colors.ink,
     paddingHorizontal: theme.s(16),
-    paddingTop: theme.vs(12),
-    gap: theme.vs(16),
-  },
-  card: {
-    padding: theme.s(16),
-    gap: theme.vs(10),
-  },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: theme.s(5),
-  },
-  title: {
-    lineHeight: theme.vs(18 * 1.25),
-  },
-  body: {
-    lineHeight: theme.vs(15 * 1.45),
-  },
-  tags: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: theme.s(8),
-  },
-  stats: {
-    flexDirection: "row",
-    gap: theme.s(14),
-    paddingTop: theme.vs(4),
-  },
-  commentsButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: theme.s(10),
-    height: theme.vs(52),
-    paddingHorizontal: theme.s(18),
+    paddingTop: theme.vs(8),
+    paddingBottom: theme.vs(12),
   },
 }));

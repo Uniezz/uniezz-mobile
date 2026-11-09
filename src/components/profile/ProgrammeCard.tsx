@@ -1,19 +1,17 @@
-import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import type { PublicProgramme } from "@/@types/profile";
-import { UIGlass, UIText } from "@/ui";
+import { UIText } from "@/ui";
 
 type ProgrammeCardProps = {
   programme: Pick<
     PublicProgramme,
     "programme" | "faculty" | "isPrimary" | "yearOfStudy" | "modeOfStudies"
   >;
-  children?: ReactNode;
 };
 
-export const ProgrammeCard = ({ programme, children }: ProgrammeCardProps) => {
+export const ProgrammeCard = ({ programme }: ProgrammeCardProps) => {
   const { t } = useTranslation();
   const mode =
     programme.modeOfStudies === "full_time"
@@ -22,13 +20,13 @@ export const ProgrammeCard = ({ programme, children }: ProgrammeCardProps) => {
         ? t("app.modeOfStudiesPartTime")
         : null;
   return (
-    <UIGlass radius={24} style={styles.card}>
+    <View style={styles.card}>
       {programme.isPrimary ? (
-        <UIText size="xs" weight="semibold" color="brand">
+        <UIText size="xs" weight="medium" color="secondary">
           {t("app.primary")}
         </UIText>
       ) : null}
-      <UIText size="md" weight="semibold">
+      <UIText size="xl" weight="semibold" style={styles.name}>
         {programme.programme}
       </UIText>
       {programme.faculty ? (
@@ -55,19 +53,30 @@ export const ProgrammeCard = ({ programme, children }: ProgrammeCardProps) => {
           ) : null}
         </View>
       ) : null}
-      {children}
-    </UIGlass>
+    </View>
   );
 };
 
 const styles = StyleSheet.create((theme) => ({
   card: {
-    padding: theme.s(16),
-    gap: theme.vs(10),
+    padding: theme.s(20),
+    gap: theme.vs(14),
+    borderRadius: theme.vs(20),
+    borderWidth: 1,
+    borderColor: theme.colors.white14,
+    backgroundColor: theme.colors.white3,
+    experimental_backgroundImage: `linear-gradient(to bottom, ${theme.colors.white5}, ${theme.colors.white0} 65%)`,
+  },
+  name: {
+    fontSize: theme.vs(24),
+    letterSpacing: -0.5,
   },
   details: {
     flexDirection: "row",
     alignItems: "center",
-    gap: theme.s(7),
+    justifyContent: "space-between",
+    paddingTop: theme.vs(14),
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.white8,
   },
 }));

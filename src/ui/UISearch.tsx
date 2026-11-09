@@ -1,5 +1,5 @@
 import type { ComponentProps } from "react";
-import { TextInput } from "react-native";
+import { Pressable, TextInput } from "react-native";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
 import { Icon } from "./icons";
 import { UIGlass } from "./UIGlass";
@@ -9,9 +9,14 @@ const ThemedTextInput = withUnistyles(TextInput, (theme) => ({
   selectionColor: theme.colors.white,
 }));
 
-export function UISearch(
-  props: Omit<ComponentProps<typeof TextInput>, "style">,
-) {
+type UISearchProps = Omit<ComponentProps<typeof TextInput>, "style"> & {
+  /** runs the search; shows a submit button on the right and fires on the keyboard's search key */
+  onSubmit?: () => void;
+  /** accessibility label of the submit button */
+  submitLabel?: string;
+};
+
+export function UISearch({ onSubmit, submitLabel, ...props }: UISearchProps) {
   return (
     <UIGlass radius={999} style={styles.container}>
       <Icon
@@ -23,8 +28,23 @@ export function UISearch(
         {...props}
         accessibilityRole="search"
         autoCorrect={false}
+        onSubmitEditing={onSubmit}
         style={styles.input}
       />
+      {onSubmit ? (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={submitLabel}
+          onPress={onSubmit}
+          style={styles.submit}
+        >
+          <Icon
+            name="arrow-up"
+            size={16}
+            uniProps={(theme) => ({ color: theme.colors.ink })}
+          />
+        </Pressable>
+      ) : null}
     </UIGlass>
   );
 }
@@ -36,6 +56,15 @@ const styles = StyleSheet.create((theme) => ({
     gap: theme.s(10),
     paddingHorizontal: theme.s(14),
     height: theme.vs(44),
+  },
+  submit: {
+    width: theme.vs(30),
+    height: theme.vs(30),
+    marginRight: -theme.s(7),
+    borderRadius: theme.vs(15),
+    backgroundColor: theme.colors.white,
+    alignItems: "center",
+    justifyContent: "center",
   },
   input: {
     flex: 1,

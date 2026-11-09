@@ -1,3 +1,4 @@
+import { idempotencyKey } from "@/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFeedPost } from "@/api";
 import type { CreatePostInput } from "@/@types/feed";
@@ -24,7 +25,7 @@ export function useCreateFeedPost() {
           variables &&
           JSON.stringify(variables.body) === JSON.stringify(body)
             ? variables.key
-            : crypto.randomUUID(),
+            : idempotencyKey(),
       }),
   };
 }

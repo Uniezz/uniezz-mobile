@@ -1,22 +1,15 @@
 import type { ComponentProps } from "react";
 import { createNanoIconSet } from "react-native-nano-icons";
 import { withUnistyles } from "react-native-unistyles";
+import { vs } from "@/theme/scale";
 import glyphMap from "./icons.glyphmap.json";
 
-// withUnistyles lets callers theme the color prop via uniProps without useUnistyles
-const NanoIcon = withUnistyles(createNanoIconSet(glyphMap));
-
-type IconProps = ComponentProps<typeof NanoIcon>;
-
-const defaultColor: IconProps["uniProps"] = (theme) => ({
+// Keep the default in the mapping so uniProps and explicit colors can override it.
+const ThemedIcon = withUnistyles(createNanoIconSet(glyphMap), (theme) => ({
   color: theme.colors.white,
-});
+}));
 
-// Lucide glyphs use currentColor, which the icon font renders black unless a color is set
-export const Icon = ({ color, uniProps, ...props }: IconProps) => (
-  <NanoIcon
-    {...props}
-    color={color}
-    uniProps={uniProps ?? (color ? undefined : defaultColor)}
-  />
+// `size` is given in design points and scaled to the screen like every other size
+export const Icon = ({ size, ...props }: ComponentProps<typeof ThemedIcon>) => (
+  <ThemedIcon size={size === undefined ? undefined : vs(size)} {...props} />
 );

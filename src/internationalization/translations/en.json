@@ -1,6 +1,7 @@
 {
   "language": {
-    "select": "Select app language"
+    "select": "Select app language",
+    "title": "Language"
   },
   "common": {
     "tryAgain": "Please try again.",
@@ -73,12 +74,12 @@
   },
   "otp": {
     "provideUniversityEmail": "Enter your university email",
-    "checkInbox": "Check your university inbox",
+    "checkInbox": "Check your inbox",
     "emailInstructions": "We’ll send a six-digit code to this inbox. Use the address issued by your university.",
-    "codeSent": "We sent a six-digit code to {{email}}. It expires in 10 minutes.",
+    "codeSent": "We sent a 6-digit code to your university email. It expires in 10 minutes.",
     "sendCode": "Send code",
-    "verifyAndContinue": "Verify and continue",
-    "changeEmail": "Change email",
+    "verifyAndContinue": "Verify code",
+    "changeEmail": "Change",
     "emailPlaceholder": "you@university.edu",
     "email": "Email",
     "tooManyRequests": "Too many code requests. Wait a moment and try again.",
@@ -95,7 +96,7 @@
   "tabs": {
     "feed": "Feed",
     "chat": "Chat",
-    "connections": "People",
+    "connections": "Meet",
     "exams": "Exams",
     "faq": "FAQ"
   },
@@ -105,11 +106,12 @@
     "commentsCount_other": "{{count}} comments",
     "addEvent": "Add event",
     "search": "Search...",
+    "filtersTitle": "Filters",
     "filters": {
       "all": "All",
       "events": "Events",
       "people": "People",
-      "news": "News",
+      "news": "Announcement",
       "campus": "Campus"
     },
     "action": "Create post",
@@ -372,7 +374,7 @@
     "lastName": "Last name",
     "studyProgrammes": "Study programmes",
     "addProgramme": "Add programme",
-    "primary": "Primary",
+    "primary": "Primary programme",
     "makePrimary": "Make primary",
     "faculty": "Faculty",
     "yearOfStudy": "Year of study",
@@ -399,7 +401,9 @@
     "programme": "Programme",
     "addProgrammeDescription": "Enter your programme and faculty.",
     "allUniversitiesHint": "Visible to students of every university",
-    "studyLevelDoctoral": "Doctoral"
+    "studyLevelDoctoral": "Doctoral",
+    "moreOptions": "More options",
+    "students": "Students"
   },
   "postComposer": {
     "audience": "Who can see it",
@@ -492,7 +496,8 @@
     "detailsError": "Use 10–5000 characters.",
     "imageError": "Choose a valid JPG, PNG or WebP image under 10 MB.",
     "postDeleted": "Post deleted",
-    "commentDeleted": "Comment deleted"
+    "commentDeleted": "Comment deleted",
+    "commentSent": "Comment added"
   },
   "students": {
     "allStudents": "All students",
@@ -511,6 +516,7 @@
     "genderFemale": "Female",
     "genderHint": "Can be set only once",
     "posts": "Posts",
-    "noPosts": "No posts yet"
+    "noPosts": "No posts yet",
+    "profile": "Student profile"
   }
 }

@@ -18,8 +18,7 @@ const styles = StyleSheet.create((theme) => ({
   row: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "center",
-    gap: theme.s(6),
+    gap: theme.s(8),
   },
   chip: {
     paddingVertical: theme.vs(5),

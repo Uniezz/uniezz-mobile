@@ -67,7 +67,7 @@ export const PostEventField = ({
       <UIText size="sm" weight="semibold" color="soft" style={styles.label}>
         {t("postComposer.eventDetails")}
       </UIText>
-      <UIGlass radius={24} style={styles.card}>
+      <UIGlass radius={16} style={styles.card}>
         <View style={styles.row}>
           <UIText weight="medium">{t("postComposer.date")}</UIText>
           {renderPicker("date")}

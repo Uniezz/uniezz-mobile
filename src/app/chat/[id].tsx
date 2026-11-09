@@ -41,7 +41,7 @@ export default function ConversationScreen() {
   };
 
   return (
-    <UIPage backdrop="city">
+    <UIPage>
       <View style={styles.page}>
         <View style={styles.header}>
           <Pressable

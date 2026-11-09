@@ -28,7 +28,8 @@ export const UIGlass = ({
 const styles = StyleSheet.create((theme) => ({
   glass: (radius?: number) => ({
     overflow: "hidden",
-    borderRadius: radius ?? theme.vs(22),
+    // `radius` is in design points, scaled like every other size
+    borderRadius: theme.vs(radius ?? 22),
     borderWidth: 1,
     borderColor: theme.colors.white10,
     backgroundColor: theme.colors.surface60,

@@ -1,5 +1,11 @@
 import { useTranslation } from "react-i18next";
 import { Pressable } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSequence,
+  withTiming,
+} from "react-native-reanimated";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import { useFeedLike } from "@/hooks/useFeed";
@@ -16,9 +22,23 @@ export const LikeButton = ({ id, kind, liked, count }: LikeButtonProps) => {
   const { t } = useTranslation();
   const { mutateAsync: setLike, isPending } = useFeedLike();
 
+  const scale = useSharedValue(1);
+  const heartStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.get() }],
+  }));
+
   const handlePress = async () => {
+    // a quick bump on tap, before the server answers
+    if (!liked) {
+      scale.set(
+        withSequence(
+          withTiming(1.3, { duration: 90 }),
+          withTiming(1, { duration: 120 }),
+        ),
+      );
+    }
     try {
-      await setLike({ id, kind, liked: !liked });
+      await setLike({ id, kind, liked: !liked, likesCount: count });
     } catch {
       toast.error(t("apiState.error"));
     }
@@ -34,13 +54,15 @@ export const LikeButton = ({ id, kind, liked, count }: LikeButtonProps) => {
       onPress={handlePress}
       style={styles.button}
     >
-      <Icon
-        name="heart"
-        size={14}
-        uniProps={(theme) => ({
-          color: liked ? theme.colors.red : theme.colors.white60,
-        })}
-      />
+      <Animated.View style={heartStyle}>
+        <Icon
+          name={liked ? "heart-filled" : "heart"}
+          size={14}
+          uniProps={(theme) => ({
+            color: liked ? theme.colors.red : theme.colors.white60,
+          })}
+        />
+      </Animated.View>
       <UIText size="sm" weight="semibold" color={liked ? "error" : "secondary"}>
         {count}
       </UIText>

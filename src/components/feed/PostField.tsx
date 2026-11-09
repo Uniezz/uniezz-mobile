@@ -38,7 +38,7 @@ export const PostField = ({
       value={value}
       maxLength={maxLength}
       multiline={tall || props.multiline}
-      style={styles.input(Boolean(value), Boolean(errorText), Boolean(tall))}
+      style={styles.input(Boolean(errorText), Boolean(tall))}
     />
     {errorText ? (
       <UIText size="sm" weight="semibold" color="error">
@@ -57,22 +57,19 @@ const styles = StyleSheet.create((theme) => ({
     justifyContent: "space-between",
     paddingHorizontal: theme.s(4),
   },
-  input: (filled: boolean, error: boolean, tall: boolean) => ({
-    minHeight: tall ? theme.vs(168) : undefined,
-    borderRadius: theme.vs(20),
+  input: (error: boolean, tall: boolean) => ({
+    height: tall ? theme.vs(168) : undefined,
+    borderRadius: theme.vs(12),
     borderWidth: 1,
-    borderColor: error
-      ? theme.colors.red
-      : filled
-        ? theme.colors.white40
-        : theme.colors.white10,
-    backgroundColor: theme.colors.surface60,
-    paddingVertical: theme.vs(14),
+    borderColor: error ? theme.colors.red : theme.colors.white12,
+    backgroundColor: theme.colors.white3,
+    paddingVertical: theme.vs(16),
     paddingHorizontal: theme.s(16),
     color: theme.colors.white,
     fontFamily: theme.fonts.Geist,
     fontSize: theme.vs(16),
-    lineHeight: theme.vs(16 * 1.4),
+    // iOS draws single-line text off-centre (and away from the placeholder) when lineHeight is set
+    lineHeight: tall ? theme.vs(16 * 1.4) : undefined,
     textAlignVertical: "top",
   }),
 }));

@@ -12,12 +12,9 @@ export const personalDetailsSchema = z.object({
   gender: z.enum(["male", "female"]).nullable(),
 });
 
-export const addProgrammeSchema = z.object({
+export const programmeSchema = z.object({
   programme: z.string().trim().min(1, "app.required").max(120),
   faculty: z.string().trim().min(1, "app.required").max(120),
-});
-
-export const programmeDetailsSchema = z.object({
   yearOfStudy: z.number().int().min(1).max(10).nullable(),
   level: z
     .enum([

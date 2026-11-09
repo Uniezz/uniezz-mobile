@@ -62,6 +62,9 @@ const styles = StyleSheet.create((theme) => ({
         },
       },
       radius: {
+        sm: {
+          borderRadius: theme.vs(14),
+        },
         default: {
           borderRadius: theme.vs(999),
         },

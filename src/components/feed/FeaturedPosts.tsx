@@ -1,15 +1,12 @@
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { Pressable, ScrollView, View } from "react-native";
-import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
-import { StyleSheet, withUnistyles } from "react-native-unistyles";
+import { Pressable, View } from "react-native";
+import { StyleSheet } from "react-native-unistyles";
 import { useFeaturedFeedPosts } from "@/hooks/useFeed";
-import { Icon, UIImage, UIText } from "@/ui";
+import { Icon, UIFadeScrollView, UIImage, UIText } from "@/ui";
 import { isLive } from "@/utils";
 
-const Shade = withUnistyles(Stop, (theme) => ({ stopColor: theme.colors.ink }));
-
-export const EventStories = () => {
+export const FeaturedPosts = () => {
   const { t, i18n } = useTranslation();
   const { data: { items: events } = { items: [] } } = useFeaturedFeedPosts();
   const time = new Intl.DateTimeFormat(i18n.resolvedLanguage ?? "en", {
@@ -18,9 +15,10 @@ export const EventStories = () => {
   });
 
   return (
-    <ScrollView
+    <UIFadeScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
+      style={styles.bleed}
       contentContainerStyle={styles.row}
     >
       <Pressable
@@ -35,7 +33,7 @@ export const EventStories = () => {
             uniProps={(theme) => ({ color: theme.colors.ink })}
           />
         </View>
-        <UIText size="xs" weight="semibold">
+        <UIText size="xs" weight="semibold" style={styles.addLabel}>
           {t("feed.addEvent")}
         </UIText>
       </Pressable>
@@ -60,15 +58,7 @@ export const EventStories = () => {
               contentFit="cover"
               style={StyleSheet.absoluteFill}
             />
-            <Svg style={StyleSheet.absoluteFill}>
-              <Defs>
-                <LinearGradient id="shade" x1="0" y1="0" x2="0" y2="1">
-                  <Shade offset="0.35" stopOpacity={0} />
-                  <Shade offset="1" stopOpacity={0.9} />
-                </LinearGradient>
-              </Defs>
-              <Rect width="100%" height="100%" fill="url(#shade)" />
-            </Svg>
+            <View style={styles.shade} />
             {event.eventDate ? (
               <View style={styles.time(live)}>
                 <UIText size="xs" weight="semibold">
@@ -91,21 +81,26 @@ export const EventStories = () => {
           </Pressable>
         );
       })}
-    </ScrollView>
+    </UIFadeScrollView>
   );
 };
 
 const styles = StyleSheet.create((theme) => ({
+  // the row runs to the screen edges under the scroll fades, its first tile still at the page inset
+  bleed: {
+    marginHorizontal: -theme.s(16),
+  },
   row: {
-    gap: theme.s(10),
+    gap: theme.s(8),
+    paddingHorizontal: theme.s(16),
   },
   add: {
-    width: theme.s(96),
-    height: theme.vs(136),
+    width: theme.s(84),
+    height: theme.vs(112),
     borderRadius: theme.vs(18),
     borderWidth: 1,
-    borderColor: theme.colors.white10,
-    backgroundColor: theme.colors.surface60,
+    borderColor: theme.colors.white12,
+    backgroundColor: theme.colors.white3,
     alignItems: "center",
     justifyContent: "center",
     gap: theme.vs(8),
@@ -118,14 +113,22 @@ const styles = StyleSheet.create((theme) => ({
     alignItems: "center",
     justifyContent: "center",
   },
+  addLabel: {
+    textAlign: "center",
+    paddingHorizontal: theme.s(6),
+  },
   story: {
-    width: theme.s(96),
-    height: theme.vs(136),
+    width: theme.s(84),
+    height: theme.vs(112),
     borderRadius: theme.vs(18),
     overflow: "hidden",
     justifyContent: "space-between",
     padding: theme.s(8),
     backgroundColor: theme.colors.surface60,
+  },
+  shade: {
+    ...StyleSheet.absoluteFillObject,
+    experimental_backgroundImage: `linear-gradient(to bottom, ${theme.colors.ink0} 35%, ${theme.colors.ink90})`,
   },
   time: (live: boolean) => ({
     alignSelf: "flex-start",

@@ -22,16 +22,15 @@ export const UIIconButton = ({
       ]}
       {...props}
     >
-      <UIGlass radius={999} style={styles.glass}>
-        {children}
-      </UIGlass>
+      <UIGlass style={styles.glass}>{children}</UIGlass>
     </Pressable>
   );
 };
 
 const styles = StyleSheet.create((theme) => ({
+  // rounded square, as every icon button in the v2 design
   iconContainer: (pressed: boolean) => ({
-    borderRadius: theme.vs(999),
+    borderRadius: theme.vs(12),
     variants: {
       size: {
         sm: {
@@ -56,6 +55,7 @@ const styles = StyleSheet.create((theme) => ({
   }),
   glass: {
     flex: 1,
+    borderRadius: theme.vs(12),
     justifyContent: "center",
     alignItems: "center",
   },

@@ -12,7 +12,7 @@ export default function ChatScreen() {
   const [creatingGroup, setCreatingGroup] = useState(false);
 
   return (
-    <UIPage backdrop="city">
+    <UIPage>
       <View style={styles.page}>
         {creatingGroup ? (
           <CreateGroup

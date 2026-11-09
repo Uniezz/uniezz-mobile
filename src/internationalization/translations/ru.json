@@ -1,6 +1,7 @@
 {
   "language": {
-    "select": "Выбрать язык приложения"
+    "select": "Выбрать язык приложения",
+    "title": "Язык"
   },
   "common": {
     "tryAgain": "Попробуйте ещё раз.",
@@ -73,12 +74,12 @@
   },
   "otp": {
     "provideUniversityEmail": "Введите университетский адрес электронной почты",
-    "checkInbox": "Проверьте университетскую почту",
+    "checkInbox": "Проверь почту",
     "emailInstructions": "Мы отправим шестизначный код на этот адрес. Используйте адрес, выданный вашим университетом.",
-    "codeSent": "Мы отправили шестизначный код на адрес {{email}}. Он действителен 10 минут.",
+    "codeSent": "Мы отправили 6-значный код на твою университетскую почту. Он действителен 10 минут.",
     "sendCode": "Отправить код",
-    "verifyAndContinue": "Подтвердить и продолжить",
-    "changeEmail": "Изменить адрес",
+    "verifyAndContinue": "Подтвердить код",
+    "changeEmail": "Изменить",
     "emailPlaceholder": "you@university.edu",
     "email": "Электронная почта",
     "tooManyRequests": "Слишком много запросов кода. Подождите и попробуйте ещё раз.",
@@ -95,7 +96,7 @@
   "tabs": {
     "feed": "Лента",
     "chat": "Чат",
-    "connections": "Люди",
+    "connections": "Знакомства",
     "exams": "Экзамены",
     "faq": "FAQ"
   },
@@ -107,11 +108,12 @@
     "commentsCount_other": "{{count}} комментария",
     "addEvent": "Добавить событие",
     "search": "Поиск...",
+    "filtersTitle": "Фильтры",
     "filters": {
       "all": "Все",
       "events": "События",
       "people": "Люди",
-      "news": "Новости",
+      "news": "Объявление",
       "campus": "Кампус"
     },
     "action": "Создать пост",
@@ -376,7 +378,7 @@
     "lastName": "Фамилия",
     "studyProgrammes": "Образовательные программы",
     "addProgramme": "Добавить программу",
-    "primary": "Основная",
+    "primary": "Основная программа",
     "makePrimary": "Сделать основной",
     "faculty": "Факультет",
     "yearOfStudy": "Год обучения",
@@ -403,7 +405,9 @@
     "programme": "Направление",
     "addProgrammeDescription": "Укажите направление и факультет.",
     "allUniversitiesHint": "Видят студенты всех университетов",
-    "studyLevelDoctoral": "Докторантура"
+    "studyLevelDoctoral": "Докторантура",
+    "moreOptions": "Другие действия",
+    "students": "Студенты"
   },
   "postComposer": {
     "audience": "Кто может видеть",
@@ -496,7 +500,8 @@
     "detailsError": "Введите 10–5000 символов.",
     "imageError": "Выберите корректное изображение JPG, PNG или WebP до 10 МБ.",
     "postDeleted": "Пост удалён",
-    "commentDeleted": "Комментарий удалён"
+    "commentDeleted": "Комментарий удалён",
+    "commentSent": "Комментарий добавлен"
   },
   "students": {
     "allStudents": "Все студенты",
@@ -515,6 +520,7 @@
     "genderFemale": "Женщина",
     "genderHint": "Можно указать только один раз",
     "posts": "Публикации",
-    "noPosts": "Пока нет публикаций"
+    "noPosts": "Пока нет публикаций",
+    "profile": "Профиль студента"
   }
 }

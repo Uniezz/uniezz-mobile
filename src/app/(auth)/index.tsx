@@ -1,9 +1,15 @@
 import { AuthPage, RowPicker } from "@/components";
 import { useUniversities } from "@/hooks";
-import { Icon, UIButton, UIText } from "@/ui";
+import {
+  Icon,
+  UIButton,
+  UIFadeScrollView,
+  UIText,
+  UIUniversityLogo,
+} from "@/ui";
+import { UNIVERSITY_SHORT_NAMES } from "@/utils";
 import { router } from "expo-router";
 import { useState } from "react";
-import { ScrollView } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { StyleSheet } from "react-native-unistyles";
 import { useTranslation } from "react-i18next";
@@ -21,10 +27,13 @@ export default function WelcomeScreen() {
   } = useUniversities();
   const selectedUniversity = universities[selected];
   const selectedAuthMethod = selectedUniversity?.authMethod;
-  const items = universities.map(({ name, authMethod }) => ({
-    topText: name,
-    rightText: authMethod === "OTP" ? t("auth.emailCode") : authMethod,
+  const items = universities.map(({ id, name }) => ({
+    leading: <UIUniversityLogo id={id} size="sm" />,
+    topText: UNIVERSITY_SHORT_NAMES[id] ?? name,
+    bottomText: UNIVERSITY_SHORT_NAMES[id] ? name : undefined,
   }));
+
+  const handleRetryPress = () => refetch();
 
   const handleContinuePress = () => {
     if (!selectedUniversity) {
@@ -44,19 +53,23 @@ export default function WelcomeScreen() {
       {isPending ? (
         <UIText color="gray">{t("auth.loadingUniversities")}</UIText>
       ) : isError ? (
-        <UIButton onPress={() => refetch()} type="secondary">
+        <UIButton onPress={handleRetryPress} type="secondary">
           <UIText>{t("auth.universitiesLoadError")}</UIText>
         </UIButton>
       ) : items.length === 0 ? (
         <UIText color="gray">{t("auth.noUniversities")}</UIText>
       ) : (
-        <ScrollView style={styles.list} showsVerticalScrollIndicator={false}>
+        <UIFadeScrollView
+          style={styles.list}
+          showsVerticalScrollIndicator={false}
+        >
           <RowPicker
+            appearance="inset"
             onItemPress={setSelected}
             items={items}
             selectedItem={selected}
           />
-        </ScrollView>
+        </UIFadeScrollView>
       )}
       <Animated.View entering={buttonEntering}>
         <UIButton
@@ -64,6 +77,7 @@ export default function WelcomeScreen() {
           disabled={!selectedUniversity}
           style={styles.continueButton}
           size="rg"
+          radius="sm"
         >
           <Icon
             name="shield-check"
@@ -87,10 +101,7 @@ export default function WelcomeScreen() {
   );
 }
 
-const styles = StyleSheet.create((theme, rt) => ({
-  page: {
-    paddingTop: 0,
-  },
+const styles = StyleSheet.create((theme) => ({
   continueButton: {
     flexDirection: "row",
     gap: theme.s(8),

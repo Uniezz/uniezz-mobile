@@ -19,7 +19,7 @@ export default function FaqScreen() {
   const [search, setSearch] = useState("");
 
   return (
-    <UIPage backdrop="city">
+    <UIPage>
       <ScrollView contentContainerStyle={styles.page}>
         <View style={styles.header}>
           <View style={styles.title}>

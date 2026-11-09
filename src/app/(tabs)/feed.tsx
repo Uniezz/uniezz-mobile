@@ -1,35 +1,50 @@
+import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { FlashList } from "@shopify/flash-list";
 import { router } from "expo-router";
-import { useEffect, useMemo, useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Pressable, View } from "react-native";
-import debounce from "lodash/debounce";
+import {
+  Keyboard,
+  LayoutChangeEvent,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  Pressable,
+  View,
+} from "react-native";
+import { EaseView } from "react-native-ease";
 import { StyleSheet } from "react-native-unistyles";
-import { EventStories, FeedFilters, FeedPostCard } from "@/components/feed";
+import { FeaturedPosts, FeedFilters, FeedPostCard } from "@/components/feed";
 import type { FeedFilterValues } from "@/@types/feed";
 import { useFeedPosts } from "@/hooks/useFeed";
 import { useMyProfile } from "@/hooks/useMyProfile";
 import {
   Icon,
   UIAvatar,
+  UIBottomSheet,
+  UICollapsingHeader,
   UIIconButton,
   UIPage,
   UIQueryError,
-  UISearch,
+  UISearchOverlay,
   UISkeleton,
   UIText,
 } from "@/ui";
-import { DATE_PRESETS, datePresetFrom, toSearchQuery } from "@/utils";
+import {
+  DATE_PRESETS,
+  datePresetFrom,
+  HEADER_COMPACT_OFFSET,
+  HEADER_TRANSITION,
+  toSearchQuery,
+} from "@/utils";
 
 export default function FeedScreen() {
   const { t } = useTranslation();
   const [search, setSearch] = useState("");
+  // the feed filters by `query`, applied only on submit; `search` is the text being typed
   const [query, setQuery] = useState("");
-  const updateQuery = useMemo(() => debounce(setQuery, 300), []);
-  useEffect(() => () => updateQuery.cancel(), [updateQuery]);
-  const handleSearchChange = (value: string) => {
-    setSearch(value);
-    updateQuery(value);
+  const handleSearchSubmit = () => {
+    setQuery(search);
+    Keyboard.dismiss();
   };
   const [isSearching, setIsSearching] = useState(false);
   const [filters, setFilters] = useState<FeedFilterValues>({
@@ -38,8 +53,25 @@ export default function FeedScreen() {
     date: "any",
   });
   const { data: profile } = useMyProfile();
-  const handleToggleSearch = () => setIsSearching(!isSearching);
+  const filtersRef = useRef<BottomSheetModal>(null);
+  // the header floats over the list; the list starts below it and turns the header compact once scrolled
+  const [headerHeight, setHeaderHeight] = useState(0);
+  const [isHeaderCompact, setIsHeaderCompact] = useState(false);
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    setIsHeaderCompact(
+      event.nativeEvent.contentOffset.y > HEADER_COMPACT_OFFSET,
+    );
+  };
+  const handleHeaderLayout = (event: LayoutChangeEvent) => {
+    setHeaderHeight(event.nativeEvent.layout.height);
+  };
+  // the search field only exists while the keyboard is up; blurring it closes it, the query stays
+  const handleSearchPress = () => setIsSearching(true);
+  const handleSearchBlur = () => setIsSearching(false);
+  const handleFiltersPress = () => filtersRef.current?.present();
   const handleProfilePress = () => router.push("/profile");
+  const handleNewPostPress = () => router.push("/feed/new");
+  const isNewPostShown = isHeaderCompact || Boolean(query);
   const feedFilters = {
     q: toSearchQuery(query),
     type: filters.type === "all" ? undefined : filters.type,
@@ -60,58 +92,85 @@ export default function FeedScreen() {
   } = useFeedPosts(feedFilters);
   const posts = data?.pages.flatMap((page) => page.items ?? []) ?? [];
 
+  const headerActions = (
+    <>
+      <View style={styles.actions}>
+        {/* stands in for the "Add event" tile once it has scrolled away (or is hidden by a search);
+            positioned outside the row, so the expanded header keeps its full title width */}
+        <EaseView
+          animate={{
+            opacity: isNewPostShown ? 1 : 0,
+            scale: isNewPostShown ? 1 : 0.6,
+          }}
+          transition={HEADER_TRANSITION}
+          pointerEvents={isNewPostShown ? "auto" : "none"}
+          accessibilityElementsHidden={!isNewPostShown}
+          importantForAccessibility={
+            isNewPostShown ? "auto" : "no-hide-descendants"
+          }
+          style={styles.newPost}
+        >
+          <UIIconButton
+            accessibilityRole="button"
+            accessibilityLabel={t("app.newPost")}
+            onPress={handleNewPostPress}
+          >
+            <Icon name="plus" size={18} />
+          </UIIconButton>
+        </EaseView>
+        <UIIconButton
+          accessibilityRole="button"
+          accessibilityLabel={t("topbar.search")}
+          onPress={handleSearchPress}
+        >
+          <Icon name="search" size={18} />
+        </UIIconButton>
+        <UIIconButton
+          accessibilityRole="button"
+          accessibilityLabel={t("feed.filtersTitle")}
+          onPress={handleFiltersPress}
+        >
+          <Icon name="sliders-horizontal" size={18} />
+        </UIIconButton>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t("app.profile")}
+          onPress={handleProfilePress}
+        >
+          <UIAvatar imageSrc={profile?.avatarUrl} />
+        </Pressable>
+      </View>
+    </>
+  );
+
   return (
-    <UIPage backdrop="city">
+    <UIPage>
+      <UICollapsingHeader
+        title={t("tabs.feed")}
+        subtitle={t("app.feedSubtitle")}
+        isCompact={isHeaderCompact}
+        actions={headerActions}
+        onLayout={handleHeaderLayout}
+      />
       <FlashList
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+        showsVerticalScrollIndicator={false}
+        progressViewOffset={headerHeight}
         data={posts}
-        masonry
-        numColumns={2}
         keyExtractor={(post) => post.id}
-        contentContainerStyle={styles.list}
+        contentContainerStyle={styles.list(headerHeight)}
         onRefresh={refetch}
         refreshing={isRefetching}
         onEndReached={() => {
           if (hasNextPage && !isFetchingNextPage) return fetchNextPage();
         }}
         ListHeaderComponent={
-          <View style={styles.header}>
-            <View style={styles.titleRow}>
-              <View style={styles.title}>
-                <UIText size="sm" weight="medium" color="secondary">
-                  {t("app.feedSubtitle")}
-                </UIText>
-                <UIText size="title1" weight="bold" style={styles.h1}>
-                  {t("tabs.feed")}
-                </UIText>
-              </View>
-              <UIIconButton
-                accessibilityRole="button"
-                accessibilityLabel={t("topbar.search")}
-                onPress={handleToggleSearch}
-              >
-                <Icon name="search" size={18} />
-              </UIIconButton>
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel={t("app.profile")}
-                onPress={handleProfilePress}
-              >
-                <UIAvatar imageSrc={profile?.avatarUrl} />
-              </Pressable>
+          query ? null : (
+            <View style={styles.header}>
+              <FeaturedPosts />
             </View>
-            {isSearching ? (
-              <View style={styles.searchPanel}>
-                <UISearch
-                  autoFocus
-                  placeholder={t("feed.search")}
-                  value={search}
-                  onChangeText={handleSearchChange}
-                />
-                <FeedFilters value={filters} onChange={setFilters} />
-              </View>
-            ) : null}
-            {!isSearching ? <EventStories /> : null}
-          </View>
+          )
         }
         ListEmptyComponent={
           isPending ? (
@@ -131,40 +190,49 @@ export default function FeedScreen() {
           </View>
         )}
       />
+      <UISearchOverlay
+        isOpen={isSearching}
+        value={search}
+        onChangeText={setSearch}
+        onSubmit={handleSearchSubmit}
+        onClose={handleSearchBlur}
+        placeholder={t("feed.search")}
+        submitLabel={t("topbar.search")}
+      />
+      <UIBottomSheet ref={filtersRef} title={t("feed.filtersTitle")}>
+        <BottomSheetView style={styles.filtersSheet}>
+          <FeedFilters value={filters} onChange={setFilters} />
+        </BottomSheetView>
+      </UIBottomSheet>
     </UIPage>
   );
 }
 
-const styles = StyleSheet.create((theme) => ({
-  list: {
-    paddingTop: theme.vs(4),
-    paddingHorizontal: theme.s(11),
-    paddingBottom: theme.vs(110),
-  },
-  header: {
-    gap: theme.vs(16),
-    paddingHorizontal: theme.s(5),
-    paddingBottom: theme.vs(16),
-  },
-  titleRow: {
+const styles = StyleSheet.create((theme, rt) => ({
+  // same spacing as the header row the actions sit in
+  actions: {
     flexDirection: "row",
-    alignItems: "flex-end",
+    alignItems: "center",
     gap: theme.s(8),
   },
-  title: {
-    flex: 1,
-    gap: theme.vs(4),
+  newPost: {
+    position: "absolute",
+    right: "100%",
+    marginRight: theme.s(8),
   },
-  h1: {
-    letterSpacing: -1,
-    lineHeight: theme.vs(26),
+  // UIPage already pads the status bar; the rest of the header height is added here
+  list: (headerHeight: number) => ({
+    paddingTop: Math.max(headerHeight - rt.insets.top, 0),
+    paddingHorizontal: theme.s(16),
+    paddingBottom: theme.vs(110),
+  }),
+  header: {
+    paddingBottom: theme.vs(20),
   },
-  searchPanel: {
-    gap: theme.vs(12),
+  filtersSheet: {
+    paddingBottom: rt.insets.bottom + theme.vs(16),
   },
-  // masonry has no column gap prop: 5 + 5 cell padding makes the 10pt gap
   cell: {
-    paddingHorizontal: theme.s(5),
-    paddingBottom: theme.vs(10),
+    paddingBottom: theme.vs(16),
   },
 }));

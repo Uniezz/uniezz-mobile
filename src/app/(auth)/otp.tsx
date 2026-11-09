@@ -37,12 +37,13 @@ export default function OtpScreen() {
     <AuthPage topText={topText} bottomText={bottomText}>
       {isEmailStep ? (
         <UIInput
+          accessibilityLabel={t("otp.email")}
           keyboardType="email-address"
           leftIcon={
             <Icon
-              name="at-sign"
-              size={16}
-              uniProps={(theme) => ({ color: theme.colors.white40 })}
+              name="mail"
+              size={17}
+              uniProps={(theme) => ({ color: theme.colors.iconMuted })}
             />
           }
           captionText={t("otp.email")}
@@ -53,11 +54,11 @@ export default function OtpScreen() {
         />
       ) : (
         <View style={styles.codeField}>
-          <UIGlass radius={999} style={styles.emailPill}>
+          <UIGlass style={styles.emailPill}>
             <Icon
               name="mail"
               size={17}
-              uniProps={(theme) => ({ color: theme.colors.white60 })}
+              uniProps={(theme) => ({ color: theme.colors.iconMuted })}
             />
             <UIText numberOfLines={1} style={styles.grow}>
               {email}
@@ -82,6 +83,7 @@ export default function OtpScreen() {
             keyboardType="number-pad"
             textContentType="oneTimeCode"
             autoComplete={autoComplete}
+            accessibilityLabel={t("auth.otp.codeLabel")}
             rootStyle={styles.cells}
             renderCell={({ index, symbol, isFocused }) => {
               return (
@@ -108,6 +110,7 @@ export default function OtpScreen() {
           style={styles.button}
           onPress={onButtonPress}
           size="rg"
+          radius="sm"
           disabled={isButtonDisabled}
         >
           {isEmailStep ? (
@@ -166,17 +169,20 @@ const styles = StyleSheet.create((theme) => ({
     lineHeight: theme.vs(58),
     fontSize: theme.vs(26),
     borderWidth: isFocused ? 1.5 : 1,
-    borderColor: isFocused ? theme.colors.white : theme.colors.white10,
+    borderColor: isFocused ? theme.colors.sky : theme.colors.white12,
     textAlign: "center",
     color: theme.colors.white,
-    borderRadius: theme.vs(16),
+    borderRadius: theme.vs(12),
     overflow: "hidden",
-    backgroundColor: theme.colors.surface60,
+    backgroundColor: theme.colors.white3,
   }),
   cells: {
     gap: theme.s(8),
   },
   emailPill: {
+    borderRadius: theme.vs(12),
+    borderColor: theme.colors.white12,
+    backgroundColor: theme.colors.white3,
     flexDirection: "row",
     alignItems: "center",
     gap: theme.s(10),

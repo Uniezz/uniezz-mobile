@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Pressable, TextInput, View } from "react-native";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
 import { Icon, UIText } from "@/ui";
+import { PostTag } from "./PostTag";
 
 const ThemedTextInput = withUnistyles(TextInput, (theme) => ({
   placeholderTextColor: theme.colors.white60,
@@ -74,22 +75,12 @@ export const PostTagsField = ({ value, onChange }: PostTagsFieldProps) => {
       {value.length ? (
         <View style={styles.tags}>
           {value.map((item) => (
-            <Pressable
+            <PostTag
               key={item}
-              accessibilityRole="button"
-              accessibilityLabel={`${t("app.remove")} #${item}`}
-              onPress={() => removeTag(item)}
-              style={styles.tag}
-            >
-              <UIText size="sm" weight="medium" color="link">
-                #{item}
-              </UIText>
-              <Icon
-                name="x"
-                size={13}
-                uniProps={(theme) => ({ color: theme.colors.white60 })}
-              />
-            </Pressable>
+              tag={item}
+              removeLabel={`${t("app.remove")} #${item}`}
+              onRemove={() => removeTag(item)}
+            />
           ))}
         </View>
       ) : null}
@@ -113,10 +104,10 @@ const styles = StyleSheet.create((theme) => ({
   input: {
     flex: 1,
     height: theme.vs(48),
-    borderRadius: theme.vs(999),
+    borderRadius: theme.vs(12),
     borderWidth: 1,
-    borderColor: theme.colors.white10,
-    backgroundColor: theme.colors.surface60,
+    borderColor: theme.colors.white12,
+    backgroundColor: theme.colors.white3,
     paddingHorizontal: theme.s(16),
     color: theme.colors.white,
     fontFamily: theme.fonts.Geist,
@@ -134,16 +125,5 @@ const styles = StyleSheet.create((theme) => ({
     flexDirection: "row",
     flexWrap: "wrap",
     gap: theme.s(6),
-  },
-  tag: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: theme.s(4),
-    paddingVertical: theme.vs(5),
-    paddingHorizontal: theme.s(10),
-    borderRadius: theme.vs(999),
-    borderWidth: 1,
-    borderColor: theme.colors.white10,
-    backgroundColor: theme.colors.white5,
   },
 }));

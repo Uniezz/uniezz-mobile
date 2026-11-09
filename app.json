@@ -7,6 +7,7 @@
     "icon": "./assets/images/icon.png",
     "scheme": "uniezz",
     "userInterfaceStyle": "dark",
+    "backgroundColor": "#0C0D14",
     "ios": {
       "icon": "./assets/images/icon.png",
       "bundleIdentifier": "com.uniezz"
@@ -28,12 +29,9 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#5B7CFF",
-          "android": {
-            "image": "./assets/images/splash-screen.png",
-            "imageWidth": 76
-          },
-          "image": "./assets/images/splash-screen.png"
+          "backgroundColor": "#0C0D14",
+          "image": "./assets/images/splash-screen.png",
+          "imageWidth": 390
         }
       ],
       "expo-localization",

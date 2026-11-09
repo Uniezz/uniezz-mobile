@@ -2,8 +2,9 @@ import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { useUniversities } from "@/hooks/useUniversities";
-import { Icon, UIGlass, UIText } from "@/ui";
+import { UIText, UIUniversityLogo } from "@/ui";
 
+// university row inside the profile identity card
 export const UniversityCard = ({ universityId }: { universityId: string }) => {
   const { t } = useTranslation();
   const { data: universities = [] } = useUniversities();
@@ -11,12 +12,8 @@ export const UniversityCard = ({ universityId }: { universityId: string }) => {
     universities.find(({ id }) => id === universityId)?.name ??
     universityId.toUpperCase();
   return (
-    <UIGlass radius={24} style={styles.card}>
-      <Icon
-        name="graduation-cap"
-        size={20}
-        uniProps={(theme) => ({ color: theme.colors.white60 })}
-      />
+    <View style={styles.card}>
+      <UIUniversityLogo id={universityId} size="xs" />
       <View style={styles.text}>
         <UIText size="xs" weight="medium" color="secondary">
           {t("app.university")}
@@ -25,7 +22,7 @@ export const UniversityCard = ({ universityId }: { universityId: string }) => {
           {name}
         </UIText>
       </View>
-    </UIGlass>
+    </View>
   );
 };
 
@@ -34,8 +31,12 @@ const styles = StyleSheet.create((theme) => ({
     flexDirection: "row",
     alignItems: "center",
     gap: theme.s(12),
-    paddingVertical: theme.vs(14),
-    paddingHorizontal: theme.s(16),
+    paddingVertical: theme.vs(16),
+    paddingHorizontal: theme.s(12),
+    borderRadius: theme.vs(16),
+    borderWidth: 1,
+    borderColor: theme.colors.sky15,
+    backgroundColor: theme.colors.sky5,
   },
   text: {
     flex: 1,

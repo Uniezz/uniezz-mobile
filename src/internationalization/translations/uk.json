@@ -1,6 +1,7 @@
 {
   "language": {
-    "select": "Обрати мову застосунку"
+    "select": "Обрати мову застосунку",
+    "title": "Мова"
   },
   "common": {
     "tryAgain": "Спробуйте ще раз.",
@@ -73,12 +74,12 @@
   },
   "otp": {
     "provideUniversityEmail": "Введіть університетську адресу електронної пошти",
-    "checkInbox": "Перевірте університетську пошту",
+    "checkInbox": "Перевір пошту",
     "emailInstructions": "Ми надішлемо шестизначний код на цю адресу. Використовуйте адресу, надану університетом.",
-    "codeSent": "Ми надіслали шестизначний код на адресу {{email}}. Він дійсний 10 хвилин.",
+    "codeSent": "Ми надіслали 6-значний код на твою університетську пошту. Він дійсний 10 хвилин.",
     "sendCode": "Надіслати код",
-    "verifyAndContinue": "Підтвердити й продовжити",
-    "changeEmail": "Змінити адресу",
+    "verifyAndContinue": "Підтвердити код",
+    "changeEmail": "Змінити",
     "emailPlaceholder": "you@university.edu",
     "email": "Електронна пошта",
     "tooManyRequests": "Забагато запитів на код. Зачекайте й спробуйте ще раз.",
@@ -95,7 +96,7 @@
   "tabs": {
     "feed": "Стрічка",
     "chat": "Чат",
-    "connections": "Люди",
+    "connections": "Знайомства",
     "exams": "Іспити",
     "faq": "FAQ"
   },
@@ -107,11 +108,12 @@
     "commentsCount_other": "{{count}} коментаря",
     "addEvent": "Додати подію",
     "search": "Пошук...",
+    "filtersTitle": "Фільтри",
     "filters": {
       "all": "Усе",
       "events": "Події",
       "people": "Люди",
-      "news": "Новини",
+      "news": "Оголошення",
       "campus": "Кампус"
     },
     "action": "Створити допис",
@@ -376,7 +378,7 @@
     "lastName": "Прізвище",
     "studyProgrammes": "Освітні програми",
     "addProgramme": "Додати програму",
-    "primary": "Основна",
+    "primary": "Основна програма",
     "makePrimary": "Зробити основною",
     "faculty": "Факультет",
     "yearOfStudy": "Рік навчання",
@@ -403,7 +405,9 @@
     "programme": "Напрям",
     "addProgrammeDescription": "Вкажіть напрям і факультет.",
     "allUniversitiesHint": "Бачать студенти всіх університетів",
-    "studyLevelDoctoral": "Докторантура"
+    "studyLevelDoctoral": "Докторантура",
+    "moreOptions": "Інші дії",
+    "students": "Студенти"
   },
   "postComposer": {
     "audience": "Хто може бачити",
@@ -496,7 +500,8 @@
     "detailsError": "Введіть 10–5000 символів.",
     "imageError": "Виберіть коректне зображення JPG, PNG або WebP до 10 МБ.",
     "postDeleted": "Допис видалено",
-    "commentDeleted": "Коментар видалено"
+    "commentDeleted": "Коментар видалено",
+    "commentSent": "Коментар додано"
   },
   "students": {
     "allStudents": "Усі студенти",
@@ -515,6 +520,7 @@
     "genderFemale": "Жінка",
     "genderHint": "Можна вказати лише один раз",
     "posts": "Дописи",
-    "noPosts": "Ще немає дописів"
+    "noPosts": "Ще немає дописів",
+    "profile": "Профіль студента"
   }
 }
