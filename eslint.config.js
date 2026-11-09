@@ -18,14 +18,6 @@ module.exports = defineConfig([
     },
   },
   {
-    // The bundled eslint-plugin-react-hooks (v5) doesn't yet recognize the stable
-    // useEffectEvent, so the example there needs an exhaustive-deps escape hatch,
-    // which in turn trips the compiler rule. These example files are throwaway
-    // references, so exempt them rather than ship a spurious warning.
-    files: ["src/components/examples/**"],
-    rules: { "react-compiler/react-compiler": "off" },
-  },
-  {
     ignores: ["dist/*", "node_modules/*", ".expo/*"],
   },
 ]);

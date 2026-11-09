@@ -2,7 +2,7 @@
 
 ## Overview
 
-**uniezz** is a web application for students of Lublin universities. The platform brings together students from five institutions in one space: communication, knowledge sharing, practical information about life in Lublin, and finding new connections.
+**uniezz** is a mobile app for students of Lublin universities. The platform brings together students from five institutions in one space: communication, knowledge sharing, practical information about life in Lublin, and finding new connections.
 
 ### Target Universities
 

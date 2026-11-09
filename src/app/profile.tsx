@@ -26,12 +26,10 @@ import {
   useLanguageStore,
 } from "@/store/languageStore";
 import {
-  InterestChips,
   PersonalDetailsSheet,
   PrivacySheet,
   ProfileHeader,
-  ProfileHero,
-  ProgrammeCard,
+  ProfileOverview,
   ProgrammesSheet,
 } from "@/components/profile";
 import { FeedPostCard } from "@/components/feed";
@@ -219,45 +217,14 @@ export default function ProfileScreen() {
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
-          <View style={styles.page}>
-            {isPending ? (
-              <UISkeleton height={220} />
-            ) : isError || !profile ? (
-              <UIQueryError message={t("apiState.error")} onRetry={refetch} />
-            ) : (
-              <>
-                <ProfileHero
-                  avatar={profile.avatarUrl}
-                  name={authorName(profile) || t("apiState.student")}
-                  subtitle={profile.email}
-                  universityId={profile.universityId}
-                  onAvatarPress={handleChangePhotoPress}
-                  avatarLabel={t("app.changePhoto")}
-                  isAvatarDisabled={isUploadingPhoto}
-                >
-                  {profile.bio ? (
-                    <UIText size="rg" color="soft" style={styles.bio}>
-                      {profile.bio}
-                    </UIText>
-                  ) : null}
-                  {profile.interests?.length ? (
-                    <InterestChips interests={profile.interests} />
-                  ) : null}
-                </ProfileHero>
-                <View style={styles.section}>
-                  <UIText size="md" weight="semibold">
-                    {t("app.studyProgrammes")}
-                  </UIText>
-                  {(profile.programmes ?? []).map((item) => (
-                    <ProgrammeCard key={item.id} programme={item} />
-                  ))}
-                </View>
-                <UIText size="md" weight="semibold">
-                  {t("students.posts")}
-                </UIText>
-              </>
-            )}
-          </View>
+          <ProfileOverview
+            profile={profile}
+            isPending={isPending}
+            isError={isError}
+            onRetry={refetch}
+            onChangePhoto={handleChangePhotoPress}
+            isUploadingPhoto={isUploadingPhoto}
+          />
         }
         data={posts}
         keyExtractor={(post) => post.id}
@@ -314,18 +281,8 @@ const styles = StyleSheet.create((theme, rt) => ({
     paddingHorizontal: theme.s(20),
     paddingBottom: theme.vs(60),
   }),
-  page: {
-    paddingBottom: theme.vs(12),
-    gap: theme.vs(20),
-  },
   cell: {
     paddingBottom: theme.vs(16),
-  },
-  bio: {
-    lineHeight: theme.vs(24),
-  },
-  section: {
-    gap: theme.vs(12),
   },
   more: {
     width: theme.vs(44),

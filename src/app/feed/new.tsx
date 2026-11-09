@@ -10,8 +10,6 @@ import {
   LayoutChangeEvent,
   NativeScrollEvent,
   NativeSyntheticEvent,
-  Pressable,
-  View,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { StyleSheet } from "react-native-unistyles";
@@ -20,6 +18,7 @@ import { ApiRequestError } from "@/api";
 import type { NewPostFormValues } from "@/@types/feed";
 import {
   ComposerHeader,
+  PostAudienceField,
   PostEventField,
   PostField,
   PostPhotosField,
@@ -30,14 +29,7 @@ import { useCreateFeedPost } from "@/hooks/useCreateFeedPost";
 import { useMyProfile } from "@/hooks/useMyProfile";
 import { useUniversities } from "@/hooks/useUniversities";
 import { newPostSchema } from "@/schemas";
-import {
-  Icon,
-  UIGlass,
-  UIPage,
-  UISegmented,
-  UIText,
-  UIUniversityLogo,
-} from "@/ui";
+import { UIPage, UISegmented } from "@/ui";
 
 const POST_TYPES = ["question", "announcement", "event"] as const;
 
@@ -73,28 +65,6 @@ export default function NewPostScreen() {
     universities.find(({ id }) => id === profile?.universityId)?.name ??
     profile?.universityId.toUpperCase() ??
     "";
-  const audiences = [
-    {
-      value: "all",
-      icon: (
-        <Icon
-          name="globe"
-          size={20}
-          uniProps={(theme) => ({ color: theme.colors.white80 })}
-        />
-      ),
-      title: t("feed.allStudents"),
-      subtitle: t("postComposer.audienceAll"),
-    },
-    {
-      value: "university",
-      icon: <UIUniversityLogo id={profile?.universityId ?? ""} size="xs" />,
-      title: universityName,
-      subtitle: t("postComposer.audienceUniversity", {
-        university: universityName,
-      }),
-    },
-  ] as const;
 
   const posthog = usePostHog();
   const onSubmit = handleSubmit(
@@ -238,42 +208,18 @@ export default function NewPostScreen() {
             <PostTagsField value={field.value} onChange={field.onChange} />
           )}
         />
-        <View style={styles.audience}>
-          <UIText size="sm" weight="semibold" color="soft" style={styles.label}>
-            {t("postComposer.audience")}
-          </UIText>
-          <Controller
-            control={control}
-            name="audience"
-            render={({ field }) => (
-              <UIGlass radius={16} style={styles.options}>
-                {audiences.map((option) => {
-                  const selected = field.value === option.value;
-                  return (
-                    <Pressable
-                      key={option.value}
-                      accessibilityRole="radio"
-                      accessibilityState={{ selected }}
-                      onPress={() => field.onChange(option.value)}
-                      style={styles.option(selected)}
-                    >
-                      {option.icon}
-                      <View style={styles.optionText}>
-                        <UIText weight="semibold">{option.title}</UIText>
-                        <UIText size="sm" color="secondary">
-                          {option.subtitle}
-                        </UIText>
-                      </View>
-                      <View style={styles.radio(selected)}>
-                        {selected ? <View style={styles.radioDot} /> : null}
-                      </View>
-                    </Pressable>
-                  );
-                })}
-              </UIGlass>
-            )}
-          />
-        </View>
+        <Controller
+          control={control}
+          name="audience"
+          render={({ field }) => (
+            <PostAudienceField
+              value={field.value}
+              onChange={field.onChange}
+              universityId={profile?.universityId ?? ""}
+              universityName={universityName}
+            />
+          )}
+        />
       </KeyboardAwareScrollView>
     </UIPage>
   );
@@ -287,43 +233,4 @@ const styles = StyleSheet.create((theme, rt) => ({
     paddingHorizontal: theme.s(20),
     paddingBottom: theme.vs(24),
   }),
-  audience: {
-    gap: theme.vs(8),
-  },
-  label: {
-    paddingHorizontal: theme.s(4),
-  },
-  options: {
-    padding: theme.s(4),
-    gap: theme.vs(4),
-  },
-  option: (selected: boolean) => ({
-    flexDirection: "row",
-    alignItems: "center",
-    gap: theme.s(14),
-    padding: theme.s(12),
-    borderRadius: theme.vs(12),
-    borderWidth: 1,
-    borderColor: selected ? theme.colors.white20 : "transparent",
-    backgroundColor: selected ? theme.colors.white5 : "transparent",
-  }),
-  optionText: {
-    flex: 1,
-    gap: theme.vs(2),
-  },
-  radio: (selected: boolean) => ({
-    width: theme.vs(22),
-    height: theme.vs(22),
-    borderRadius: theme.vs(11),
-    borderWidth: 1.5,
-    borderColor: selected ? theme.colors.sky : theme.colors.white40,
-    alignItems: "center",
-    justifyContent: "center",
-  }),
-  radioDot: {
-    width: theme.vs(10),
-    height: theme.vs(10),
-    borderRadius: theme.vs(5),
-    backgroundColor: theme.colors.sky,
-  },
 }));

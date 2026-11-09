@@ -1,0 +1,7 @@
+#!/bin/sh
+# Blocks a commit when a staged file is not formatted. Run `bun run format` to fix.
+
+files=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(js|jsx|ts|tsx|json|md)$' || true)
+[ -z "$files" ] && exit 0
+
+printf '%s\n' "$files" | tr '\n' '\0' | xargs -0 bunx prettier --check --

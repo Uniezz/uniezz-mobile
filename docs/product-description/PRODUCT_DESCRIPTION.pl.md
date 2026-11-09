@@ -2,7 +2,7 @@
 
 ## Przegląd
 
-**uniezz** to aplikacja webowa dla studentów lubelskich uczelni wyższych. Platforma łączy studentów pięciu wydziałów akademickich miasta w jednej przestrzeni: komunikacja, wymiana wiedzy, praktyczne informacje o życiu w Lublinie oraz poznawanie nowych osób.
+**uniezz** to aplikacja mobilna dla studentów lubelskich uczelni wyższych. Platforma łączy studentów pięciu wydziałów akademickich miasta w jednej przestrzeni: komunikacja, wymiana wiedzy, praktyczne informacje o życiu w Lublinie oraz poznawanie nowych osób.
 
 ### Docelowe uczelnie
 

@@ -838,7 +838,7 @@ Maintain consistent file structure within components:
 
 ## React 19.2 Patterns
 
-These patterns target **React 19.2** and are scaffolded by `create-madis-app` under `src/ui` and `src/components/examples`. They favour declarative loading/error handling and the newer React APIs over manual state juggling.
+These patterns target **React 19.2** and follow the app's `src/ui` primitives. They favour declarative state and the newer React APIs over manual state juggling.
 
 ### React Compiler
 

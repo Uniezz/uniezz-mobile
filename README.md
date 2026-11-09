@@ -25,11 +25,17 @@ bun android
 
 Routes live in `src/app/` — [file-based routing](https://docs.expo.dev/router/introduction) via Expo Router.
 
-Lint:
+Checks:
 
 ```bash
 bun lint
+bun run typecheck
+bun test
 ```
+
+`bun install` runs `prepare`, which points Git at `.githooks/`. The pre-commit hook
+checks staged JS/TS/JSON/Markdown files with Prettier, so run `bun run format`
+before committing if it complains.
 
 ## Learn more
 
