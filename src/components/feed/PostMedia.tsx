@@ -25,6 +25,21 @@ export const PostMedia = ({ urls }: PostMediaProps) => {
     if (width) setPage(Math.round(event.nativeEvent.contentOffset.x / width));
   };
 
+  if (urls.length <= 1) {
+    const url = urls[0];
+    if (!url) return null;
+    return (
+      <View style={styles.container}>
+        <UIImage
+          source={{ uri: url }}
+          fallback={undefined}
+          contentFit="cover"
+          style={StyleSheet.absoluteFill}
+        />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container} onLayout={handleLayout}>
       <ScrollView
@@ -43,13 +58,11 @@ export const PostMedia = ({ urls }: PostMediaProps) => {
           />
         ))}
       </ScrollView>
-      {urls.length > 1 ? (
-        <View style={styles.dots}>
-          {urls.map((url, index) => (
-            <View key={url} style={styles.dot(index === page)} />
-          ))}
-        </View>
-      ) : null}
+      <View style={styles.dots}>
+        {urls.map((url, index) => (
+          <View key={url} style={styles.dot(index === page)} />
+        ))}
+      </View>
     </View>
   );
 };

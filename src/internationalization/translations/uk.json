@@ -106,7 +106,6 @@
     "commentsCount_few": "{{count}} коментарі",
     "commentsCount_many": "{{count}} коментарів",
     "commentsCount_other": "{{count}} коментаря",
-    "addEvent": "Додати подію",
     "search": "Пошук...",
     "filtersTitle": "Фільтри",
     "filters": {

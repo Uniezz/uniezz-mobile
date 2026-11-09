@@ -106,7 +106,6 @@
     "commentsCount_few": "{{count}} komentarze",
     "commentsCount_many": "{{count}} komentarzy",
     "commentsCount_other": "{{count}} komentarza",
-    "addEvent": "Dodaj wydarzenie",
     "search": "Szukaj...",
     "filtersTitle": "Filtry",
     "filters": {

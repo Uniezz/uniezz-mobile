@@ -18,7 +18,10 @@ export async function uploadImage(image: PickedImage, kind: UploadKind) {
   const { data } = await api.POST("/media/uploads", {
     body: { kind, size, contentType: image.mimeType },
   });
-  const file = await fetch(image.uri).then((response) => response.blob());
+  // arrayBuffer skips React Native's Blob, which copies the file through base64
+  const file = await fetch(image.uri).then((response) =>
+    response.arrayBuffer(),
+  );
   const response = await fetch(data!.uploadUrl, {
     method: "PUT",
     headers: data!.headers,

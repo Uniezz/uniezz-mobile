@@ -53,8 +53,10 @@ export const PostPhotosField = ({ value, onChange }: PostPhotosFieldProps) => {
     onChange([...value, ...valid].slice(0, MAX_POST_PHOTOS));
   };
 
-  const removePhoto = (uri: string) =>
+  const removePhoto = (uri: string) => {
+    toast.dismiss();
     onChange(value.filter((photo) => photo.uri !== uri));
+  };
 
   return (
     <View style={styles.field}>

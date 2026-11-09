@@ -34,7 +34,7 @@ export const FeaturedPosts = () => {
           />
         </View>
         <UIText size="xs" weight="semibold" style={styles.addLabel}>
-          {t("feed.addEvent")}
+          {t("app.newPost")}
         </UIText>
       </Pressable>
       {events?.map((event) => {

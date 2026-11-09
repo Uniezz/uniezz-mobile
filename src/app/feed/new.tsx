@@ -33,6 +33,13 @@ import { UIPage, UISegmented } from "@/ui";
 
 const POST_TYPES = ["question", "announcement", "event"] as const;
 
+const samePhotos = (
+  left: NewPostFormValues["photos"],
+  right: NewPostFormValues["photos"],
+) =>
+  left.length === right.length &&
+  left.every((photo) => right.some((item) => item.uri === photo.uri));
+
 export default function NewPostScreen() {
   const { t } = useTranslation();
   const { data: profile } = useMyProfile();
@@ -44,6 +51,7 @@ export default function NewPostScreen() {
   const {
     control,
     handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm<NewPostFormValues>({
     resolver: zodResolver(newPostSchema),
@@ -72,6 +80,8 @@ export default function NewPostScreen() {
       if (!profile) return;
       try {
         const mediaIds = await uploadImages(values.photos);
+        // the photo can be removed while this upload is in flight
+        if (!samePhotos(values.photos, getValues("photos"))) return;
         await createPost({
           type: values.type,
           title: values.title,
@@ -87,6 +97,7 @@ export default function NewPostScreen() {
         toast.success(t("postComposer.published"));
         router.back();
       } catch (error) {
+        if (!samePhotos(values.photos, getValues("photos"))) return;
         toast.error(
           t(
             error instanceof ApiRequestError && error.translationKey

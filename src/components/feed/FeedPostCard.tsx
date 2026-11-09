@@ -16,7 +16,7 @@ type FeedPostCardProps = {
 export const FeedPostCard = ({ post, filters }: FeedPostCardProps) => {
   const { t, i18n } = useTranslation();
   const locale = i18n.resolvedLanguage ?? "en";
-  const cover = post.type === "question" ? undefined : post.mediaUrls?.[0];
+  const cover = post.mediaUrls?.[0];
   const hasCover = Boolean(cover);
   const createdAt = postDate(
     { eventDate: null, createdAt: post.createdAt },

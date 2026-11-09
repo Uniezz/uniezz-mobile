@@ -104,7 +104,6 @@
     "allStudents": "All students",
     "commentsCount_one": "{{count}} comment",
     "commentsCount_other": "{{count}} comments",
-    "addEvent": "Add event",
     "search": "Search...",
     "filtersTitle": "Filters",
     "filters": {

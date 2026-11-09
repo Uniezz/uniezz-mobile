@@ -106,7 +106,6 @@
     "commentsCount_few": "{{count}} комментария",
     "commentsCount_many": "{{count}} комментариев",
     "commentsCount_other": "{{count}} комментария",
-    "addEvent": "Добавить событие",
     "search": "Поиск...",
     "filtersTitle": "Фильтры",
     "filters": {

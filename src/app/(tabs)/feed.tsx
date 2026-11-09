@@ -105,7 +105,7 @@ export default function FeedScreen() {
   const headerActions = (
     <>
       <View style={styles.actions}>
-        {/* stands in for the "Add event" tile once it has scrolled away (or is hidden by a search);
+        {/* stands in for the "New post" tile once it has scrolled away (or is hidden by a search);
             positioned outside the row, so the expanded header keeps its full title width */}
         <EaseView
           animate={{
