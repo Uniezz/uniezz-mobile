@@ -13,6 +13,7 @@ export { PostEventField } from "./PostEventField";
 export { PostPhotosField } from "./PostPhotosField";
 export { PostTagsField } from "./PostTagsField";
 export { PostTag } from "./PostTag";
+export { PostPage } from "./PostPage";
 export { AuthorRow } from "./AuthorRow";
 export { PostCard } from "./PostCard";
 export { PostSummary } from "./PostSummary";

@@ -8,13 +8,12 @@ import {
 import {
   deleteFeedPost,
   getFeaturedFeedPosts,
-  getFeedPostNavigation,
   getFeedPost,
   getFeedPosts,
   setFeedLike,
   updateFeedPost,
 } from "@/api";
-import type { FeedFilters, FeedNavigationFilters } from "@/@types/feed";
+import type { FeedFilters } from "@/@types/feed";
 import { patchFeedItem } from "./patchFeedItem";
 
 export function useUpdateFeedPost() {
@@ -51,7 +50,20 @@ export function useFeedLike() {
   const queryClient = useQueryClient();
   return useMutation({
     meta: { analyticsAction: "post_like_set" },
-    mutationFn: setFeedLike,
+    // likesCount is the count before the tap, for the optimistic patch and its rollback
+    mutationFn: ({
+      likesCount: _,
+      ...like
+    }: Parameters<typeof setFeedLike>[0] & { likesCount: number }) =>
+      setFeedLike(like),
+    // the heart and count change on tap; the server's answer then settles them
+    onMutate: ({ id, liked, likesCount }) =>
+      patchFeedItem(queryClient, id, {
+        likedByMe: liked,
+        likesCount: likesCount + (liked ? 1 : -1),
+      }),
+    onError: (_, { id, liked, likesCount }) =>
+      patchFeedItem(queryClient, id, { likedByMe: !liked, likesCount }),
     onSuccess: ({ liked, likesCount }, { id, kind }) => {
       patchFeedItem(queryClient, id, { likedByMe: liked, likesCount });
       // Featured ranking follows this week's post likes.
@@ -78,19 +90,6 @@ export function useFeedPosts(
     placeholderData: keepPreviousData,
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (page) => page.nextCursor ?? undefined,
-  });
-}
-
-export function useFeedPostNavigation(
-  id: string,
-  filters: FeedNavigationFilters = {},
-) {
-  return useQuery({
-    staleTime: 60_000,
-    gcTime: 10 * 60_000,
-    // Under "posts" so post writes that refresh the feed also refresh neighbours.
-    queryKey: ["feed", "posts", "navigation", id, filters],
-    queryFn: () => getFeedPostNavigation(id, filters),
   });
 }
 

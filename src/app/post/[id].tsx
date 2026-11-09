@@ -7,83 +7,59 @@ import { useForm } from "react-hook-form";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
+  AccessibilityActionEvent,
   Alert,
   LayoutChangeEvent,
   NativeScrollEvent,
   NativeSyntheticEvent,
-  ScrollViewProps,
+  useWindowDimensions,
   View,
 } from "react-native";
-import { EaseView } from "react-native-ease";
-import {
-  KeyboardChatScrollView,
-  KeyboardStickyView,
-} from "react-native-keyboard-controller";
+import { KeyboardStickyView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import type {
   CommentFormValues,
   FeedComment,
-  FeedNavigationFilters,
+  FeedFilters,
 } from "@/@types/feed";
-import {
-  CommentComposer,
-  CommentItem,
-  PostCard,
-  PostSummary,
-} from "@/components/feed";
+import { CommentComposer, PostPage } from "@/components/feed";
 import { ReportSheet } from "@/components/report";
-import {
-  useDeleteFeedPost,
-  useFeedPost,
-  useFeedPostNavigation,
-} from "@/hooks/useFeed";
-import { useCreateComment, useFeedComments } from "@/hooks/useFeedComments";
+import { useDeleteFeedPost, useFeedPost, useFeedPosts } from "@/hooks/useFeed";
+import { useCreateComment } from "@/hooks/useFeedComments";
 import { commentSchema } from "@/schemas";
 import { captureAction } from "@/utils/analytics";
 import { useMyProfile } from "@/hooks/useMyProfile";
-import {
-  Icon,
-  UIIconButton,
-  UIPage,
-  UIQueryError,
-  UISkeleton,
-  UIText,
-} from "@/ui";
-import { HEADER_TRANSITION } from "@/utils";
-
-// lifts the visible comments with the keyboard, so the one being read stays in view;
-// the list ends above the home indicator (UIPage pads it), which the keyboard already covers
-const CommentsScrollView = (props: ScrollViewProps) => {
-  const { bottom } = useSafeAreaInsets();
-  return <KeyboardChatScrollView {...props} offset={bottom} />;
-};
+import { Icon, UIIconButton, UIPage, UIText } from "@/ui";
 
 export default function PostScreen() {
   const { id, ...filters } = useLocalSearchParams<
-    FeedNavigationFilters & { id: string }
+    Omit<FeedFilters, "limit"> & { id: string }
   >();
   const { t } = useTranslation();
   const posthog = usePostHog();
-  const { data: post, isPending, isError, refetch } = useFeedPost(id);
+  const { width } = useWindowDimensions();
+  const { data: post } = useFeedPost(id);
   const { data: profile } = useMyProfile();
-  const { data: navigation } = useFeedPostNavigation(id, filters);
+  // the pager pages through the list the post was opened from (its filters come along in the params),
+  // already cached by that screen; a post outside it (e.g. a featured event) gets a single page
   const {
-    data: commentPages,
-    isPending: areCommentsPending,
-    isError: areCommentsError,
-    refetch: refetchComments,
+    data: feedPages,
+    isPending: isFeedPending,
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-  } = useFeedComments(id);
-  // the posts behind the arrows load in the background, so switching shows them at once;
-  // their comments load after the switch, to keep each press to fewer requests
-  const previousId = navigation?.previousId ?? "";
-  const nextId = navigation?.nextId ?? "";
-  useFeedPost(previousId, Boolean(previousId));
-  useFeedPost(nextId, Boolean(nextId));
+  } = useFeedPosts(filters);
+  const feedIds =
+    feedPages?.pages.flatMap(
+      (page) => page.items?.map((item) => item.id) ?? [],
+    ) ?? [];
+  const ids = feedIds.includes(id) ? feedIds : [id];
+  const index = ids.indexOf(id);
+  const previousId = ids[index - 1] ?? "";
+  const nextId = ids[index + 1] ?? "";
+
   const { createComment, isPending: isSending } = useCreateComment();
   const {
     control,
@@ -95,21 +71,20 @@ export default function PostScreen() {
     defaultValues: { content: "" },
     mode: "onChange",
   });
-  const comments =
-    commentPages?.pages.flatMap((page) => page.items ?? []) ?? [];
   const { mutateAsync: deletePost, isPending: isDeleting } =
     useDeleteFeedPost();
-  const listRef = useRef<FlashListRef<FeedComment>>(null);
+  const pagerRef = useRef<FlashListRef<string>>(null);
   const postReportRef = useRef<BottomSheetModal>(null);
   const commentReportRef = useRef<BottomSheetModal>(null);
   const [replyTo, setReplyTo] = useState<FeedComment | null>(null);
   const [reportTarget, setReportTarget] = useState<FeedComment | null>(null);
-  // once the full card has scrolled away, a compact summary of the post is pinned under the header
-  const [cardHeight, setCardHeight] = useState(0);
-  const [isSummaryShown, setIsSummaryShown] = useState(false);
   const isAuthor = Boolean(post && profile?.id === post.author.id);
-  // the composer floats over the list's end, so the list reserves its height
   const [composerHeight, setComposerHeight] = useState(0);
+  // a horizontal list doesn't stretch its pages, so each gets the pager's measured height
+  const [pagerHeight, setPagerHeight] = useState(0);
+  const handlePagerLayout = (event: LayoutChangeEvent) => {
+    setPagerHeight(event.nativeEvent.layout.height);
+  };
   const { bottom: bottomInset } = useSafeAreaInsets();
   const handleComposerLayout = (event: LayoutChangeEvent) => {
     setComposerHeight(event.nativeEvent.layout.height);
@@ -118,14 +93,30 @@ export default function PostScreen() {
   const handleBackPress = () => router.back();
   // swaps the post in place (no navigation), so back still returns to the list
   const openPost = (postId: string) => {
+    if (!postId || postId === id) return;
     router.setParams({ id: postId });
     reset();
     setReplyTo(null);
-    setIsSummaryShown(false);
-    listRef.current?.scrollToOffset({ offset: 0 });
   };
-  const handlePreviousPress = () => openPost(previousId);
-  const handleNextPress = () => openPost(nextId);
+  const handlePagerEndReached = () => {
+    if (hasNextPage && !isFetchingNextPage) return fetchNextPage();
+  };
+  const handlePageSettled = (event: NativeSyntheticEvent<NativeScrollEvent>) =>
+    openPost(ids[Math.round(event.nativeEvent.contentOffset.x / width)] ?? "");
+  // VoiceOver/TalkBack can't swipe the pager, so the title offers the same moves as actions
+  const navigationActions = [
+    ...(previousId
+      ? [{ name: "previous", label: t("feed.previousPost") }]
+      : []),
+    ...(nextId ? [{ name: "next", label: t("feed.nextPost") }] : []),
+  ];
+  const handleNavigationAction = ({
+    nativeEvent,
+  }: AccessibilityActionEvent) => {
+    const toNext = nativeEvent.actionName === "next";
+    pagerRef.current?.scrollToIndex({ index: index + (toNext ? 1 : -1) });
+    openPost(toNext ? nextId : previousId);
+  };
   const handleEditPress = () =>
     router.push({ pathname: "/post/edit/[id]", params: { id } });
   const handleReportPress = () => postReportRef.current?.present();
@@ -152,20 +143,6 @@ export default function PostScreen() {
     () => captureAction(posthog, "comment_form", "validation_failed"),
   );
 
-  const handleCardLayout = (event: LayoutChangeEvent) => {
-    setCardHeight(event.nativeEvent.layout.height);
-  };
-  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    setIsSummaryShown(
-      cardHeight > 0 && event.nativeEvent.contentOffset.y > cardHeight,
-    );
-  };
-  const handleSummaryPress = () =>
-    listRef.current?.scrollToOffset({ offset: 0, animated: true });
-  const handleEndReached = () => {
-    if (hasNextPage && !isFetchingNextPage) return fetchNextPage();
-  };
-
   const confirmDelete = async () => {
     try {
       await deletePost(id);
@@ -185,26 +162,6 @@ export default function PostScreen() {
       ],
     );
 
-  const listHeader = isPending ? (
-    <UISkeleton height={260} />
-  ) : isError || !post ? (
-    <UIQueryError message={t("apiState.error")} onRetry={refetch} />
-  ) : (
-    <View style={styles.listHeader}>
-      <View onLayout={handleCardLayout}>
-        <PostCard post={post} />
-      </View>
-      <View style={styles.commentsHeading}>
-        <UIText size="title3" weight="semibold">
-          {t("app.comments")}
-        </UIText>
-        <UIText size="sm" color="secondary">
-          {post.commentsCount}
-        </UIText>
-      </View>
-    </View>
-  );
-
   return (
     <UIPage>
       <View style={styles.screen}>
@@ -216,7 +173,13 @@ export default function PostScreen() {
           >
             <Icon name="arrow-left" size={18} />
           </UIIconButton>
-          <UIText size="md" weight="semibold" style={styles.grow}>
+          <UIText
+            size="md"
+            weight="semibold"
+            style={styles.grow}
+            accessibilityActions={navigationActions}
+            onAccessibilityAction={handleNavigationAction}
+          >
             {t("postComposer.post")}
           </UIText>
           {isAuthor ? (
@@ -247,76 +210,39 @@ export default function PostScreen() {
               <Icon name="flag" size={18} />
             </UIIconButton>
           ) : null}
-          {/* last, so the arrows keep their place whether edit/delete or report is shown; disabled while the neighbours load */}
-          <UIIconButton
-            accessibilityRole="button"
-            accessibilityLabel={t("feed.previousPost")}
-            disabled={!previousId}
-            onPress={handlePreviousPress}
-            style={styles.navButton(Boolean(previousId))}
-          >
-            <Icon name="chevron-up" size={18} />
-          </UIIconButton>
-          <UIIconButton
-            accessibilityRole="button"
-            accessibilityLabel={t("feed.nextPost")}
-            disabled={!nextId}
-            onPress={handleNextPress}
-            style={styles.navButton(Boolean(nextId))}
-          >
-            <Icon name="chevron-down" size={18} />
-          </UIIconButton>
         </View>
-        <View style={styles.grow}>
-          <FlashList
-            ref={listRef}
-            renderScrollComponent={CommentsScrollView}
-            data={post ? comments : []}
-            keyExtractor={(comment) => comment.id}
-            onScroll={handleScroll}
-            scrollEventThrottle={16}
-            showsVerticalScrollIndicator={false}
-            keyboardDismissMode="on-drag"
-            keyboardShouldPersistTaps="handled"
-            contentContainerStyle={styles.list(composerHeight)}
-            onEndReached={handleEndReached}
-            ListHeaderComponent={listHeader}
-            ListEmptyComponent={
-              !post ? null : areCommentsPending ? (
-                <UISkeleton height={64} />
-              ) : areCommentsError ? (
-                <UIQueryError
-                  message={t("apiState.error")}
-                  onRetry={refetchComments}
+        <View style={styles.grow} onLayout={handlePagerLayout}>
+          {/* waits for the list, so the pager opens on this post's page */}
+          {pagerHeight && !isFeedPending ? (
+            <FlashList
+              ref={pagerRef}
+              horizontal
+              pagingEnabled
+              data={ids}
+              initialScrollIndex={index}
+              onEndReached={handlePagerEndReached}
+              // in screen widths, i.e. posts: the next feed page starts loading 5 posts before the end
+              onEndReachedThreshold={5}
+              keyExtractor={(postId) => postId}
+              extraData={{ composerHeight, id }}
+              // renders the neighbour pages before they scroll into view
+              drawDistance={width}
+              showsHorizontalScrollIndicator={false}
+              onMomentumScrollEnd={handlePageSettled}
+              renderItem={({ item }) => (
+                // keyed so a page never shows another post's scroll position or summary state
+                <PostPage
+                  key={item}
+                  id={item}
+                  isCurrent={item === id}
+                  width={width}
+                  height={pagerHeight}
+                  composerHeight={composerHeight}
+                  onReply={setReplyTo}
+                  onReport={handleCommentReport}
                 />
-              ) : (
-                <UIText color="secondary">{t("app.empty")}</UIText>
-              )
-            }
-            ListFooterComponent={
-              isFetchingNextPage ? <UISkeleton height={64} /> : null
-            }
-            renderItem={({ item }) => (
-              <CommentItem
-                comment={item}
-                myId={profile?.id}
-                onReply={setReplyTo}
-                onReport={handleCommentReport}
-              />
-            )}
-          />
-          {post ? (
-            <EaseView
-              animate={{
-                opacity: isSummaryShown ? 1 : 0,
-                translateY: isSummaryShown ? 0 : -8,
-              }}
-              transition={HEADER_TRANSITION}
-              pointerEvents={isSummaryShown ? "auto" : "none"}
-              style={styles.summary}
-            >
-              <PostSummary post={post} onPress={handleSummaryPress} />
-            </EaseView>
+              )}
+            />
           ) : null}
         </View>
         {post ? (
@@ -359,30 +285,8 @@ const styles = StyleSheet.create((theme) => ({
     marginBottom: theme.vs(12),
     paddingHorizontal: theme.s(16),
   },
-  navButton: (enabled: boolean) => ({
-    opacity: enabled ? 1 : 0.3,
-  }),
   grow: {
     flex: 1,
-  },
-  list: (composerHeight: number) => ({
-    paddingHorizontal: theme.s(16),
-    paddingBottom: composerHeight + theme.vs(16),
-  }),
-  listHeader: {
-    gap: theme.vs(16),
-    paddingBottom: theme.vs(16),
-  },
-  commentsHeading: {
-    flexDirection: "row",
-    alignItems: "baseline",
-    gap: theme.s(8),
-  },
-  summary: {
-    position: "absolute",
-    top: 0,
-    left: theme.s(16),
-    right: theme.s(16),
   },
   composer: {
     position: "absolute",

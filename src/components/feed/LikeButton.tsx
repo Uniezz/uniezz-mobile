@@ -38,7 +38,7 @@ export const LikeButton = ({ id, kind, liked, count }: LikeButtonProps) => {
       );
     }
     try {
-      await setLike({ id, kind, liked: !liked });
+      await setLike({ id, kind, liked: !liked, likesCount: count });
     } catch {
       toast.error(t("apiState.error"));
     }

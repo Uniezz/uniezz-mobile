@@ -1,7 +1,6 @@
 import type {
   CreatePostInput,
   FeedFilters,
-  FeedNavigationFilters,
   UpdatePostInput,
 } from "@/@types/feed";
 import { api } from "./client";
@@ -77,16 +76,6 @@ export async function getFeedPosts(filters: FeedFilters = {}, cursor?: string) {
     params: { query: { limit: 20, ...filters, cursor } },
   });
 
-  return data!;
-}
-
-export async function getFeedPostNavigation(
-  id: string,
-  filters: FeedNavigationFilters = {},
-) {
-  const { data } = await api.GET("/feed/posts/{id}/navigation", {
-    params: { path: { id }, query: filters },
-  });
   return data!;
 }
 

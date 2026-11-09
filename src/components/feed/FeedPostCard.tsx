@@ -2,7 +2,7 @@ import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { Pressable, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import type { ApiFeedPost, FeedNavigationFilters } from "@/@types/feed";
+import type { ApiFeedPost, FeedFilters } from "@/@types/feed";
 import { UIGlass, UIImage, UIText } from "@/ui";
 import { postDate } from "@/utils";
 import { AuthorRow } from "./AuthorRow";
@@ -10,7 +10,7 @@ import { AuthorRow } from "./AuthorRow";
 type FeedPostCardProps = {
   post: ApiFeedPost;
   // Active list filters, so previous/next on the post screen stays inside this list.
-  filters?: FeedNavigationFilters;
+  filters?: FeedFilters;
 };
 
 export const FeedPostCard = ({ post, filters }: FeedPostCardProps) => {

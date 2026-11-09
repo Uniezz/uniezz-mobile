@@ -33,9 +33,6 @@ export type FeedFilters = Omit<
   NonNullable<operations["listFeedPosts"]["parameters"]["query"]>,
   "cursor"
 >;
-export type FeedNavigationFilters = NonNullable<
-  operations["getFeedPostNavigation"]["parameters"]["query"]
->;
 export type EditPostFormValues = Pick<
   NewPostFormValues,
   "title" | "content" | "tags"
