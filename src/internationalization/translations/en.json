@@ -144,7 +144,7 @@
     "anyFaculty": "Any faculty",
     "lookingFor": "Looking for",
     "emptyTitle": "No one here yet",
-    "emptyDescription": "You have seen everyone who matches. Widen your filters or check back later.",
+    "emptyDescription": "You've seen everyone for now. Check back later.",
     "matchInterests": "Match interests",
     "showMe": "Show me",
     "everyone": "Everyone",
@@ -165,6 +165,7 @@
     "title": "Guide"
   },
   "faq": {
+    "search": "Search questions",
     "subtitle": "Answers from students in Lublin",
     "title": "FAQ",
     "empty": "No questions here yet."

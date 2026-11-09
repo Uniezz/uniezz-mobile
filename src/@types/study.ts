@@ -7,3 +7,5 @@ export type Material = {
 };
 
 export type AddMaterialFormValues = { subject: string; university: string };
+
+export type MaterialTab = "papers" | "reviews" | "professors";

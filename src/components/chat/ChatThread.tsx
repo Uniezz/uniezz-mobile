@@ -5,7 +5,7 @@ import { KeyboardChatScrollView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
 import type { ChatMessage } from "@/@types/chat";
-import { UIEmpty, UIText } from "@/ui";
+import { UIText } from "@/ui";
 import { chatDay, isSameDay } from "@/utils";
 
 // lifts the latest messages with the keyboard, like the post comments;
@@ -25,14 +25,6 @@ type ChatThreadProps = {
 export function ChatThread({ messages, composerHeight }: ChatThreadProps) {
   const { t, i18n } = useTranslation();
   const locale = i18n.resolvedLanguage ?? "en";
-
-  // FlashList doesn't stretch an empty component, so the cat is centred in the thread's space here instead
-  if (messages.length === 0)
-    return (
-      <View style={styles.empty(composerHeight)}>
-        <UIEmpty message={t("app.empty")} />
-      </View>
-    );
 
   return (
     <FlashList
@@ -75,11 +67,6 @@ export function ChatThread({ messages, composerHeight }: ChatThreadProps) {
 }
 
 const styles = StyleSheet.create((theme) => ({
-  empty: (composerHeight: number) => ({
-    flex: 1,
-    justifyContent: "center",
-    paddingBottom: composerHeight,
-  }),
   list: (composerHeight: number) => ({
     paddingBottom: composerHeight,
   }),

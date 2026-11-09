@@ -92,9 +92,7 @@ export default function ConversationScreen() {
         </View>
         {conversation ? (
           <ChatThread messages={messages} composerHeight={composerHeight} />
-        ) : (
-          <UIEmpty message={t("app.empty")} />
-        )}
+        ) : null}
         {conversation ? (
           // UIPage already lifts the composer off the home indicator; above the keyboard that gap is dropped
           <KeyboardStickyView
@@ -110,6 +108,10 @@ export default function ConversationScreen() {
           </KeyboardStickyView>
         ) : null}
       </View>
+      {/* a direct child of UIPage, so the cat centres like every other empty state */}
+      {!conversation || messages.length === 0 ? (
+        <UIEmpty isScreenCentred message={t("app.empty")} />
+      ) : null}
     </UIPage>
   );
 }

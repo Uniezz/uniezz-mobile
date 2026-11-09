@@ -136,18 +136,7 @@ export default function MeetScreen() {
                 </View>
               </View>
             </View>
-          ) : (
-            <View style={styles.empty}>
-              <UIEmpty>
-                <UIText size="title1" weight="bold" style={styles.emptyText}>
-                  {t("connections.emptyTitle")}
-                </UIText>
-                <UIText color="soft" style={styles.emptyText}>
-                  {t("connections.emptyDescription")}
-                </UIText>
-              </UIEmpty>
-            </View>
-          )}
+          ) : null}
           {student ? (
             <View style={styles.actions}>
               <Pressable
@@ -193,6 +182,10 @@ export default function MeetScreen() {
           ) : null}
         </>
       </View>
+      {/* a direct child of UIPage, so the cat centres like every other empty state */}
+      {student ? null : (
+        <UIEmpty isScreenCentred message={t("connections.emptyDescription")} />
+      )}
     </UIPage>
   );
 }
@@ -290,14 +283,6 @@ const styles = StyleSheet.create((theme) => ({
   },
   connect: {
     backgroundColor: theme.colors.white,
-  },
-  // centres the cat in the card's space, like the web empty state
-  empty: {
-    flex: 1,
-    justifyContent: "center",
-  },
-  emptyText: {
-    textAlign: "center",
   },
   notice: {
     textAlign: "center",

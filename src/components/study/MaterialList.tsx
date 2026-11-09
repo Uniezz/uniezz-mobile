@@ -1,16 +1,15 @@
 import { FlashList } from "@shopify/flash-list";
-import { useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { Pressable, ScrollView, View } from "react-native";
+import {
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  Pressable,
+  View,
+} from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import type { Material } from "@/@types/study";
-import { Icon, UIChip, UIEmpty, UISearch, UIText } from "@/ui";
-
-const TABS = [
-  ["papers", "app.pastPapers"],
-  ["reviews", "app.courseReviews"],
-  ["professors", "app.professorRatings"],
-] as const;
+import type { Material, MaterialTab } from "@/@types/study";
+import { Icon, UIEmpty, UIGlass, UIText } from "@/ui";
 
 const TYPE_ICONS = {
   Exam: "file-check",
@@ -22,153 +21,112 @@ const TYPE_ICONS = {
 export function MaterialList({
   header,
   materials,
-  isSearching,
+  query,
+  tab,
+  headerHeight,
+  onScroll,
   onOpen,
 }: {
   header: ReactNode;
   materials: Material[];
-  isSearching: boolean;
+  /** the submitted search; filters by subject and university */
+  query: string;
+  /** only past papers have materials so far */
+  tab: MaterialTab;
+  /** the floating screen header's height, so the list starts below it */
+  headerHeight: number;
+  onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
   onOpen: (subject: string) => void;
 }) {
   const { t } = useTranslation();
-  const [search, setSearch] = useState("");
-  const [tab, setTab] = useState<(typeof TABS)[number][0]>("papers");
   const visible =
     tab === "papers"
       ? materials.filter((item) =>
           `${item.subject} ${item.university}`
             .toLowerCase()
-            .includes(search.toLowerCase()),
+            .includes(query.toLowerCase()),
         )
       : [];
   return (
-    <FlashList
-      style={styles.list}
-      contentContainerStyle={styles.listContent}
-      data={visible}
-      keyExtractor={(item) => `${item.subject}-${item.author}`}
-      ListHeaderComponent={
-        <View style={styles.header}>
-          {header}
-          {isSearching ? (
-            <UISearch
-              autoFocus
-              placeholder={t("app.searchMaterials")}
-              value={search}
-              onChangeText={setSearch}
-            />
-          ) : null}
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.tabs}
+    <>
+      <FlashList
+        style={styles.list}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.listContent(headerHeight)}
+        data={visible}
+        keyExtractor={(item) => `${item.subject}-${item.author}`}
+        ListHeaderComponent={
+          header ? <View style={styles.header}>{header}</View> : null
+        }
+        renderItem={({ item }) => (
+          <Pressable
+            style={styles.cell}
+            accessibilityRole="button"
+            onPress={() => onOpen(item.subject)}
           >
-            {TABS.map(([value, label]) => (
-              <UIChip
-                key={value}
-                label={t(label)}
-                selected={tab === value}
-                onPress={() => setTab(value)}
-              />
-            ))}
-          </ScrollView>
-          <View style={styles.cardTop} />
-        </View>
-      }
-      ListEmptyComponent={
-        <View style={styles.empty}>
-          <UIEmpty message={t("app.empty")} />
-        </View>
-      }
-      ListFooterComponent={<View style={styles.cardBottom} />}
-      renderItem={({ item }) => (
-        <Pressable
-          style={styles.row}
-          accessibilityRole="button"
-          onPress={() => onOpen(item.subject)}
-        >
-          <View style={styles.tile}>
-            <Icon
-              name={
-                TYPE_ICONS[item.type as keyof typeof TYPE_ICONS] ?? "file-check"
-              }
-              size={18}
-              uniProps={(theme) => ({ color: theme.colors.white80 })}
-            />
-          </View>
-          <View style={styles.text}>
-            <UIText weight="semibold">{item.subject}</UIText>
-            <UIText size="xs" color="secondary">
-              {item.type} · {item.university}
-            </UIText>
-          </View>
-          <View style={styles.rating}>
-            <Icon
-              name="star"
-              size={13}
-              uniProps={(theme) => ({ color: theme.colors.amber })}
-            />
-            <UIText size="body" weight="semibold">
-              {item.rating}
-            </UIText>
-          </View>
-        </Pressable>
-      )}
-    />
+            <UIGlass radius={16} style={styles.row}>
+              <View style={styles.tile}>
+                <Icon
+                  name={
+                    TYPE_ICONS[item.type as keyof typeof TYPE_ICONS] ??
+                    "file-check"
+                  }
+                  size={18}
+                  uniProps={(theme) => ({ color: theme.colors.white80 })}
+                />
+              </View>
+              <View style={styles.text}>
+                <UIText weight="semibold">{item.subject}</UIText>
+                <UIText size="xs" color="secondary">
+                  {item.type} · {item.university}
+                </UIText>
+              </View>
+              <View style={styles.rating}>
+                <Icon
+                  name="star"
+                  size={13}
+                  uniProps={(theme) => ({ color: theme.colors.amber })}
+                />
+                <UIText size="body" weight="semibold">
+                  {item.rating}
+                </UIText>
+              </View>
+            </UIGlass>
+          </Pressable>
+        )}
+      />
+      {/* beside the list, not inside it: centred on the screen like the other tabs' cat, not under the chips */}
+      {visible.length === 0 ? (
+        <UIEmpty isScreenCentred message={t("app.empty")} />
+      ) : null}
+    </>
   );
 }
 
-const styles = StyleSheet.create((theme) => ({
+const styles = StyleSheet.create((theme, rt) => ({
   list: { flex: 1 },
-  listContent: {
-    // lets the empty-state cat fill the space under the header and centre in it
-    flexGrow: 1,
+  // UIPage already pads the status bar; the rest of the screen header's height (chips included) is added here
+  listContent: (headerHeight: number) => ({
+    paddingTop: Math.max(headerHeight - rt.insets.top, 0),
     paddingHorizontal: theme.s(16),
     paddingBottom: theme.vs(110),
-  },
-  header: { gap: theme.vs(16) },
-  tabs: { gap: theme.s(6) },
-  cardTop: {
-    height: theme.vs(6),
-    marginTop: -theme.vs(16),
-    borderTopLeftRadius: theme.vs(24),
-    borderTopRightRadius: theme.vs(24),
-    borderWidth: 1,
-    borderBottomWidth: 0,
-    borderColor: theme.colors.white10,
-    backgroundColor: theme.colors.surface60,
-  },
-  cardBottom: {
-    height: theme.vs(6),
-    borderBottomLeftRadius: theme.vs(24),
-    borderBottomRightRadius: theme.vs(24),
-    borderWidth: 1,
-    borderTopWidth: 0,
-    borderColor: theme.colors.white10,
-    backgroundColor: theme.colors.surface60,
+  }),
+  header: { paddingBottom: theme.vs(16) },
+  // one glass card per material, 8pt apart, as in the design
+  cell: {
+    paddingBottom: theme.vs(8),
   },
   row: {
     flexDirection: "row",
     alignItems: "center",
     gap: theme.s(12),
-    padding: theme.s(10),
-    paddingHorizontal: theme.s(16),
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
-    borderColor: theme.colors.white10,
-    backgroundColor: theme.colors.surface60,
-  },
-  empty: {
-    flex: 1,
-    padding: theme.s(16),
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
-    borderColor: theme.colors.white10,
-    backgroundColor: theme.colors.surface60,
+    padding: theme.s(12),
   },
   tile: {
-    width: theme.vs(42),
-    height: theme.vs(42),
+    width: theme.vs(40),
+    height: theme.vs(40),
     borderRadius: theme.vs(12),
     borderWidth: 1,
     borderColor: theme.colors.white10,
@@ -182,6 +140,6 @@ const styles = StyleSheet.create((theme) => ({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-end",
-    gap: theme.s(4),
+    gap: theme.s(5),
   },
 }));

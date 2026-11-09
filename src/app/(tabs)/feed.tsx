@@ -177,9 +177,7 @@ export default function FeedScreen() {
             <UISkeleton height={180} />
           ) : isError ? (
             <UIQueryError message={t("apiState.error")} onRetry={refetch} />
-          ) : (
-            <UIEmpty message={t("app.empty")} />
-          )
+          ) : null
         }
         ListFooterComponent={
           isFetchingNextPage ? <UISkeleton height={110} /> : null
@@ -190,6 +188,10 @@ export default function FeedScreen() {
           </View>
         )}
       />
+      {/* beside the list, not inside it, so the cat centres on the screen like every other empty state */}
+      {!isPending && !isError && posts.length === 0 ? (
+        <UIEmpty isScreenCentred message={t("app.empty")} />
+      ) : null}
       <UISearchOverlay
         isOpen={isSearching}
         value={search}
@@ -222,8 +224,6 @@ const styles = StyleSheet.create((theme, rt) => ({
   },
   // UIPage already pads the status bar; the rest of the header height is added here
   list: (headerHeight: number) => ({
-    // lets the empty-state cat fill the space under the header and centre in it
-    flexGrow: 1,
     paddingTop: Math.max(headerHeight - rt.insets.top, 0),
     paddingHorizontal: theme.s(16),
     paddingBottom: theme.vs(110),

@@ -101,9 +101,7 @@ export default function StudentsScreen() {
             <UISkeleton height={64} />
           ) : isError ? (
             <UIQueryError message={t("apiState.error")} onRetry={refetch} />
-          ) : (
-            <UIEmpty message={t("students.noResults")} />
-          )
+          ) : null
         }
         ListFooterComponent={
           isFetchingNextPage ? <UISkeleton height={64} /> : null
@@ -114,6 +112,10 @@ export default function StudentsScreen() {
           </View>
         )}
       />
+      {/* beside the list, not inside it, so the cat centres on the screen like every other empty state */}
+      {!isPending && !isError && students.length === 0 ? (
+        <UIEmpty isScreenCentred message={t("students.noResults")} />
+      ) : null}
       <UISearchOverlay
         isOpen={isSearching}
         value={search}
@@ -130,8 +132,6 @@ export default function StudentsScreen() {
 const styles = StyleSheet.create((theme, rt) => ({
   // UIPage already pads the status bar; the rest of the header height is added here
   list: (headerHeight: number) => ({
-    // lets the empty-state cat fill the space under the header and centre in it
-    flexGrow: 1,
     paddingTop: Math.max(headerHeight - rt.insets.top, 0) + theme.vs(8),
     paddingHorizontal: theme.s(16),
     paddingBottom: theme.vs(40),

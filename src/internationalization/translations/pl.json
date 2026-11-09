@@ -148,7 +148,7 @@
     "anyFaculty": "Dowolny wydział",
     "lookingFor": "Szukam",
     "emptyTitle": "Na razie nikogo",
-    "emptyDescription": "Widzisz już wszystkich pasujących. Poszerz filtry lub zajrzyj później.",
+    "emptyDescription": "Na razie widzisz już wszystkich. Zajrzyj później.",
     "matchInterests": "Wspólne zainteresowania",
     "showMe": "Pokaż mi",
     "everyone": "Wszystkich",
@@ -171,6 +171,7 @@
     "title": "Przewodnik"
   },
   "faq": {
+    "search": "Szukaj pytań",
     "subtitle": "Odpowiedzi od studentów w Lublinie",
     "title": "FAQ",
     "empty": "Nie ma tu jeszcze pytań."

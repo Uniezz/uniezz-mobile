@@ -42,96 +42,110 @@ export function ConversationList({
   );
   return (
     <>
-      <View style={styles.header}>
-        <UIText size="xl" weight="bold" style={styles.title}>
-          {t("tabs.chat")}
-        </UIText>
-        <UIIconButton
-          accessibilityRole="button"
-          accessibilityLabel={t("app.createGroup")}
-          onPress={onCreate}
-        >
-          <Icon name="square-pen" size={18} />
-        </UIIconButton>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={t("app.profile")}
-          onPress={() => router.push("/profile")}
-        >
-          <UIAvatar />
-        </Pressable>
-      </View>
-      <UISearch
-        placeholder={t("app.searchConversations")}
-        value={search}
-        onChangeText={setSearch}
-      />
-      <View style={styles.filters}>
-        {FILTERS.map(([value, label]) => (
-          <UIChip
-            key={value}
-            label={t(label)}
-            selected={filter === value}
-            onPress={() => setFilter(value)}
-          />
-        ))}
-      </View>
-      <FlashList
-        style={styles.list}
-        contentContainerStyle={styles.listContent}
-        data={filter === "requests" ? [] : visible}
-        keyExtractor={(item) => item.id}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={
-          <UIEmpty
-            message={t(filter === "requests" ? "chat.noRequests" : "app.empty")}
-          />
-        }
-        renderItem={({ item }) => (
-          <Pressable accessibilityRole="button" onPress={() => onOpen(item.id)}>
-            <View style={styles.row}>
-              <UIAvatar size="lg" />
-              <View style={styles.rowText}>
-                <View style={styles.top}>
-                  <UIText
-                    size="rg"
-                    weight="semibold"
-                    numberOfLines={1}
-                    style={styles.name}
-                  >
-                    {item.name}
-                  </UIText>
-                  <UIText size="sm" color="secondary">
-                    {chatTime(item.updatedAt, locale)}
-                  </UIText>
-                </View>
-                <View style={styles.bottom}>
-                  <UIText
-                    size="body"
-                    color={item.unread > 0 ? "white" : "secondary"}
-                    numberOfLines={1}
-                    style={styles.preview}
-                  >
-                    {item.preview}
-                  </UIText>
-                  {item.unread > 0 ? (
-                    <View style={styles.badge}>
-                      <UIText size="xs" weight="semibold">
-                        {item.unread}
-                      </UIText>
-                    </View>
-                  ) : null}
+      <View style={styles.page}>
+        <View style={styles.header}>
+          <UIText size="xl" weight="bold" style={styles.title}>
+            {t("tabs.chat")}
+          </UIText>
+          <UIIconButton
+            accessibilityRole="button"
+            accessibilityLabel={t("app.createGroup")}
+            onPress={onCreate}
+          >
+            <Icon name="square-pen" size={18} />
+          </UIIconButton>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t("app.profile")}
+            onPress={() => router.push("/profile")}
+          >
+            <UIAvatar />
+          </Pressable>
+        </View>
+        <UISearch
+          placeholder={t("app.searchConversations")}
+          value={search}
+          onChangeText={setSearch}
+        />
+        <View style={styles.filters}>
+          {FILTERS.map(([value, label]) => (
+            <UIChip
+              key={value}
+              label={t(label)}
+              selected={filter === value}
+              onPress={() => setFilter(value)}
+            />
+          ))}
+        </View>
+        <FlashList
+          style={styles.list}
+          contentContainerStyle={styles.listContent}
+          data={filter === "requests" ? [] : visible}
+          keyExtractor={(item) => item.id}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => (
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => onOpen(item.id)}
+            >
+              <View style={styles.row}>
+                <UIAvatar size="lg" />
+                <View style={styles.rowText}>
+                  <View style={styles.top}>
+                    <UIText
+                      size="rg"
+                      weight="semibold"
+                      numberOfLines={1}
+                      style={styles.name}
+                    >
+                      {item.name}
+                    </UIText>
+                    <UIText size="sm" color="secondary">
+                      {chatTime(item.updatedAt, locale)}
+                    </UIText>
+                  </View>
+                  <View style={styles.bottom}>
+                    <UIText
+                      size="body"
+                      color={item.unread > 0 ? "white" : "secondary"}
+                      numberOfLines={1}
+                      style={styles.preview}
+                    >
+                      {item.preview}
+                    </UIText>
+                    {item.unread > 0 ? (
+                      <View style={styles.badge}>
+                        <UIText size="xs" weight="semibold">
+                          {item.unread}
+                        </UIText>
+                      </View>
+                    ) : null}
+                  </View>
                 </View>
               </View>
-            </View>
-          </Pressable>
-        )}
-      />
+            </Pressable>
+          )}
+        />
+      </View>
+      {/* beside the list, not inside it, so the cat centres on the screen like every other empty state */}
+      {filter === "requests" || visible.length === 0 ? (
+        <UIEmpty
+          isScreenCentred
+          message={t(filter === "requests" ? "chat.noRequests" : "app.empty")}
+        />
+      ) : null}
     </>
   );
 }
 
 const styles = StyleSheet.create((theme) => ({
+  // the tab's padded content; the empty cat sits outside it, directly on UIPage
+  page: {
+    flex: 1,
+    paddingHorizontal: theme.s(16),
+    paddingTop: theme.vs(4),
+    gap: theme.vs(16),
+  },
   header: {
     flexDirection: "row",
     alignItems: "flex-end",
@@ -150,8 +164,6 @@ const styles = StyleSheet.create((theme) => ({
   },
   // keeps the last row clear of the tab bar
   listContent: {
-    // lets the empty-state cat fill the space under the header and centre in it
-    flexGrow: 1,
     paddingBottom: theme.vs(110),
   },
   row: {

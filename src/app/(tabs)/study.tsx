@@ -1,16 +1,33 @@
 import { router } from "expo-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Pressable, ScrollView, View } from "react-native";
-import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
-import { StyleSheet, withUnistyles } from "react-native-unistyles";
-import type { Material } from "@/@types/study";
+import {
+  Keyboard,
+  LayoutChangeEvent,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  Pressable,
+  ScrollView,
+} from "react-native";
+import { StyleSheet } from "react-native-unistyles";
+import type { Material, MaterialTab } from "@/@types/study";
 import { AddMaterial, MaterialList } from "@/components/study";
-import { Icon, UIAvatar, UIGlass, UIIconButton, UIPage, UIText } from "@/ui";
+import { useMyProfile } from "@/hooks/useMyProfile";
+import {
+  Icon,
+  UIAvatar,
+  UIChip,
+  UICollapsingHeader,
+  UIFadeScrollView,
+  UIGlass,
+  UIIconButton,
+  UIPage,
+  UISearchOverlay,
+  UIText,
+} from "@/ui";
+import { HEADER_COMPACT_OFFSET, MATERIAL_TABS } from "@/utils";
 
-const Glow = withUnistyles(Stop, (theme) => ({ stopColor: theme.colors.blue }));
-
-// shortcut: preview materials and exam until the backend has an exams endpoint
+// shortcut: preview materials until the backend has an exams endpoint
 const initialMaterials: Material[] = [
   {
     subject: "Mathematical Analysis II",
@@ -41,97 +58,104 @@ const initialMaterials: Material[] = [
     rating: "4.6",
   },
 ];
-const nextExam = { days: 12, name: "Thermodynamics", meta: "7 Oct, 9:00" };
 
 export default function StudyScreen() {
   const { t } = useTranslation();
+  const { data: profile } = useMyProfile();
   const [materials, setMaterials] = useState(initialMaterials);
   const [selected, setSelected] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
+  // the list filters by `query`, applied only on submit; `search` is the text being typed
+  const [search, setSearch] = useState("");
+  const [query, setQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
-  const header = (
+  const [tab, setTab] = useState<MaterialTab>("papers");
+  // the header floats over the list; the list starts below it and turns the header compact once scrolled
+  const [headerHeight, setHeaderHeight] = useState(0);
+  const [isHeaderCompact, setIsHeaderCompact] = useState(false);
+
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    setIsHeaderCompact(
+      event.nativeEvent.contentOffset.y > HEADER_COMPACT_OFFSET,
+    );
+  };
+  const handleHeaderLayout = (event: LayoutChangeEvent) => {
+    setHeaderHeight(event.nativeEvent.layout.height);
+  };
+  // the search field only exists while the keyboard is up; blurring it closes it, the query stays
+  const handleSearchPress = () => setIsSearching(true);
+  const handleSearchClose = () => setIsSearching(false);
+  const handleSearchSubmit = () => {
+    setQuery(search);
+    Keyboard.dismiss();
+  };
+  const handleAddPress = () => setAdding(!adding);
+  const handleProfilePress = () => router.push("/profile");
+  const handleMaterialSave = (material: Material) => {
+    setMaterials((current) => [material, ...current]);
+    setAdding(false);
+  };
+  const handleDetailBackPress = () => setSelected(null);
+
+  const headerActions = (
     <>
-      <View style={styles.header}>
-        <UIText size="xl" weight="bold" style={styles.title}>
-          {t("tabs.exams")}
-        </UIText>
-        <UIIconButton
-          accessibilityRole="button"
-          accessibilityLabel={t("app.searchMaterials")}
-          onPress={() => setIsSearching(!isSearching)}
-        >
-          <Icon name="search" size={18} />
-        </UIIconButton>
-        <UIIconButton
-          accessibilityRole="button"
-          accessibilityLabel={t("exams.action")}
-          onPress={() => setAdding(!adding)}
-        >
-          <Icon name={adding ? "x" : "upload"} size={18} />
-        </UIIconButton>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={t("app.profile")}
-          onPress={() => router.push("/profile")}
-        >
-          <UIAvatar />
-        </Pressable>
-      </View>
-      {adding ? (
-        <AddMaterial
-          onSave={(material) => {
-            setMaterials((current) => [material, ...current]);
-            setAdding(false);
-          }}
-        />
-      ) : null}
-      <UIGlass radius={24} style={styles.exam}>
-        <Svg style={StyleSheet.absoluteFill}>
-          <Defs>
-            <LinearGradient id="glow" x1="0" y1="0" x2="1" y2="0">
-              <Glow offset="0" stopOpacity={0.4} />
-              <Glow offset="0.7" stopOpacity={0} />
-            </LinearGradient>
-          </Defs>
-          <Rect width="100%" height="100%" fill="url(#glow)" />
-        </Svg>
-        <View style={styles.count}>
-          <UIText size="display" weight="bold" style={styles.days}>
-            {nextExam.days}
-          </UIText>
-          <UIText size="xs" color="secondary">
-            {t("exams.days", { count: nextExam.days })}
-          </UIText>
-        </View>
-        <View style={styles.separator} />
-        <View style={styles.info}>
-          <UIText size="xs" weight="semibold" color="link">
-            {t("exams.nextExam")}
-          </UIText>
-          <UIText size="title3" weight="semibold">
-            {nextExam.name}
-          </UIText>
-          <UIText size="sm" color="soft">
-            {nextExam.meta}
-          </UIText>
-        </View>
-        <Icon
-          name="chevron-right"
-          size={18}
-          uniProps={(theme) => ({ color: theme.colors.white60 })}
-        />
-      </UIGlass>
+      <UIIconButton
+        accessibilityRole="button"
+        accessibilityLabel={t("app.searchMaterials")}
+        onPress={handleSearchPress}
+      >
+        <Icon name="search" size={18} />
+      </UIIconButton>
+      <UIIconButton
+        accessibilityRole="button"
+        accessibilityLabel={t("exams.action")}
+        onPress={handleAddPress}
+      >
+        <Icon name={adding ? "x" : "upload"} size={18} />
+      </UIIconButton>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={t("app.profile")}
+        onPress={handleProfilePress}
+      >
+        <UIAvatar imageSrc={profile?.avatarUrl} />
+      </Pressable>
     </>
   );
+
   return (
     <UIPage>
+      <UICollapsingHeader
+        title={t("tabs.exams")}
+        isCompact={isHeaderCompact}
+        actions={headerActions}
+        onLayout={handleHeaderLayout}
+      >
+        {/* fades at either edge while more chips are hidden there */}
+        <UIFadeScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.tabs}
+        >
+          {MATERIAL_TABS.map(([value, label]) => {
+            const handleTabPress = () => setTab(value);
+            return (
+              <UIChip
+                key={value}
+                label={t(label)}
+                selected={tab === value}
+                onPress={handleTabPress}
+              />
+            );
+          })}
+        </UIFadeScrollView>
+      </UICollapsingHeader>
       {selected ? (
-        <ScrollView contentContainerStyle={styles.page}>
-          {header}
+        <ScrollView contentContainerStyle={styles.page(headerHeight)}>
           <UIGlass radius={24} style={styles.card}>
             <Pressable
               accessibilityRole="button"
-              onPress={() => setSelected(null)}
+              onPress={handleDetailBackPress}
             >
               <UIText color="link">{t("app.back")}</UIText>
             </Pressable>
@@ -142,55 +166,39 @@ export default function StudyScreen() {
         </ScrollView>
       ) : (
         <MaterialList
-          header={header}
+          header={adding ? <AddMaterial onSave={handleMaterialSave} /> : null}
           materials={materials}
-          isSearching={isSearching}
+          query={query}
+          tab={tab}
+          headerHeight={headerHeight}
+          onScroll={handleScroll}
           onOpen={setSelected}
         />
       )}
+      <UISearchOverlay
+        isOpen={isSearching}
+        value={search}
+        onChangeText={setSearch}
+        onSubmit={handleSearchSubmit}
+        onClose={handleSearchClose}
+        placeholder={t("app.searchMaterials")}
+        submitLabel={t("topbar.search")}
+      />
     </UIPage>
   );
 }
 
-const styles = StyleSheet.create((theme) => ({
-  page: {
-    paddingTop: theme.vs(4),
+const styles = StyleSheet.create((theme, rt) => ({
+  // UIPage already pads the status bar; the rest of the header height is added here
+  page: (headerHeight: number) => ({
+    paddingTop: Math.max(headerHeight - rt.insets.top, 0),
     paddingHorizontal: theme.s(16),
     paddingBottom: theme.vs(110),
     gap: theme.vs(16),
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "flex-end",
-    gap: theme.s(8),
-    paddingTop: theme.vs(4),
-  },
-  title: {
-    flex: 1,
-    lineHeight: theme.vs(30),
-  },
-  exam: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: theme.s(14),
-    padding: theme.s(16),
-  },
-  count: {
-    width: theme.s(64),
-    alignItems: "center",
-  },
-  days: {
-    letterSpacing: -2,
-    lineHeight: theme.vs(40),
-  },
-  separator: {
-    width: 1,
-    height: theme.vs(48),
-    backgroundColor: theme.colors.white10,
-  },
-  info: {
-    flex: 1,
-    gap: theme.vs(3),
+  }),
+  tabs: {
+    gap: theme.s(6),
+    paddingHorizontal: theme.s(16),
   },
   card: {
     padding: theme.s(16),

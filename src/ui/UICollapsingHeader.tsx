@@ -26,6 +26,8 @@ type UICollapsingHeaderProps = {
   backLabel?: string;
   /** buttons after the title */
   actions?: ReactNode;
+  /** pinned under the title row, e.g. filter chips; full width, so a horizontal scroller reaches the screen edges */
+  children?: ReactNode;
   onLayout: (event: LayoutChangeEvent) => void;
 };
 
@@ -37,6 +39,7 @@ export const UICollapsingHeader = ({
   onBackPress,
   backLabel,
   actions,
+  children,
   onLayout,
 }: UICollapsingHeaderProps) => {
   // only a subtitle leaves room above the buttons for the row to rise into
@@ -108,6 +111,7 @@ export const UICollapsingHeader = ({
         </View>
         {actions}
       </EaseView>
+      {children ? <View style={styles.below}>{children}</View> : null}
     </View>
   );
 };
@@ -130,6 +134,11 @@ const styles = StyleSheet.create((theme, rt) => ({
     alignItems: hasSubtitle ? "flex-end" : "center",
     gap: theme.s(8),
   }),
+  // cancels the header's side padding, so the content runs edge to edge
+  below: {
+    marginTop: theme.vs(12),
+    marginHorizontal: -theme.s(16),
+  },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
     borderBottomWidth: 1,

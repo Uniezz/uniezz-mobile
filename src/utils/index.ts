@@ -14,3 +14,4 @@ export * from "./sheet";
 export * from "./header";
 export * from "./id";
 export * from "./chat";
+export * from "./study";
