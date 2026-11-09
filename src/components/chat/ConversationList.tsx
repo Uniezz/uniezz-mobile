@@ -6,7 +6,15 @@ import { Pressable, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import type { Conversation } from "@/@types/chat";
 import { chatTime } from "@/utils";
-import { Icon, UIAvatar, UIChip, UIIconButton, UISearch, UIText } from "@/ui";
+import {
+  Icon,
+  UIAvatar,
+  UIChip,
+  UIEmpty,
+  UIIconButton,
+  UISearch,
+  UIText,
+} from "@/ui";
 
 const FILTERS = [
   ["all", "app.all"],
@@ -75,11 +83,9 @@ export function ConversationList({
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
-          filter === "requests" ? (
-            <UIText color="secondary" style={styles.empty}>
-              {t("chat.noRequests")}
-            </UIText>
-          ) : null
+          <UIEmpty
+            message={t(filter === "requests" ? "chat.noRequests" : "app.empty")}
+          />
         }
         renderItem={({ item }) => (
           <Pressable accessibilityRole="button" onPress={() => onOpen(item.id)}>
@@ -144,10 +150,9 @@ const styles = StyleSheet.create((theme) => ({
   },
   // keeps the last row clear of the tab bar
   listContent: {
+    // lets the empty-state cat fill the space under the header and centre in it
+    flexGrow: 1,
     paddingBottom: theme.vs(110),
-  },
-  empty: {
-    padding: theme.s(10),
   },
   row: {
     flexDirection: "row",

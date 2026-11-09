@@ -22,12 +22,12 @@ import {
   UIAvatar,
   UIBottomSheet,
   UICollapsingHeader,
+  UIEmpty,
   UIIconButton,
   UIPage,
   UIQueryError,
   UISearchOverlay,
   UISkeleton,
-  UIText,
 } from "@/ui";
 import {
   DATE_PRESETS,
@@ -178,7 +178,7 @@ export default function FeedScreen() {
           ) : isError ? (
             <UIQueryError message={t("apiState.error")} onRetry={refetch} />
           ) : (
-            <UIText color="secondary">{t("app.empty")}</UIText>
+            <UIEmpty message={t("app.empty")} />
           )
         }
         ListFooterComponent={
@@ -222,6 +222,8 @@ const styles = StyleSheet.create((theme, rt) => ({
   },
   // UIPage already pads the status bar; the rest of the header height is added here
   list: (headerHeight: number) => ({
+    // lets the empty-state cat fill the space under the header and centre in it
+    flexGrow: 1,
     paddingTop: Math.max(headerHeight - rt.insets.top, 0),
     paddingHorizontal: theme.s(16),
     paddingBottom: theme.vs(110),

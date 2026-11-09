@@ -6,7 +6,7 @@ import { StyleSheet } from "react-native-unistyles";
 import {
   Icon,
   UIAvatar,
-  UIGlass,
+  UIEmpty,
   UIIconButton,
   UIPage,
   UISearch,
@@ -50,9 +50,7 @@ export default function FaqScreen() {
           value={search}
           onChangeText={setSearch}
         />
-        <UIGlass radius={24} style={styles.empty}>
-          <UIText color="secondary">{t("faq.empty")}</UIText>
-        </UIGlass>
+        <UIEmpty message={t("faq.empty")} />
       </ScrollView>
     </UIPage>
   );
@@ -60,6 +58,8 @@ export default function FaqScreen() {
 
 const styles = StyleSheet.create((theme) => ({
   page: {
+    // lets the empty-state cat fill the space under the header and centre in it
+    flexGrow: 1,
     paddingTop: theme.vs(4),
     paddingHorizontal: theme.s(16),
     paddingBottom: theme.vs(110),
@@ -76,8 +76,5 @@ const styles = StyleSheet.create((theme) => ({
   },
   h1: {
     lineHeight: theme.vs(30),
-  },
-  empty: {
-    padding: theme.s(24),
   },
 }));

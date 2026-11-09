@@ -2,11 +2,11 @@ import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Pressable, ScrollView, View } from "react-native";
+import { Pressable, View } from "react-native";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
 import { useMyProfile } from "@/hooks/useMyProfile";
-import { Icon, UIAvatar, UIGlass, UIIconButton, UIPage, UIText } from "@/ui";
+import { Icon, UIAvatar, UIEmpty, UIGlass, UIPage, UIText } from "@/ui";
 
 const Shade = withUnistyles(Stop, (theme) => ({ stopColor: theme.colors.ink }));
 
@@ -47,7 +47,7 @@ export default function MeetScreen() {
 
   return (
     <UIPage>
-      <ScrollView contentContainerStyle={styles.page}>
+      <View style={styles.page}>
         <View style={styles.header}>
           <UIText size="xl" weight="bold" style={styles.title}>
             {t("tabs.connections")}
@@ -137,56 +137,53 @@ export default function MeetScreen() {
               </View>
             </View>
           ) : (
-            <UIGlass radius={24} style={styles.empty}>
-              <UIText size="lg" weight="semibold">
-                {t("connections.emptyTitle")}
-              </UIText>
-              <UIText color="secondary">
-                {t("connections.emptyDescription")}
-              </UIText>
-              <Pressable
-                accessibilityRole="button"
-                onPress={() => {
-                  setIndex(0);
-                  setConnected(false);
-                }}
-              >
-                <UIText color="link" weight="semibold">
-                  {t("connections.resetFilters")}
+            <View style={styles.empty}>
+              <UIEmpty>
+                <UIText size="title1" weight="bold" style={styles.emptyText}>
+                  {t("connections.emptyTitle")}
                 </UIText>
-              </Pressable>
-            </UIGlass>
+                <UIText color="soft" style={styles.emptyText}>
+                  {t("connections.emptyDescription")}
+                </UIText>
+              </UIEmpty>
+            </View>
           )}
           {student ? (
             <View style={styles.actions}>
-              <UIIconButton
-                size="xl"
+              <Pressable
                 accessibilityRole="button"
                 accessibilityLabel={t("app.pass")}
                 onPress={next}
+                style={styles.action}
               >
-                <Icon name="x" size={24} />
-              </UIIconButton>
+                <UIGlass radius={32} style={styles.actionCircle}>
+                  <Icon
+                    name="x"
+                    size={24}
+                    uniProps={(theme) => ({ color: theme.colors.red })}
+                  />
+                </UIGlass>
+                <UIText size="sm" color="soft">
+                  {t("app.pass")}
+                </UIText>
+              </Pressable>
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel={t("app.connect")}
                 onPress={() => setConnected(true)}
-                style={styles.connect}
+                style={styles.action}
               >
-                <Icon
-                  name={connected ? "check" : "heart"}
-                  size={28}
-                  uniProps={(theme) => ({ color: theme.colors.ink })}
-                />
+                <View style={[styles.actionCircle, styles.connect]}>
+                  <Icon
+                    name={connected ? "check" : "heart"}
+                    size={24}
+                    uniProps={(theme) => ({ color: theme.colors.ink })}
+                  />
+                </View>
+                <UIText size="sm" color="soft">
+                  {t("app.connect")}
+                </UIText>
               </Pressable>
-              <UIIconButton
-                size="xl"
-                accessibilityRole="button"
-                accessibilityLabel={t("app.message")}
-                onPress={() => router.push("/(tabs)/chat")}
-              >
-                <Icon name="message-circle" size={24} />
-              </UIIconButton>
             </View>
           ) : null}
           {connected ? (
@@ -195,16 +192,18 @@ export default function MeetScreen() {
             </UIText>
           ) : null}
         </>
-      </ScrollView>
+      </View>
     </UIPage>
   );
 }
 
 const styles = StyleSheet.create((theme) => ({
   page: {
+    flex: 1,
     paddingTop: theme.vs(4),
     paddingHorizontal: theme.s(16),
-    paddingBottom: theme.vs(110),
+    // the tab bar floats ~40pt above this page's bottom (UIPage pads the home indicator); +12 keeps the actions just above it, as in the design
+    paddingBottom: theme.vs(52),
     gap: theme.vs(16),
   },
   header: {
@@ -218,8 +217,6 @@ const styles = StyleSheet.create((theme) => ({
     alignItems: "center",
     gap: theme.s(8),
     paddingHorizontal: theme.s(12),
-    borderColor: theme.colors.white12,
-    backgroundColor: theme.colors.white3,
   },
   title: {
     flex: 1,
@@ -237,12 +234,14 @@ const styles = StyleSheet.create((theme) => ({
     paddingHorizontal: theme.s(13),
     borderRadius: theme.vs(999),
     backgroundColor: selected ? theme.colors.white : theme.colors.white5,
-    borderWidth: selected ? 0 : 1,
-    borderColor: theme.colors.white10,
+    // a border on every chip (white when selected, like UIChip) so selecting one doesn't change its size
+    borderWidth: 1,
+    borderColor: selected ? theme.colors.white : theme.colors.white10,
   }),
   card: {
-    height: theme.vs(470),
-    borderRadius: theme.vs(24),
+    // fills the space between the modes and the actions, so the screen fits without scrolling
+    flex: 1,
+    borderRadius: theme.vs(16),
     borderWidth: 1,
     borderColor: theme.colors.white10,
     overflow: "hidden",
@@ -267,7 +266,7 @@ const styles = StyleSheet.create((theme) => ({
     borderRadius: theme.vs(16),
     borderWidth: 1,
     borderColor: theme.colors.white10,
-    backgroundColor: theme.colors.ink40,
+    backgroundColor: theme.colors.ink70,
   },
   answerText: {
     lineHeight: theme.vs(15 * 1.35),
@@ -276,19 +275,29 @@ const styles = StyleSheet.create((theme) => ({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: theme.s(20),
+    gap: theme.s(28),
   },
-  connect: {
-    width: theme.vs(68),
-    height: theme.vs(68),
-    borderRadius: theme.vs(34),
-    backgroundColor: theme.colors.white,
+  action: {
+    alignItems: "center",
+    gap: theme.vs(8),
+  },
+  actionCircle: {
+    width: theme.vs(64),
+    height: theme.vs(64),
+    borderRadius: theme.vs(32),
     alignItems: "center",
     justifyContent: "center",
   },
+  connect: {
+    backgroundColor: theme.colors.white,
+  },
+  // centres the cat in the card's space, like the web empty state
   empty: {
-    padding: theme.s(24),
-    gap: theme.vs(12),
+    flex: 1,
+    justifyContent: "center",
+  },
+  emptyText: {
+    textAlign: "center",
   },
   notice: {
     textAlign: "center",

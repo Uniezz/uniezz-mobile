@@ -16,7 +16,7 @@ import type { FeedComment } from "@/@types/feed";
 import { useFeedPost } from "@/hooks/useFeed";
 import { useFeedComments } from "@/hooks/useFeedComments";
 import { useMyProfile } from "@/hooks/useMyProfile";
-import { UIQueryError, UISkeleton, UIText } from "@/ui";
+import { UIEmpty, UIQueryError, UISkeleton, UIText } from "@/ui";
 import { HEADER_TRANSITION } from "@/utils";
 import { CommentItem } from "./CommentItem";
 import { PostCard } from "./PostCard";
@@ -131,7 +131,7 @@ export const PostPage = ({
               onRetry={refetchComments}
             />
           ) : (
-            <UIText color="secondary">{t("app.empty")}</UIText>
+            <UIEmpty message={t("app.empty")} />
           )
         }
         ListFooterComponent={
@@ -169,6 +169,8 @@ const styles = StyleSheet.create((theme) => ({
     height,
   }),
   list: (composerHeight: number) => ({
+    // lets the empty-state cat fill the space under the header and centre in it
+    flexGrow: 1,
     paddingHorizontal: theme.s(16),
     paddingBottom: composerHeight + theme.vs(16),
   }),

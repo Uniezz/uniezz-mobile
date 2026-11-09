@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import type { Material } from "@/@types/study";
-import { Icon, UIChip, UISearch, UIText } from "@/ui";
+import { Icon, UIChip, UIEmpty, UISearch, UIText } from "@/ui";
 
 const TABS = [
   ["papers", "app.pastPapers"],
@@ -76,9 +76,9 @@ export function MaterialList({
         </View>
       }
       ListEmptyComponent={
-        <UIText color="secondary" style={styles.empty}>
-          {t("app.empty")}
-        </UIText>
+        <View style={styles.empty}>
+          <UIEmpty message={t("app.empty")} />
+        </View>
       }
       ListFooterComponent={<View style={styles.cardBottom} />}
       renderItem={({ item }) => (
@@ -121,6 +121,8 @@ export function MaterialList({
 const styles = StyleSheet.create((theme) => ({
   list: { flex: 1 },
   listContent: {
+    // lets the empty-state cat fill the space under the header and centre in it
+    flexGrow: 1,
     paddingHorizontal: theme.s(16),
     paddingBottom: theme.vs(110),
   },
@@ -157,6 +159,7 @@ const styles = StyleSheet.create((theme) => ({
     backgroundColor: theme.colors.surface60,
   },
   empty: {
+    flex: 1,
     padding: theme.s(16),
     borderLeftWidth: 1,
     borderRightWidth: 1,

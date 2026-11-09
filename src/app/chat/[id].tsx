@@ -13,7 +13,7 @@ import { ChatThread, MessageComposer } from "@/components/chat";
 import { messageSchema } from "@/schemas";
 import { useChatStore } from "@/store/chat";
 import { captureAction } from "@/utils/analytics";
-import { Icon, UIAvatar, UIIconButton, UIPage, UIText } from "@/ui";
+import { Icon, UIAvatar, UIEmpty, UIIconButton, UIPage, UIText } from "@/ui";
 
 const emptyMessages: ChatMessage[] = [];
 
@@ -93,7 +93,7 @@ export default function ConversationScreen() {
         {conversation ? (
           <ChatThread messages={messages} composerHeight={composerHeight} />
         ) : (
-          <UIText color="secondary">{t("app.empty")}</UIText>
+          <UIEmpty message={t("app.empty")} />
         )}
         {conversation ? (
           // UIPage already lifts the composer off the home indicator; above the keyboard that gap is dropped
