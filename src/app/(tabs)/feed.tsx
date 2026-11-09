@@ -11,6 +11,7 @@ import {
   Pressable,
   View,
 } from "react-native";
+import { EaseView } from "react-native-ease";
 import { StyleSheet } from "react-native-unistyles";
 import { FeaturedPosts, FeedFilters, FeedPostCard } from "@/components/feed";
 import type { FeedFilterValues } from "@/@types/feed";
@@ -32,6 +33,7 @@ import {
   DATE_PRESETS,
   datePresetFrom,
   HEADER_COMPACT_OFFSET,
+  HEADER_TRANSITION,
   toSearchQuery,
 } from "@/utils";
 
@@ -68,6 +70,8 @@ export default function FeedScreen() {
   const handleSearchBlur = () => setIsSearching(false);
   const handleFiltersPress = () => filtersRef.current?.present();
   const handleProfilePress = () => router.push("/profile");
+  const handleNewPostPress = () => router.push("/feed/new");
+  const isNewPostShown = isHeaderCompact || Boolean(query);
   const feedFilters = {
     q: toSearchQuery(query),
     type: filters.type === "all" ? undefined : filters.type,
@@ -90,27 +94,52 @@ export default function FeedScreen() {
 
   const headerActions = (
     <>
-      <UIIconButton
-        accessibilityRole="button"
-        accessibilityLabel={t("topbar.search")}
-        onPress={handleSearchPress}
-      >
-        <Icon name="search" size={18} />
-      </UIIconButton>
-      <UIIconButton
-        accessibilityRole="button"
-        accessibilityLabel={t("feed.filtersTitle")}
-        onPress={handleFiltersPress}
-      >
-        <Icon name="sliders-horizontal" size={18} />
-      </UIIconButton>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={t("app.profile")}
-        onPress={handleProfilePress}
-      >
-        <UIAvatar imageSrc={profile?.avatarUrl} />
-      </Pressable>
+      <View style={styles.actions}>
+        {/* stands in for the "Add event" tile once it has scrolled away (or is hidden by a search);
+            positioned outside the row, so the expanded header keeps its full title width */}
+        <EaseView
+          animate={{
+            opacity: isNewPostShown ? 1 : 0,
+            scale: isNewPostShown ? 1 : 0.6,
+          }}
+          transition={HEADER_TRANSITION}
+          pointerEvents={isNewPostShown ? "auto" : "none"}
+          accessibilityElementsHidden={!isNewPostShown}
+          importantForAccessibility={
+            isNewPostShown ? "auto" : "no-hide-descendants"
+          }
+          style={styles.newPost}
+        >
+          <UIIconButton
+            accessibilityRole="button"
+            accessibilityLabel={t("app.newPost")}
+            onPress={handleNewPostPress}
+          >
+            <Icon name="plus" size={18} />
+          </UIIconButton>
+        </EaseView>
+        <UIIconButton
+          accessibilityRole="button"
+          accessibilityLabel={t("topbar.search")}
+          onPress={handleSearchPress}
+        >
+          <Icon name="search" size={18} />
+        </UIIconButton>
+        <UIIconButton
+          accessibilityRole="button"
+          accessibilityLabel={t("feed.filtersTitle")}
+          onPress={handleFiltersPress}
+        >
+          <Icon name="sliders-horizontal" size={18} />
+        </UIIconButton>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t("app.profile")}
+          onPress={handleProfilePress}
+        >
+          <UIAvatar imageSrc={profile?.avatarUrl} />
+        </Pressable>
+      </View>
     </>
   );
 
@@ -180,6 +209,17 @@ export default function FeedScreen() {
 }
 
 const styles = StyleSheet.create((theme, rt) => ({
+  // same spacing as the header row the actions sit in
+  actions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: theme.s(8),
+  },
+  newPost: {
+    position: "absolute",
+    right: "100%",
+    marginRight: theme.s(8),
+  },
   // UIPage already pads the status bar; the rest of the header height is added here
   list: (headerHeight: number) => ({
     paddingTop: Math.max(headerHeight - rt.insets.top, 0),
