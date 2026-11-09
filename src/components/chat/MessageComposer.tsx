@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Pressable, TextInput } from "react-native";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
 import type { MessageFormValues } from "@/@types/chat";
-import { Icon, UIGlass } from "@/ui";
+import { Icon, UIGlass, UIIconButton } from "@/ui";
 
 const ThemedTextInput = withUnistyles(TextInput, (theme) => ({
   placeholderTextColor: theme.colors.white60,
@@ -27,11 +27,29 @@ export const MessageComposer = ({
 
   return (
     <>
+      {/* shortcut: placeholder from the design, attachments aren't supported yet; wire it up once chat has a backend */}
+      <UIIconButton
+        size="lg"
+        disabled
+        accessibilityRole="button"
+        accessibilityLabel={t("app.attach")}
+        accessibilityState={{ disabled: true }}
+      >
+        <Icon
+          name="plus"
+          size={20}
+          uniProps={(theme) => ({ color: theme.colors.white80 })}
+        />
+      </UIIconButton>
       <Controller
         control={control}
         name="text"
         render={({ field }) => (
-          <UIGlass radius={999} style={styles.field}>
+          <UIGlass
+            // half the 44pt height: a pill on one line, a rounded box (not an oval) once it grows
+            radius={22}
+            style={styles.field}
+          >
             <ThemedTextInput
               value={field.value}
               onChangeText={field.onChange}
