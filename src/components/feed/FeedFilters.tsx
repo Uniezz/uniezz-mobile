@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+import { Controller, type Control } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
@@ -7,83 +9,93 @@ import { UIChip, UIFadeScrollView, UIText } from "@/ui";
 import { DATE_PRESETS, FEED_TYPE_LABELS, FEED_TYPES } from "@/utils";
 
 type FeedFiltersProps = {
-  value: FeedFilterValues;
-  onChange: (value: FeedFilterValues) => void;
+  control: Control<FeedFilterValues>;
 };
 
-export const FeedFilters = ({ value, onChange }: FeedFiltersProps) => {
+export const FeedFilters = ({ control }: FeedFiltersProps) => {
   const { t } = useTranslation();
   const { data: universities = [] } = useUniversities();
-  const rows = [
-    {
-      label: t("feed.type"),
-      options: FEED_TYPES.map((type) => ({
-        key: type,
-        label: t(FEED_TYPE_LABELS[type]),
-        selected: value.type === type,
-        next: { ...value, type },
-      })),
-    },
-    {
-      label: t("app.university"),
-      options: [
-        {
-          key: "all",
-          label: t("app.all"),
-          selected: value.university === null,
-          next: { ...value, university: null },
-        },
-        ...universities.map(({ id }) => ({
-          key: id,
-          label: id.toUpperCase(),
-          selected: value.university === id,
-          next: { ...value, university: id },
-        })),
-      ],
-    },
-    {
-      label: t("feed.date"),
-      options: DATE_PRESETS.map(([date, label]) => ({
-        key: date,
-        label: t(label),
-        selected: value.date === date,
-        next: { ...value, date },
-      })),
-    },
-  ];
 
   return (
     <View style={styles.container}>
-      {rows.map((row) => (
-        <View key={row.label} style={styles.row}>
-          <UIText
-            size="xs"
-            weight="semibold"
-            color="secondary"
-            style={styles.label}
-          >
-            {row.label}
-          </UIText>
-          <UIFadeScrollView
-            horizontal
-            fadeColor="surface"
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.chips}
-          >
-            {row.options.map((option) => (
+      <Controller
+        control={control}
+        name="type"
+        render={({ field }) => (
+          <FilterRow label={t("feed.type")}>
+            {FEED_TYPES.map((type) => (
               <UIChip
-                key={option.key}
-                label={option.label}
-                selected={option.selected}
-                onPress={() => onChange(option.next)}
+                key={type}
+                label={t(FEED_TYPE_LABELS[type])}
+                selected={field.value === type}
+                onPress={() => field.onChange(type)}
               />
             ))}
-          </UIFadeScrollView>
-        </View>
-      ))}
+          </FilterRow>
+        )}
+      />
+      <Controller
+        control={control}
+        name="university"
+        render={({ field }) => (
+          <FilterRow label={t("app.university")}>
+            <UIChip
+              label={t("app.all")}
+              selected={field.value === null}
+              onPress={() => field.onChange(null)}
+            />
+            {universities.map(({ id }) => (
+              <UIChip
+                key={id}
+                label={id.toUpperCase()}
+                selected={field.value === id}
+                onPress={() => field.onChange(id)}
+              />
+            ))}
+          </FilterRow>
+        )}
+      />
+      <Controller
+        control={control}
+        name="date"
+        render={({ field }) => (
+          <FilterRow label={t("feed.date")}>
+            {DATE_PRESETS.map(([date, label]) => (
+              <UIChip
+                key={date}
+                label={t(label)}
+                selected={field.value === date}
+                onPress={() => field.onChange(date)}
+              />
+            ))}
+          </FilterRow>
+        )}
+      />
     </View>
   );
 };
+
+const FilterRow = ({
+  label,
+  children,
+}: {
+  label: string;
+  children: ReactNode;
+}) => (
+  <View style={styles.row}>
+    <UIText size="xs" weight="semibold" color="secondary" style={styles.label}>
+      {label}
+    </UIText>
+    <UIFadeScrollView
+      horizontal
+      fadeColor="surface"
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={styles.chips}
+    >
+      {children}
+    </UIFadeScrollView>
+  </View>
+);
 
 const styles = StyleSheet.create((theme) => ({
   container: {

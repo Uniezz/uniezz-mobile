@@ -1,4 +1,12 @@
+import type { FeedFilterValues } from "@/@types/feed";
+
 export const FEED_TYPES = ["all", "announcement", "question", "event"] as const;
+
+export const INITIAL_FILTERS: FeedFilterValues = {
+  type: "all",
+  university: null,
+  date: "any",
+};
 
 export const FEED_TYPE_LABELS = {
   all: "app.all",

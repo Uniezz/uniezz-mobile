@@ -34,3 +34,9 @@ export const editPostSchema = z.object(postFields);
 export const commentSchema = z.object({
   content: z.string().trim().min(1).max(1000),
 });
+
+export const feedFiltersSchema = z.object({
+  type: z.enum(["all", "announcement", "question", "event"]),
+  university: z.string().nullable(),
+  date: z.enum(["any", "today", "week", "month"]),
+});

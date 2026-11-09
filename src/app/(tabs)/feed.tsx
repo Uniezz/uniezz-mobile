@@ -1,7 +1,9 @@
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { FlashList } from "@shopify/flash-list";
 import { router } from "expo-router";
 import { useRef, useState } from "react";
+import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import {
   Keyboard,
@@ -17,6 +19,7 @@ import { FeaturedPosts, FeedFilters, FeedPostCard } from "@/components/feed";
 import type { FeedFilterValues } from "@/@types/feed";
 import { useFeedPosts } from "@/hooks/useFeed";
 import { useMyProfile } from "@/hooks/useMyProfile";
+import { feedFiltersSchema } from "@/schemas";
 import {
   Icon,
   UIAvatar,
@@ -34,6 +37,7 @@ import {
   datePresetFrom,
   HEADER_COMPACT_OFFSET,
   HEADER_TRANSITION,
+  INITIAL_FILTERS,
   toSearchQuery,
 } from "@/utils";
 
@@ -42,15 +46,12 @@ export default function FeedScreen() {
   const [search, setSearch] = useState("");
   // the feed filters by `query`, applied only on submit; `search` is the text being typed
   const [query, setQuery] = useState("");
-  const handleSearchSubmit = () => {
-    setQuery(search);
-    Keyboard.dismiss();
-  };
   const [isSearching, setIsSearching] = useState(false);
-  const [filters, setFilters] = useState<FeedFilterValues>({
-    type: "all",
-    university: null,
-    date: "any",
+  // the sheet edits the form; the feed uses `filters`, copied across when the sheet closes
+  const [filters, setFilters] = useState(INITIAL_FILTERS);
+  const { control, reset, handleSubmit } = useForm<FeedFilterValues>({
+    resolver: zodResolver(feedFiltersSchema),
+    defaultValues: INITIAL_FILTERS,
   });
   const { data: profile } = useMyProfile();
   const filtersRef = useRef<BottomSheetModal>(null);
@@ -65,10 +66,18 @@ export default function FeedScreen() {
   const handleHeaderLayout = (event: LayoutChangeEvent) => {
     setHeaderHeight(event.nativeEvent.layout.height);
   };
+  const handleSearchSubmit = () => {
+    setQuery(search);
+    Keyboard.dismiss();
+  };
   // the search field only exists while the keyboard is up; blurring it closes it, the query stays
   const handleSearchPress = () => setIsSearching(true);
   const handleSearchBlur = () => setIsSearching(false);
-  const handleFiltersPress = () => filtersRef.current?.present();
+  const handleFiltersPress = () => {
+    reset(filters);
+    filtersRef.current?.present();
+  };
+  const handleFiltersDismiss = handleSubmit(setFilters);
   const handleProfilePress = () => router.push("/profile");
   const handleNewPostPress = () => router.push("/feed/new");
   const isNewPostShown = isHeaderCompact || Boolean(query);
@@ -89,6 +98,7 @@ export default function FeedScreen() {
     hasNextPage,
     isFetchingNextPage,
     isRefetching,
+    isPlaceholderData,
   } = useFeedPosts(feedFilters);
   const posts = data?.pages.flatMap((page) => page.items ?? []) ?? [];
 
@@ -154,6 +164,8 @@ export default function FeedScreen() {
       />
       <FlashList
         onScroll={handleScroll}
+        // shortcut: a card can shift when an image above it loads, turn anchoring back on if that shows up
+        maintainVisibleContentPosition={{ disabled: true }}
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
         progressViewOffset={headerHeight}
@@ -161,7 +173,8 @@ export default function FeedScreen() {
         keyExtractor={(post) => post.id}
         contentContainerStyle={styles.list(headerHeight)}
         onRefresh={refetch}
-        refreshing={isRefetching}
+        // placeholder data is the previous filter's posts, so that fetch is not a pull
+        refreshing={isRefetching && !isPlaceholderData}
         onEndReached={() => {
           if (hasNextPage && !isFetchingNextPage) return fetchNextPage();
         }}
@@ -201,9 +214,13 @@ export default function FeedScreen() {
         placeholder={t("feed.search")}
         submitLabel={t("topbar.search")}
       />
-      <UIBottomSheet ref={filtersRef} title={t("feed.filtersTitle")}>
+      <UIBottomSheet
+        ref={filtersRef}
+        title={t("feed.filtersTitle")}
+        onDismiss={handleFiltersDismiss}
+      >
         <BottomSheetView style={styles.filtersSheet}>
-          <FeedFilters value={filters} onChange={setFilters} />
+          <FeedFilters control={control} />
         </BottomSheetView>
       </UIBottomSheet>
     </UIPage>
