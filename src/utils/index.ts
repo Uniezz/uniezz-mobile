@@ -13,3 +13,4 @@ export * from "./splash";
 export * from "./sheet";
 export * from "./header";
 export * from "./id";
+export * from "./chat";

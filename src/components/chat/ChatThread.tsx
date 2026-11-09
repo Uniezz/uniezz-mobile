@@ -1,133 +1,90 @@
+import { FlashList } from "@shopify/flash-list";
 import { useTranslation } from "react-i18next";
-import { View } from "react-native";
-import {
-  Bubble,
-  Day,
-  GiftedChat,
-  InputToolbar,
-  Send,
-} from "react-native-gifted-chat";
+import { ScrollViewProps, View } from "react-native";
+import { KeyboardChatScrollView } from "react-native-keyboard-controller";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
 import type { ChatMessage } from "@/@types/chat";
-import { Icon } from "@/ui";
+import { UIText } from "@/ui";
+import { chatDay, isSameDay } from "@/utils";
 
-export function ChatThread({
-  messages,
-  onSend,
-}: {
+// lifts the latest messages with the keyboard, like the post comments;
+// the list ends above the home indicator (UIPage pads it), which the keyboard already covers
+const ThreadScrollView = (props: ScrollViewProps) => {
+  const { bottom } = useSafeAreaInsets();
+  return <KeyboardChatScrollView {...props} offset={bottom} />;
+};
+
+type ChatThreadProps = {
+  /** oldest first */
   messages: ChatMessage[];
-  onSend: (messages: ChatMessage[]) => void;
-}) {
-  const { t } = useTranslation();
+  /** the composer floats over the list's end, so the list reserves its height */
+  composerHeight: number;
+};
+
+export function ChatThread({ messages, composerHeight }: ChatThreadProps) {
+  const { t, i18n } = useTranslation();
+  const locale = i18n.resolvedLanguage ?? "en";
+
   return (
-    <GiftedChat<ChatMessage>
-      messages={messages}
-      onSend={onSend}
-      user={{ _id: "me" }}
-      colorScheme="dark"
-      renderAvatar={null}
-      textInputProps={{
-        placeholder: t("app.message"),
-        placeholderTextColor: styles.placeholder.color,
-        style: styles.input,
+    <FlashList
+      renderScrollComponent={ThreadScrollView}
+      data={messages}
+      keyExtractor={(message) => message.id}
+      // opens on the latest message and follows new ones while the reader is near the end
+      maintainVisibleContentPosition={{
+        startRenderingFromBottom: true,
+        autoscrollToBottomThreshold: 0.2,
       }}
-      renderDay={(props) => (
-        <Day {...props} textProps={{ style: styles.dayText }} />
-      )}
-      renderBubble={(props) => (
-        <Bubble
-          {...props}
-          wrapperStyle={{ left: styles.bubbleLeft, right: styles.bubbleRight }}
-          textStyle={{ left: styles.bubbleText, right: styles.bubbleText }}
-        />
-      )}
-      renderInputToolbar={(props) => (
-        <InputToolbar
-          {...props}
-          containerStyle={styles.toolbar}
-          primaryStyle={styles.toolbarRow}
-        />
-      )}
-      renderSend={(props) => (
-        <Send
-          {...props}
-          isSendButtonAlwaysVisible
-          containerStyle={styles.sendContainer}
-          sendButtonProps={{ accessibilityLabel: t("app.send") }}
-        >
-          <View style={styles.send}>
-            <Icon
-              name="arrow-up"
-              size={18}
-              uniProps={(theme) => ({ color: theme.colors.ink })}
-            />
+      keyboardDismissMode="interactive"
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={styles.list(composerHeight)}
+      renderItem={({ item, index }) => {
+        const previous = messages[index - 1];
+        const isNewDay =
+          !previous || !isSameDay(previous.createdAt, item.createdAt);
+        return (
+          <View style={styles.item}>
+            {isNewDay ? (
+              <UIText
+                size="xs"
+                weight="medium"
+                color="secondary"
+                style={styles.day}
+              >
+                {chatDay(item.createdAt, locale, t("feed.today"))}
+              </UIText>
+            ) : null}
+            <View style={styles.bubble(item.mine)}>
+              <UIText>{item.text}</UIText>
+            </View>
           </View>
-        </Send>
-      )}
+        );
+      }}
     />
   );
 }
 
 const styles = StyleSheet.create((theme) => ({
-  dayText: {
-    color: theme.colors.white60,
-    fontFamily: theme.fonts.Geist,
-    fontSize: theme.vs(12),
-    fontWeight: "500",
+  list: (composerHeight: number) => ({
+    paddingBottom: composerHeight,
+  }),
+  item: {
+    paddingBottom: theme.vs(6),
   },
-  bubbleLeft: {
-    backgroundColor: theme.colors.surface60,
-    borderWidth: 1,
-    borderColor: theme.colors.white10,
-    borderRadius: theme.vs(20),
-    paddingVertical: theme.vs(4),
-    paddingHorizontal: theme.s(4),
+  day: {
+    alignSelf: "center",
+    paddingBottom: theme.vs(8),
+  },
+  bubble: (mine: boolean) => ({
+    alignSelf: mine ? "flex-end" : "flex-start",
     maxWidth: theme.s(260),
-  },
-  bubbleRight: {
-    backgroundColor: theme.colors.blue,
-    borderRadius: theme.vs(20),
-    paddingVertical: theme.vs(4),
-    paddingHorizontal: theme.s(4),
-    maxWidth: theme.s(260),
-  },
-  bubbleText: {
-    color: theme.colors.white,
-    fontFamily: theme.fonts.Geist,
-    fontSize: theme.vs(15),
-    lineHeight: theme.vs(15 * 1.4),
-  },
-  toolbar: {
-    backgroundColor: "transparent",
-    borderTopWidth: 0,
-  },
-  toolbarRow: {
-    alignItems: "center",
-    gap: theme.s(8),
-  },
-  input: {
-    flex: 1,
-    minHeight: theme.vs(44),
-    borderRadius: theme.vs(22),
-    borderWidth: 1,
+    paddingVertical: theme.vs(10),
+    paddingHorizontal: theme.s(14),
+    borderRadius: theme.vs(16),
+    borderWidth: mine ? 0 : 1,
     borderColor: theme.colors.white10,
-    backgroundColor: theme.colors.surface60,
-    paddingHorizontal: theme.s(16),
-    paddingTop: theme.vs(12),
-    color: theme.colors.white,
-    fontFamily: theme.fonts.Geist,
-    fontSize: theme.vs(16),
-  },
-  placeholder: { color: theme.colors.white60 },
-  sendContainer: {
-    justifyContent: "center",
-  },
-  send: {
-    width: theme.vs(44),
-    height: theme.vs(44),
-    borderRadius: theme.vs(22),
-    backgroundColor: theme.colors.white,
-    alignItems: "center",
-    justifyContent: "center",
-  },
+    backgroundColor: mine ? theme.colors.blue : theme.colors.surface60,
+  }),
 }));

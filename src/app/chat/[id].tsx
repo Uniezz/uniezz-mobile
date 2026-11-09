@@ -1,13 +1,19 @@
-import { usePostHog } from "posthog-react-native";
-import { captureAction } from "@/utils/analytics";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { router, useLocalSearchParams } from "expo-router";
+import { usePostHog } from "posthog-react-native";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { Pressable, View } from "react-native";
+import { LayoutChangeEvent, View } from "react-native";
+import { KeyboardStickyView } from "react-native-keyboard-controller";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
-import type { ChatMessage } from "@/@types/chat";
-import { ChatThread } from "@/components/chat";
+import type { ChatMessage, MessageFormValues } from "@/@types/chat";
+import { ChatThread, MessageComposer } from "@/components/chat";
+import { messageSchema } from "@/schemas";
 import { useChatStore } from "@/store/chat";
-import { Icon, UIAvatar, UIPage, UIText } from "@/ui";
+import { captureAction } from "@/utils/analytics";
+import { Icon, UIAvatar, UIIconButton, UIPage, UIText } from "@/ui";
 
 const emptyMessages: ChatMessage[] = [];
 
@@ -19,18 +25,34 @@ export default function ConversationScreen() {
     state.conversations.find((item) => item.id === id),
   );
   const messages = useChatStore((state) => state.messages[id] ?? emptyMessages);
-  const sendMessages = useChatStore((state) => state.sendMessages);
+  const sendMessage = useChatStore((state) => state.sendMessage);
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { isValid },
+  } = useForm<MessageFormValues>({
+    resolver: zodResolver(messageSchema),
+    defaultValues: { text: "" },
+    mode: "onChange",
+  });
+  const [composerHeight, setComposerHeight] = useState(0);
+  const { bottom: bottomInset } = useSafeAreaInsets();
+  const handleComposerLayout = (event: LayoutChangeEvent) => {
+    setComposerHeight(event.nativeEvent.layout.height);
+  };
 
-  const handleSend = (sent: ChatMessage[]) => {
+  const handleSendPress = handleSubmit(({ text }) => {
     captureAction(posthog, "message_send", "attempted", { storage: "local" });
     try {
-      sendMessages(id, sent);
+      sendMessage(id, text);
+      reset();
       captureAction(posthog, "message_send", "succeeded", { storage: "local" });
     } catch (error) {
       captureAction(posthog, "message_send", "failed", { storage: "local" });
       throw error;
     }
-  };
+  });
 
   const handleBackPress = () => {
     if (router.canGoBack()) {
@@ -44,14 +66,14 @@ export default function ConversationScreen() {
     <UIPage>
       <View style={styles.page}>
         <View style={styles.header}>
-          <Pressable
+          <UIIconButton
+            size="lg"
             accessibilityRole="button"
             accessibilityLabel={t("app.back")}
             onPress={handleBackPress}
-            style={styles.back}
           >
             <Icon name="arrow-left" size={18} />
-          </Pressable>
+          </UIIconButton>
           {conversation ? (
             <>
               <UIAvatar size="sm" />
@@ -69,10 +91,24 @@ export default function ConversationScreen() {
           ) : null}
         </View>
         {conversation ? (
-          <ChatThread messages={messages} onSend={handleSend} />
+          <ChatThread messages={messages} composerHeight={composerHeight} />
         ) : (
           <UIText color="secondary">{t("app.empty")}</UIText>
         )}
+        {conversation ? (
+          // UIPage already lifts the composer off the home indicator; above the keyboard that gap is dropped
+          <KeyboardStickyView
+            offset={{ opened: bottomInset }}
+            style={styles.composer}
+            onLayout={handleComposerLayout}
+          >
+            <MessageComposer
+              control={control}
+              isSendDisabled={!isValid}
+              onSendPress={handleSendPress}
+            />
+          </KeyboardStickyView>
+        ) : null}
       </View>
     </UIPage>
   );
@@ -91,14 +127,20 @@ const styles = StyleSheet.create((theme) => ({
     gap: theme.s(10),
     height: theme.vs(44),
   },
-  back: {
-    width: theme.vs(44),
-    height: theme.vs(44),
-    alignItems: "center",
-    justifyContent: "center",
-  },
   who: {
     flex: 1,
     gap: theme.vs(1),
+  },
+  composer: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    flexDirection: "row",
+    alignItems: "flex-end",
+    gap: theme.s(8),
+    paddingHorizontal: theme.s(16),
+    paddingTop: theme.vs(8),
+    paddingBottom: theme.vs(12),
   },
 }));

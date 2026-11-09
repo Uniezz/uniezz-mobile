@@ -1,4 +1,4 @@
-import { LegendList } from "@legendapp/list/react-native";
+import { FlashList } from "@shopify/flash-list";
 import { useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, View } from "react-native";
@@ -42,7 +42,7 @@ export function MaterialList({
         )
       : [];
   return (
-    <LegendList
+    <FlashList
       style={styles.list}
       contentContainerStyle={styles.listContent}
       data={visible}

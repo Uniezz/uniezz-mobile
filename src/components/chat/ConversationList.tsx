@@ -1,10 +1,11 @@
-import { LegendList } from "@legendapp/list/react-native";
 import { router } from "expo-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { FlashList } from "@shopify/flash-list";
 import { Pressable, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import type { Conversation } from "@/@types/chat";
+import { chatTime } from "@/utils";
 import { Icon, UIAvatar, UIChip, UIIconButton, UISearch, UIText } from "@/ui";
 
 const FILTERS = [
@@ -22,7 +23,8 @@ export function ConversationList({
   onOpen: (id: string) => void;
   onCreate: () => void;
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const locale = i18n.resolvedLanguage ?? "en";
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<(typeof FILTERS)[number][0]>("all");
   const visible = conversations.filter(
@@ -66,11 +68,12 @@ export function ConversationList({
           />
         ))}
       </View>
-      <LegendList
+      <FlashList
         style={styles.list}
         contentContainerStyle={styles.listContent}
         data={filter === "requests" ? [] : visible}
         keyExtractor={(item) => item.id}
+        showsVerticalScrollIndicator={false}
         ListEmptyComponent={
           filter === "requests" ? (
             <UIText color="secondary" style={styles.empty}>
@@ -79,32 +82,40 @@ export function ConversationList({
           ) : null
         }
         renderItem={({ item }) => (
-          <Pressable
-            style={styles.row}
-            accessibilityRole="button"
-            onPress={() => onOpen(item.id)}
-          >
-            <UIAvatar size="lg" />
-            <View style={styles.rowText}>
-              <UIText size="rg" weight="semibold" numberOfLines={1}>
-                {item.name}
-              </UIText>
-              <View style={styles.bottom}>
-                <UIText
-                  size="body"
-                  color={item.unread > 0 ? "white" : "secondary"}
-                  numberOfLines={1}
-                  style={styles.preview}
-                >
-                  {item.preview}
-                </UIText>
-                {item.unread > 0 ? (
-                  <View style={styles.badge}>
-                    <UIText size="xs" weight="semibold">
-                      {item.unread}
-                    </UIText>
-                  </View>
-                ) : null}
+          <Pressable accessibilityRole="button" onPress={() => onOpen(item.id)}>
+            <View style={styles.row}>
+              <UIAvatar size="lg" />
+              <View style={styles.rowText}>
+                <View style={styles.top}>
+                  <UIText
+                    size="rg"
+                    weight="semibold"
+                    numberOfLines={1}
+                    style={styles.name}
+                  >
+                    {item.name}
+                  </UIText>
+                  <UIText size="sm" color="secondary">
+                    {chatTime(item.updatedAt, locale)}
+                  </UIText>
+                </View>
+                <View style={styles.bottom}>
+                  <UIText
+                    size="body"
+                    color={item.unread > 0 ? "white" : "secondary"}
+                    numberOfLines={1}
+                    style={styles.preview}
+                  >
+                    {item.preview}
+                  </UIText>
+                  {item.unread > 0 ? (
+                    <View style={styles.badge}>
+                      <UIText size="xs" weight="semibold">
+                        {item.unread}
+                      </UIText>
+                    </View>
+                  ) : null}
+                </View>
               </View>
             </View>
           </Pressable>
@@ -130,14 +141,10 @@ const styles = StyleSheet.create((theme) => ({
   },
   list: {
     flex: 1,
-    backgroundColor: theme.colors.surface60,
-    borderRadius: theme.vs(24),
-    borderWidth: 1,
-    borderColor: theme.colors.white10,
   },
+  // keeps the last row clear of the tab bar
   listContent: {
-    padding: theme.s(6),
-    paddingBottom: theme.vs(90),
+    paddingBottom: theme.vs(110),
   },
   empty: {
     padding: theme.s(10),
@@ -146,19 +153,29 @@ const styles = StyleSheet.create((theme) => ({
     flexDirection: "row",
     alignItems: "center",
     gap: theme.s(12),
-    padding: theme.s(10),
+    // lines up with the search and filters; the page already pads the sides
+    paddingVertical: theme.vs(10),
   },
   rowText: {
     flex: 1,
     gap: theme.vs(3),
+  },
+  top: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: theme.s(8),
+  },
+  name: {
+    flex: 1,
   },
   bottom: {
     flexDirection: "row",
     alignItems: "center",
     gap: theme.s(8),
   },
+  // badge sits right after the preview, not pinned to the edge
   preview: {
-    flex: 1,
+    flexShrink: 1,
   },
   badge: {
     paddingVertical: theme.vs(1),

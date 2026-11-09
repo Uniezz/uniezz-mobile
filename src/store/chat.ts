@@ -1,7 +1,9 @@
 import { create } from "zustand";
 import type { ChatStore } from "@/@types/chat";
+import { idempotencyKey } from "@/utils";
 
 let nextGroupId = 1;
+const MINUTE = 60 * 1000;
 
 const initialConversations = [
   {
@@ -10,6 +12,7 @@ const initialConversations = [
     preview: "See you after class!",
     group: false,
     unread: 2,
+    updatedAt: Date.now() - 2 * MINUTE,
   },
   {
     id: "mechatronika",
@@ -17,6 +20,7 @@ const initialConversations = [
     preview: "Who has the notes?",
     group: true,
     unread: 1,
+    updatedAt: Date.now() - 18 * MINUTE,
   },
   {
     id: "taras",
@@ -24,6 +28,7 @@ const initialConversations = [
     preview: "Thanks for the help",
     group: false,
     unread: 0,
+    updatedAt: Date.now() - 60 * MINUTE,
   },
   {
     id: "erasmus",
@@ -31,6 +36,7 @@ const initialConversations = [
     preview: "Friday works for me",
     group: true,
     unread: 0,
+    updatedAt: Date.now() - 180 * MINUTE,
   },
   {
     id: "anna",
@@ -38,6 +44,7 @@ const initialConversations = [
     preview: "Sent the document",
     group: false,
     unread: 0,
+    updatedAt: Date.now() - 1440 * MINUTE,
   },
 ];
 
@@ -54,17 +61,25 @@ export const useChatStore = create<ChatStore>((set) => ({
           preview: `${members.length} members`,
           group: true,
           unread: 0,
+          updatedAt: Date.now(),
         },
         ...state.conversations,
       ],
     }));
     return id;
   },
-  sendMessages: (id, messages) =>
+  // messages are kept oldest first, the order the thread shows them
+  sendMessage: (id, text) =>
     set((state) => ({
+      conversations: state.conversations.map((item) =>
+        item.id === id ? { ...item, updatedAt: Date.now() } : item,
+      ),
       messages: {
         ...state.messages,
-        [id]: [...messages, ...(state.messages[id] ?? [])],
+        [id]: [
+          ...(state.messages[id] ?? []),
+          { id: idempotencyKey(), text, createdAt: Date.now(), mine: true },
+        ],
       },
     })),
   reset: () => {

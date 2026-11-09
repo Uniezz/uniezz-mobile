@@ -1,0 +1,27 @@
+diff --git a/lib/module/index.js b/lib/module/index.js
+index cf40247047702118014f531779a7c45d54c6d3f0..8ec9780e5381d2f69a30cf35841c9adb02f3c4ad 100644
+--- a/lib/module/index.js
++++ b/lib/module/index.js
+@@ -62,8 +62,7 @@ export const Skeleton = ({
+     }, style],
+     children: [/*#__PURE__*/_jsx(EaseView, {
+       style: [StyleSheet.absoluteFillObject, {
+-        backgroundColor: activeColors[1],
+-        opacity: 0
++        backgroundColor: activeColors[1]
+       }],
+       initialAnimate: {
+         opacity: 0
+diff --git a/src/index.tsx b/src/index.tsx
+index c9c2fae2eb199ada8d2187cdc57fbc373e418813..3c2f37b7ed695e1557780dc02bbb2959f0f857a2 100644
+--- a/src/index.tsx
++++ b/src/index.tsx
+@@ -84,7 +84,7 @@ export const Skeleton = ({
+       <EaseView
+         style={[
+           StyleSheet.absoluteFillObject,
+-          { backgroundColor: activeColors[1], opacity: 0 },
++          { backgroundColor: activeColors[1] },
+         ]}
+         initialAnimate={{ opacity: 0 }}
+         animate={{ opacity: 1 }}
