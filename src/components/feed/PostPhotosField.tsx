@@ -3,11 +3,11 @@ import { captureAction } from "@/utils/analytics";
 import { Image } from "expo-image";
 import { launchImageLibraryAsync } from "expo-image-picker";
 import { useTranslation } from "react-i18next";
-import { Pressable, ScrollView, View } from "react-native";
+import { Pressable, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import type { PickedImage } from "@/@types/media";
-import { Icon, UIText } from "@/ui";
+import { Icon, UIFadeScrollView, UIText } from "@/ui";
 import { isImageType, MAX_IMAGE_MB, MAX_POST_PHOTOS } from "@/utils";
 
 type PostPhotosFieldProps = {
@@ -66,9 +66,10 @@ export const PostPhotosField = ({ value, onChange }: PostPhotosFieldProps) => {
           {value.length} / {MAX_POST_PHOTOS}
         </UIText>
       </View>
-      <ScrollView
+      <UIFadeScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
+        style={styles.scroller}
         contentContainerStyle={styles.row}
       >
         {value.length < MAX_POST_PHOTOS ? (
@@ -100,7 +101,7 @@ export const PostPhotosField = ({ value, onChange }: PostPhotosFieldProps) => {
             </Pressable>
           </View>
         ))}
-      </ScrollView>
+      </UIFadeScrollView>
       <UIText size="xs" color="secondary" style={styles.hint}>
         {t("postComposer.photosHint")}
       </UIText>
@@ -117,17 +118,21 @@ const styles = StyleSheet.create((theme) => ({
     justifyContent: "space-between",
     paddingHorizontal: theme.s(4),
   },
+  // bleeds past the page's side padding, so photos scroll to the screen edge instead of clipping 20pt in
+  scroller: {
+    marginHorizontal: -theme.s(20),
+  },
   row: {
     gap: theme.s(8),
+    paddingHorizontal: theme.s(20),
   },
   add: {
     width: theme.vs(84),
     height: theme.vs(84),
     borderRadius: theme.vs(16),
     borderWidth: 1,
-    borderStyle: "dashed",
-    borderColor: theme.colors.white20,
-    backgroundColor: theme.colors.surface60,
+    borderColor: theme.colors.white12,
+    backgroundColor: theme.colors.white3,
     alignItems: "center",
     justifyContent: "center",
   },

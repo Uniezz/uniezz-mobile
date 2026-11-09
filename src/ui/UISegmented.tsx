@@ -42,10 +42,10 @@ export const UISegmented = ({
 const styles = StyleSheet.create((theme) => ({
   container: {
     gap: theme.s(3),
-    borderRadius: theme.vs(999),
-    backgroundColor: theme.colors.surface60,
+    borderRadius: theme.vs(16),
+    backgroundColor: theme.colors.white3,
     borderWidth: 1,
-    borderColor: theme.colors.white10,
+    borderColor: theme.colors.white12,
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: theme.vs(3),
@@ -57,7 +57,7 @@ const styles = StyleSheet.create((theme) => ({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: theme.vs(999),
-    height: theme.vs(34),
+    borderRadius: theme.vs(10),
+    height: theme.vs(36),
   }),
 }));

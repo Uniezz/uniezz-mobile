@@ -12,6 +12,7 @@ export { FeedFilters } from "./FeedFilters";
 export { PostEventField } from "./PostEventField";
 export { PostPhotosField } from "./PostPhotosField";
 export { PostTagsField } from "./PostTagsField";
+export { PostTag } from "./PostTag";
 export { AuthorRow } from "./AuthorRow";
 export { PostCard } from "./PostCard";
 export { PostSummary } from "./PostSummary";

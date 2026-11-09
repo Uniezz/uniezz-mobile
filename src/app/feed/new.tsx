@@ -1,10 +1,18 @@
 import { usePostHog } from "posthog-react-native";
 import { captureAction } from "@/utils/analytics";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { HEADER_COMPACT_OFFSET } from "@/utils";
 import { router } from "expo-router";
 import { Controller, useForm, useWatch } from "react-hook-form";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Pressable, View } from "react-native";
+import {
+  LayoutChangeEvent,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  Pressable,
+  View,
+} from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
@@ -22,7 +30,14 @@ import { useCreateFeedPost } from "@/hooks/useCreateFeedPost";
 import { useMyProfile } from "@/hooks/useMyProfile";
 import { useUniversities } from "@/hooks/useUniversities";
 import { newPostSchema } from "@/schemas";
-import { Icon, UIGlass, UIPage, UISegmented, UIText } from "@/ui";
+import {
+  Icon,
+  UIGlass,
+  UIPage,
+  UISegmented,
+  UIText,
+  UIUniversityLogo,
+} from "@/ui";
 
 const POST_TYPES = ["question", "announcement", "event"] as const;
 
@@ -61,13 +76,19 @@ export default function NewPostScreen() {
   const audiences = [
     {
       value: "all",
-      icon: "globe",
+      icon: (
+        <Icon
+          name="globe"
+          size={20}
+          uniProps={(theme) => ({ color: theme.colors.white80 })}
+        />
+      ),
       title: t("feed.allStudents"),
       subtitle: t("postComposer.audienceAll"),
     },
     {
       value: "university",
-      icon: "graduation-cap",
+      icon: <UIUniversityLogo id={profile?.universityId ?? ""} size="xs" />,
       title: universityName,
       subtitle: t("postComposer.audienceUniversity", {
         university: universityName,
@@ -109,22 +130,39 @@ export default function NewPostScreen() {
   );
   const handleSubmitPress = () => onSubmit();
 
+  // the header floats over the form; scrolling fades in its blurred backdrop
+  const [headerHeight, setHeaderHeight] = useState(0);
+  // a boolean, so a scroll only re-renders when it flips
+  const [isScrolled, setIsScrolled] = useState(false);
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    setIsScrolled(event.nativeEvent.contentOffset.y > HEADER_COMPACT_OFFSET);
+  };
+  const handleHeaderLayout = (event: LayoutChangeEvent) => {
+    setHeaderHeight(event.nativeEvent.layout.height);
+  };
+
   return (
     <UIPage>
-      <View style={styles.header}>
-        <ComposerHeader
-          title={t("app.newPost")}
-          actionLabel={t("postComposer.post")}
-          disabled={
-            isPending ||
-            !profile ||
-            !newPostSchema.shape.title.safeParse(title).success ||
-            !newPostSchema.shape.content.safeParse(content).success
-          }
-          onAction={handleSubmitPress}
-        />
-      </View>
-      <KeyboardAwareScrollView contentContainerStyle={styles.content}>
+      <ComposerHeader
+        title={t("app.newPost")}
+        actionLabel={t("postComposer.post")}
+        disabled={
+          isPending ||
+          !profile ||
+          !newPostSchema.shape.title.safeParse(title).success ||
+          !newPostSchema.shape.content.safeParse(content).success
+        }
+        onAction={handleSubmitPress}
+        isScrolled={isScrolled}
+        onLayout={handleHeaderLayout}
+      />
+      <KeyboardAwareScrollView
+        onScroll={handleScroll}
+        // taps on buttons (adding a tag) keep the keyboard open
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.content(headerHeight)}
+      >
         <Controller
           control={control}
           name="type"
@@ -208,7 +246,7 @@ export default function NewPostScreen() {
             control={control}
             name="audience"
             render={({ field }) => (
-              <UIGlass radius={24} style={styles.options}>
+              <UIGlass radius={16} style={styles.options}>
                 {audiences.map((option) => {
                   const selected = field.value === option.value;
                   return (
@@ -219,18 +257,16 @@ export default function NewPostScreen() {
                       onPress={() => field.onChange(option.value)}
                       style={styles.option(selected)}
                     >
-                      <Icon
-                        name={option.icon}
-                        size={18}
-                        uniProps={(theme) => ({ color: theme.colors.white80 })}
-                      />
+                      {option.icon}
                       <View style={styles.optionText}>
                         <UIText weight="semibold">{option.title}</UIText>
                         <UIText size="sm" color="secondary">
                           {option.subtitle}
                         </UIText>
                       </View>
-                      <View style={styles.radio(selected)} />
+                      <View style={styles.radio(selected)}>
+                        {selected ? <View style={styles.radioDot} /> : null}
+                      </View>
                     </Pressable>
                   );
                 })}
@@ -243,17 +279,14 @@ export default function NewPostScreen() {
   );
 }
 
-const styles = StyleSheet.create((theme) => ({
-  header: {
-    paddingTop: theme.vs(8),
-    paddingHorizontal: theme.s(16),
-  },
-  content: {
-    gap: theme.vs(20),
-    paddingTop: theme.vs(20),
-    paddingHorizontal: theme.s(16),
+const styles = StyleSheet.create((theme, rt) => ({
+  // UIPage already pads the status bar; the rest of the header height is added here
+  content: (headerHeight: number) => ({
+    gap: theme.vs(24),
+    paddingTop: Math.max(headerHeight - rt.insets.top, 0) + theme.vs(12),
+    paddingHorizontal: theme.s(20),
     paddingBottom: theme.vs(24),
-  },
+  }),
   audience: {
     gap: theme.vs(8),
   },
@@ -261,14 +294,17 @@ const styles = StyleSheet.create((theme) => ({
     paddingHorizontal: theme.s(4),
   },
   options: {
-    padding: theme.s(6),
+    padding: theme.s(4),
+    gap: theme.vs(4),
   },
   option: (selected: boolean) => ({
     flexDirection: "row",
     alignItems: "center",
-    gap: theme.s(12),
+    gap: theme.s(14),
     padding: theme.s(12),
-    borderRadius: theme.vs(18),
+    borderRadius: theme.vs(12),
+    borderWidth: 1,
+    borderColor: selected ? theme.colors.white20 : "transparent",
     backgroundColor: selected ? theme.colors.white5 : "transparent",
   }),
   optionText: {
@@ -279,8 +315,15 @@ const styles = StyleSheet.create((theme) => ({
     width: theme.vs(22),
     height: theme.vs(22),
     borderRadius: theme.vs(11),
-    borderWidth: selected ? theme.vs(6) : 1.5,
-    borderColor: selected ? theme.colors.white : theme.colors.white40,
-    backgroundColor: selected ? theme.colors.ink : "transparent",
+    borderWidth: 1.5,
+    borderColor: selected ? theme.colors.sky : theme.colors.white40,
+    alignItems: "center",
+    justifyContent: "center",
   }),
+  radioDot: {
+    width: theme.vs(10),
+    height: theme.vs(10),
+    borderRadius: theme.vs(5),
+    backgroundColor: theme.colors.sky,
+  },
 }));

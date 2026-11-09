@@ -3,10 +3,11 @@ import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import type { ApiFeedPost } from "@/@types/feed";
 import { Icon, UIText } from "@/ui";
-import { formatTag, postDate } from "@/utils";
+import { postDate } from "@/utils";
 import { AuthorRow } from "./AuthorRow";
 import { LikeButton } from "./LikeButton";
 import { PostMedia } from "./PostMedia";
+import { PostTag } from "./PostTag";
 
 type PostCardProps = {
   post: ApiFeedPost;
@@ -50,9 +51,7 @@ export const PostCard = ({ post }: PostCardProps) => {
       {post.tags?.length ? (
         <View style={[styles.tags, styles.inset]}>
           {post.tags.map((tag) => (
-            <UIText key={tag} size="sm" weight="medium" color="link">
-              {formatTag(tag)}
-            </UIText>
+            <PostTag key={tag} tag={tag} />
           ))}
         </View>
       ) : null}
