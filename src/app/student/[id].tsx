@@ -4,12 +4,14 @@ import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FlashList } from "@shopify/flash-list";
 import {
+  Alert,
   LayoutChangeEvent,
   NativeScrollEvent,
   NativeSyntheticEvent,
   View,
 } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
+import { toast } from "sonner-native";
 import {
   InterestChips,
   ProfileHeader,
@@ -18,6 +20,7 @@ import {
 } from "@/components/profile";
 import { FeedPostCard } from "@/components/feed";
 import { ReportSheet } from "@/components/report";
+import { useBlockStudent } from "@/hooks/useConnections";
 import { useFeedPosts } from "@/hooks/useFeed";
 import { usePublicProfile } from "@/hooks/useProfiles";
 import {
@@ -36,6 +39,7 @@ export default function PublicProfileScreen() {
   const { t } = useTranslation();
   const { data: profile, isPending, isError, refetch } = usePublicProfile(id);
   const reportRef = useRef<BottomSheetModal>(null);
+  const { mutateAsync: block } = useBlockStudent();
   const postFilters = { authorId: id };
   const {
     data: postPages,
@@ -65,15 +69,44 @@ export default function PublicProfileScreen() {
   };
   const handleBackPress = () => router.back();
   const handleReportPress = () => reportRef.current?.present();
+  const confirmBlock = async () => {
+    try {
+      await block(id);
+      toast.success(t("students.blocked"));
+      router.back();
+    } catch {
+      toast.error(t("apiState.error"));
+    }
+  };
+  const handleBlockPress = () =>
+    Alert.alert(t("students.blockTitle"), t("students.blockDescription"), [
+      { text: t("postComposer.cancel"), style: "cancel" },
+      {
+        text: t("students.block"),
+        style: "destructive",
+        onPress: confirmBlock,
+      },
+    ]);
+  // Android alerts hold at most three buttons
+  const handleMorePress = () =>
+    Alert.alert(t("students.actions"), undefined, [
+      { text: t("postComposer.cancel"), style: "cancel" },
+      { text: t("report.user"), onPress: handleReportPress },
+      {
+        text: t("students.block"),
+        style: "destructive",
+        onPress: handleBlockPress,
+      },
+    ]);
   const handleMessagePress = () => router.push("/(tabs)/chat");
 
   const reportAction = profile ? (
     <UIIconButton
       accessibilityRole="button"
-      accessibilityLabel={t("report.user")}
-      onPress={handleReportPress}
+      accessibilityLabel={t("students.actions")}
+      onPress={handleMorePress}
     >
-      <Icon name="flag" size={18} />
+      <Icon name="ellipsis" size={18} />
     </UIIconButton>
   ) : null;
 
@@ -106,6 +139,7 @@ export default function PublicProfileScreen() {
                   name={authorName(profile) || t("apiState.student")}
                   subtitle={profile.email}
                   universityId={profile.universityId}
+                  songUrl={profile.songUrl}
                 >
                   {profile.gender ? (
                     <UIText size="sm" color="secondary">

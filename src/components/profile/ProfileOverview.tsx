@@ -49,6 +49,8 @@ export const ProfileOverview = ({
         name={authorName(profile) || t("apiState.student")}
         subtitle={profile.email}
         universityId={profile.universityId}
+        bannerUrl={profile.bannerUrl}
+        songUrl={profile.songUrl}
         onAvatarPress={onChangePhoto}
         avatarLabel={t("app.changePhoto")}
         isAvatarDisabled={isUploadingPhoto}
@@ -70,9 +72,6 @@ export const ProfileOverview = ({
           <ProgrammeCard key={item.id} programme={item} />
         ))}
       </View>
-      <UIText size="md" weight="semibold">
-        {t("students.posts")}
-      </UIText>
     </View>
   );
 };

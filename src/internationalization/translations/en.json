@@ -148,7 +148,20 @@
     "showMe": "Show me",
     "everyone": "Everyone",
     "women": "Women",
-    "men": "Men"
+    "men": "Men",
+    "cardExpired": "This card has expired. Here's the next one.",
+    "likeLimit": "You've reached today's limit of {{limit}} connects. Try again tomorrow.",
+    "datingRequiresAdult": "Dating is only for students aged 18 or older.",
+    "inCommon": "In common",
+    "interests": "Interests",
+    "closedToMode": "You're not open to this mode yet. Turn it on to see students.",
+    "openToMode": "Turn on",
+    "refresh": "Show more",
+    "viewProfile": "View profile",
+    "matches": "Matches",
+    "removeTitle": "Remove this match?",
+    "removeDescription": "You'll both lose access to each other's full profile.",
+    "removeHint": "Long press to remove the match"
   },
   "exams": {
     "nextExam": "Your next exam",
@@ -167,7 +180,17 @@
     "search": "Search questions",
     "subtitle": "Answers from students in Lublin",
     "title": "FAQ",
-    "empty": "No questions here yet."
+    "empty": "No questions here yet.",
+    "propose": "Suggest a question",
+    "proposalDescription": "Write a question and its answer. A moderator reviews it before it appears.",
+    "question": "Question",
+    "answer": "Answer",
+    "questionError": "Use 3 to 200 characters.",
+    "answerError": "Use 1 to 2000 characters.",
+    "proposalSubmit": "Send",
+    "proposalSent": "Thanks! Your question will appear once a moderator approves it.",
+    "proposalInvalid": "Check the question and answer and try again.",
+    "proposalFailed": "Couldn't send your question. Try again."
   },
   "landing": {
     "navigation": "Page sections",
@@ -406,7 +429,8 @@
     "allUniversitiesHint": "Visible to students of every university",
     "studyLevelDoctoral": "Doctoral",
     "moreOptions": "More options",
-    "students": "Students"
+    "students": "Students",
+    "changeBanner": "Change banner"
   },
   "postComposer": {
     "audience": "Who can see it",
@@ -469,7 +493,9 @@
     "submit": "Send report",
     "sent": "Report sent.",
     "duplicate": "You have already reported this item.",
-    "rateLimit": "You have reached the reporting limit. Try again later."
+    "rateLimit": "You have reached the reporting limit. Try again later.",
+    "candidate": "Report card",
+    "course": "Report course"
   },
   "apiState": {
     "editComment": "Edit comment",
@@ -482,6 +508,8 @@
     "replyingTo": "Replying to {{name}}",
     "like": "Like",
     "unlike": "Unlike",
+    "save": "Save",
+    "unsave": "Unsave",
     "loading": "Loading…",
     "error": "Could not load or save your changes. Please try again.",
     "retry": "Try again",
@@ -520,6 +548,48 @@
     "genderHint": "Can be set only once",
     "posts": "Posts",
     "noPosts": "No posts yet",
-    "profile": "Student profile"
+    "profile": "Student profile",
+    "liked": "Liked",
+    "saved": "Saved",
+    "noLikedPosts": "No liked posts yet",
+    "noSavedPosts": "No saved posts yet",
+    "song": "Song",
+    "songUrlError": "Enter an http or https link up to 500 characters.",
+    "removeBanner": "Remove banner",
+    "actions": "More actions",
+    "block": "Block",
+    "blockTitle": "Block this student?",
+    "blockDescription": "You won't see each other anywhere in uniezz.",
+    "blocked": "Student blocked."
+  },
+  "study": {
+    "typeExam": "Exam",
+    "typeColloquium": "Colloquium",
+    "typeLab": "Lab report",
+    "typeNotes": "Notes",
+    "rateLimit": "You've added a lot in the last hour. Try again later.",
+    "lengthError": "Use 3 to 150 characters.",
+    "semesterError": "Enter a semester from 1 to 10.",
+    "difficultyError": "Pick a difficulty.",
+    "descriptionError": "Use at most 5000 characters.",
+    "rateValue": "{{rating}} of 5",
+    "courseCreated": "Course added.",
+    "addCourse": "Add course",
+    "create": "Add",
+    "name": "Course name",
+    "subject": "Subject",
+    "faculty": "Faculty",
+    "semester": "Semester",
+    "difficulty": "Difficulty",
+    "description": "Description (optional)",
+    "semesterShort": "Semester {{semester}}",
+    "difficultyValue": "Difficulty {{difficulty}}/5",
+    "ratingSummary": "★ {{rating}} ({{votes}})",
+    "noRatings": "No ratings yet",
+    "yourRating": "Your rating",
+    "files": "Files",
+    "comments": "Comments",
+    "noComments": "No comments yet.",
+    "deleteCommentTitle": "Delete this comment?"
   }
 }

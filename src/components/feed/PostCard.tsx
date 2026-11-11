@@ -8,6 +8,7 @@ import { AuthorRow } from "./AuthorRow";
 import { LikeButton } from "./LikeButton";
 import { PostMedia } from "./PostMedia";
 import { PostTag } from "./PostTag";
+import { SaveButton } from "./SaveButton";
 
 type PostCardProps = {
   post: ApiFeedPost;
@@ -64,7 +65,7 @@ export const PostCard = ({ post }: PostCardProps) => {
           liked={post.likedByMe}
           count={post.likesCount}
         />
-        <View style={styles.row}>
+        <View style={[styles.row, styles.grow]}>
           <Icon
             name="users"
             size={14}
@@ -76,6 +77,7 @@ export const PostCard = ({ post }: PostCardProps) => {
               : post.university.toUpperCase()}
           </UIText>
         </View>
+        <SaveButton id={post.id} saved={post.savedByMe} />
       </View>
     </View>
   );
@@ -114,6 +116,9 @@ const styles = StyleSheet.create((theme) => ({
     flexDirection: "row",
     alignItems: "center",
     gap: theme.s(5),
+  },
+  grow: {
+    flex: 1,
   },
   tags: {
     flexDirection: "row",

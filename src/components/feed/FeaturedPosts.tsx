@@ -53,7 +53,7 @@ export const FeaturedPosts = () => {
             style={styles.story}
           >
             <UIImage
-              source={{ uri: event.imageUrl ?? undefined }}
+              source={{ uri: event.imageUrl }}
               fallback={undefined}
               contentFit="cover"
               style={StyleSheet.absoluteFill}

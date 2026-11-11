@@ -8,10 +8,10 @@ import { useForm, useWatch } from "react-hook-form";
 import { useClearByFocusCell } from "react-native-confirmation-code-field";
 import { useRequestOtpCode, useVerifyOtpCode } from "./auth";
 import { useTranslation } from "react-i18next";
-import { ApiRequestError } from "@/api";
+import { apiErrorKey } from "@/utils/apiErrorKey";
 
 export const useOtpScreen = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { university = "" } = useLocalSearchParams<{ university?: string }>();
   const { mutateAsync: requestCode, isPending: isRequesting } =
     useRequestOtpCode();
@@ -69,12 +69,7 @@ export const useOtpScreen = () => {
           await verifyCode({ code: data.code, email: data.email, university });
         }
       } catch (error) {
-        const errorMessage =
-          error instanceof ApiRequestError &&
-          error.translationKey &&
-          i18n.exists(error.translationKey)
-            ? error.translationKey
-            : "common.tryAgain";
+        const errorMessage = apiErrorKey(error, "common.tryAgain");
         setError(data.step, {
           message: errorMessage,
         });

@@ -15,9 +15,9 @@ type CommentComposerProps = {
   control: Control<CommentFormValues>;
   isSendDisabled: boolean;
   onSendPress: () => void;
-  /** the comment being replied to, if any */
-  replyTo: FeedComment | null;
-  onCancelReply: () => void;
+  /** the comment being replied to, if any; comments without replies leave it out */
+  replyTo?: FeedComment | null;
+  onCancelReply?: () => void;
 };
 
 // the comment field under a post; replies when a comment is picked

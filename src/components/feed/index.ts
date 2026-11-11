@@ -19,3 +19,4 @@ export { AuthorRow } from "./AuthorRow";
 export { PostCard } from "./PostCard";
 export { PostSummary } from "./PostSummary";
 export { CommentComposer } from "./CommentComposer";
+export { SaveButton } from "./SaveButton";

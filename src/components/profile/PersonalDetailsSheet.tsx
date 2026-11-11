@@ -47,11 +47,12 @@ export function PersonalDetailsSheet({
   // the API rejects changing a saved gender (gender_immutable)
   const isGenderLocked = Boolean(profile.gender);
   const handleSavePress = handleSubmit(
-    async ({ interests, gender, ...values }) => {
+    async ({ interests, songUrl, gender, ...values }) => {
       try {
         await updateProfile({
           ...values,
           interests: splitInterests(interests),
+          songUrl: songUrl.trim(),
           ...(isGenderLocked || !gender ? {} : { gender }),
         });
         toast.success(t("app.saved"));
@@ -132,6 +133,24 @@ export function PersonalDetailsSheet({
             onChangeText={field.onChange}
             onBlur={field.onBlur}
             errorText={fieldState.error?.message && t(fieldState.error.message)}
+          />
+        )}
+      />
+      <Controller
+        control={control}
+        name="songUrl"
+        render={({ field, fieldState }) => (
+          <UIInput
+            isInSheet
+            captionText={t("students.song")}
+            placeholder="https://…"
+            value={field.value}
+            onChangeText={field.onChange}
+            onBlur={field.onBlur}
+            errorText={fieldState.error?.message && t(fieldState.error.message)}
+            maxLength={500}
+            autoCapitalize="none"
+            inputMode="url"
           />
         )}
       />

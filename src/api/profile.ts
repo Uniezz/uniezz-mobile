@@ -57,3 +57,7 @@ export async function getPublicProfile(id: string) {
 export async function deleteMyAvatar() {
   await api.DELETE("/profile/avatar");
 }
+
+export async function deleteMyBanner() {
+  await api.DELETE("/profile/banner");
+}

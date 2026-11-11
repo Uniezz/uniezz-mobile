@@ -14,7 +14,6 @@ import {
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
-import { ApiRequestError } from "@/api";
 import type { NewPostFormValues } from "@/@types/feed";
 import {
   ComposerHeader,
@@ -30,6 +29,7 @@ import { useMyProfile } from "@/hooks/useMyProfile";
 import { useUniversities } from "@/hooks/useUniversities";
 import { newPostSchema } from "@/schemas";
 import { UIPage, UISegmented } from "@/ui";
+import { apiErrorKey } from "@/utils/apiErrorKey";
 
 const POST_TYPES = ["question", "announcement", "event"] as const;
 
@@ -98,13 +98,7 @@ export default function NewPostScreen() {
         router.back();
       } catch (error) {
         if (!samePhotos(values.photos, getValues("photos"))) return;
-        toast.error(
-          t(
-            error instanceof ApiRequestError && error.translationKey
-              ? error.translationKey
-              : "apiState.error",
-          ),
-        );
+        toast.error(t(apiErrorKey(error)));
       }
     },
     () => captureAction(posthog, "post_create_form", "validation_failed"),

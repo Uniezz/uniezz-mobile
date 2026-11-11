@@ -10,6 +10,7 @@ export type PersonalDetailsFormValues = {
   bio: string;
   interests: string;
   gender: Profile["gender"];
+  songUrl: string;
 };
 export type ProgrammeFormValues = { programme: string; faculty: string } & Pick<
   Programme,

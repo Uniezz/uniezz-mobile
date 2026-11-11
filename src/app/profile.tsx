@@ -9,13 +9,9 @@ import { captureAction } from "@/utils/analytics";
 import { router } from "expo-router";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FlashList } from "@shopify/flash-list";
-import {
-  LayoutChangeEvent,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  View,
-} from "react-native";
+import { LayoutChangeEvent, View } from "react-native";
+import { type CollapsibleRef, Tabs } from "react-native-collapsible-tab-view";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import { useSession } from "@/contexts";
@@ -26,24 +22,27 @@ import {
   useLanguageStore,
 } from "@/store/languageStore";
 import {
+  HeaderScrollWatcher,
+  LikedPosts,
+  OwnPosts,
   PersonalDetailsSheet,
   PrivacySheet,
   ProfileHeader,
   ProfileOverview,
   ProgrammesSheet,
+  SavedPosts,
 } from "@/components/profile";
-import { FeedPostCard } from "@/components/feed";
-import { useFeedPosts } from "@/hooks/useFeed";
 import { launchImageLibraryAsync } from "expo-image-picker";
-import { ApiRequestError } from "@/api";
 import { useUploadImages } from "@/hooks/useMedia";
 import {
   useDeleteMyAvatar,
+  useDeleteMyBanner,
   useMyProfile,
   useUpdateMyProfile,
 } from "@/hooks/useMyProfile";
-import { Icon, UIGlass, UIPage, UIQueryError, UISkeleton, UIText } from "@/ui";
-import { authorName, HEADER_COMPACT_OFFSET } from "@/utils";
+import { Icon, UIGlass, UIPage, UISegmented } from "@/ui";
+import { authorName } from "@/utils";
+import { apiErrorKey } from "@/utils/apiErrorKey";
 
 export default function ProfileScreen() {
   const { t, i18n } = useTranslation();
@@ -51,39 +50,27 @@ export default function ProfileScreen() {
   const { data: profile, isPending, isError, refetch } = useMyProfile();
   const { mutateAsync: deleteAvatar, isPending: isRemovingPhoto } =
     useDeleteMyAvatar();
+  const { mutateAsync: deleteBanner, isPending: isRemovingBanner } =
+    useDeleteMyBanner();
   const { mutateAsync: uploadImages, isPending: isUploadingPhoto } =
     useUploadImages("avatar");
+  const { mutateAsync: uploadBanner, isPending: isUploadingBanner } =
+    useUploadImages("banner");
   const { mutateAsync: updateProfile } = useUpdateMyProfile();
   const { clearSession } = useSession();
   const programmesRef = useRef<BottomSheetModal>(null);
   const detailsRef = useRef<BottomSheetModal>(null);
   const privacyRef = useRef<BottomSheetModal>(null);
-  const postFilters = { authorId: profile?.id };
-  const {
-    data: postPages,
-    isPending: arePostsPending,
-    isError: arePostsError,
-    refetch: refetchPosts,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useFeedPosts(postFilters, {
-    enabled: Boolean(profile),
-  });
-  const posts = profile
-    ? (postPages?.pages.flatMap((page) => page.items ?? []) ?? [])
-    : [];
-  const handleEndReached = () => {
-    if (hasNextPage && !isFetchingNextPage) return fetchNextPage();
-  };
-
-  // the header floats over the list; scrolling blurs it and swaps its title for the name
+  const { top: topInset } = useSafeAreaInsets();
+  const tabsRef = useRef<CollapsibleRef>(null);
+  // own posts, liked posts or saved posts; the switch and a swipe both change it
+  const [tabIndex, setTabIndex] = useState(0);
+  // the header floats over the tabs; scrolling blurs it and swaps its title for the name
   const [headerHeight, setHeaderHeight] = useState(0);
-  // a boolean, so a scroll only re-renders when it flips
   const [isScrolled, setIsScrolled] = useState(false);
-  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    setIsScrolled(event.nativeEvent.contentOffset.y > HEADER_COMPACT_OFFSET);
-  };
+  // UIPage already pads the status bar; the rest of the floating header stays over the tabs
+  const headerOffset = Math.max(headerHeight - topInset, 0);
+  const handleTabPress = (index: number) => tabsRef.current?.setIndex(index);
   const handleHeaderLayout = (event: LayoutChangeEvent) => {
     setHeaderHeight(event.nativeEvent.layout.height);
   };
@@ -97,6 +84,42 @@ export default function ProfileScreen() {
       toast.success(t("app.saved"));
     } catch {
       toast.error(t("apiState.profileSaveError"));
+    }
+  };
+
+  const handleRemoveBannerPress = async () => {
+    try {
+      await deleteBanner();
+      toast.success(t("app.saved"));
+    } catch {
+      toast.error(t("apiState.profileSaveError"));
+    }
+  };
+
+  const handleChangeBannerPress = async () => {
+    captureAction(posthog, "banner_pick", "attempted");
+    const result = await launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [3, 1],
+      quality: 0.8,
+    }).catch((error: unknown) => {
+      captureAction(posthog, "banner_pick", "failed");
+      throw error;
+    });
+    if (result.canceled) {
+      captureAction(posthog, "banner_pick", "cancelled");
+      return;
+    }
+    captureAction(posthog, "banner_pick", "succeeded");
+    if (!result.assets[0]) return;
+    const { uri, mimeType, fileSize } = result.assets[0];
+    try {
+      const [bannerMediaId] = await uploadBanner([{ uri, mimeType, fileSize }]);
+      await updateProfile({ bannerMediaId });
+      toast.success(t("app.saved"));
+    } catch (error) {
+      toast.error(t(apiErrorKey(error, "apiState.profileSaveError")));
     }
   };
 
@@ -123,13 +146,7 @@ export default function ProfileScreen() {
       await updateProfile({ avatarMediaId });
       toast.success(t("app.saved"));
     } catch (error) {
-      toast.error(
-        t(
-          error instanceof ApiRequestError && error.translationKey
-            ? error.translationKey
-            : "apiState.profileSaveError",
-        ),
-      );
+      toast.error(t(apiErrorKey(error, "apiState.profileSaveError")));
     }
   };
 
@@ -156,12 +173,15 @@ export default function ProfileScreen() {
     if (nativeEvent.event === "programmes")
       return programmesRef.current?.present();
     if (nativeEvent.event === "removePhoto") return handleRemovePhotoPress();
+    if (nativeEvent.event === "changeBanner") return handleChangeBannerPress();
+    if (nativeEvent.event === "removeBanner") return handleRemoveBannerPress();
     if (nativeEvent.event === "logout") return handleLogoutPress();
   };
   const menuActions: MenuAction[] = [
     { id: "details", title: t("app.personalDetails") },
     { id: "programmes", title: t("app.studyProgrammes") },
     { id: "privacy", title: t("app.profileVisibility") },
+    { id: "changeBanner", title: t("app.changeBanner") },
     {
       id: "language",
       title: t("language.title"),
@@ -176,6 +196,15 @@ export default function ProfileScreen() {
           {
             id: "removePhoto",
             title: t("students.removePhoto"),
+            attributes: { destructive: true },
+          },
+        ]
+      : []),
+    ...(profile?.bannerUrl && !isRemovingBanner && !isUploadingBanner
+      ? [
+          {
+            id: "removeBanner",
+            title: t("students.removeBanner"),
             attributes: { destructive: true },
           },
         ]
@@ -200,6 +229,30 @@ export default function ProfileScreen() {
     </MenuView>
   ) : null;
 
+  const renderTabsHeader = () => (
+    <View style={styles.overview}>
+      <View style={styles.spacer(headerOffset)} />
+      <ProfileOverview
+        profile={profile}
+        isPending={isPending}
+        isError={isError}
+        onRetry={refetch}
+        onChangePhoto={handleChangePhotoPress}
+        isUploadingPhoto={isUploadingPhoto}
+      />
+      <HeaderScrollWatcher onScrolledChange={setIsScrolled} />
+    </View>
+  );
+  const renderTabBar = () => (
+    <View style={styles.tabBar}>
+      <UISegmented
+        items={[t("students.posts"), t("students.liked"), t("students.saved")]}
+        selectedItemIndex={tabIndex}
+        onPress={handleTabPress}
+      />
+    </View>
+  );
+
   return (
     <UIPage>
       <ProfileHeader
@@ -212,11 +265,31 @@ export default function ProfileScreen() {
         onLayout={handleHeaderLayout}
         onBackPress={handleBackPress}
       />
-      <FlashList
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
-        showsVerticalScrollIndicator={false}
-        ListHeaderComponent={
+      {/* waits for the floating header's height, so the tabs start with the right minHeaderHeight */}
+      {profile && headerHeight > 0 ? (
+        // the overview scrolls away under the floating header; the switch sticks below it
+        <Tabs.Container
+          ref={tabsRef}
+          lazy
+          minHeaderHeight={headerOffset}
+          onIndexChange={setTabIndex}
+          headerContainerStyle={styles.tabsHeader}
+          renderHeader={renderTabsHeader}
+          renderTabBar={renderTabBar}
+        >
+          <Tabs.Tab name="posts">
+            <OwnPosts authorId={profile.id} />
+          </Tabs.Tab>
+          <Tabs.Tab name="liked">
+            <LikedPosts />
+          </Tabs.Tab>
+          <Tabs.Tab name="saved">
+            <SavedPosts />
+          </Tabs.Tab>
+        </Tabs.Container>
+      ) : (
+        <View style={styles.overview}>
+          <View style={styles.spacer(headerOffset)} />
           <ProfileOverview
             profile={profile}
             isPending={isPending}
@@ -225,32 +298,8 @@ export default function ProfileScreen() {
             onChangePhoto={handleChangePhotoPress}
             isUploadingPhoto={isUploadingPhoto}
           />
-        }
-        data={posts}
-        keyExtractor={(post) => post.id}
-        contentContainerStyle={styles.list(headerHeight)}
-        onEndReached={handleEndReached}
-        ListEmptyComponent={
-          !profile ? null : arePostsPending ? (
-            <UISkeleton height={120} />
-          ) : arePostsError ? (
-            <UIQueryError
-              message={t("apiState.error")}
-              onRetry={refetchPosts}
-            />
-          ) : (
-            <UIText color="secondary">{t("students.noPosts")}</UIText>
-          )
-        }
-        ListFooterComponent={
-          isFetchingNextPage ? <UISkeleton height={110} /> : null
-        }
-        renderItem={({ item }) => (
-          <View style={styles.cell}>
-            <FeedPostCard post={item} filters={postFilters} />
-          </View>
-        )}
-      />
+        </View>
+      )}
       {profile ? (
         <>
           <PersonalDetailsSheet
@@ -274,15 +323,21 @@ export default function ProfileScreen() {
   );
 }
 
-const styles = StyleSheet.create((theme, rt) => ({
-  // UIPage already pads the status bar; the rest of the header height is added here
-  list: (headerHeight: number) => ({
-    paddingTop: Math.max(headerHeight - rt.insets.top, 0),
+const styles = StyleSheet.create((theme) => ({
+  // transparent, so posts show through the floating header's blur once the overview is gone
+  tabsHeader: {
+    backgroundColor: "transparent",
+    shadowOpacity: 0,
+    elevation: 0,
+  },
+  overview: {
     paddingHorizontal: theme.s(20),
-    paddingBottom: theme.vs(60),
-  }),
-  cell: {
-    paddingBottom: theme.vs(16),
+  },
+  spacer: (height: number) => ({ height }),
+  tabBar: {
+    paddingHorizontal: theme.s(20),
+    paddingVertical: theme.vs(8),
+    backgroundColor: theme.colors.ink,
   },
   more: {
     width: theme.vs(44),

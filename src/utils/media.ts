@@ -8,6 +8,7 @@ export const IMAGE_TYPES: readonly UploadContentType[] = [
 
 export const MAX_IMAGE_MB: Record<UploadKind, number> = {
   avatar: 5,
+  banner: 10,
   feed: 10,
   chat: 10,
 };

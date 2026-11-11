@@ -152,7 +152,20 @@
     "showMe": "Pokaż mi",
     "everyone": "Wszystkich",
     "women": "Kobiety",
-    "men": "Mężczyzn"
+    "men": "Mężczyzn",
+    "cardExpired": "Ta karta wygasła. Oto następna.",
+    "likeLimit": "Osiągnięto dzisiejszy limit {{limit}} połączeń. Spróbuj jutro.",
+    "datingRequiresAdult": "Randki są tylko dla studentów, którzy mają 18 lat lub więcej.",
+    "inCommon": "Wspólne",
+    "interests": "Zainteresowania",
+    "closedToMode": "Ten tryb nie jest jeszcze włączony. Włącz go, aby zobaczyć studentów.",
+    "openToMode": "Włącz",
+    "refresh": "Pokaż więcej",
+    "viewProfile": "Zobacz profil",
+    "matches": "Dopasowania",
+    "removeTitle": "Usunąć to dopasowanie?",
+    "removeDescription": "Oboje stracicie dostęp do pełnych profili.",
+    "removeHint": "Przytrzymaj, aby usunąć dopasowanie"
   },
   "exams": {
     "nextExam": "Twój najbliższy egzamin",
@@ -173,7 +186,17 @@
     "search": "Szukaj pytań",
     "subtitle": "Odpowiedzi od studentów w Lublinie",
     "title": "FAQ",
-    "empty": "Nie ma tu jeszcze pytań."
+    "empty": "Nie ma tu jeszcze pytań.",
+    "propose": "Zaproponuj pytanie",
+    "proposalDescription": "Napisz pytanie i odpowiedź. Moderator sprawdzi je przed publikacją.",
+    "question": "Pytanie",
+    "answer": "Odpowiedź",
+    "questionError": "Użyj od 3 do 200 znaków.",
+    "answerError": "Użyj od 1 do 2000 znaków.",
+    "proposalSubmit": "Wyślij",
+    "proposalSent": "Dzięki! Pytanie pojawi się po zatwierdzeniu przez moderatora.",
+    "proposalInvalid": "Sprawdź pytanie i odpowiedź i spróbuj ponownie.",
+    "proposalFailed": "Nie udało się wysłać pytania. Spróbuj ponownie."
   },
   "landing": {
     "navigation": "Sekcje strony",
@@ -412,7 +435,8 @@
     "allUniversitiesHint": "Widoczne dla studentów wszystkich uczelni",
     "studyLevelDoctoral": "Doktoranckie",
     "moreOptions": "Więcej opcji",
-    "students": "Studenci"
+    "students": "Studenci",
+    "changeBanner": "Zmień baner"
   },
   "postComposer": {
     "audience": "Kto może to zobaczyć",
@@ -475,7 +499,9 @@
     "submit": "Wyślij zgłoszenie",
     "sent": "Zgłoszenie wysłane.",
     "duplicate": "Ten element został już zgłoszony.",
-    "rateLimit": "Osiągnięto limit zgłoszeń. Spróbuj ponownie później."
+    "rateLimit": "Osiągnięto limit zgłoszeń. Spróbuj ponownie później.",
+    "candidate": "Zgłoś kartę",
+    "course": "Zgłoś przedmiot"
   },
   "apiState": {
     "editComment": "Edytuj komentarz",
@@ -488,6 +514,8 @@
     "replyingTo": "Odpowiedź dla {{name}}",
     "like": "Polub",
     "unlike": "Usuń polubienie",
+    "save": "Zapisz",
+    "unsave": "Usuń z zapisanych",
     "loading": "Ładowanie…",
     "error": "Nie udało się wczytać lub zapisać zmian. Spróbuj ponownie.",
     "retry": "Spróbuj ponownie",
@@ -526,6 +554,48 @@
     "genderHint": "Można ustawić tylko raz",
     "posts": "Posty",
     "noPosts": "Brak postów",
-    "profile": "Profil studenta"
+    "profile": "Profil studenta",
+    "liked": "Polubione",
+    "saved": "Zapisane",
+    "noLikedPosts": "Brak polubionych postów",
+    "noSavedPosts": "Brak zapisanych postów",
+    "song": "Piosenka",
+    "songUrlError": "Podaj link http lub https o długości do 500 znaków.",
+    "removeBanner": "Usuń baner",
+    "actions": "Więcej działań",
+    "block": "Zablokuj",
+    "blockTitle": "Zablokować tego studenta?",
+    "blockDescription": "Nie będziecie się widzieć nigdzie w uniezz.",
+    "blocked": "Student zablokowany."
+  },
+  "study": {
+    "typeExam": "Egzamin",
+    "typeColloquium": "Kolokwium",
+    "typeLab": "Sprawozdanie",
+    "typeNotes": "Notatki",
+    "rateLimit": "Dodano dużo w ostatniej godzinie. Spróbuj później.",
+    "lengthError": "Użyj od 3 do 150 znaków.",
+    "semesterError": "Podaj semestr od 1 do 10.",
+    "difficultyError": "Wybierz trudność.",
+    "descriptionError": "Użyj najwyżej 5000 znaków.",
+    "rateValue": "{{rating}} z 5",
+    "courseCreated": "Dodano przedmiot.",
+    "addCourse": "Dodaj przedmiot",
+    "create": "Dodaj",
+    "name": "Nazwa przedmiotu",
+    "subject": "Dziedzina",
+    "faculty": "Wydział",
+    "semester": "Semestr",
+    "difficulty": "Trudność",
+    "description": "Opis (opcjonalnie)",
+    "semesterShort": "Semestr {{semester}}",
+    "difficultyValue": "Trudność {{difficulty}}/5",
+    "ratingSummary": "★ {{rating}} ({{votes}})",
+    "noRatings": "Brak ocen",
+    "yourRating": "Twoja ocena",
+    "files": "Pliki",
+    "comments": "Komentarze",
+    "noComments": "Brak komentarzy.",
+    "deleteCommentTitle": "Usunąć ten komentarz?"
   }
 }

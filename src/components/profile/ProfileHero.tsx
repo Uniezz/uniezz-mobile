@@ -1,7 +1,10 @@
+import * as WebBrowser from "expo-web-browser";
 import type { ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 import { Pressable, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { Icon, UIAvatar, UIGlass, UIText } from "@/ui";
+import { toast } from "sonner-native";
+import { Icon, UIAvatar, UIGlass, UIImage, UIText } from "@/ui";
 import { UniversityCard } from "./UniversityCard";
 
 type ProfileHeroProps = {
@@ -9,6 +12,10 @@ type ProfileHeroProps = {
   name: string;
   subtitle?: string | null;
   universityId: string;
+  /** cover image above the identity, e.g. the student's banner */
+  bannerUrl?: string | null;
+  /** link the student associates with themselves, opened in the browser */
+  songUrl?: string | null;
   /** makes the avatar a button with a camera badge, e.g. to pick a new photo */
   onAvatarPress?: () => void;
   avatarLabel?: string;
@@ -22,49 +29,88 @@ export const ProfileHero = ({
   name,
   subtitle,
   universityId,
+  bannerUrl,
+  songUrl,
   onAvatarPress,
   avatarLabel,
   isAvatarDisabled,
   children,
-}: ProfileHeroProps) => (
-  <View style={styles.hero}>
-    <UIGlass radius={24} style={styles.card}>
-      <View style={styles.identity}>
-        {onAvatarPress ? (
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={avatarLabel}
-            disabled={isAvatarDisabled}
-            onPress={onAvatarPress}
-          >
+}: ProfileHeroProps) => {
+  const { t } = useTranslation();
+  const handleSongPress = async () => {
+    if (!songUrl) return;
+    try {
+      await WebBrowser.openBrowserAsync(songUrl);
+    } catch {
+      toast.error(t("apiState.error"));
+    }
+  };
+
+  return (
+    <View style={styles.hero}>
+      <UIGlass radius={24} style={styles.card}>
+        {bannerUrl ? (
+          <UIImage
+            source={{ uri: bannerUrl }}
+            fallback={undefined}
+            contentFit="cover"
+            style={styles.banner}
+          />
+        ) : null}
+        <View style={styles.identity}>
+          {onAvatarPress ? (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={avatarLabel}
+              disabled={isAvatarDisabled}
+              onPress={onAvatarPress}
+            >
+              <UIAvatar size="xxl" imageSrc={avatar} style={styles.avatar} />
+              <View style={styles.badge}>
+                <Icon
+                  name="camera"
+                  size={15}
+                  uniProps={(theme) => ({ color: theme.colors.ink })}
+                />
+              </View>
+            </Pressable>
+          ) : (
             <UIAvatar size="xxl" imageSrc={avatar} style={styles.avatar} />
-            <View style={styles.badge}>
-              <Icon
-                name="camera"
-                size={15}
-                uniProps={(theme) => ({ color: theme.colors.ink })}
-              />
-            </View>
-          </Pressable>
-        ) : (
-          <UIAvatar size="xxl" imageSrc={avatar} style={styles.avatar} />
-        )}
-        <View style={styles.text}>
-          <UIText size="xxl" weight="semibold" style={styles.name}>
-            {name}
-          </UIText>
-          {subtitle ? (
-            <UIText size="body" weight="medium" color="soft">
-              {subtitle}
+          )}
+          <View style={styles.text}>
+            <UIText size="xxl" weight="semibold" style={styles.name}>
+              {name}
             </UIText>
-          ) : null}
+            {subtitle ? (
+              <UIText size="body" weight="medium" color="soft">
+                {subtitle}
+              </UIText>
+            ) : null}
+          </View>
         </View>
-      </View>
-      <UniversityCard universityId={universityId} />
-    </UIGlass>
-    {children}
-  </View>
-);
+        <UniversityCard universityId={universityId} />
+        {songUrl ? (
+          <Pressable
+            accessibilityRole="link"
+            accessibilityLabel={t("students.song")}
+            onPress={handleSongPress}
+            style={styles.song}
+          >
+            <Icon
+              name="music"
+              size={14}
+              uniProps={(theme) => ({ color: theme.colors.white60 })}
+            />
+            <UIText size="sm" color="link" numberOfLines={1}>
+              {new URL(songUrl).host}
+            </UIText>
+          </Pressable>
+        ) : null}
+      </UIGlass>
+      {children}
+    </View>
+  );
+};
 
 const styles = StyleSheet.create((theme) => ({
   hero: {
@@ -75,6 +121,10 @@ const styles = StyleSheet.create((theme) => ({
     gap: theme.vs(8),
     borderColor: theme.colors.white20,
     backgroundColor: theme.colors.white3,
+  },
+  banner: {
+    height: theme.vs(96),
+    borderRadius: theme.vs(16),
   },
   identity: {
     alignItems: "center",
@@ -112,5 +162,12 @@ const styles = StyleSheet.create((theme) => ({
   },
   name: {
     textAlign: "center",
+  },
+  song: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: theme.s(5),
+    paddingVertical: theme.vs(8),
+    paddingHorizontal: theme.s(10),
   },
 }));

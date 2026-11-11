@@ -6,6 +6,7 @@ import { Pressable, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import type { Conversation } from "@/@types/chat";
 import { chatTime } from "@/utils";
+import { ConnectionAvatarList } from "./ConnectionAvatarList";
 import {
   Icon,
   UIAvatar,
@@ -77,6 +78,7 @@ export function ConversationList({
             />
           ))}
         </View>
+        <ConnectionAvatarList />
         <FlashList
           style={styles.list}
           contentContainerStyle={styles.listContent}
