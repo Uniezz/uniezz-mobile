@@ -570,6 +570,7 @@
     "blocked": "Student blocked."
   },
   "study": {
+    "filters": "Filters",
     "typeExam": "Exam",
     "typeColloquium": "Colloquium",
     "typeLab": "Lab report",
@@ -590,6 +591,7 @@
     "difficulty": "Difficulty",
     "description": "Description (optional)",
     "semesterShort": "Semester {{semester}}",
+    "anySemester": "Any semester",
     "difficultyValue": "Difficulty {{difficulty}}/5",
     "averageRating": "Average rating",
     "ratingSummary": "{{rating}} ({{votes}})",

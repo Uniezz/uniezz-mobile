@@ -1,4 +1,5 @@
 import type { ComponentProps } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, View } from "react-native";
 import { SymbolView } from "expo-symbols";
@@ -38,10 +39,15 @@ export function StudyRow({
   onPress,
 }: StudyRowProps) {
   const { t } = useTranslation();
+  const [myRating, setMyRating] = useState(0);
+  const handleRatingChange = (value: number) => {
+    setMyRating(value);
+    onRate?.(value);
+  };
 
   return (
     <Pressable accessibilityRole="button" onPress={onPress} style={styles.cell}>
-      <UIGlass radius={16} style={styles.row}>
+      <UIGlass radius={16} style={styles.row(rating !== undefined)}>
         {icon ? (
           <View style={styles.tile}>
             <Icon
@@ -51,7 +57,7 @@ export function StudyRow({
             />
           </View>
         ) : null}
-        <View style={styles.text}>
+        <View style={styles.text(rating !== undefined)}>
           <UIText weight="semibold" numberOfLines={1}>
             {title}
           </UIText>
@@ -86,42 +92,46 @@ export function StudyRow({
               </View>
             )}
           </View>
-          {rating === undefined ? null : (
-            <View style={styles.ratingRow}>
-              <View style={styles.ratingSummary}>
-                <UIText size="xs" color="secondary">
-                  {t("study.averageRating")}
-                </UIText>
-                {rating > 0 ? (
-                  <View style={styles.average}>
-                    <ThemedSymbol
-                      name={{ ios: "star.fill", android: "star", web: "star" }}
-                      size={14}
-                    />
-                    <UIText size="xs" color="secondary">
-                      {t("study.ratingSummary", {
-                        rating: rating.toFixed(1),
-                        votes: ratingCount ?? 0,
-                      })}
-                    </UIText>
-                  </View>
-                ) : (
-                  <UIText size="xs" color="secondary">
-                    {t("study.noRatings")}
+        </View>
+        {rating === undefined ? null : (
+          <View style={styles.ratingRow}>
+            <View style={styles.ratingSummary}>
+              <UIText size="xs" color="secondary">
+                {t("study.averageRating")}
+              </UIText>
+              {rating > 0 ? (
+                <View style={styles.average}>
+                  <UIText size="xs" style={styles.star}>
+                    ★
                   </UIText>
-                )}
-              </View>
-              {onRate ? (
+                  <UIText size="xs" color="secondary">
+                    {t("study.ratingSummary", {
+                      rating: rating.toFixed(1),
+                      votes: ratingCount ?? 0,
+                    })}
+                  </UIText>
+                </View>
+              ) : (
+                <UIText size="xs" color="secondary">
+                  {t("study.noRatings")}
+                </UIText>
+              )}
+            </View>
+            {onRate ? (
+              <View style={styles.myRating}>
+                <UIText size="xs" color="secondary">
+                  {t("study.yourRating")}
+                </UIText>
                 <RatingInput
-                  value={rating}
-                  onChange={onRate}
+                  value={myRating}
+                  onChange={handleRatingChange}
                   disabled={isRating}
                   size="compact"
                 />
-              ) : null}
-            </View>
-          )}
-        </View>
+              </View>
+            ) : null}
+          </View>
+        )}
       </UIGlass>
     </Pressable>
   );
@@ -129,12 +139,12 @@ export function StudyRow({
 
 const styles = StyleSheet.create((theme) => ({
   cell: { paddingBottom: theme.vs(8) },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
+  row: (hasRating: boolean) => ({
+    flexDirection: hasRating ? "column" : "row",
+    alignItems: hasRating ? "stretch" : "center",
     gap: theme.s(12),
     padding: theme.s(12),
-  },
+  }),
   tile: {
     width: theme.vs(40),
     height: theme.vs(40),
@@ -145,7 +155,10 @@ const styles = StyleSheet.create((theme) => ({
     alignItems: "center",
     justifyContent: "center",
   },
-  text: { flex: 1, gap: theme.vs(3) },
+  text: (hasRating: boolean) => ({
+    flex: hasRating ? undefined : 1,
+    gap: theme.vs(3),
+  }),
   details: {
     flexDirection: "row",
     alignItems: "center",
@@ -156,10 +169,12 @@ const styles = StyleSheet.create((theme) => ({
   flame: (filled: boolean) => ({ opacity: filled ? 1 : 0.25 }),
   ratingRow: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "space-between",
     gap: theme.s(8),
   },
   ratingSummary: { gap: theme.vs(2) },
+  myRating: { alignItems: "flex-end", gap: theme.vs(2) },
   average: { flexDirection: "row", alignItems: "center", gap: theme.s(4) },
+  star: { color: theme.colors.amber },
 }));

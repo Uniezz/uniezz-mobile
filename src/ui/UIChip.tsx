@@ -1,15 +1,23 @@
+import type { ReactNode } from "react";
 import { Pressable } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { UIText } from "./UIText";
 type UIChipProps = {
   label: string;
+  leading?: ReactNode;
   selected?: boolean;
   onPress?: () => void;
 };
 
-export const UIChip = ({ label, selected = false, onPress }: UIChipProps) => {
+export const UIChip = ({
+  label,
+  leading,
+  selected = false,
+  onPress,
+}: UIChipProps) => {
   return (
     <Pressable onPress={onPress} style={styles.chip({ selected })}>
+      {leading}
       <UIText size="sm" weight="semibold" color={selected ? "black" : "soft"}>
         {label}
       </UIText>

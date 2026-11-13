@@ -7,3 +7,4 @@ export { ProfessorRow } from "./ProfessorRow";
 export { RatingInput } from "./RatingInput";
 export { StudyList } from "./StudyList";
 export { StudyRow } from "./StudyRow";
+export { StudyFilters } from "./StudyFilters";

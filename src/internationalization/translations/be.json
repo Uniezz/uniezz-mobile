@@ -417,6 +417,7 @@
     "blocked": "Студэнт заблакіраваны."
   },
   "study": {
+    "filters": "Фільтры",
     "typeExam": "Экзамен",
     "typeColloquium": "Калёквіум",
     "typeNotes": "Заўвагі",
@@ -426,6 +427,7 @@
     "faculty": "Факультэт",
     "semester": "Семестр",
     "semesterShort": "Семестр {{semester}}",
+    "anySemester": "Любы семестр",
     "difficultyValue": "Складанасць {{difficulty}}/5",
     "averageRating": "Сярэдняя ацэнка",
     "yourRating": "Ваша ацэнка",

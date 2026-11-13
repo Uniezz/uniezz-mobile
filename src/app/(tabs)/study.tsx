@@ -19,17 +19,17 @@ import {
   CreateCourseSheet,
   FilesPage,
   ProfessorsPage,
+  StudyFilters,
 } from "@/components/study";
 import { useMyProfile } from "@/hooks/useMyProfile";
 import {
   Icon,
   UIAvatar,
-  UIChip,
   UICollapsingHeader,
-  UIFadeScrollView,
   UIIconButton,
   UIPage,
   UISearchOverlay,
+  UISubTabs,
 } from "@/ui";
 import { HEADER_COMPACT_OFFSET, MATERIAL_TABS } from "@/utils";
 
@@ -42,6 +42,8 @@ export default function StudyScreen() {
   const [isSearching, setIsSearching] = useState(false);
   // the selected page; the chips and a swipe both change it
   const [tabIndex, setTabIndex] = useState(0);
+  const [universityId, setUniversityId] = useState<string>();
+  const [semester, setSemester] = useState<number>();
   const searchPlaceholder =
     [
       t("app.searchCourses"),
@@ -76,6 +78,11 @@ export default function StudyScreen() {
       (scrollOffsets.current[index] ?? 0) > HEADER_COMPACT_OFFSET,
     );
   };
+  const handleTabPress = (index: number) => pagerRef.current?.setPage(index);
+  const handleUniversityChange = (value: string | undefined) =>
+    setUniversityId(value);
+  const handleSemesterChange = (value: number | undefined) =>
+    setSemester(value);
   // the search field only exists while the keyboard is up; blurring it closes it, the query stays
   const handleSearchPress = () => setIsSearching(true);
   const handleSearchClose = () => setIsSearching(false);
@@ -95,6 +102,13 @@ export default function StudyScreen() {
       >
         <Icon name="search" size={18} />
       </UIIconButton>
+      <StudyFilters
+        universityId={universityId}
+        semester={semester}
+        showSemester={tabIndex !== 1}
+        onUniversityChange={handleUniversityChange}
+        onSemesterChange={handleSemesterChange}
+      />
       <UIIconButton
         accessibilityRole="button"
         accessibilityLabel={t("study.addCourse")}
@@ -121,24 +135,11 @@ export default function StudyScreen() {
         actions={headerActions}
         onLayout={handleHeaderLayout}
       >
-        {/* fades at either edge while more chips are hidden there */}
-        <UIFadeScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.tabs}
-        >
-          {MATERIAL_TABS.map(([value, label], index) => {
-            const handleTabPress = () => pagerRef.current?.setPage(index);
-            return (
-              <UIChip
-                key={value}
-                label={t(label)}
-                selected={tabIndex === index}
-                onPress={handleTabPress}
-              />
-            );
-          })}
-        </UIFadeScrollView>
+        <UISubTabs
+          items={MATERIAL_TABS.map(([, label]) => t(label))}
+          selectedItemIndex={tabIndex}
+          onPress={handleTabPress}
+        />
       </UICollapsingHeader>
       {/* page order follows MATERIAL_TABS */}
       <PagerView
@@ -150,12 +151,15 @@ export default function StudyScreen() {
         <View key="reviews" style={styles.pager}>
           <CoursesPage
             query={query}
+            universityId={universityId}
+            semester={semester}
             headerHeight={headerHeight}
             onScroll={handleCoursesScroll}
           />
         </View>
         <View key="professors" style={styles.pager}>
           <ProfessorsPage
+            universityId={universityId}
             headerHeight={headerHeight}
             onScroll={handleProfessorsScroll}
           />
@@ -163,6 +167,8 @@ export default function StudyScreen() {
         <View key="mine" style={styles.pager}>
           <FilesPage
             query={query}
+            universityId={universityId}
+            semester={semester}
             headerHeight={headerHeight}
             onScroll={handleFilesScroll}
           />
@@ -187,10 +193,6 @@ export default function StudyScreen() {
   );
 }
 
-const styles = StyleSheet.create((theme) => ({
-  tabs: {
-    gap: theme.s(6),
-    paddingHorizontal: theme.s(16),
-  },
+const styles = StyleSheet.create({
   pager: { flex: 1 },
-}));
+});

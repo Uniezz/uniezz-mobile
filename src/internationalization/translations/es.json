@@ -417,6 +417,7 @@
     "blocked": "Estudiante bloqueado."
   },
   "study": {
+    "filters": "Filtros",
     "typeExam": "Examen",
     "typeColloquium": "Coloquio",
     "typeNotes": "Notas",
@@ -426,6 +427,7 @@
     "faculty": "Facultad",
     "semester": "Semestre",
     "semesterShort": "Semestre {{semester}}",
+    "anySemester": "Cualquier semestre",
     "difficultyValue": "Dificultad {{difficulty}}/5",
     "averageRating": "Valoración media",
     "yourRating": "Tu valoración",

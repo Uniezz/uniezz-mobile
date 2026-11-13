@@ -11,12 +11,16 @@ import { StudyRow } from "./StudyRow";
 
 type CoursesPageProps = {
   query: string;
+  universityId?: string;
+  semester?: number;
   headerHeight: number;
   onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
 };
 
 export function CoursesPage({
   query,
+  universityId,
+  semester,
   headerHeight,
   onScroll,
 }: CoursesPageProps) {
@@ -32,7 +36,11 @@ export function CoursesPage({
     hasNextPage,
     fetchNextPage,
     refetch,
-  } = useCourses(query ? { subject: query } : {});
+  } = useCourses({
+    universityId,
+    semester,
+    subject: query || undefined,
+  });
   const courses = data?.pages.flatMap((page) => page.items ?? []) ?? [];
 
   const handleEndReached = () => {

@@ -576,6 +576,7 @@
     "blocked": "Студента заблоковано."
   },
   "study": {
+    "filters": "Фільтри",
     "typeExam": "Іспит",
     "typeColloquium": "Колоквіум",
     "typeLab": "Лабораторна",
@@ -596,6 +597,7 @@
     "difficulty": "Складність",
     "description": "Опис (необов’язково)",
     "semesterShort": "Семестр {{semester}}",
+    "anySemester": "Будь-який семестр",
     "difficultyValue": "Складність {{difficulty}}/5",
     "averageRating": "Середня оцінка",
     "ratingSummary": "{{rating}} ({{votes}})",

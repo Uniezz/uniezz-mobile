@@ -576,6 +576,7 @@
     "blocked": "Студент заблокирован."
   },
   "study": {
+    "filters": "Фильтры",
     "typeExam": "Экзамен",
     "typeColloquium": "Коллоквиум",
     "typeLab": "Лабораторная",
@@ -596,6 +597,7 @@
     "difficulty": "Сложность",
     "description": "Описание (необязательно)",
     "semesterShort": "Семестр {{semester}}",
+    "anySemester": "Любой семестр",
     "difficultyValue": "Сложность {{difficulty}}/5",
     "averageRating": "Средняя оценка",
     "ratingSummary": "{{rating}} ({{votes}})",

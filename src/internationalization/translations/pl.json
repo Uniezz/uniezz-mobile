@@ -576,6 +576,7 @@
     "blocked": "Student zablokowany."
   },
   "study": {
+    "filters": "Filtry",
     "typeExam": "Egzamin",
     "typeColloquium": "Kolokwium",
     "typeLab": "Sprawozdanie",
@@ -596,6 +597,7 @@
     "difficulty": "Trudność",
     "description": "Opis (opcjonalnie)",
     "semesterShort": "Semestr {{semester}}",
+    "anySemester": "Każdy semestr",
     "difficultyValue": "Trudność {{difficulty}}/5",
     "averageRating": "Średnia ocena",
     "ratingSummary": "{{rating}} ({{votes}})",

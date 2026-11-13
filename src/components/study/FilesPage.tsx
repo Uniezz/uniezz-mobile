@@ -12,11 +12,19 @@ import { StudyRow } from "./StudyRow";
 type FilesPageProps = {
   /** the submitted search */
   query: string;
+  universityId?: string;
+  semester?: number;
   headerHeight: number;
   onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
 };
 
-export function FilesPage({ query, headerHeight, onScroll }: FilesPageProps) {
+export function FilesPage({
+  query,
+  universityId,
+  semester,
+  headerHeight,
+  onScroll,
+}: FilesPageProps) {
   const { t } = useTranslation();
   const {
     data,
@@ -27,7 +35,12 @@ export function FilesPage({ query, headerHeight, onScroll }: FilesPageProps) {
     hasNextPage,
     fetchNextPage,
     refetch,
-  } = useStudyFiles({ q: query || undefined, mine: true });
+  } = useStudyFiles({
+    q: query || undefined,
+    universityId,
+    semester,
+    mine: true,
+  });
   const files = data?.pages.flatMap((page) => page.items ?? []) ?? [];
 
   const handleEndReached = () => {

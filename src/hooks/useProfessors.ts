@@ -23,20 +23,25 @@ export function useRateProfessor() {
     meta: { analyticsAction: "professor_rate" },
     mutationFn: rateProfessor,
     onSuccess: (professor) =>
-      queryClient.setQueryData<
+      queryClient.setQueriesData<
         InfiniteData<Awaited<ReturnType<typeof getProfessors>>>
       >(
-        ["study", "professors", undefined],
+        { queryKey: ["study", "professors"] },
         (data) =>
           data && {
             ...data,
-            pages: data.pages.map((page) => ({
-              ...page,
-              items:
-                page.items?.map((item) =>
+            pages: data.pages.map((page) => {
+              if (!page.items?.some((item) => item.id === professor.id)) {
+                return page;
+              }
+
+              return {
+                ...page,
+                items: page.items.map((item) =>
                   item.id === professor.id ? professor : item,
-                ) ?? null,
-            })),
+                ),
+              };
+            }),
           },
       ),
   });
