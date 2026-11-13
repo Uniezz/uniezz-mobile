@@ -9,7 +9,7 @@ import { captureAction } from "@/utils/analytics";
 import { router } from "expo-router";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { LayoutChangeEvent, View } from "react-native";
+import { Alert, LayoutChangeEvent, View } from "react-native";
 import { type CollapsibleRef, Tabs } from "react-native-collapsible-tab-view";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
@@ -37,12 +37,14 @@ import { useUploadImages } from "@/hooks/useMedia";
 import {
   useDeleteMyAvatar,
   useDeleteMyBanner,
+  useDeleteMyProfile,
   useMyProfile,
   useUpdateMyProfile,
 } from "@/hooks/useMyProfile";
 import { Icon, UIGlass, UIPage, UISegmented } from "@/ui";
 import { authorName } from "@/utils";
 import { apiErrorKey } from "@/utils/apiErrorKey";
+import { ApiRequestError } from "@/api";
 
 export default function ProfileScreen() {
   const { t, i18n } = useTranslation();
@@ -52,6 +54,8 @@ export default function ProfileScreen() {
     useDeleteMyAvatar();
   const { mutateAsync: deleteBanner, isPending: isRemovingBanner } =
     useDeleteMyBanner();
+  const { mutateAsync: deleteProfile, isPending: isDeletingProfile } =
+    useDeleteMyProfile();
   const { mutateAsync: uploadImages, isPending: isUploadingPhoto } =
     useUploadImages("avatar");
   const { mutateAsync: uploadBanner, isPending: isUploadingBanner } =
@@ -158,12 +162,37 @@ export default function ProfileScreen() {
     }
   };
 
+  const confirmDeleteProfile = async () => {
+    try {
+      await deleteProfile();
+      await clearSession();
+    } catch (error) {
+      toast.error(
+        t(
+          error instanceof ApiRequestError && error.status === 403
+            ? "auth.reauthenticateToDelete"
+            : apiErrorKey(error, "apiState.error"),
+        ),
+      );
+    }
+  };
+  const handleDeleteProfilePress = () =>
+    Alert.alert(
+      t("auth.deleteAccountTitle"),
+      t("auth.deleteAccountDescription"),
+      [
+        { text: t("postComposer.cancel"), style: "cancel" },
+        {
+          text: t("auth.deleteAccount"),
+          style: "destructive",
+          onPress: confirmDeleteProfile,
+        },
+      ],
+    );
+
   const setLanguage = useLanguageStore((state) => state.setLanguage);
   const handleLanguagePress = (code: Language) => {
     setLanguage(code);
-    updateProfile({ language: code }).catch(() =>
-      toast.error(t("apiState.profileSaveError")),
-    );
   };
   const handleMenuAction = ({ nativeEvent }: NativeActionEvent) => {
     const language = LANGUAGES.find((code) => nativeEvent.event === code);
@@ -176,6 +205,8 @@ export default function ProfileScreen() {
     if (nativeEvent.event === "changeBanner") return handleChangeBannerPress();
     if (nativeEvent.event === "removeBanner") return handleRemoveBannerPress();
     if (nativeEvent.event === "logout") return handleLogoutPress();
+    if (nativeEvent.event === "deleteProfile")
+      return handleDeleteProfilePress();
   };
   const menuActions: MenuAction[] = [
     { id: "details", title: t("app.personalDetails") },
@@ -213,6 +244,11 @@ export default function ProfileScreen() {
       id: "logout",
       title: t("auth.logOut"),
       attributes: { destructive: true },
+    },
+    {
+      id: "deleteProfile",
+      title: t("auth.deleteAccount"),
+      attributes: { destructive: true, disabled: isDeletingProfile },
     },
   ];
   const headerAction = profile ? (

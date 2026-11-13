@@ -88,6 +88,13 @@ export async function searchStudyFiles(
   return data!;
 }
 
+export async function getStudyFile(id: string) {
+  const { data } = await api.GET("/study/files/{id}", {
+    params: { path: { id } },
+  });
+  return data!;
+}
+
 export async function deleteStudyFile(id: string) {
   await api.DELETE("/study/files/{id}", { params: { path: { id } } });
 }

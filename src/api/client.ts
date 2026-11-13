@@ -67,6 +67,7 @@ const apiMiddleware: Middleware = {
               "/feed/comments/{id}",
               "/feed/posts/{id}",
               "/profile/avatar",
+              "/profile/me",
               "/profile/programmes/{id}",
               "/connections/{id}",
               "/connections/blocks/{id}",

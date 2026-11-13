@@ -625,7 +625,11 @@ export interface paths {
     get: operations["getMyProfile"];
     put?: never;
     post?: never;
-    delete?: never;
+    /**
+     * Delete the logged-in student's profile and account
+     * @description Signs the student out everywhere and frees their university login, so signing in again creates a new, empty account. Posts, comments, likes, study files, uploads and the profile are removed in the background. Requires a sign-in within the last 15 minutes: on 403 reauthentication_required, sign in again and retry.
+     */
+    delete: operations["deleteMyProfile"];
     options?: never;
     head?: never;
     /**
@@ -1220,18 +1224,19 @@ export interface components {
     };
     CreateUploadInputBody: {
       /**
-       * @description MIME type the file will be uploaded with
+       * @description MIME type the file will be uploaded with; application/pdf only for exam
        * @enum {string}
        */
-      contentType: "image/jpeg" | "image/png" | "image/webp";
+      contentType:
+        "image/jpeg" | "image/png" | "image/webp" | "application/pdf";
       /**
        * @description What the file will be used for
        * @enum {string}
        */
-      kind: "avatar" | "banner" | "feed" | "chat";
+      kind: "avatar" | "banner" | "feed" | "chat" | "exam";
       /**
        * Format: int64
-       * @description Exact file size in bytes; 5 MiB max for avatars, 10 MiB for banners, feed and chat
+       * @description Exact file size in bytes; 5 MiB max for avatars, 10 MiB for banners, feed, chat and exam images, 20 MiB for exam PDFs
        */
       size: number;
     };
@@ -1614,6 +1619,8 @@ export interface components {
     };
     PublicProfile: {
       avatarUrl: string | null;
+      /** @description URL of the banner image, null when the student has none */
+      bannerUrl: string | null;
       bio: string | null;
       /** @description Null unless the student shows it */
       email: string | null;
@@ -4347,6 +4354,51 @@ export interface operations {
       };
       /** @description Unauthorized */
       401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  deleteMyProfile: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
         headers: {
           [name: string]: unknown;
         };

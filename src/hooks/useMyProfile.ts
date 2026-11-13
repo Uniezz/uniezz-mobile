@@ -3,6 +3,7 @@ import {
   addMyProgramme,
   deleteMyAvatar,
   deleteMyBanner,
+  deleteMyProfile,
   deleteMyProgramme,
   getMyProfile,
   replaceMyProgramme,
@@ -16,6 +17,13 @@ export function useMyProfile() {
     gcTime: 30 * 60_000,
     queryKey: ["profile", "me"],
     queryFn: getMyProfile,
+  });
+}
+
+export function useDeleteMyProfile() {
+  return useMutation({
+    meta: { analyticsAction: "profile_delete" },
+    mutationFn: deleteMyProfile,
   });
 }
 

@@ -1,7 +1,7 @@
 import type { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FlashList } from "@shopify/flash-list";
-import * as WebBrowser from "expo-web-browser";
+import ExpoQuickLook from "@magrinj/expo-quick-look";
 import { router, useLocalSearchParams } from "expo-router";
 import { usePostHog } from "posthog-react-native";
 import { useRef, useState } from "react";
@@ -43,6 +43,7 @@ import {
 } from "@/ui";
 import { FILE_TYPES, HEADER_COMPACT_OFFSET } from "@/utils";
 import { captureAction } from "@/utils/analytics";
+import { getStudyFile } from "@/api";
 import { apiErrorKey } from "@/utils/apiErrorKey";
 
 // shortcut: shows the first page of files only; add "show more" once courses carry many files
@@ -203,8 +204,17 @@ export default function CourseScreen() {
                   </UIText>
                   {files.map((file) => {
                     const [label, icon] = FILE_TYPES[file.type];
-                    const handlePress = () =>
-                      WebBrowser.openBrowserAsync(file.url);
+                    const handlePress = async () => {
+                      try {
+                        const { url } = await getStudyFile(file.id);
+                        await ExpoQuickLook.previewFile({
+                          uri: url,
+                          editingMode: "disabled",
+                        });
+                      } catch {
+                        toast.error(t("apiState.error"));
+                      }
+                    };
                     return (
                       <StudyRow
                         key={file.id}

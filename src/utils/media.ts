@@ -11,6 +11,7 @@ export const MAX_IMAGE_MB: Record<UploadKind, number> = {
   banner: 10,
   feed: 10,
   chat: 10,
+  exam: 10,
 };
 
 export const MAX_POST_PHOTOS = 10;

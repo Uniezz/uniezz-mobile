@@ -1,7 +1,9 @@
-import * as WebBrowser from "expo-web-browser";
+import ExpoQuickLook from "@magrinj/expo-quick-look";
 import { useTranslation } from "react-i18next";
 import type { NativeScrollEvent, NativeSyntheticEvent } from "react-native";
 import type { CourseFile } from "@/@types/study";
+import { getStudyFile } from "@/api";
+import { toast } from "sonner-native";
 import { useStudyFiles } from "@/hooks/useStudyFiles";
 import { FILE_TYPES } from "@/utils";
 import { StudyList } from "./StudyList";
@@ -34,7 +36,14 @@ export function FilesPage({ query, headerHeight, onScroll }: FilesPageProps) {
   const handleRefresh = () => refetch();
   const renderFile = (file: CourseFile) => {
     const [label, icon] = FILE_TYPES[file.type];
-    const handlePress = () => WebBrowser.openBrowserAsync(file.url);
+    const handlePress = async () => {
+      try {
+        const { url } = await getStudyFile(file.id);
+        await ExpoQuickLook.previewFile({ uri: url, editingMode: "disabled" });
+      } catch {
+        toast.error(t("apiState.error"));
+      }
+    };
     return (
       <StudyRow
         icon={icon}

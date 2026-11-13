@@ -21,7 +21,6 @@ type CreateCourseSheetProps = {
   universityId: string;
 };
 
-// shortcut: exam file upload waits for backend openapi CreateUploadInputBody to list kind "exam" + application/pdf (UNI-44)
 export const CreateCourseSheet = ({
   ref,
   universityId,

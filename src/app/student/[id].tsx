@@ -136,6 +136,7 @@ export default function PublicProfileScreen() {
               <>
                 <ProfileHero
                   avatar={profile.avatarUrl}
+                  bannerUrl={profile.bannerUrl}
                   name={authorName(profile) || t("apiState.student")}
                   subtitle={profile.email}
                   universityId={profile.universityId}
