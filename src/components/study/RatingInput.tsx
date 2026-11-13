@@ -13,10 +13,16 @@ type RatingInputProps = {
   value: number;
   onChange: (rating: number) => void;
   disabled?: boolean;
+  size?: "default" | "compact";
 };
 
 // whole stars from 1 to 5, as the API accepts
-export function RatingInput({ value, onChange, disabled }: RatingInputProps) {
+export function RatingInput({
+  value,
+  onChange,
+  disabled,
+  size = "default",
+}: RatingInputProps) {
   const { t } = useTranslation();
   // swiping to the far left reports 0, which the API rejects
   const handleChange = (rating: number) => {
@@ -30,7 +36,8 @@ export function RatingInput({ value, onChange, disabled }: RatingInputProps) {
         onChange={handleChange}
         maxStars={5}
         step="full"
-        starSize={28}
+        starSize={size === "compact" ? 20 : 28}
+        starStyle={size === "compact" ? styles.compactStar : undefined}
         accessibilityLabel={t("study.rateValue", { rating: "%value%" })}
         accessibilityAdjustmentLabel={t("study.rateValue", {
           rating: "%value%",
@@ -40,6 +47,7 @@ export function RatingInput({ value, onChange, disabled }: RatingInputProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create((theme) => ({
   row: { alignSelf: "flex-start" },
-});
+  compactStar: { marginHorizontal: theme.s(2) },
+}));

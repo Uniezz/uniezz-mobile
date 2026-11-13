@@ -132,23 +132,15 @@ export default function StudyScreen() {
         initialPage={0}
         onPageSelected={handlePageSelected}
       >
-        <View key="papers" style={styles.pager}>
-          <FilesPage
-            query={query}
-            headerHeight={headerHeight}
-            onScroll={handleScroll}
-          />
-        </View>
         <View key="reviews" style={styles.pager}>
-          <CoursesPage
-            universityId={profile?.universityId}
-            headerHeight={headerHeight}
-            onScroll={handleScroll}
-          />
+          <CoursesPage headerHeight={headerHeight} onScroll={handleScroll} />
         </View>
         <View key="professors" style={styles.pager}>
-          <ProfessorsPage
-            universityId={profile?.universityId}
+          <ProfessorsPage headerHeight={headerHeight} onScroll={handleScroll} />
+        </View>
+        <View key="mine" style={styles.pager}>
+          <FilesPage
+            query={query}
             headerHeight={headerHeight}
             onScroll={handleScroll}
           />

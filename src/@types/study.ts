@@ -19,4 +19,4 @@ export type CreateCourseFormValues = Omit<
   "universityId" | "semester"
 > & { semester: string };
 
-export type MaterialTab = "papers" | "reviews" | "professors";
+export type MaterialTab = "reviews" | "professors" | "mine";

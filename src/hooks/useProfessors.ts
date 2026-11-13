@@ -1,30 +1,19 @@
 import {
+  type InfiniteData,
   useInfiniteQuery,
   useMutation,
-  useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import type { Professor } from "@/@types/study";
-import { getProfessor, getProfessors, rateProfessor } from "@/api";
+import { getProfessors, rateProfessor } from "@/api";
 
-export function useProfessors(universityId: string | undefined) {
+export function useProfessors(universityId?: string) {
   return useInfiniteQuery({
-    enabled: !!universityId,
     staleTime: 10 * 60_000,
     gcTime: 30 * 60_000,
     queryKey: ["study", "professors", universityId],
-    queryFn: ({ pageParam }) => getProfessors(universityId!, pageParam),
+    queryFn: ({ pageParam }) => getProfessors(universityId, pageParam),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (page) => page.nextCursor ?? undefined,
-  });
-}
-
-export function useProfessor(id: string) {
-  return useQuery({
-    staleTime: 5 * 60_000,
-    gcTime: 30 * 60_000,
-    queryKey: ["study", "professor", id],
-    queryFn: () => getProfessor(id),
   });
 }
 
@@ -33,14 +22,22 @@ export function useRateProfessor() {
   return useMutation({
     meta: { analyticsAction: "professor_rate" },
     mutationFn: rateProfessor,
-    onSuccess: (professor) => {
-      queryClient.setQueryData<Professor>(
-        ["study", "professor", professor.id],
-        professor,
-      );
-      return queryClient.invalidateQueries({
-        queryKey: ["study", "professors"],
-      });
-    },
+    onSuccess: (professor) =>
+      queryClient.setQueryData<
+        InfiniteData<Awaited<ReturnType<typeof getProfessors>>>
+      >(
+        ["study", "professors", undefined],
+        (data) =>
+          data && {
+            ...data,
+            pages: data.pages.map((page) => ({
+              ...page,
+              items:
+                page.items?.map((item) =>
+                  item.id === professor.id ? professor : item,
+                ) ?? null,
+            })),
+          },
+      ),
   });
 }

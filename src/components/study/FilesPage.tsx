@@ -27,7 +27,7 @@ export function FilesPage({ query, headerHeight, onScroll }: FilesPageProps) {
     hasNextPage,
     fetchNextPage,
     refetch,
-  } = useStudyFiles({ q: query || undefined });
+  } = useStudyFiles({ q: query || undefined, mine: true });
   const files = data?.pages.flatMap((page) => page.items ?? []) ?? [];
 
   const handleEndReached = () => {

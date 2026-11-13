@@ -99,17 +99,9 @@ export async function deleteStudyFile(id: string) {
   await api.DELETE("/study/files/{id}", { params: { path: { id } } });
 }
 
-export async function getProfessors(universityId: string, cursor?: string) {
+export async function getProfessors(universityId?: string, cursor?: string) {
   const { data } = await api.GET("/study/professors", {
     params: { query: { universityId, cursor, limit: 20 } },
-  });
-
-  return data!;
-}
-
-export async function getProfessor(id: string) {
-  const { data } = await api.GET("/study/professors/{id}", {
-    params: { path: { id } },
   });
 
   return data!;

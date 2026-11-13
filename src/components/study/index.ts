@@ -3,6 +3,7 @@ export { CoursesPage } from "./CoursesPage";
 export { CreateCourseSheet } from "./CreateCourseSheet";
 export { FilesPage } from "./FilesPage";
 export { ProfessorsPage } from "./ProfessorsPage";
+export { ProfessorRow } from "./ProfessorRow";
 export { RatingInput } from "./RatingInput";
 export { StudyList } from "./StudyList";
 export { StudyRow } from "./StudyRow";

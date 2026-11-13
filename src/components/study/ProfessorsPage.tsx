@@ -1,19 +1,15 @@
-import { router } from "expo-router";
 import type { NativeScrollEvent, NativeSyntheticEvent } from "react-native";
 import type { Professor } from "@/@types/study";
 import { useProfessors } from "@/hooks/useProfessors";
-import { UNIVERSITY_SHORT_NAMES } from "@/utils";
 import { StudyList } from "./StudyList";
-import { StudyRow } from "./StudyRow";
+import { ProfessorRow } from "./ProfessorRow";
 
 type ProfessorsPageProps = {
-  universityId: string | undefined;
   headerHeight: number;
   onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
 };
 
 export function ProfessorsPage({
-  universityId,
   headerHeight,
   onScroll,
 }: ProfessorsPageProps) {
@@ -26,7 +22,7 @@ export function ProfessorsPage({
     hasNextPage,
     fetchNextPage,
     refetch,
-  } = useProfessors(universityId);
+  } = useProfessors();
   const professors = data?.pages.flatMap((page) => page.items ?? []) ?? [];
 
   const handleEndReached = () => {
@@ -34,20 +30,7 @@ export function ProfessorsPage({
   };
   const handleRefresh = () => refetch();
   const renderProfessor = (professor: Professor) => {
-    const handlePress = () => router.push(`/professor/${professor.id}`);
-    return (
-      <StudyRow
-        icon="users"
-        title={professor.name}
-        subtitle={
-          professor.degree ??
-          UNIVERSITY_SHORT_NAMES[professor.universityId] ??
-          professor.universityId
-        }
-        rating={professor.ratingAverage}
-        onPress={handlePress}
-      />
-    );
+    return <ProfessorRow professor={professor} />;
   };
 
   return (

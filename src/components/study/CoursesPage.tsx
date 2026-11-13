@@ -7,16 +7,11 @@ import { StudyList } from "./StudyList";
 import { StudyRow } from "./StudyRow";
 
 type CoursesPageProps = {
-  universityId: string | undefined;
   headerHeight: number;
   onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
 };
 
-export function CoursesPage({
-  universityId,
-  headerHeight,
-  onScroll,
-}: CoursesPageProps) {
+export function CoursesPage({ headerHeight, onScroll }: CoursesPageProps) {
   const { t } = useTranslation();
   const {
     data,
@@ -27,7 +22,7 @@ export function CoursesPage({
     hasNextPage,
     fetchNextPage,
     refetch,
-  } = useCourses({ universityId }, { enabled: !!universityId });
+  } = useCourses();
   const courses = data?.pages.flatMap((page) => page.items ?? []) ?? [];
 
   const handleEndReached = () => {

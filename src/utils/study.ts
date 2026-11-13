@@ -1,9 +1,9 @@
 import type { CourseFileType, MaterialTab } from "@/@types/study";
 
 export const MATERIAL_TABS: readonly (readonly [MaterialTab, string])[] = [
-  ["papers", "app.pastPapers"],
   ["reviews", "app.courseReviews"],
   ["professors", "app.professorRatings"],
+  ["mine", "app.myUploads"],
 ];
 
 export const FILE_TYPES = {
