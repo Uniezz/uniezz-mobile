@@ -47,18 +47,28 @@ export default function StudyScreen() {
   const [isHeaderCompact, setIsHeaderCompact] = useState(false);
   const pagerRef = useRef<PagerView>(null);
   const createCourseRef = useRef<BottomSheetModal>(null);
+  const scrollOffsets = useRef<number[]>([0, 0, 0]);
 
-  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    setIsHeaderCompact(
-      event.nativeEvent.contentOffset.y > HEADER_COMPACT_OFFSET,
-    );
-  };
+  const handlePageScroll =
+    (index: number) => (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const offset = event.nativeEvent.contentOffset.y;
+      scrollOffsets.current[index] = offset;
+      if (index === tabIndex) {
+        setIsHeaderCompact(offset > HEADER_COMPACT_OFFSET);
+      }
+    };
+  const handleCoursesScroll = handlePageScroll(0);
+  const handleProfessorsScroll = handlePageScroll(1);
+  const handleFilesScroll = handlePageScroll(2);
   const handleHeaderLayout = (event: LayoutChangeEvent) => {
     setHeaderHeight(event.nativeEvent.layout.height);
   };
   const handlePageSelected = (event: PagerViewOnPageSelectedEvent) => {
-    setTabIndex(event.nativeEvent.position);
-    setIsHeaderCompact(false);
+    const index = event.nativeEvent.position;
+    setTabIndex(index);
+    setIsHeaderCompact(
+      (scrollOffsets.current[index] ?? 0) > HEADER_COMPACT_OFFSET,
+    );
   };
   // the search field only exists while the keyboard is up; blurring it closes it, the query stays
   const handleSearchPress = () => setIsSearching(true);
@@ -133,16 +143,22 @@ export default function StudyScreen() {
         onPageSelected={handlePageSelected}
       >
         <View key="reviews" style={styles.pager}>
-          <CoursesPage headerHeight={headerHeight} onScroll={handleScroll} />
+          <CoursesPage
+            headerHeight={headerHeight}
+            onScroll={handleCoursesScroll}
+          />
         </View>
         <View key="professors" style={styles.pager}>
-          <ProfessorsPage headerHeight={headerHeight} onScroll={handleScroll} />
+          <ProfessorsPage
+            headerHeight={headerHeight}
+            onScroll={handleProfessorsScroll}
+          />
         </View>
         <View key="mine" style={styles.pager}>
           <FilesPage
             query={query}
             headerHeight={headerHeight}
-            onScroll={handleScroll}
+            onScroll={handleFilesScroll}
           />
         </View>
       </PagerView>
