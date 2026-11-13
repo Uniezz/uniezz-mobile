@@ -1,18 +1,28 @@
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import type { NativeScrollEvent, NativeSyntheticEvent } from "react-native";
+import { toast } from "sonner-native";
 import type { Course } from "@/@types/study";
-import { useCourses } from "@/hooks/useCourses";
+import { useCourses, useRateCourse } from "@/hooks/useCourses";
+import { useUniversities } from "@/hooks/useUniversities";
+import { apiErrorKey } from "@/utils/apiErrorKey";
 import { StudyList } from "./StudyList";
 import { StudyRow } from "./StudyRow";
 
 type CoursesPageProps = {
+  query: string;
   headerHeight: number;
   onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
 };
 
-export function CoursesPage({ headerHeight, onScroll }: CoursesPageProps) {
+export function CoursesPage({
+  query,
+  headerHeight,
+  onScroll,
+}: CoursesPageProps) {
   const { t } = useTranslation();
+  const { data: universities = [] } = useUniversities();
+  const { mutateAsync: rateCourse, isPending: isRating } = useRateCourse();
   const {
     data,
     isPending,
@@ -22,21 +32,37 @@ export function CoursesPage({ headerHeight, onScroll }: CoursesPageProps) {
     hasNextPage,
     fetchNextPage,
     refetch,
-  } = useCourses();
+  } = useCourses(query ? { subject: query } : {});
   const courses = data?.pages.flatMap((page) => page.items ?? []) ?? [];
 
   const handleEndReached = () => {
     if (hasNextPage && !isFetchingNextPage) return fetchNextPage();
   };
   const handleRefresh = () => refetch();
+  const handleCourseRating = async (id: string, rating: number) => {
+    try {
+      await rateCourse({ id, rating });
+    } catch (error) {
+      toast.error(t(apiErrorKey(error)));
+    }
+  };
   const renderCourse = (course: Course) => {
     const handlePress = () => router.push(`/course/${course.id}`);
+    const handleRatingChange = (rating: number) =>
+      handleCourseRating(course.id, rating);
     return (
       <StudyRow
-        icon="graduation-cap"
         title={course.name}
         subtitle={`${course.subject} · ${t("study.semesterShort", { semester: course.semester })}`}
+        university={
+          universities.find(({ id }) => id === course.universityId)?.name ??
+          course.universityId
+        }
+        difficulty={course.difficulty}
         rating={course.ratingAverage}
+        ratingCount={course.ratingCount}
+        onRate={handleRatingChange}
+        isRating={isRating}
         onPress={handlePress}
       />
     );

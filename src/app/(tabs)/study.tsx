@@ -42,6 +42,12 @@ export default function StudyScreen() {
   const [isSearching, setIsSearching] = useState(false);
   // the selected page; the chips and a swipe both change it
   const [tabIndex, setTabIndex] = useState(0);
+  const searchPlaceholder =
+    [
+      t("app.searchCourses"),
+      t("app.searchProfessors"),
+      t("app.searchMyMaterials"),
+    ][tabIndex] ?? t("app.searchMyMaterials");
   // the header floats over the pages; they start below it and turn it compact once scrolled
   const [headerHeight, setHeaderHeight] = useState(0);
   const [isHeaderCompact, setIsHeaderCompact] = useState(false);
@@ -74,8 +80,7 @@ export default function StudyScreen() {
   const handleSearchPress = () => setIsSearching(true);
   const handleSearchClose = () => setIsSearching(false);
   const handleSearchSubmit = () => {
-    setQuery(search.trim());
-    pagerRef.current?.setPage(0);
+    if (tabIndex !== 1) setQuery(search.trim());
     Keyboard.dismiss();
   };
   const handleAddPress = () => createCourseRef.current?.present();
@@ -85,7 +90,7 @@ export default function StudyScreen() {
     <>
       <UIIconButton
         accessibilityRole="button"
-        accessibilityLabel={t("app.searchMaterials")}
+        accessibilityLabel={searchPlaceholder}
         onPress={handleSearchPress}
       >
         <Icon name="search" size={18} />
@@ -144,6 +149,7 @@ export default function StudyScreen() {
       >
         <View key="reviews" style={styles.pager}>
           <CoursesPage
+            query={query}
             headerHeight={headerHeight}
             onScroll={handleCoursesScroll}
           />
@@ -168,7 +174,7 @@ export default function StudyScreen() {
         onChangeText={setSearch}
         onSubmit={handleSearchSubmit}
         onClose={handleSearchClose}
-        placeholder={t("app.searchMaterials")}
+        placeholder={searchPlaceholder}
         submitLabel={t("topbar.search")}
       />
       {profile ? (

@@ -106,19 +106,19 @@ const styles = StyleSheet.create((theme) => ({
   input: (isMultiline?: boolean) => ({
     fontFamily: theme.fonts.Geist,
     fontSize: theme.vs(15),
-    // no fontWeight: with a custom font, iOS resolves the placeholder to another face and draws it low
     color: theme.colors.white,
     flex: 1,
-    // a multiline input grows from its content; the 48pt box (alignItems center) keeps its first line centred
     ...(isMultiline
       ? {
-          // a fixed line height fits an emoji line, so adding or removing emoji doesn't change the height
           lineHeight: theme.vs(21),
           paddingTop: theme.vs(12),
           paddingBottom: theme.vs(12),
-          textAlignVertical: "top" as const,
+          textAlignVertical: "top",
         }
-      : { height: theme.vs(46) }),
+      : {
+          height: theme.vs(46),
+          textAlignVertical: "center",
+        }),
   }),
   errorText: {
     color: theme.colors.red,

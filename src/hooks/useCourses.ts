@@ -1,4 +1,5 @@
 import {
+  type InfiniteData,
   useInfiniteQuery,
   useMutation,
   useQuery,
@@ -48,7 +49,28 @@ export function useRateCourse() {
     mutationFn: rateCourse,
     onSuccess: (course) => {
       queryClient.setQueryData<Course>(["study", "course", course.id], course);
-      return queryClient.invalidateQueries({ queryKey: ["study", "courses"] });
+      queryClient.setQueriesData<
+        InfiniteData<Awaited<ReturnType<typeof getCourses>>>
+      >({ queryKey: ["study", "courses"] }, (data) => {
+        if (!data) return data;
+
+        let updated = false;
+        const pages = data.pages.map((page) => {
+          if (!page.items?.some((item) => item.id === course.id)) {
+            return page;
+          }
+
+          updated = true;
+          return {
+            ...page,
+            items: page.items.map((item) =>
+              item.id === course.id ? course : item,
+            ),
+          };
+        });
+
+        return updated ? { ...data, pages } : data;
+      });
     },
   });
 }
