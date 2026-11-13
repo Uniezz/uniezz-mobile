@@ -39,6 +39,7 @@ export function StudyList<T extends { id: string }>({
       <FlashList
         style={styles.list}
         data={items}
+        maintainVisibleContentPosition={{ disabled: true }}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => renderItem(item)}
         onScroll={onScroll}
