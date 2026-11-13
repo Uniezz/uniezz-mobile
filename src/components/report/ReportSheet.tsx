@@ -9,6 +9,7 @@ import type { Ref } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner-native";
+import { StyleSheet } from "react-native-unistyles";
 import type { CreateReportInput, ReportFormValues } from "@/@types/report";
 import { RowPicker } from "@/components/RowPicker";
 import { useCreateReport } from "@/hooks/useReports";
@@ -104,9 +105,17 @@ export const ReportSheet = ({
             errorText={fieldState.error?.message && t(fieldState.error.message)}
             maxLength={1000}
             multiline
+            scrollEnabled
+            inputContainerStyle={styles.details}
+            style={styles.detailsInput}
           />
         )}
       />
     </UIFormSheet>
   );
 };
+
+const styles = StyleSheet.create((theme) => ({
+  details: { height: theme.vs(150) },
+  detailsInput: { alignSelf: "stretch" },
+}));

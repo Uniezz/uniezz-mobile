@@ -1,5 +1,11 @@
 import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
-import { TextInput, TextInputProps, View } from "react-native";
+import {
+  TextInput,
+  TextInputProps,
+  View,
+  type StyleProp,
+  type ViewStyle,
+} from "react-native";
 import { UIText } from "./UIText";
 import { UIGlass } from "./UIGlass";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
@@ -19,6 +25,7 @@ type UIInputProps = {
   errorText?: string;
   /** inside a bottom sheet: uses its input so the sheet moves above the keyboard */
   isInSheet?: boolean;
+  inputContainerStyle?: StyleProp<ViewStyle>;
 } & TextInputProps;
 
 export const UIInput = ({
@@ -26,7 +33,9 @@ export const UIInput = ({
   leftIcon,
   errorText,
   isInSheet,
+  inputContainerStyle,
   editable = true,
+  style,
   ...props
 }: UIInputProps) => {
   const isError = Boolean(errorText);
@@ -38,17 +47,20 @@ export const UIInput = ({
       </UIText>
 
       <UIGlass
-        style={styles.inputContainer({
-          isError,
-          editable,
-          isMultiline: props.multiline,
-        })}
+        style={[
+          styles.inputContainer({
+            isError,
+            editable,
+            isMultiline: props.multiline,
+          }),
+          inputContainerStyle,
+        ]}
       >
         {leftIcon}
         <Input
           {...props}
           hitSlop={{ top: vs(12), bottom: vs(12), left: s(12), right: s(12) }}
-          style={styles.input(props.multiline)}
+          style={[styles.input(props.multiline), style]}
           autoCorrect={false}
           autoCapitalize="none"
           editable={editable}

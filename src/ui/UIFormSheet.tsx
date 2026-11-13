@@ -7,6 +7,7 @@ import {
 import type { ReactNode, Ref } from "react";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { UIBottomSheet } from "./UIBottomSheet";
 import { UIButton } from "./UIButton";
 import { SHEET_FOOTER_FADE } from "@/utils";
@@ -43,8 +44,10 @@ export const UIFormSheet = ({
   onDismiss,
   children,
 }: UIFormSheetProps) => {
+  const { bottom } = useSafeAreaInsets();
+
   const renderFooter = (props: BottomSheetFooterProps) => (
-    <BottomSheetFooter {...props}>
+    <BottomSheetFooter {...props} bottomInset={bottom}>
       <View style={styles.footer}>
         {destructiveLabel ? (
           <UIButton
@@ -85,6 +88,8 @@ export const UIFormSheet = ({
       onDismiss={onDismiss}
     >
       <BottomSheetScrollView
+        enableFooterMarginAdjustment
+        keyboardDismissMode="none"
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.content}
@@ -100,8 +105,7 @@ const styles = StyleSheet.create((theme, rt) => ({
     gap: theme.vs(14),
     paddingHorizontal: theme.s(16),
     paddingTop: theme.vs(8),
-    // room for the footer: its fade, the button and its bottom padding
-    paddingBottom: rt.insets.bottom + theme.vs(SHEET_FOOTER_FADE + 56 + 16),
+    paddingBottom: rt.insets.bottom,
   },
   // fades the scrolled form out behind the button
   footer: {
@@ -109,7 +113,7 @@ const styles = StyleSheet.create((theme, rt) => ({
     gap: theme.s(10),
     paddingHorizontal: theme.s(16),
     paddingTop: theme.vs(SHEET_FOOTER_FADE),
-    paddingBottom: rt.insets.bottom + theme.vs(12),
+    paddingBottom: theme.vs(12),
     experimental_backgroundImage: `linear-gradient(to bottom, ${theme.colors.surface0}, ${theme.colors.surface} 40%)`,
   },
   destructive: {
