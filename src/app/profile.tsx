@@ -6,11 +6,12 @@ import {
 } from "@react-native-menu/menu";
 import { usePostHog } from "posthog-react-native";
 import { captureAction } from "@/utils/analytics";
+import type { FlashListRef } from "@shopify/flash-list";
+import { BlurView } from "expo-blur";
 import { router } from "expo-router";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Alert, LayoutChangeEvent, View } from "react-native";
-import { type CollapsibleRef, Tabs } from "react-native-collapsible-tab-view";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
@@ -21,17 +22,20 @@ import {
   LANGUAGES,
   useLanguageStore,
 } from "@/store/languageStore";
+import type { ProfileListItem } from "@/@types/profile";
 import {
-  HeaderScrollWatcher,
-  LikedPosts,
-  OwnPosts,
   PersonalDetailsSheet,
   PrivacySheet,
   ProfileHeader,
   ProfileOverview,
+  ProfilePostList,
   ProgrammesSheet,
-  SavedPosts,
 } from "@/components/profile";
+import {
+  useFeedPosts,
+  useLikedFeedPosts,
+  useSavedFeedPosts,
+} from "@/hooks/useFeed";
 import { launchImageLibraryAsync } from "expo-image-picker";
 import { useUploadImages } from "@/hooks/useMedia";
 import {
@@ -41,8 +45,8 @@ import {
   useMyProfile,
   useUpdateMyProfile,
 } from "@/hooks/useMyProfile";
-import { Icon, UIGlass, UIPage, UISegmented } from "@/ui";
-import { authorName } from "@/utils";
+import { Icon, UIGlass, UIPage, UISubTabs } from "@/ui";
+import { authorName, HEADER_COMPACT_OFFSET } from "@/utils";
 import { apiErrorKey } from "@/utils/apiErrorKey";
 import { ApiRequestError } from "@/api";
 
@@ -66,15 +70,55 @@ export default function ProfileScreen() {
   const detailsRef = useRef<BottomSheetModal>(null);
   const privacyRef = useRef<BottomSheetModal>(null);
   const { top: topInset } = useSafeAreaInsets();
-  const tabsRef = useRef<CollapsibleRef>(null);
-  // own posts, liked posts or saved posts; the switch and a swipe both change it
   const [tabIndex, setTabIndex] = useState(0);
-  // the header floats over the tabs; scrolling blurs it and swaps its title for the name
   const [headerHeight, setHeaderHeight] = useState(0);
+  const [tabBarHeight, setTabBarHeight] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
-  // UIPage already pads the status bar; the rest of the floating header stays over the tabs
+  const tabOffsets = useRef([0, 0, 0]);
+  const overviewHeight = useRef(0);
   const headerOffset = Math.max(headerHeight - topInset, 0);
-  const handleTabPress = (index: number) => tabsRef.current?.setIndex(index);
+
+  const ownPostFilters = { authorId: profile?.id };
+  const ownPosts = useFeedPosts(ownPostFilters, { enabled: Boolean(profile) });
+  const likedPosts = useLikedFeedPosts();
+  const savedPosts = useSavedFeedPosts();
+  const ownListRef = useRef<FlashListRef<ProfileListItem>>(null);
+  const likedListRef = useRef<FlashListRef<ProfileListItem>>(null);
+  const savedListRef = useRef<FlashListRef<ProfileListItem>>(null);
+  const listRefs = [ownListRef, likedListRef, savedListRef];
+  const postTabs = [
+    {
+      query: ownPosts,
+      emptyMessage: t("students.noPosts"),
+      filters: ownPostFilters,
+    },
+    { query: likedPosts, emptyMessage: t("students.noLikedPosts") },
+    { query: savedPosts, emptyMessage: t("students.noSavedPosts") },
+  ];
+
+  const handleListScroll = (index: number, offset: number) => {
+    tabOffsets.current[index] = offset;
+    if (index === tabIndex) setIsScrolled(offset > HEADER_COMPACT_OFFSET);
+  };
+  const handleOverviewLayout = (event: LayoutChangeEvent) => {
+    overviewHeight.current = event.nativeEvent.layout.height;
+  };
+  const handleTabPress = (index: number) => {
+    const current = tabOffsets.current[tabIndex] ?? 0;
+    const own = tabOffsets.current[index] ?? 0;
+    const pinnedAt = overviewHeight.current;
+    const target = current < pinnedAt - 1 ? current : Math.max(own, pinnedAt);
+    if (target !== own)
+      listRefs[index]?.current?.scrollToOffset({
+        offset: target,
+        animated: false,
+      });
+    setIsScrolled(target > HEADER_COMPACT_OFFSET);
+    setTabIndex(index);
+  };
+  const handleTabBarLayout = (event: LayoutChangeEvent) => {
+    setTabBarHeight(event.nativeEvent.layout.height);
+  };
   const handleHeaderLayout = (event: LayoutChangeEvent) => {
     setHeaderHeight(event.nativeEvent.layout.height);
   };
@@ -265,9 +309,8 @@ export default function ProfileScreen() {
     </MenuView>
   ) : null;
 
-  const renderTabsHeader = () => (
-    <View style={styles.overview}>
-      <View style={styles.spacer(headerOffset)} />
+  const overview = (
+    <View style={styles.overview} onLayout={handleOverviewLayout}>
       <ProfileOverview
         profile={profile}
         isPending={isPending}
@@ -276,12 +319,14 @@ export default function ProfileScreen() {
         onChangePhoto={handleChangePhotoPress}
         isUploadingPhoto={isUploadingPhoto}
       />
-      <HeaderScrollWatcher onScrolledChange={setIsScrolled} />
     </View>
   );
-  const renderTabBar = () => (
-    <View style={styles.tabBar}>
-      <UISegmented
+  const renderTabBar = (isPinned: boolean) => (
+    <View style={styles.tabBar} onLayout={handleTabBarLayout}>
+      {isPinned ? (
+        <BlurView intensity={50} tint="dark" style={styles.tabBarBlur} />
+      ) : null}
+      <UISubTabs
         items={[t("students.posts"), t("students.liked"), t("students.saved")]}
         selectedItemIndex={tabIndex}
         onPress={handleTabPress}
@@ -301,40 +346,27 @@ export default function ProfileScreen() {
         onLayout={handleHeaderLayout}
         onBackPress={handleBackPress}
       />
-      {/* waits for the floating header's height, so the tabs start with the right minHeaderHeight */}
-      {profile && headerHeight > 0 ? (
-        // the overview scrolls away under the floating header; the switch sticks below it
-        <Tabs.Container
-          ref={tabsRef}
-          lazy
-          minHeaderHeight={headerOffset}
-          onIndexChange={setTabIndex}
-          headerContainerStyle={styles.tabsHeader}
-          renderHeader={renderTabsHeader}
-          renderTabBar={renderTabBar}
-        >
-          <Tabs.Tab name="posts">
-            <OwnPosts authorId={profile.id} />
-          </Tabs.Tab>
-          <Tabs.Tab name="liked">
-            <LikedPosts />
-          </Tabs.Tab>
-          <Tabs.Tab name="saved">
-            <SavedPosts />
-          </Tabs.Tab>
-        </Tabs.Container>
-      ) : (
-        <View style={styles.overview}>
-          <View style={styles.spacer(headerOffset)} />
-          <ProfileOverview
-            profile={profile}
-            isPending={isPending}
-            isError={isError}
-            onRetry={refetch}
-            onChangePhoto={handleChangePhotoPress}
-            isUploadingPhoto={isUploadingPhoto}
-          />
+      {profile ? (
+        <View style={styles.lists}>
+          {postTabs.map(({ query, emptyMessage, filters }, index) => (
+            <ProfilePostList
+              key={index}
+              ref={listRefs[index]}
+              index={index}
+              query={query}
+              emptyMessage={emptyMessage}
+              filters={filters}
+              overview={overview}
+              renderTabBar={renderTabBar}
+              headerOffset={headerOffset}
+              tabBarHeight={tabBarHeight}
+              isActive={index === tabIndex}
+              onScroll={handleListScroll}
+            />
+          ))}
         </View>
+      ) : (
+        <View style={styles.loading(headerOffset)}>{overview}</View>
       )}
       {profile ? (
         <>
@@ -360,20 +392,22 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create((theme) => ({
-  // transparent, so posts show through the floating header's blur once the overview is gone
-  tabsHeader: {
-    backgroundColor: "transparent",
-    shadowOpacity: 0,
-    elevation: 0,
+  lists: {
+    flex: 1,
   },
+  loading: (headerOffset: number) => ({
+    paddingTop: headerOffset,
+  }),
   overview: {
     paddingHorizontal: theme.s(20),
   },
-  spacer: (height: number) => ({ height }),
   tabBar: {
-    paddingHorizontal: theme.s(20),
-    paddingVertical: theme.vs(8),
-    backgroundColor: theme.colors.ink,
+    borderBottomWidth: theme.vs(1),
+    borderBottomColor: theme.colors.white10,
+  },
+  tabBarBlur: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: theme.colors.ink40,
   },
   more: {
     width: theme.vs(44),

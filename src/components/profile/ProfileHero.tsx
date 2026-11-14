@@ -54,6 +54,7 @@ export const ProfileHero = ({
             source={{ uri: bannerUrl }}
             fallback={undefined}
             contentFit="cover"
+            blurRadius={24}
             style={styles.banner}
           />
         ) : null}
@@ -122,10 +123,7 @@ const styles = StyleSheet.create((theme) => ({
     borderColor: theme.colors.white20,
     backgroundColor: theme.colors.white3,
   },
-  banner: {
-    height: theme.vs(96),
-    borderRadius: theme.vs(16),
-  },
+  banner: StyleSheet.absoluteFillObject,
   identity: {
     alignItems: "center",
     gap: theme.vs(20),

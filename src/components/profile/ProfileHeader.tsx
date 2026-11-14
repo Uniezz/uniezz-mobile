@@ -118,11 +118,7 @@ const styles = StyleSheet.create((theme, rt) => ({
     paddingHorizontal: theme.s(20),
     paddingBottom: theme.vs(12),
   },
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.white5,
-  },
+  backdrop: StyleSheet.absoluteFillObject,
   // shortcut: Android shows only the ink tint (no BlurTargetView behind the list), add one if Android needs real blur
   blur: {
     flex: 1,

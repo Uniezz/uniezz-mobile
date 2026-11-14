@@ -7,5 +7,4 @@ export { ProgrammesSheet } from "./ProgrammesSheet";
 export { InterestChips } from "./InterestChips";
 export { ProfileHeader } from "./ProfileHeader";
 export { ProfileOverview } from "./ProfileOverview";
-export { HeaderScrollWatcher } from "./HeaderScrollWatcher";
-export { LikedPosts, OwnPosts, SavedPosts } from "./ProfilePosts";
+export { ProfilePostList } from "./ProfilePostList";
