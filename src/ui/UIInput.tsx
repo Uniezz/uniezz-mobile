@@ -1,5 +1,11 @@
 import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
-import { TextInput, TextInputProps, View } from "react-native";
+import {
+  TextInput,
+  TextInputProps,
+  View,
+  type StyleProp,
+  type ViewStyle,
+} from "react-native";
 import { UIText } from "./UIText";
 import { UIGlass } from "./UIGlass";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
@@ -19,6 +25,7 @@ type UIInputProps = {
   errorText?: string;
   /** inside a bottom sheet: uses its input so the sheet moves above the keyboard */
   isInSheet?: boolean;
+  inputContainerStyle?: StyleProp<ViewStyle>;
 } & TextInputProps;
 
 export const UIInput = ({
@@ -26,7 +33,9 @@ export const UIInput = ({
   leftIcon,
   errorText,
   isInSheet,
+  inputContainerStyle,
   editable = true,
+  style,
   ...props
 }: UIInputProps) => {
   const isError = Boolean(errorText);
@@ -38,17 +47,20 @@ export const UIInput = ({
       </UIText>
 
       <UIGlass
-        style={styles.inputContainer({
-          isError,
-          editable,
-          isMultiline: props.multiline,
-        })}
+        style={[
+          styles.inputContainer({
+            isError,
+            editable,
+            isMultiline: props.multiline,
+          }),
+          inputContainerStyle,
+        ]}
       >
         {leftIcon}
         <Input
           {...props}
           hitSlop={{ top: vs(12), bottom: vs(12), left: s(12), right: s(12) }}
-          style={styles.input(props.multiline)}
+          style={[styles.input(props.multiline), style]}
           autoCorrect={false}
           autoCapitalize="none"
           editable={editable}
@@ -94,19 +106,19 @@ const styles = StyleSheet.create((theme) => ({
   input: (isMultiline?: boolean) => ({
     fontFamily: theme.fonts.Geist,
     fontSize: theme.vs(15),
-    // no fontWeight: with a custom font, iOS resolves the placeholder to another face and draws it low
     color: theme.colors.white,
     flex: 1,
-    // a multiline input grows from its content; the 48pt box (alignItems center) keeps its first line centred
     ...(isMultiline
       ? {
-          // a fixed line height fits an emoji line, so adding or removing emoji doesn't change the height
           lineHeight: theme.vs(21),
           paddingTop: theme.vs(12),
           paddingBottom: theme.vs(12),
-          textAlignVertical: "top" as const,
+          textAlignVertical: "top",
         }
-      : { height: theme.vs(46) }),
+      : {
+          height: theme.vs(46),
+          textAlignVertical: "center",
+        }),
   }),
   errorText: {
     color: theme.colors.red,

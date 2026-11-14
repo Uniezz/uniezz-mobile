@@ -6,6 +6,9 @@ export const LANGUAGE_OPTIONS = [
   { code: "pl", flag: "🇵🇱", label: "Polski" },
   { code: "uk", flag: "🇺🇦", label: "Українська" },
   { code: "ru", flag: "🇷🇺", label: "Русский" },
+  { code: "be", flag: "🇧🇾", label: "Беларуская" },
+  { code: "de", flag: "🇩🇪", label: "Deutsch" },
+  { code: "es", flag: "🇪🇸", label: "Español" },
   { code: "en", flag: "🇬🇧", label: "English" },
 ] as const;
 

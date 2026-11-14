@@ -5,3 +5,5 @@ export * from "./profile";
 export * from "./chat";
 export * from "./study";
 export * from "./report";
+export * from "./faq";
+export * from "./connections";

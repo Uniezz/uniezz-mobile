@@ -10,6 +10,17 @@ export const personalDetailsSchema = z.object({
     return items.length <= 10 && items.every((item) => item.length <= 30);
   }, "students.interestsError"),
   gender: z.enum(["male", "female"]).nullable(),
+  // an empty string clears the saved song; anything else must be an http(s) link
+  songUrl: z
+    .string()
+    .trim()
+    .max(500, "students.songUrlError")
+    .refine(
+      (value) =>
+        value === "" ||
+        (z.url().safeParse(value).success && /^https?:\/\//i.test(value)),
+      "students.songUrlError",
+    ),
 });
 
 export const programmeSchema = z.object({

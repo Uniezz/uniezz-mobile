@@ -1,4 +1,4 @@
-import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
+import type { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FlashList } from "@shopify/flash-list";
 import { router } from "expo-router";
@@ -23,9 +23,9 @@ import { feedFiltersSchema } from "@/schemas";
 import {
   Icon,
   UIAvatar,
-  UIBottomSheet,
   UICollapsingHeader,
   UIEmpty,
+  UIFilters,
   UIIconButton,
   UIPage,
   UIQueryError,
@@ -73,11 +73,8 @@ export default function FeedScreen() {
   // the search field only exists while the keyboard is up; blurring it closes it, the query stays
   const handleSearchPress = () => setIsSearching(true);
   const handleSearchBlur = () => setIsSearching(false);
-  const handleFiltersPress = () => {
-    reset(filters);
-    filtersRef.current?.present();
-  };
-  const handleFiltersDismiss = handleSubmit(setFilters);
+  const handleFiltersOpen = () => reset(filters);
+  const handleFiltersClose = handleSubmit(setFilters);
   const handleProfilePress = () => router.push("/profile");
   const handleNewPostPress = () => router.push("/feed/new");
   const isNewPostShown = isHeaderCompact || Boolean(query);
@@ -135,13 +132,14 @@ export default function FeedScreen() {
         >
           <Icon name="search" size={18} />
         </UIIconButton>
-        <UIIconButton
-          accessibilityRole="button"
-          accessibilityLabel={t("feed.filtersTitle")}
-          onPress={handleFiltersPress}
+        <UIFilters
+          ref={filtersRef}
+          title={t("feed.filtersTitle")}
+          onOpen={handleFiltersOpen}
+          onClose={handleFiltersClose}
         >
-          <Icon name="sliders-horizontal" size={18} />
-        </UIIconButton>
+          <FeedFilters control={control} />
+        </UIFilters>
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={t("app.profile")}
@@ -214,15 +212,6 @@ export default function FeedScreen() {
         placeholder={t("feed.search")}
         submitLabel={t("topbar.search")}
       />
-      <UIBottomSheet
-        ref={filtersRef}
-        title={t("feed.filtersTitle")}
-        onDismiss={handleFiltersDismiss}
-      >
-        <BottomSheetView style={styles.filtersSheet}>
-          <FeedFilters control={control} />
-        </BottomSheetView>
-      </UIBottomSheet>
     </UIPage>
   );
 }
@@ -247,9 +236,6 @@ const styles = StyleSheet.create((theme, rt) => ({
   }),
   header: {
     paddingBottom: theme.vs(20),
-  },
-  filtersSheet: {
-    paddingBottom: rt.insets.bottom + theme.vs(16),
   },
   cell: {
     paddingBottom: theme.vs(16),

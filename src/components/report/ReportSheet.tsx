@@ -9,26 +9,29 @@ import type { Ref } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner-native";
+import { StyleSheet } from "react-native-unistyles";
 import type { CreateReportInput, ReportFormValues } from "@/@types/report";
-import { ApiRequestError } from "@/api";
 import { RowPicker } from "@/components/RowPicker";
 import { useCreateReport } from "@/hooks/useReports";
 import { reportSchema } from "@/schemas";
 import { UIFormSheet, UIInput, UIText } from "@/ui";
 import { REPORT_REASONS } from "@/utils";
+import { apiErrorKey } from "@/utils/apiErrorKey";
 
 type ReportSheetProps = {
   ref: Ref<BottomSheetModal>;
   targetId: string;
   targetType: CreateReportInput["targetType"];
+  onSent?: () => void;
 };
 
 export const ReportSheet = ({
   ref,
   targetId,
   targetType,
+  onSent,
 }: ReportSheetProps) => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { mutateAsync: report, isPending } = useCreateReport();
   const { dismiss } = useBottomSheetModal();
   const { control, handleSubmit, reset } = useForm<ReportFormValues>({
@@ -49,16 +52,9 @@ export const ReportSheet = ({
         toast.success(t("report.sent"));
         reset();
         dismiss();
+        onSent?.();
       } catch (error) {
-        toast.error(
-          t(
-            error instanceof ApiRequestError &&
-              error.translationKey &&
-              i18n.exists(error.translationKey)
-              ? error.translationKey
-              : "apiState.error",
-          ),
-        );
+        toast.error(t(apiErrorKey(error)));
       }
     },
     () => captureAction(posthog, "report_form", "validation_failed"),
@@ -109,9 +105,17 @@ export const ReportSheet = ({
             errorText={fieldState.error?.message && t(fieldState.error.message)}
             maxLength={1000}
             multiline
+            scrollEnabled
+            inputContainerStyle={styles.details}
+            style={styles.detailsInput}
           />
         )}
       />
     </UIFormSheet>
   );
 };
+
+const styles = StyleSheet.create((theme) => ({
+  details: { height: theme.vs(150) },
+  detailsInput: { alignSelf: "stretch" },
+}));

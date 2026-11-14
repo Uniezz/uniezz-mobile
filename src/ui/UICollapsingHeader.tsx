@@ -49,7 +49,7 @@ export const UICollapsingHeader = ({
   const titleLift = subtitle ? HEADER_TITLE_LIFT : 0;
 
   return (
-    <View style={styles.header} onLayout={onLayout}>
+    <View style={styles.header(Boolean(children))} onLayout={onLayout}>
       {/* slides up rather than shrinking: Ease animates transforms, not layout; its top stays off-screen */}
       <EaseView
         animate={{
@@ -117,7 +117,7 @@ export const UICollapsingHeader = ({
 };
 
 const styles = StyleSheet.create((theme, rt) => ({
-  header: {
+  header: (hasChildren: boolean) => ({
     position: "absolute",
     top: 0,
     left: 0,
@@ -127,8 +127,8 @@ const styles = StyleSheet.create((theme, rt) => ({
     pointerEvents: "box-none",
     paddingTop: rt.insets.top + theme.vs(4),
     paddingHorizontal: theme.s(16),
-    paddingBottom: theme.vs(12),
-  },
+    paddingBottom: hasChildren ? 0 : theme.vs(12),
+  }),
   row: (hasSubtitle: boolean) => ({
     flexDirection: "row",
     alignItems: hasSubtitle ? "flex-end" : "center",
@@ -141,8 +141,6 @@ const styles = StyleSheet.create((theme, rt) => ({
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.white5,
   },
   // light tint, so content stays visible, blurred, as it passes under the header
   // shortcut: Android shows only the ink tint (no BlurTargetView behind the list), add one if Android needs real blur

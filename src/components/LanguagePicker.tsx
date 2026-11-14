@@ -1,5 +1,3 @@
-import { useSession } from "@/contexts";
-import { useUpdateMyProfile } from "@/hooks/useMyProfile";
 import {
   type Language,
   LANGUAGES,
@@ -17,8 +15,6 @@ export const LanguagePicker = () => {
   const [isOpen, setIsOpen] = useState(false);
   const language = useLanguageStore((state) => state.language);
   const setLanguage = useLanguageStore((state) => state.setLanguage);
-  const { session } = useSession();
-  const { mutate: updateProfile } = useUpdateMyProfile();
   const currentLanguage =
     (language && LANGUAGES.includes(language) ? language : undefined) ??
     LANGUAGES.find((item) => item === i18n.resolvedLanguage) ??
@@ -30,8 +26,6 @@ export const LanguagePicker = () => {
   const handleSelect = (code: Language) => {
     setLanguage(code);
     setIsOpen(false);
-    // The picker also shows before sign-in, when there is no profile to update.
-    if (session) updateProfile({ language: code });
   };
 
   return (

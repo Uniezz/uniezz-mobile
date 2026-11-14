@@ -6,11 +6,16 @@ import {
 } from "@gorhom/bottom-sheet";
 import type { ReactNode, Ref } from "react";
 import { View } from "react-native";
-import { StyleSheet } from "react-native-unistyles";
+import { StyleSheet, withUnistyles } from "react-native-unistyles";
 import { UIBottomSheet } from "./UIBottomSheet";
 import { UIButton } from "./UIButton";
 import { SHEET_FOOTER_FADE } from "@/utils";
 import { UIText } from "./UIText";
+
+// the device inset, not the screen's: inside a tab, useSafeAreaInsets() also counts the tab bar the sheet covers
+const ThemedFooter = withUnistyles(BottomSheetFooter, (_theme, rt) => ({
+  bottomInset: rt.insets.bottom,
+}));
 
 type UIFormSheetProps = {
   ref: Ref<BottomSheetModal>;
@@ -26,6 +31,8 @@ type UIFormSheetProps = {
   backLabel?: string;
   /** e.g. reset the form, so a closed sheet drops unsaved edits */
   onDismiss?: () => void;
+  /** e.g. confirm discarding a dirty form; while set the sheet does not close on its own */
+  onDismissAttempt?: () => void;
   children: ReactNode;
 };
 
@@ -41,10 +48,11 @@ export const UIFormSheet = ({
   onBackPress,
   backLabel,
   onDismiss,
+  onDismissAttempt,
   children,
 }: UIFormSheetProps) => {
   const renderFooter = (props: BottomSheetFooterProps) => (
-    <BottomSheetFooter {...props}>
+    <ThemedFooter {...props}>
       <View style={styles.footer}>
         {destructiveLabel ? (
           <UIButton
@@ -69,7 +77,7 @@ export const UIFormSheet = ({
           </UIText>
         </UIButton>
       </View>
-    </BottomSheetFooter>
+    </ThemedFooter>
   );
 
   return (
@@ -83,8 +91,11 @@ export const UIFormSheet = ({
       android_keyboardInputMode="adjustResize"
       footerComponent={renderFooter}
       onDismiss={onDismiss}
+      onDismissAttempt={onDismissAttempt}
     >
       <BottomSheetScrollView
+        enableFooterMarginAdjustment
+        keyboardDismissMode="none"
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.content}
@@ -100,8 +111,7 @@ const styles = StyleSheet.create((theme, rt) => ({
     gap: theme.vs(14),
     paddingHorizontal: theme.s(16),
     paddingTop: theme.vs(8),
-    // room for the footer: its fade, the button and its bottom padding
-    paddingBottom: rt.insets.bottom + theme.vs(SHEET_FOOTER_FADE + 56 + 16),
+    paddingBottom: rt.insets.bottom,
   },
   // fades the scrolled form out behind the button
   footer: {
@@ -109,7 +119,9 @@ const styles = StyleSheet.create((theme, rt) => ({
     gap: theme.s(10),
     paddingHorizontal: theme.s(16),
     paddingTop: theme.vs(SHEET_FOOTER_FADE),
-    paddingBottom: rt.insets.bottom + theme.vs(12),
+    // the fill runs on under the home indicator inset, so fields scrolled below the button stay hidden
+    paddingBottom: theme.vs(12) + rt.insets.bottom,
+    marginBottom: -rt.insets.bottom,
     experimental_backgroundImage: `linear-gradient(to bottom, ${theme.colors.surface0}, ${theme.colors.surface} 40%)`,
   },
   destructive: {

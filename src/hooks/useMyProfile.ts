@@ -2,6 +2,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   addMyProgramme,
   deleteMyAvatar,
+  deleteMyBanner,
+  deleteMyProfile,
   deleteMyProgramme,
   getMyProfile,
   replaceMyProgramme,
@@ -15,6 +17,13 @@ export function useMyProfile() {
     gcTime: 30 * 60_000,
     queryKey: ["profile", "me"],
     queryFn: getMyProfile,
+  });
+}
+
+export function useDeleteMyProfile() {
+  return useMutation({
+    meta: { analyticsAction: "profile_delete" },
+    mutationFn: deleteMyProfile,
   });
 }
 
@@ -64,6 +73,16 @@ export function useDeleteMyAvatar() {
   return useMutation({
     meta: { analyticsAction: "avatar_delete" },
     mutationFn: deleteMyAvatar,
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["profile", "me"] }),
+  });
+}
+
+export function useDeleteMyBanner() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    meta: { analyticsAction: "banner_delete" },
+    mutationFn: deleteMyBanner,
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: ["profile", "me"] }),
   });

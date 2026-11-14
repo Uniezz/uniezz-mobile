@@ -10,6 +10,10 @@ export async function getMyProfile(): Promise<Profile> {
   return data!;
 }
 
+export async function deleteMyProfile() {
+  await api.DELETE("/profile/me");
+}
+
 export async function updateMyProfile(body: UpdateProfileInput) {
   const { data } = await api.PATCH("/profile/me", { body });
   return data!;
@@ -56,4 +60,8 @@ export async function getPublicProfile(id: string) {
 
 export async function deleteMyAvatar() {
   await api.DELETE("/profile/avatar");
+}
+
+export async function deleteMyBanner() {
+  await api.DELETE("/profile/banner");
 }

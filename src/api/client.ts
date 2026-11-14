@@ -60,12 +60,19 @@ const apiMiddleware: Middleware = {
       if (response.status === 204) {
         const allowsNoContent =
           (request.method === "POST" && schemaPath === "/auth/otp/request") ||
+          (request.method === "PUT" &&
+            schemaPath === "/connections/blocks/{id}") ||
           (request.method === "DELETE" &&
             [
               "/feed/comments/{id}",
               "/feed/posts/{id}",
               "/profile/avatar",
+              "/profile/me",
               "/profile/programmes/{id}",
+              "/connections/{id}",
+              "/connections/blocks/{id}",
+              "/study/comments/{id}",
+              "/study/files/{id}",
             ].includes(schemaPath));
         if (!allowsNoContent) {
           throw apiError(`${request.method} ${schemaPath}`, response);

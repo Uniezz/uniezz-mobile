@@ -84,6 +84,37 @@ export async function getFeaturedFeedPosts() {
   return data!;
 }
 
+export async function getLikedFeedPosts(cursor?: string) {
+  const { data } = await api.GET("/feed/posts/liked", {
+    params: { query: { cursor, limit: 20 } },
+  });
+
+  return data!;
+}
+
+export async function getSavedFeedPosts(cursor?: string) {
+  const { data } = await api.GET("/feed/posts/saved", {
+    params: { query: { cursor, limit: 20 } },
+  });
+
+  return data!;
+}
+
+export async function setFeedSave({
+  id,
+  saved,
+}: {
+  id: string;
+  saved: boolean;
+}) {
+  const params = { path: { id } };
+  const result = saved
+    ? await api.PUT("/feed/posts/{id}/save", { params })
+    : await api.DELETE("/feed/posts/{id}/save", { params });
+
+  return result.data!;
+}
+
 export async function getFeedPost(id: string) {
   const { data } = await api.GET("/feed/posts/{id}", {
     params: { path: { id } },

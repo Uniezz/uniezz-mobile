@@ -25,8 +25,8 @@ export const StudentRow = ({ student }: { student: ProfileSummary }) => {
       accessibilityLabel={name}
       onPress={handlePress}
     >
-      <UIGlass radius={16} style={styles.row}>
-        <UIAvatar imageSrc={student.avatarUrl} />
+      <UIGlass radius={12} style={styles.row}>
+        <UIAvatar imageSrc={student.avatarUrl} style={styles.avatar} />
         <View style={styles.text}>
           <UIText weight="semibold" numberOfLines={1}>
             {name}
@@ -54,6 +54,7 @@ export const StudentRow = ({ student }: { student: ProfileSummary }) => {
 };
 
 const styles = StyleSheet.create((theme) => ({
+  avatar: { borderWidth: 0 },
   row: {
     flexDirection: "row",
     alignItems: "center",

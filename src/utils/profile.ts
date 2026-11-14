@@ -56,6 +56,7 @@ export const toDetailsValues = (
   bio: profile.bio ?? "",
   interests: (profile.interests ?? []).join(", "),
   gender: profile.gender,
+  songUrl: profile.songUrl ?? "",
 });
 
 // how far the header titles slide while crossfading

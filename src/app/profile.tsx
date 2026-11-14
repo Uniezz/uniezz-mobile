@@ -6,16 +6,13 @@ import {
 } from "@react-native-menu/menu";
 import { usePostHog } from "posthog-react-native";
 import { captureAction } from "@/utils/analytics";
+import type { FlashListRef } from "@shopify/flash-list";
+import { BlurView } from "expo-blur";
 import { router } from "expo-router";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FlashList } from "@shopify/flash-list";
-import {
-  LayoutChangeEvent,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  View,
-} from "react-native";
+import { Alert, LayoutChangeEvent, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import { useSession } from "@/contexts";
@@ -25,25 +22,33 @@ import {
   LANGUAGES,
   useLanguageStore,
 } from "@/store/languageStore";
+import type { ProfileListItem } from "@/@types/profile";
 import {
   PersonalDetailsSheet,
   PrivacySheet,
   ProfileHeader,
   ProfileOverview,
+  ProfilePostList,
   ProgrammesSheet,
 } from "@/components/profile";
-import { FeedPostCard } from "@/components/feed";
-import { useFeedPosts } from "@/hooks/useFeed";
+import {
+  useFeedPosts,
+  useLikedFeedPosts,
+  useSavedFeedPosts,
+} from "@/hooks/useFeed";
 import { launchImageLibraryAsync } from "expo-image-picker";
-import { ApiRequestError } from "@/api";
 import { useUploadImages } from "@/hooks/useMedia";
 import {
   useDeleteMyAvatar,
+  useDeleteMyBanner,
+  useDeleteMyProfile,
   useMyProfile,
   useUpdateMyProfile,
 } from "@/hooks/useMyProfile";
-import { Icon, UIGlass, UIPage, UIQueryError, UISkeleton, UIText } from "@/ui";
+import { Icon, UIGlass, UIPage, UISubTabs } from "@/ui";
 import { authorName, HEADER_COMPACT_OFFSET } from "@/utils";
+import { apiErrorKey } from "@/utils/apiErrorKey";
+import { ApiRequestError } from "@/api";
 
 export default function ProfileScreen() {
   const { t, i18n } = useTranslation();
@@ -51,38 +56,68 @@ export default function ProfileScreen() {
   const { data: profile, isPending, isError, refetch } = useMyProfile();
   const { mutateAsync: deleteAvatar, isPending: isRemovingPhoto } =
     useDeleteMyAvatar();
+  const { mutateAsync: deleteBanner, isPending: isRemovingBanner } =
+    useDeleteMyBanner();
+  const { mutateAsync: deleteProfile, isPending: isDeletingProfile } =
+    useDeleteMyProfile();
   const { mutateAsync: uploadImages, isPending: isUploadingPhoto } =
     useUploadImages("avatar");
+  const { mutateAsync: uploadBanner, isPending: isUploadingBanner } =
+    useUploadImages("banner");
   const { mutateAsync: updateProfile } = useUpdateMyProfile();
   const { clearSession } = useSession();
   const programmesRef = useRef<BottomSheetModal>(null);
   const detailsRef = useRef<BottomSheetModal>(null);
   const privacyRef = useRef<BottomSheetModal>(null);
-  const postFilters = { authorId: profile?.id };
-  const {
-    data: postPages,
-    isPending: arePostsPending,
-    isError: arePostsError,
-    refetch: refetchPosts,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useFeedPosts(postFilters, {
-    enabled: Boolean(profile),
-  });
-  const posts = profile
-    ? (postPages?.pages.flatMap((page) => page.items ?? []) ?? [])
-    : [];
-  const handleEndReached = () => {
-    if (hasNextPage && !isFetchingNextPage) return fetchNextPage();
-  };
-
-  // the header floats over the list; scrolling blurs it and swaps its title for the name
+  const { top: topInset } = useSafeAreaInsets();
+  const [tabIndex, setTabIndex] = useState(0);
   const [headerHeight, setHeaderHeight] = useState(0);
-  // a boolean, so a scroll only re-renders when it flips
+  const [tabBarHeight, setTabBarHeight] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
-  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    setIsScrolled(event.nativeEvent.contentOffset.y > HEADER_COMPACT_OFFSET);
+  const tabOffsets = useRef([0, 0, 0]);
+  const overviewHeight = useRef(0);
+  const headerOffset = Math.max(headerHeight - topInset, 0);
+
+  const ownPostFilters = { authorId: profile?.id };
+  const ownPosts = useFeedPosts(ownPostFilters, { enabled: Boolean(profile) });
+  const likedPosts = useLikedFeedPosts();
+  const savedPosts = useSavedFeedPosts();
+  const ownListRef = useRef<FlashListRef<ProfileListItem>>(null);
+  const likedListRef = useRef<FlashListRef<ProfileListItem>>(null);
+  const savedListRef = useRef<FlashListRef<ProfileListItem>>(null);
+  const listRefs = [ownListRef, likedListRef, savedListRef];
+  const postTabs = [
+    {
+      query: ownPosts,
+      emptyMessage: t("students.noPosts"),
+      filters: ownPostFilters,
+    },
+    { query: likedPosts, emptyMessage: t("students.noLikedPosts") },
+    { query: savedPosts, emptyMessage: t("students.noSavedPosts") },
+  ];
+
+  const handleListScroll = (index: number, offset: number) => {
+    tabOffsets.current[index] = offset;
+    if (index === tabIndex) setIsScrolled(offset > HEADER_COMPACT_OFFSET);
+  };
+  const handleOverviewLayout = (event: LayoutChangeEvent) => {
+    overviewHeight.current = event.nativeEvent.layout.height;
+  };
+  const handleTabPress = (index: number) => {
+    const current = tabOffsets.current[tabIndex] ?? 0;
+    const own = tabOffsets.current[index] ?? 0;
+    const pinnedAt = overviewHeight.current;
+    const target = current < pinnedAt - 1 ? current : Math.max(own, pinnedAt);
+    if (target !== own)
+      listRefs[index]?.current?.scrollToOffset({
+        offset: target,
+        animated: false,
+      });
+    setIsScrolled(target > HEADER_COMPACT_OFFSET);
+    setTabIndex(index);
+  };
+  const handleTabBarLayout = (event: LayoutChangeEvent) => {
+    setTabBarHeight(event.nativeEvent.layout.height);
   };
   const handleHeaderLayout = (event: LayoutChangeEvent) => {
     setHeaderHeight(event.nativeEvent.layout.height);
@@ -97,6 +132,42 @@ export default function ProfileScreen() {
       toast.success(t("app.saved"));
     } catch {
       toast.error(t("apiState.profileSaveError"));
+    }
+  };
+
+  const handleRemoveBannerPress = async () => {
+    try {
+      await deleteBanner();
+      toast.success(t("app.saved"));
+    } catch {
+      toast.error(t("apiState.profileSaveError"));
+    }
+  };
+
+  const handleChangeBannerPress = async () => {
+    captureAction(posthog, "banner_pick", "attempted");
+    const result = await launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [3, 1],
+      quality: 0.8,
+    }).catch((error: unknown) => {
+      captureAction(posthog, "banner_pick", "failed");
+      throw error;
+    });
+    if (result.canceled) {
+      captureAction(posthog, "banner_pick", "cancelled");
+      return;
+    }
+    captureAction(posthog, "banner_pick", "succeeded");
+    if (!result.assets[0]) return;
+    const { uri, mimeType, fileSize } = result.assets[0];
+    try {
+      const [bannerMediaId] = await uploadBanner([{ uri, mimeType, fileSize }]);
+      await updateProfile({ bannerMediaId });
+      toast.success(t("app.saved"));
+    } catch (error) {
+      toast.error(t(apiErrorKey(error, "apiState.profileSaveError")));
     }
   };
 
@@ -123,13 +194,7 @@ export default function ProfileScreen() {
       await updateProfile({ avatarMediaId });
       toast.success(t("app.saved"));
     } catch (error) {
-      toast.error(
-        t(
-          error instanceof ApiRequestError && error.translationKey
-            ? error.translationKey
-            : "apiState.profileSaveError",
-        ),
-      );
+      toast.error(t(apiErrorKey(error, "apiState.profileSaveError")));
     }
   };
 
@@ -141,12 +206,37 @@ export default function ProfileScreen() {
     }
   };
 
+  const confirmDeleteProfile = async () => {
+    try {
+      await deleteProfile();
+      await clearSession();
+    } catch (error) {
+      toast.error(
+        t(
+          error instanceof ApiRequestError && error.status === 403
+            ? "auth.reauthenticateToDelete"
+            : apiErrorKey(error, "apiState.error"),
+        ),
+      );
+    }
+  };
+  const handleDeleteProfilePress = () =>
+    Alert.alert(
+      t("auth.deleteAccountTitle"),
+      t("auth.deleteAccountDescription"),
+      [
+        { text: t("postComposer.cancel"), style: "cancel" },
+        {
+          text: t("auth.deleteAccount"),
+          style: "destructive",
+          onPress: confirmDeleteProfile,
+        },
+      ],
+    );
+
   const setLanguage = useLanguageStore((state) => state.setLanguage);
   const handleLanguagePress = (code: Language) => {
     setLanguage(code);
-    updateProfile({ language: code }).catch(() =>
-      toast.error(t("apiState.profileSaveError")),
-    );
   };
   const handleMenuAction = ({ nativeEvent }: NativeActionEvent) => {
     const language = LANGUAGES.find((code) => nativeEvent.event === code);
@@ -156,12 +246,17 @@ export default function ProfileScreen() {
     if (nativeEvent.event === "programmes")
       return programmesRef.current?.present();
     if (nativeEvent.event === "removePhoto") return handleRemovePhotoPress();
+    if (nativeEvent.event === "changeBanner") return handleChangeBannerPress();
+    if (nativeEvent.event === "removeBanner") return handleRemoveBannerPress();
     if (nativeEvent.event === "logout") return handleLogoutPress();
+    if (nativeEvent.event === "deleteProfile")
+      return handleDeleteProfilePress();
   };
   const menuActions: MenuAction[] = [
     { id: "details", title: t("app.personalDetails") },
     { id: "programmes", title: t("app.studyProgrammes") },
     { id: "privacy", title: t("app.profileVisibility") },
+    { id: "changeBanner", title: t("app.changeBanner") },
     {
       id: "language",
       title: t("language.title"),
@@ -180,10 +275,24 @@ export default function ProfileScreen() {
           },
         ]
       : []),
+    ...(profile?.bannerUrl && !isRemovingBanner && !isUploadingBanner
+      ? [
+          {
+            id: "removeBanner",
+            title: t("students.removeBanner"),
+            attributes: { destructive: true },
+          },
+        ]
+      : []),
     {
       id: "logout",
       title: t("auth.logOut"),
       attributes: { destructive: true },
+    },
+    {
+      id: "deleteProfile",
+      title: t("auth.deleteAccount"),
+      attributes: { destructive: true, disabled: isDeletingProfile },
     },
   ];
   const headerAction = profile ? (
@@ -200,6 +309,31 @@ export default function ProfileScreen() {
     </MenuView>
   ) : null;
 
+  const overview = (
+    <View style={styles.overview} onLayout={handleOverviewLayout}>
+      <ProfileOverview
+        profile={profile}
+        isPending={isPending}
+        isError={isError}
+        onRetry={refetch}
+        onChangePhoto={handleChangePhotoPress}
+        isUploadingPhoto={isUploadingPhoto}
+      />
+    </View>
+  );
+  const renderTabBar = (isPinned: boolean) => (
+    <View style={styles.tabBar} onLayout={handleTabBarLayout}>
+      {isPinned ? (
+        <BlurView intensity={50} tint="dark" style={styles.tabBarBlur} />
+      ) : null}
+      <UISubTabs
+        items={[t("students.posts"), t("students.liked"), t("students.saved")]}
+        selectedItemIndex={tabIndex}
+        onPress={handleTabPress}
+      />
+    </View>
+  );
+
   return (
     <UIPage>
       <ProfileHeader
@@ -212,45 +346,28 @@ export default function ProfileScreen() {
         onLayout={handleHeaderLayout}
         onBackPress={handleBackPress}
       />
-      <FlashList
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
-        showsVerticalScrollIndicator={false}
-        ListHeaderComponent={
-          <ProfileOverview
-            profile={profile}
-            isPending={isPending}
-            isError={isError}
-            onRetry={refetch}
-            onChangePhoto={handleChangePhotoPress}
-            isUploadingPhoto={isUploadingPhoto}
-          />
-        }
-        data={posts}
-        keyExtractor={(post) => post.id}
-        contentContainerStyle={styles.list(headerHeight)}
-        onEndReached={handleEndReached}
-        ListEmptyComponent={
-          !profile ? null : arePostsPending ? (
-            <UISkeleton height={120} />
-          ) : arePostsError ? (
-            <UIQueryError
-              message={t("apiState.error")}
-              onRetry={refetchPosts}
+      {profile ? (
+        <View style={styles.lists}>
+          {postTabs.map(({ query, emptyMessage, filters }, index) => (
+            <ProfilePostList
+              key={index}
+              ref={listRefs[index]}
+              index={index}
+              query={query}
+              emptyMessage={emptyMessage}
+              filters={filters}
+              overview={overview}
+              renderTabBar={renderTabBar}
+              headerOffset={headerOffset}
+              tabBarHeight={tabBarHeight}
+              isActive={index === tabIndex}
+              onScroll={handleListScroll}
             />
-          ) : (
-            <UIText color="secondary">{t("students.noPosts")}</UIText>
-          )
-        }
-        ListFooterComponent={
-          isFetchingNextPage ? <UISkeleton height={110} /> : null
-        }
-        renderItem={({ item }) => (
-          <View style={styles.cell}>
-            <FeedPostCard post={item} filters={postFilters} />
-          </View>
-        )}
-      />
+          ))}
+        </View>
+      ) : (
+        <View style={styles.loading(headerOffset)}>{overview}</View>
+      )}
       {profile ? (
         <>
           <PersonalDetailsSheet
@@ -274,15 +391,23 @@ export default function ProfileScreen() {
   );
 }
 
-const styles = StyleSheet.create((theme, rt) => ({
-  // UIPage already pads the status bar; the rest of the header height is added here
-  list: (headerHeight: number) => ({
-    paddingTop: Math.max(headerHeight - rt.insets.top, 0),
-    paddingHorizontal: theme.s(20),
-    paddingBottom: theme.vs(60),
+const styles = StyleSheet.create((theme) => ({
+  lists: {
+    flex: 1,
+  },
+  loading: (headerOffset: number) => ({
+    paddingTop: headerOffset,
   }),
-  cell: {
-    paddingBottom: theme.vs(16),
+  overview: {
+    paddingHorizontal: theme.s(20),
+  },
+  tabBar: {
+    borderBottomWidth: theme.vs(1),
+    borderBottomColor: theme.colors.white10,
+  },
+  tabBarBlur: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: theme.colors.ink40,
   },
   more: {
     width: theme.vs(44),

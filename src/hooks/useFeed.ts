@@ -10,7 +10,10 @@ import {
   getFeaturedFeedPosts,
   getFeedPost,
   getFeedPosts,
+  getLikedFeedPosts,
+  getSavedFeedPosts,
   setFeedLike,
+  setFeedSave,
   updateFeedPost,
 } from "@/api";
 import type { FeedFilters } from "@/@types/feed";
@@ -76,6 +79,24 @@ export function useFeedLike() {
   });
 }
 
+export function useFeedSave() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    meta: { analyticsAction: "post_save_set" },
+    // savedByMe is the state before the tap, for the optimistic patch and its rollback
+    mutationFn: setFeedSave,
+    onMutate: ({ id, saved }) =>
+      patchFeedItem(queryClient, id, { savedByMe: saved }),
+    onError: (_, { id, saved }) =>
+      patchFeedItem(queryClient, id, { savedByMe: !saved }),
+    onSuccess: ({ saved }, { id }) => {
+      patchFeedItem(queryClient, id, { savedByMe: saved });
+      // The saved list gains or loses this post.
+      return queryClient.invalidateQueries({ queryKey: ["feed", "saved"] });
+    },
+  });
+}
+
 export function useFeedPosts(
   filters: FeedFilters = {},
   { enabled = true } = {},
@@ -110,5 +131,27 @@ export function useFeedPost(id: string, enabled = true) {
     queryKey: ["feed", "post", id],
     queryFn: () => getFeedPost(id),
     enabled,
+  });
+}
+
+export function useLikedFeedPosts() {
+  return useInfiniteQuery({
+    staleTime: 60_000,
+    gcTime: 10 * 60_000,
+    queryKey: ["feed", "liked"],
+    queryFn: ({ pageParam }) => getLikedFeedPosts(pageParam),
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (page) => page.nextCursor ?? undefined,
+  });
+}
+
+export function useSavedFeedPosts() {
+  return useInfiniteQuery({
+    staleTime: 60_000,
+    gcTime: 10 * 60_000,
+    queryKey: ["feed", "saved"],
+    queryFn: ({ pageParam }) => getSavedFeedPosts(pageParam),
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (page) => page.nextCursor ?? undefined,
   });
 }

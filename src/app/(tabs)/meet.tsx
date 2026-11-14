@@ -1,49 +1,155 @@
-import { Image } from "expo-image";
+import {
+  useBottomSheetModal,
+  type BottomSheetModal,
+} from "@gorhom/bottom-sheet";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Pressable, View } from "react-native";
-import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
-import { StyleSheet, withUnistyles } from "react-native-unistyles";
+import { StyleSheet } from "react-native-unistyles";
+import { toast } from "sonner-native";
+import type {
+  Connection,
+  ConnectionFilterValues,
+  ConnectionMode,
+  ConnectionPreferencesFormValues,
+} from "@/@types/connections";
+import {
+  ConnectionFilters,
+  ConnectionPreferencesForm,
+  DiscoverCard,
+} from "@/components/meet";
+import { ReportSheet } from "@/components/report";
+import {
+  useActOnCandidate,
+  useConnectionPreferences,
+  useDiscoverCards,
+  useUpdateConnectionPreferences,
+} from "@/hooks/useConnections";
 import { useMyProfile } from "@/hooks/useMyProfile";
-import { Icon, UIAvatar, UIEmpty, UIGlass, UIPage, UIText } from "@/ui";
-
-const Shade = withUnistyles(Stop, (theme) => ({ stopColor: theme.colors.ink }));
-
-const MODES = [
-  ["friends", "app.friends", "face-slightly-smiling"],
-  ["study", "app.studyBuddy", "book-open"],
-  ["dating", "app.dating", "heart"],
-] as const;
-
-// shortcut: preview profiles until the backend has a matching endpoint
-const students = [
-  {
-    name: "Zofia, 21",
-    study: "UMCS, Journalism, 3rd year",
-    about: "Someone to try Lublin's cafés with and practise Polish.",
-    portrait: require("../../../assets/meet-zofia.jpg"),
-  },
-  {
-    name: "Marek, 22",
-    study: "Politechnika, Computer Science",
-    about: "A study buddy for algorithms and new friends.",
-    portrait: require("../../../assets/meet-student.jpg"),
-  },
-];
+import {
+  Icon,
+  UIAvatar,
+  UIEmpty,
+  UIFadeScrollView,
+  UIFilters,
+  UIGlass,
+  UIIconButton,
+  UIPage,
+  UIQueryError,
+  UISkeleton,
+  UIText,
+} from "@/ui";
+import {
+  connectionFiltersSchema,
+  connectionPreferencesSchema,
+} from "@/schemas";
+import {
+  CONNECTION_MODES,
+  DAILY_LIKE_LIMIT,
+  INITIAL_CONNECTION_FILTERS,
+  toCalendarDay,
+  toDiscoverFilters,
+  toPreferencesValues,
+} from "@/utils";
+import { apiErrorKey } from "@/utils/apiErrorKey";
 
 export default function MeetScreen() {
   const { t } = useTranslation();
-  const [mode, setMode] = useState<(typeof MODES)[number][0]>("friends");
-  const [index, setIndex] = useState(0);
-  const [connected, setConnected] = useState(false);
-  const student = students[index];
+  const [mode, setMode] = useState<ConnectionMode>("friends");
+  // the match the last Connect made; its profile is revealed
+  const [match, setMatch] = useState<Connection | null>(null);
+  const reportRef = useRef<BottomSheetModal>(null);
+  const filtersRef = useRef<BottomSheetModal>(null);
+  // the sheet edits the form; the deck uses `filterValues`, copied across when the sheet closes
+  const [filterValues, setFilterValues] = useState(INITIAL_CONNECTION_FILTERS);
+  const { control, reset, handleSubmit } = useForm<ConnectionFilterValues>({
+    resolver: zodResolver(connectionFiltersSchema),
+    defaultValues: INITIAL_CONNECTION_FILTERS,
+  });
+  const filters = toDiscoverFilters(mode, filterValues);
   const { data: profile } = useMyProfile();
+  const {
+    data: deck,
+    isPending,
+    isError,
+    refetch,
+    isPlaceholderData,
+  } = useDiscoverCards(filters);
+  const { data: preferences } = useConnectionPreferences();
+  const { dismiss } = useBottomSheetModal();
+  const { mutateAsync: savePreferences, isPending: isSaving } =
+    useUpdateConnectionPreferences();
+  const { control: preferencesControl, handleSubmit: handlePreferencesSubmit } =
+    useForm<ConnectionPreferencesFormValues>({
+      resolver: zodResolver(connectionPreferencesSchema),
+      values: toPreferencesValues(preferences),
+    });
+  const { mutateAsync: act, isPending: isActing } = useActOnCandidate(filters);
+  const card = deck?.items?.[0];
+  const openTo = preferences?.openTo ?? [];
+  // the server only deals cards for a mode the student is open to
+  const isClosedToMode = preferences !== undefined && !openTo.includes(mode);
+
+  const showError = (error: unknown) =>
+    toast.error(t(apiErrorKey(error), { limit: DAILY_LIKE_LIMIT }));
+
   const handleStudentsPress = () => router.push("/students");
-  const next = () => {
-    setIndex(index + 1);
-    setConnected(false);
+  const handleFiltersOpen = () => reset(filterValues);
+  const handleFiltersClose = handleSubmit((values) => {
+    setFilterValues(values);
+    setMatch(null);
+  });
+  // as on the web: saving the preferences opens the student to this mode, then the sheet closes and applies the filters
+  const handleSavePress = handlePreferencesSubmit(
+    async ({ birthDate, intent }) => {
+      try {
+        await savePreferences({
+          ...(birthDate ? { birthDate: toCalendarDay(birthDate) } : {}),
+          intent,
+          openTo: openTo.includes(mode) ? openTo : [...openTo, mode],
+        });
+        toast.success(t("connections.preferencesSaved"));
+        dismiss();
+      } catch (error) {
+        showError(error);
+      }
+    },
+  );
+  const handleProfilePress = () => router.push("/profile");
+  const handleModePress = (value: ConnectionMode) => {
+    setMode(value);
+    setMatch(null);
   };
+  const handleAction = async (action: "like" | "pass") => {
+    if (!card) return;
+    setMatch(null);
+    try {
+      const result = await act({ id: card.candidateId, mode, action });
+      if (result.connection) setMatch(result.connection);
+    } catch (error) {
+      showError(error);
+    }
+  };
+  const handlePassPress = () => handleAction("pass");
+  const handleConnectPress = () => handleAction("like");
+  const handleReportPress = () => reportRef.current?.present();
+  const handleMatchPress = () => {
+    if (match) router.push(`/student/${match.profile.id}`);
+  };
+
+  const emptyState = (
+    <UIEmpty
+      isScreenCentred
+      message={t(
+        isClosedToMode
+          ? "connections.closedToMode"
+          : "connections.emptyDescription",
+      )}
+    />
+  );
 
   return (
     <UIPage>
@@ -52,97 +158,85 @@ export default function MeetScreen() {
           <UIText size="xl" weight="bold" style={styles.title}>
             {t("tabs.connections")}
           </UIText>
-          <Pressable
+          <UIIconButton
             accessibilityRole="button"
             accessibilityLabel={t("app.searchStudents")}
             onPress={handleStudentsPress}
           >
-            <UIGlass radius={16} style={styles.students}>
-              <Icon name="search" size={18} />
-              <UIText size="sm" weight="semibold">
-                {t("app.students")}
-              </UIText>
-            </UIGlass>
-          </Pressable>
+            <Icon name="search" size={18} />
+          </UIIconButton>
+          <UIFilters
+            ref={filtersRef}
+            title={t("connections.filters")}
+            onOpen={handleFiltersOpen}
+            onClose={handleFiltersClose}
+            action={{
+              label: t("apiState.save"),
+              isDisabled: isSaving,
+              onPress: handleSavePress,
+            }}
+          >
+            <ConnectionFilters control={control} mode={mode} />
+            <ConnectionPreferencesForm control={preferencesControl} />
+          </UIFilters>
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={t("app.profile")}
-            onPress={() => router.push("/profile")}
+            onPress={handleProfilePress}
           >
             <UIAvatar imageSrc={profile?.avatarUrl} />
           </Pressable>
         </View>
-        <>
-          <View style={styles.modes}>
-            {MODES.map(([value, label, icon]) => {
-              const selected = mode === value;
-              return (
-                <Pressable
-                  key={value}
-                  accessibilityRole="button"
-                  accessibilityState={{ selected }}
-                  onPress={() => setMode(value)}
-                  style={styles.mode(selected)}
+        <UIFadeScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.modesScroll}
+          contentContainerStyle={styles.modes}
+        >
+          {CONNECTION_MODES.map(([value, label, icon]) => {
+            const selected = mode === value;
+            const handleChipPress = () => handleModePress(value);
+            return (
+              <Pressable
+                key={value}
+                accessibilityRole="button"
+                accessibilityState={{ selected }}
+                onPress={handleChipPress}
+                style={styles.mode(selected)}
+              >
+                <Icon
+                  name={icon}
+                  size={14}
+                  uniProps={(theme) => ({
+                    color: selected ? theme.colors.ink : theme.colors.white,
+                  })}
+                />
+                <UIText
+                  size="sm"
+                  weight="semibold"
+                  color={selected ? "black" : "white"}
                 >
-                  <Icon
-                    name={icon}
-                    size={14}
-                    uniProps={(theme) => ({
-                      color: selected ? theme.colors.ink : theme.colors.white,
-                    })}
-                  />
-                  <UIText
-                    size="sm"
-                    weight="semibold"
-                    color={selected ? "black" : "white"}
-                  >
-                    {t(label)}
-                  </UIText>
-                </Pressable>
-              );
-            })}
+                  {t(label)}
+                </UIText>
+              </Pressable>
+            );
+          })}
+        </UIFadeScrollView>
+        {isPending ? (
+          <View style={styles.cardSkeleton}>
+            <UISkeleton height="100%" />
           </View>
-          {student ? (
-            <View style={styles.card}>
-              <Image
-                source={student.portrait}
-                contentFit="cover"
-                style={StyleSheet.absoluteFill}
-                accessibilityLabel={student.name}
-              />
-              <Svg style={styles.shade}>
-                <Defs>
-                  <LinearGradient id="shade" x1="0" y1="0" x2="0" y2="1">
-                    <Shade offset="0" stopOpacity={0} />
-                    <Shade offset="1" stopOpacity={0.9} />
-                  </LinearGradient>
-                </Defs>
-                <Rect width="100%" height="100%" fill="url(#shade)" />
-              </Svg>
-              <View style={styles.details}>
-                <UIText size="xl" weight="bold">
-                  {student.name}
-                </UIText>
-                <UIText size="body" weight="medium" color="soft">
-                  {student.study}
-                </UIText>
-                <View style={styles.answer}>
-                  <UIText size="xs" weight="semibold" color="link">
-                    {t("connections.lookingFor")}
-                  </UIText>
-                  <UIText weight="medium" style={styles.answerText}>
-                    {student.about}
-                  </UIText>
-                </View>
-              </View>
-            </View>
-          ) : null}
-          {student ? (
+        ) : isError ? (
+          <UIQueryError message={t("apiState.error")} onRetry={refetch} />
+        ) : card ? (
+          <>
+            <DiscoverCard card={card} onReportPress={handleReportPress} />
             <View style={styles.actions}>
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel={t("app.pass")}
-                onPress={next}
+                disabled={isActing || isPlaceholderData}
+                onPress={handlePassPress}
                 style={styles.action}
               >
                 <UIGlass radius={32} style={styles.actionCircle}>
@@ -159,12 +253,13 @@ export default function MeetScreen() {
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel={t("app.connect")}
-                onPress={() => setConnected(true)}
+                disabled={isActing || isPlaceholderData}
+                onPress={handleConnectPress}
                 style={styles.action}
               >
                 <View style={[styles.actionCircle, styles.connect]}>
                   <Icon
-                    name={connected ? "check" : "heart"}
+                    name="heart"
                     size={24}
                     uniProps={(theme) => ({ color: theme.colors.ink })}
                   />
@@ -174,23 +269,36 @@ export default function MeetScreen() {
                 </UIText>
               </Pressable>
             </View>
-          ) : null}
-          {connected ? (
-            <UIText color="success" style={styles.notice}>
-              {t("app.connected")}
+          </>
+        ) : null}
+        {match ? (
+          <Pressable
+            accessibilityRole="button"
+            onPress={handleMatchPress}
+            style={styles.notice}
+          >
+            <UIText color="success">{t("app.connected")}</UIText>
+            <UIText weight="semibold" color="link">
+              {t("connections.viewProfile")}
             </UIText>
-          ) : null}
-        </>
+          </Pressable>
+        ) : null}
       </View>
       {/* a direct child of UIPage, so the cat centres like every other empty state */}
-      {student ? null : (
-        <UIEmpty isScreenCentred message={t("connections.emptyDescription")} />
-      )}
+      {!isPending && !isError && !card ? emptyState : null}
+      {card ? (
+        <ReportSheet
+          ref={reportRef}
+          targetId={card.candidateId}
+          targetType="candidate"
+          onSent={refetch}
+        />
+      ) : null}
     </UIPage>
   );
 }
 
-const styles = StyleSheet.create((theme) => ({
+const styles = StyleSheet.create((theme, rt) => ({
   page: {
     flex: 1,
     paddingTop: theme.vs(4),
@@ -204,20 +312,18 @@ const styles = StyleSheet.create((theme) => ({
     alignItems: "center",
     gap: theme.s(8),
   },
-  students: {
-    height: theme.vs(44),
-    flexDirection: "row",
-    alignItems: "center",
-    gap: theme.s(8),
-    paddingHorizontal: theme.s(12),
-  },
   title: {
     flex: 1,
     lineHeight: theme.vs(30),
   },
+  // edge to edge, so the pills scroll under the fades instead of being cut at the page inset
+  modesScroll: {
+    flexGrow: 0,
+    marginHorizontal: -theme.s(16),
+  },
   modes: {
-    flexDirection: "row",
     gap: theme.s(6),
+    paddingHorizontal: theme.s(16),
   },
   mode: (selected: boolean) => ({
     flexDirection: "row",
@@ -231,39 +337,8 @@ const styles = StyleSheet.create((theme) => ({
     borderWidth: 1,
     borderColor: selected ? theme.colors.white : theme.colors.white10,
   }),
-  card: {
-    // fills the space between the modes and the actions, so the screen fits without scrolling
-    flex: 1,
-    borderRadius: theme.vs(16),
-    borderWidth: 1,
-    borderColor: theme.colors.white10,
-    overflow: "hidden",
-    justifyContent: "flex-end",
-    padding: theme.s(14),
-    backgroundColor: theme.colors.surface60,
-  },
-  shade: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: 0,
-    height: theme.vs(280),
-  },
-  details: {
-    gap: theme.vs(10),
-  },
-  answer: {
-    gap: theme.vs(4),
-    paddingVertical: theme.vs(12),
-    paddingHorizontal: theme.s(14),
-    borderRadius: theme.vs(16),
-    borderWidth: 1,
-    borderColor: theme.colors.white10,
-    backgroundColor: theme.colors.ink70,
-  },
-  answerText: {
-    lineHeight: theme.vs(15 * 1.35),
-  },
+  // fills the card's space while the deck loads
+  cardSkeleton: { flex: 1 },
   actions: {
     flexDirection: "row",
     alignItems: "center",
@@ -285,6 +360,8 @@ const styles = StyleSheet.create((theme) => ({
     backgroundColor: theme.colors.white,
   },
   notice: {
-    textAlign: "center",
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: theme.s(8),
   },
 }));

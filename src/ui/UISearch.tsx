@@ -72,5 +72,6 @@ const styles = StyleSheet.create((theme) => ({
     color: theme.colors.white,
     fontFamily: theme.fonts.Geist,
     fontSize: theme.vs(15),
+    textAlignVertical: "center",
   },
 }));

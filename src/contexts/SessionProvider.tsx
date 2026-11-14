@@ -7,8 +7,6 @@ import {
 } from "react";
 import type { IssuedSession } from "@/@types/auth";
 import { api, setApiAccessToken } from "@/api";
-import { useUpdateMyProfile } from "@/hooks/useMyProfile";
-import i18n from "@/internationalization";
 import { useQueryClient } from "@tanstack/react-query";
 import { usePostHog } from "posthog-react-native";
 import { captureAction } from "@/utils/analytics";
@@ -16,7 +14,6 @@ import {
   deleteStoredSession,
   loadStoredSession,
   storeSession,
-  LANGUAGES,
   useChatStore,
 } from "@/store";
 
@@ -32,7 +29,6 @@ export const SessionContext = createContext<SessionContextValue | null>(null);
 export function SessionProvider({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient();
   const posthog = usePostHog();
-  const { mutate: updateProfile } = useUpdateMyProfile();
   const [session, setSession] = useState<IssuedSession | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -65,15 +61,12 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
         setSession(nextSession);
         setApiAccessToken(nextSession.token);
         captureAction(posthog, "session_save", "succeeded");
-        // The device language (MMKV choice or system) wins over the profile's; best effort, never blocks sign-in.
-        const language = LANGUAGES.find((code) => code === i18n.language);
-        if (language) updateProfile({ language });
       } catch (error) {
         captureAction(posthog, "session_save", "failed");
         throw error;
       }
     },
-    [posthog, updateProfile],
+    [posthog],
   );
 
   const clearSession = useCallback(async () => {

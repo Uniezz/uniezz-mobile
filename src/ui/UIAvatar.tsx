@@ -56,7 +56,6 @@ const styles = StyleSheet.create((theme) => ({
       },
       color: {
         default: {
-          backgroundColor: theme.colors.surface,
           borderWidth: 1,
           borderColor: theme.colors.white10,
         },

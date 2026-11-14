@@ -9,6 +9,9 @@ import {
 
 const resources = {
   en: { translation: require("./translations/en.json") },
+  be: { translation: require("./translations/be.json") },
+  de: { translation: require("./translations/de.json") },
+  es: { translation: require("./translations/es.json") },
   pl: { translation: require("./translations/pl.json") },
   ru: { translation: require("./translations/ru.json") },
   uk: { translation: require("./translations/uk.json") },

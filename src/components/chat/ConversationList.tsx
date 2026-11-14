@@ -6,13 +6,14 @@ import { Pressable, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import type { Conversation } from "@/@types/chat";
 import { chatTime } from "@/utils";
+import { ConnectionAvatarList } from "./ConnectionAvatarList";
 import {
   Icon,
   UIAvatar,
-  UIChip,
   UIEmpty,
   UIIconButton,
   UISearch,
+  UISubTabs,
   UIText,
 } from "@/ui";
 
@@ -35,6 +36,8 @@ export function ConversationList({
   const locale = i18n.resolvedLanguage ?? "en";
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<(typeof FILTERS)[number][0]>("all");
+  const handleFilterPress = (index: number) =>
+    setFilter(FILTERS[index]?.[0] ?? "all");
   const visible = conversations.filter(
     (item) =>
       item.name.toLowerCase().includes(search.toLowerCase()) &&
@@ -68,15 +71,13 @@ export function ConversationList({
           onChangeText={setSearch}
         />
         <View style={styles.filters}>
-          {FILTERS.map(([value, label]) => (
-            <UIChip
-              key={value}
-              label={t(label)}
-              selected={filter === value}
-              onPress={() => setFilter(value)}
-            />
-          ))}
+          <UISubTabs
+            items={FILTERS.map(([, label]) => t(label))}
+            selectedItemIndex={FILTERS.findIndex(([value]) => value === filter)}
+            onPress={handleFilterPress}
+          />
         </View>
+        <ConnectionAvatarList />
         <FlashList
           style={styles.list}
           contentContainerStyle={styles.listContent}
@@ -155,9 +156,9 @@ const styles = StyleSheet.create((theme) => ({
     flex: 1,
     lineHeight: theme.vs(30),
   },
+  // the tabs run edge to edge, as in the study header
   filters: {
-    flexDirection: "row",
-    gap: theme.s(6),
+    marginHorizontal: -theme.s(16),
   },
   list: {
     flex: 1,
