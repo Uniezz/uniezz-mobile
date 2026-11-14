@@ -204,7 +204,13 @@
     "proposalSubmit": "Wyślij",
     "proposalSent": "Dzięki! Pytanie pojawi się po zatwierdzeniu przez moderatora.",
     "proposalInvalid": "Sprawdź pytanie i odpowiedź i spróbuj ponownie.",
-    "proposalFailed": "Nie udało się wysłać pytania. Spróbuj ponownie."
+    "proposalFailed": "Nie udało się wysłać pytania. Spróbuj ponownie.",
+    "allQuestions": "Wszystkie pytania",
+    "myProposals": "Moje propozycje",
+    "noProposals": "Nie zaproponowano jeszcze żadnych pytań.",
+    "statusProposed": "Oczekuje",
+    "statusPublished": "Opublikowano",
+    "statusRejected": "Odrzucono"
   },
   "landing": {
     "navigation": "Sekcje strony",
@@ -626,6 +632,9 @@
     "deleteFileTitle": "Usunąć plik?",
     "deleteFileDescription": "Plik zostanie usunięty dla wszystkich.",
     "fileDeleted": "Plik usunięty",
-    "deleteFile": "Usuń plik"
+    "deleteFile": "Usuń plik",
+    "deleteCourseTitle": "Usunąć ten kurs?",
+    "deleteCourseDescription": "Jego pliki, komentarze i oceny też zostaną usunięte. Tego nie można cofnąć.",
+    "courseDeleted": "Kurs usunięty"
   }
 }

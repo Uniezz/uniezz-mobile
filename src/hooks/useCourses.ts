@@ -6,14 +6,16 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import type { Course, CourseFilters } from "@/@types/study";
+import type { Course, CourseFile, CourseFilters } from "@/@types/study";
 import {
   createCourse,
+  deleteCourse,
   getCourse,
   getCourses,
   rateCourse,
   updateCourse,
 } from "@/api";
+import { removeFromLists } from "@/utils/removeFromLists";
 
 export function useCourses(
   filters: CourseFilters = {},
@@ -91,5 +93,26 @@ export function useUpdateCourse() {
     meta: { analyticsAction: "course_update" },
     mutationFn: updateCourse,
     onSuccess: (course) => replaceCourse(queryClient, course),
+  });
+}
+
+export function useDeleteCourse() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    meta: { analyticsAction: "course_delete" },
+    mutationFn: deleteCourse,
+    // the open course page leaves on success, so its own query is left alone instead of refetching a 404
+    onSuccess: (_, id) => {
+      removeFromLists<Course>(
+        queryClient,
+        ["study", "courses"],
+        (course) => course.id === id,
+      );
+      removeFromLists<CourseFile>(
+        queryClient,
+        ["study", "files"],
+        (file) => file.courseId === id,
+      );
+    },
   });
 }

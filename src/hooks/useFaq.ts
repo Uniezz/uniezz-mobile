@@ -1,5 +1,9 @@
-import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
-import { createFaqProposal, getFaqEntries } from "@/api";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { createFaqProposal, getFaqEntries, getMyFaqProposals } from "@/api";
 
 export function useFaqEntries() {
   return useInfiniteQuery({
@@ -12,10 +16,25 @@ export function useFaqEntries() {
   });
 }
 
-// a proposal waits for a moderator, so the published list does not change
+export function useMyFaqProposals({ enabled = true } = {}) {
+  return useInfiniteQuery({
+    enabled,
+    staleTime: 60_000,
+    gcTime: 10 * 60_000,
+    queryKey: ["faq", "proposals"],
+    queryFn: ({ pageParam }) => getMyFaqProposals(pageParam),
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (page) => page.nextCursor ?? undefined,
+  });
+}
+
+// a proposal waits for a moderator, so only the student's own proposals change
 export function useCreateFaqProposal() {
+  const queryClient = useQueryClient();
   return useMutation({
     meta: { analyticsAction: "faq_propose" },
     mutationFn: createFaqProposal,
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["faq", "proposals"] }),
   });
 }

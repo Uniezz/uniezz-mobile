@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, View } from "react-native";
 import { SymbolView } from "expo-symbols";
@@ -19,6 +18,8 @@ type StudyRowProps = {
   /** average from 1 to 5; 0 means nobody rated yet */
   rating?: number;
   ratingCount?: number;
+  /** the student's own rating; 0 when they have not rated */
+  myRating?: number;
   onRate?: (rating: number) => void;
   isRating?: boolean;
   onPress: () => void;
@@ -34,17 +35,13 @@ export function StudyRow({
   difficulty,
   rating,
   ratingCount,
+  myRating = 0,
   onRate,
   isRating,
   onPress,
   action,
 }: StudyRowProps) {
   const { t } = useTranslation();
-  const [myRating, setMyRating] = useState(0);
-  const handleRatingChange = (value: number) => {
-    setMyRating(value);
-    onRate?.(value);
-  };
 
   return (
     <Pressable accessibilityRole="button" onPress={onPress} style={styles.cell}>
@@ -117,7 +114,7 @@ export function StudyRow({
                 </UIText>
                 <RatingInput
                   value={myRating}
-                  onChange={handleRatingChange}
+                  onChange={onRate}
                   disabled={isRating}
                   size="compact"
                 />

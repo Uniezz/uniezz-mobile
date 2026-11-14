@@ -9,7 +9,7 @@ import {
   replaceMyProgramme,
   updateMyProfile,
 } from "@/api/profile";
-import type { ProgrammeInput } from "@/@types/profile";
+import type { Profile, ProgrammeInput } from "@/@types/profile";
 
 export function useMyProfile() {
   return useQuery({
@@ -74,7 +74,10 @@ export function useDeleteMyAvatar() {
     meta: { analyticsAction: "avatar_delete" },
     mutationFn: deleteMyAvatar,
     onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ["profile", "me"] }),
+      queryClient.setQueryData<Profile>(
+        ["profile", "me"],
+        (profile) => profile && { ...profile, avatarUrl: null },
+      ),
   });
 }
 
@@ -84,6 +87,9 @@ export function useDeleteMyBanner() {
     meta: { analyticsAction: "banner_delete" },
     mutationFn: deleteMyBanner,
     onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ["profile", "me"] }),
+      queryClient.setQueryData<Profile>(
+        ["profile", "me"],
+        (profile) => profile && { ...profile, bannerUrl: null },
+      ),
   });
 }

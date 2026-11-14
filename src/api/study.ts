@@ -44,6 +44,11 @@ export async function updateCourse({
   return data!;
 }
 
+// the API also deletes the course's files and comments; another student's course is left as it is
+export async function deleteCourse(id: string) {
+  await api.DELETE("/study/courses/{id}", { params: { path: { id } } });
+}
+
 export async function addCourseFile({
   id,
   body,

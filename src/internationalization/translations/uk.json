@@ -204,7 +204,13 @@
     "proposalSubmit": "Надіслати",
     "proposalSent": "Дякуємо! Питання з’явиться після схвалення модератором.",
     "proposalInvalid": "Перевірте питання і відповідь і спробуйте знову.",
-    "proposalFailed": "Не вдалося надіслати питання. Спробуйте знову."
+    "proposalFailed": "Не вдалося надіслати питання. Спробуйте знову.",
+    "allQuestions": "Усі запитання",
+    "myProposals": "Мої пропозиції",
+    "noProposals": "Ви ще не запропонували жодного запитання.",
+    "statusProposed": "Очікує",
+    "statusPublished": "Опубліковано",
+    "statusRejected": "Відхилено"
   },
   "landing": {
     "navigation": "Розділи сторінки",
@@ -626,6 +632,9 @@
     "deleteFileTitle": "Видалити файл?",
     "deleteFileDescription": "Файл буде видалено для всіх.",
     "fileDeleted": "Файл видалено",
-    "deleteFile": "Видалити файл"
+    "deleteFile": "Видалити файл",
+    "deleteCourseTitle": "Видалити цей курс?",
+    "deleteCourseDescription": "Його файли, коментарі й оцінки теж буде видалено. Це не можна скасувати.",
+    "courseDeleted": "Курс видалено"
   }
 }

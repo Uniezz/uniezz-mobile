@@ -20,6 +20,7 @@ import {
   setStudentBlocked,
   updateConnectionPreferences,
 } from "@/api";
+import { removeFromLists } from "@/utils/removeFromLists";
 
 export function useDiscoverCards(filters: DiscoverFilters) {
   return useQuery({
@@ -79,8 +80,12 @@ export function useDeleteConnection() {
   return useMutation({
     meta: { analyticsAction: "connection_delete" },
     mutationFn: deleteConnection,
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ["connections", "list"] }),
+    onSuccess: (_, id) =>
+      removeFromLists<{ id: string }>(
+        queryClient,
+        ["connections", "list"],
+        (connection) => connection.id === id,
+      ),
   });
 }
 

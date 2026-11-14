@@ -111,7 +111,13 @@
     "question": "Pregunta",
     "answer": "Respuesta",
     "proposalSubmit": "Enviar",
-    "proposalSent": "¡Gracias! Su pregunta está esperando revisión."
+    "proposalSent": "¡Gracias! Su pregunta está esperando revisión.",
+    "allQuestions": "Todas las preguntas",
+    "myProposals": "Mis propuestas",
+    "noProposals": "Aún no has sugerido ninguna pregunta.",
+    "statusProposed": "Pendiente",
+    "statusPublished": "Publicado",
+    "statusRejected": "Rechazado"
   },
   "landing": {
     "navigation": "Secciones de página",
@@ -458,7 +464,10 @@
     "deleteFileTitle": "¿Eliminar archivo?",
     "deleteFileDescription": "El archivo se eliminará para todos.",
     "fileDeleted": "Archivo eliminado",
-    "deleteFile": "Eliminar archivo"
+    "deleteFile": "Eliminar archivo",
+    "deleteCourseTitle": "¿Eliminar este curso?",
+    "deleteCourseDescription": "También se eliminarán sus archivos, comentarios y valoraciones. No se puede deshacer.",
+    "courseDeleted": "Curso eliminado"
   },
   "language": {
     "select": "Seleccionar idioma de la aplicación",

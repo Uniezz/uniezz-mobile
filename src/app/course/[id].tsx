@@ -81,14 +81,18 @@ export default function CourseScreen() {
     hasNextPage,
     isFetchingNextPage,
   } = useCourseComments(id);
-  const { mutateAsync: rate, isPending: isRating } = useRateCourse();
+  const {
+    mutateAsync: rate,
+    isPending: isRating,
+    variables: rating,
+  } = useRateCourse();
   const { mutateAsync: addComment, isPending: isSending } =
     useAddCourseComment();
   const { mutateAsync: deleteComment } = useDeleteCourseComment(id);
   const reportRef = useRef<BottomSheetModal>(null);
   const editRef = useRef<BottomSheetModal>(null);
-  // the API does not return the student's own rating, so it starts empty
-  const [myRating, setMyRating] = useState(0);
+  // the picked stars show while the rating saves, then the API's
+  const myRating = (isRating ? rating?.rating : course?.myRating) ?? 0;
   const [headerHeight, setHeaderHeight] = useState(0);
   const [composerHeight, setComposerHeight] = useState(0);
   const [isHeaderCompact, setIsHeaderCompact] = useState(false);
@@ -125,12 +129,10 @@ export default function CourseScreen() {
   const handleEndReached = () => {
     if (hasNextPage && !isFetchingNextPage) return fetchNextPage();
   };
-  const handleRatingChange = async (rating: number) => {
-    setMyRating(rating);
+  const handleRatingChange = async (value: number) => {
     try {
-      await rate({ id, rating });
+      await rate({ id, rating: value });
     } catch (error) {
-      setMyRating(0);
       showError(error);
     }
   };

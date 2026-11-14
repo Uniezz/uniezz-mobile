@@ -198,7 +198,13 @@
     "proposalSubmit": "Send",
     "proposalSent": "Thanks! Your question will appear once a moderator approves it.",
     "proposalInvalid": "Check the question and answer and try again.",
-    "proposalFailed": "Couldn't send your question. Try again."
+    "proposalFailed": "Couldn't send your question. Try again.",
+    "allQuestions": "All questions",
+    "myProposals": "My proposals",
+    "noProposals": "You haven't suggested any questions yet.",
+    "statusProposed": "Pending",
+    "statusPublished": "Published",
+    "statusRejected": "Rejected"
   },
   "landing": {
     "navigation": "Page sections",
@@ -620,6 +626,9 @@
     "deleteFileTitle": "Delete file?",
     "deleteFileDescription": "The file will be removed for everyone.",
     "fileDeleted": "File deleted",
-    "deleteFile": "Delete file"
+    "deleteFile": "Delete file",
+    "deleteCourseTitle": "Delete this course?",
+    "deleteCourseDescription": "Its files, comments and ratings will be deleted too. This can't be undone.",
+    "courseDeleted": "Course deleted"
   }
 }

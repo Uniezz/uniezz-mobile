@@ -671,7 +671,10 @@ export interface paths {
      */
     put: operations["replaceMyProgramme"];
     post?: never;
-    /** Delete a study programme */
+    /**
+     * Delete a study programme
+     * @description Deleting the last programme is allowed. When deleting the primary programme, the oldest remaining programme becomes primary. The response has no body; clients should fetch the programme list again.
+     */
     delete: operations["deleteMyProgramme"];
     options?: never;
     head?: never;
@@ -796,7 +799,11 @@ export interface paths {
     get: operations["getCourse"];
     put?: never;
     post?: never;
-    delete?: never;
+    /**
+     * Delete the student's own course with its files, comments and ratings
+     * @description Deletes the course with the files, comments and ratings every student left on it. A course that is already gone, or that another student created, is left as it is and the call still succeeds.
+     */
+    delete: operations["deleteCourse"];
     options?: never;
     head?: never;
     /**
@@ -1105,6 +1112,12 @@ export interface components {
       id: string;
       /** @description True when the signed-in student created the course and may edit it */
       isMine: boolean;
+      /**
+       * Format: int64
+       * @description The signed-in student's rating, null when they have not rated the course
+       * @example 4
+       */
+      myRating: number | null;
       /** @example Calculus I */
       name: string;
       /**
@@ -1459,6 +1472,12 @@ export interface components {
       degree: string | null;
       /** Format: uuid */
       id: string;
+      /**
+       * Format: int64
+       * @description The signed-in student's rating, null when they have not rated the professor
+       * @example 5
+       */
+      myRating: number | null;
       /** @example Anna Maria Nowak */
       name: string;
       /**
@@ -1516,7 +1535,7 @@ export interface components {
        * @description Interface language; defaults to pl
        * @enum {string}
        */
-      language: "en" | "pl" | "uk" | "ru";
+      language: "en" | "pl" | "uk" | "ru" | "be" | "de" | "es";
       /** @example Kowalski */
       lastName: string | null;
       /** @description Which profile fields other students see. A missing setting keeps its current value. */
@@ -1591,7 +1610,7 @@ export interface components {
     };
     ProgrammeRequest: {
       faculty: string;
-      /** @description Making a programme primary clears the flag on the others */
+      /** @description Making a programme primary clears the flag on the others. A student with programmes always has one primary: when none is marked, the oldest becomes primary */
       isPrimary?: boolean;
       /** @enum {string} */
       level?:
@@ -1780,7 +1799,7 @@ export interface components {
       /** @description Replaces all interests: up to 10 tags of up to 30 characters, duplicates ignored */
       interests?: string[];
       /** @enum {string} */
-      language?: "en" | "pl" | "uk" | "ru";
+      language?: "en" | "pl" | "uk" | "ru" | "be" | "de" | "es";
       lastName?: string;
       /** @description Which profile fields other students see. A missing setting keeps its current value. */
       privacy?: {
@@ -4973,6 +4992,8 @@ export interface operations {
         subject?: string;
         /** @description 0 or omitted for every semester */
         semester?: number;
+        /** @description Up to 5 words of at least 3 characters, matched against the course name and subject */
+        q?: string;
       };
       header?: never;
       path?: never;
@@ -5127,6 +5148,53 @@ export interface operations {
       };
       /** @description Not Found */
       404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  deleteCourse: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
         headers: {
           [name: string]: unknown;
         };
@@ -5785,6 +5853,8 @@ export interface operations {
         /** @description Maximum number of items in the page */
         limit?: number;
         universityId?: string;
+        /** @description Up to 5 words of at least 3 characters, matched against the professor's name */
+        q?: string;
       };
       header?: never;
       path?: never;

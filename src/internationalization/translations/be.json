@@ -111,7 +111,13 @@
     "question": "Пытанне",
     "answer": "Адказ",
     "proposalSubmit": "Адправіць",
-    "proposalSent": "Дзякуй! Ваша пытанне чакае разгляду."
+    "proposalSent": "Дзякуй! Ваша пытанне чакае разгляду.",
+    "allQuestions": "Усе пытанні",
+    "myProposals": "Мае прапановы",
+    "noProposals": "Вы яшчэ не прапанавалі ніводнага пытання.",
+    "statusProposed": "У чаканні",
+    "statusPublished": "Апублікавана",
+    "statusRejected": "Адхілена"
   },
   "landing": {
     "navigation": "Раздзелы старонкі",
@@ -458,7 +464,10 @@
     "deleteFileTitle": "Выдаліць файл?",
     "deleteFileDescription": "Файл будзе выдалены для ўсіх.",
     "fileDeleted": "Файл выдалены",
-    "deleteFile": "Выдаліць файл"
+    "deleteFile": "Выдаліць файл",
+    "deleteCourseTitle": "Выдаліць гэты курс?",
+    "deleteCourseDescription": "Яго файлы, каментары і ацэнкі таксама выдаляцца. Гэта нельга адмяніць.",
+    "courseDeleted": "Курс выдалены"
   },
   "language": {
     "select": "Выберыце мову праграмы",

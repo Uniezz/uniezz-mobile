@@ -26,7 +26,11 @@ export function CoursesPage({
 }: CoursesPageProps) {
   const { t } = useTranslation();
   const { data: universities = [] } = useUniversities();
-  const { mutateAsync: rateCourse, isPending: isRating } = useRateCourse();
+  const {
+    mutateAsync: rateCourse,
+    isPending: isRating,
+    variables: rating,
+  } = useRateCourse();
   const {
     data,
     isPending,
@@ -69,6 +73,12 @@ export function CoursesPage({
         difficulty={course.difficulty}
         rating={course.ratingAverage}
         ratingCount={course.ratingCount}
+        // the picked stars show while the rating saves, then the API's
+        myRating={
+          (isRating && rating?.id === course.id
+            ? rating.rating
+            : course.myRating) ?? 0
+        }
         onRate={handleRatingChange}
         isRating={isRating}
         onPress={handlePress}

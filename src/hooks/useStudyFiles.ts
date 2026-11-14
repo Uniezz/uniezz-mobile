@@ -3,13 +3,14 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import type { StudyFileFilters } from "@/@types/study";
+import type { CourseFile, StudyFileFilters } from "@/@types/study";
 import {
   addCourseFile,
   deleteStudyFile,
   getCourseFiles,
   searchStudyFiles,
 } from "@/api";
+import { removeFromLists } from "@/utils/removeFromLists";
 
 // file urls are short-lived links, so lists refresh often
 export function useStudyFiles(filters: StudyFileFilters = {}) {
@@ -39,8 +40,12 @@ export function useDeleteStudyFile() {
   return useMutation({
     meta: { analyticsAction: "study_file_delete" },
     mutationFn: deleteStudyFile,
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ["study", "files"] }),
+    onSuccess: (_, id) =>
+      removeFromLists<CourseFile>(
+        queryClient,
+        ["study", "files"],
+        (file) => file.id === id,
+      ),
   });
 }
 

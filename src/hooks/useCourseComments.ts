@@ -8,6 +8,7 @@ import {
   deleteCourseComment,
   getCourseComments,
 } from "@/api";
+import { removeFromLists } from "@/utils/removeFromLists";
 
 export function useCourseComments(courseId: string) {
   return useInfiniteQuery({
@@ -37,9 +38,11 @@ export function useDeleteCourseComment(courseId: string) {
   return useMutation({
     meta: { analyticsAction: "course_comment_delete" },
     mutationFn: deleteCourseComment,
-    onSuccess: () =>
-      queryClient.invalidateQueries({
-        queryKey: ["study", "comments", courseId],
-      }),
+    onSuccess: (_, id) =>
+      removeFromLists<{ id: string }>(
+        queryClient,
+        ["study", "comments", courseId],
+        (comment) => comment.id === id,
+      ),
   });
 }

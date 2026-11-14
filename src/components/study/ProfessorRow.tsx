@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
@@ -12,16 +11,14 @@ import { RatingInput } from "./RatingInput";
 
 export function ProfessorRow({ professor }: { professor: Professor }) {
   const { t } = useTranslation();
-  const { mutateAsync: rate, isPending } = useRateProfessor();
-  // The API does not return the student's rating, so keep it locally.
-  const [myRating, setMyRating] = useState(0);
+  const { mutateAsync: rate, isPending, variables } = useRateProfessor();
+  // the picked stars show while the rating saves, then the API's
+  const myRating = (isPending ? variables.rating : professor.myRating) ?? 0;
 
   const handleRatingChange = async (rating: number) => {
-    setMyRating(rating);
     try {
       await rate({ id: professor.id, rating });
     } catch (error) {
-      setMyRating(0);
       toast.error(t(apiErrorKey(error)));
     }
   };

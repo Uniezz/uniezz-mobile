@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { FaqItem, FaqProposalSheet } from "@/components/faq";
-import { useFaqEntries } from "@/hooks/useFaq";
+import { useFaqEntries, useMyFaqProposals } from "@/hooks/useFaq";
 import { useMyProfile } from "@/hooks/useMyProfile";
 import {
   Icon,
@@ -25,6 +25,7 @@ import {
   UIQueryError,
   UISearchOverlay,
   UISkeleton,
+  UISubTabs,
   UIText,
 } from "@/ui";
 import { HEADER_COMPACT_OFFSET } from "@/utils";
@@ -32,6 +33,11 @@ import { HEADER_COMPACT_OFFSET } from "@/utils";
 export default function FaqScreen() {
   const { t } = useTranslation();
   const { data: profile } = useMyProfile();
+  // 0: published questions, 1: the student's own proposals, as on the web
+  const [tab, setTab] = useState(0);
+  const isMine = tab === 1;
+  const all = useFaqEntries();
+  const mine = useMyFaqProposals({ enabled: isMine });
   const {
     data,
     isPending,
@@ -41,7 +47,7 @@ export default function FaqScreen() {
     hasNextPage,
     isFetchingNextPage,
     isRefetching,
-  } = useFaqEntries();
+  } = isMine ? mine : all;
   const proposalRef = useRef<BottomSheetModal>(null);
   const [search, setSearch] = useState("");
   const [isSearching, setIsSearching] = useState(false);
@@ -122,9 +128,16 @@ export default function FaqScreen() {
         onEndReached={handleEndReached}
         ListHeaderComponent={
           // under the title, as in the design; a header subtitle would sit above it and shift the row off the other tabs'
-          <UIText color="secondary" style={styles.subtitle}>
-            {t("faq.subtitle")}
-          </UIText>
+          <View style={styles.listHeader}>
+            <UIText color="secondary">{t("faq.subtitle")}</UIText>
+            <View style={styles.tabs}>
+              <UISubTabs
+                items={[t("faq.allQuestions"), t("faq.myProposals")]}
+                selectedItemIndex={tab}
+                onPress={setTab}
+              />
+            </View>
+          </View>
         }
         ListEmptyComponent={
           isPending ? (
@@ -138,13 +151,16 @@ export default function FaqScreen() {
         }
         renderItem={({ item }) => (
           <View style={styles.cell}>
-            <FaqItem entry={item} />
+            <FaqItem entry={item} hasStatus={isMine} />
           </View>
         )}
       />
       {/* beside the list, not inside it, so the cat centres on the screen like every other empty state */}
       {!isPending && !isError && visible.length === 0 ? (
-        <UIEmpty isScreenCentred message={t("faq.empty")} />
+        <UIEmpty
+          isScreenCentred
+          message={t(isMine ? "faq.noProposals" : "faq.empty")}
+        />
       ) : null}
       <UISearchOverlay
         isOpen={isSearching}
@@ -167,6 +183,8 @@ const styles = StyleSheet.create((theme, rt) => ({
     paddingHorizontal: theme.s(16),
     paddingBottom: theme.vs(110),
   }),
-  subtitle: { paddingBottom: theme.vs(16) },
+  listHeader: { gap: theme.vs(12), paddingBottom: theme.vs(12) },
+  // the tabs run edge to edge, past the list's side padding
+  tabs: { marginHorizontal: -theme.s(16) },
   cell: { paddingBottom: theme.vs(8) },
 }));

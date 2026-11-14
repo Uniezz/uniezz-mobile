@@ -111,7 +111,13 @@
     "question": "Frage",
     "answer": "Antwort",
     "proposalSubmit": "Schicken",
-    "proposalSent": "Danke! Ihre Frage wartet auf Überprüfung."
+    "proposalSent": "Danke! Ihre Frage wartet auf Überprüfung.",
+    "allQuestions": "Alle Fragen",
+    "myProposals": "Meine Vorschläge",
+    "noProposals": "Sie haben noch keine Fragen vorgeschlagen.",
+    "statusProposed": "Ausstehend",
+    "statusPublished": "Veröffentlicht",
+    "statusRejected": "Abgelehnt"
   },
   "landing": {
     "navigation": "Seitenabschnitte",
@@ -458,7 +464,10 @@
     "deleteFileTitle": "Datei löschen?",
     "deleteFileDescription": "Die Datei wird für alle entfernt.",
     "fileDeleted": "Datei gelöscht",
-    "deleteFile": "Datei löschen"
+    "deleteFile": "Datei löschen",
+    "deleteCourseTitle": "Diesen Kurs löschen?",
+    "deleteCourseDescription": "Seine Dateien, Kommentare und Bewertungen werden ebenfalls gelöscht. Das kann nicht rückgängig gemacht werden.",
+    "courseDeleted": "Kurs gelöscht"
   },
   "language": {
     "select": "App-Sprache auswählen",

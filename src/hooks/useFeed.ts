@@ -18,16 +18,15 @@ import {
 } from "@/api";
 import type { FeedFilters } from "@/@types/feed";
 import { patchFeedItem } from "./patchFeedItem";
+import { removeFromLists } from "@/utils/removeFromLists";
 
 export function useUpdateFeedPost() {
   const queryClient = useQueryClient();
   return useMutation({
     meta: { analyticsAction: "post_update" },
     mutationFn: updateFeedPost,
-    onSuccess: (post) => {
-      queryClient.setQueryData(["feed", "post", post.id], post);
-      return queryClient.invalidateQueries({ queryKey: ["feed"] });
-    },
+    // the post's detail and every list holding it
+    onSuccess: (post) => patchFeedItem(queryClient, post.id, post),
   });
 }
 
@@ -41,10 +40,13 @@ export function useDeleteFeedPost() {
         queryKey: ["feed", "post", id],
         exact: true,
       });
-      return Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["feed", "posts"] }),
-        queryClient.invalidateQueries({ queryKey: ["feed", "featured"] }),
-      ]);
+      for (const list of ["posts", "featured", "liked", "saved"]) {
+        removeFromLists<{ id: string }>(
+          queryClient,
+          ["feed", list],
+          (post) => post.id === id,
+        );
+      }
     },
   });
 }

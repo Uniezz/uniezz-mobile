@@ -4,6 +4,7 @@ import {
 } from "@gorhom/bottom-sheet";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getDocumentAsync } from "expo-document-picker";
+import { router } from "expo-router";
 import { usePostHog } from "posthog-react-native";
 import type { Ref } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
@@ -12,7 +13,11 @@ import { Alert, Pressable, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import type { Course, CourseFormValues } from "@/@types/study";
-import { useCreateCourse, useUpdateCourse } from "@/hooks/useCourses";
+import {
+  useCreateCourse,
+  useDeleteCourse,
+  useUpdateCourse,
+} from "@/hooks/useCourses";
 import { useUploadImages } from "@/hooks/useMedia";
 import { useMyProfile } from "@/hooks/useMyProfile";
 import { useAddCourseFile } from "@/hooks/useStudyFiles";
@@ -60,7 +65,10 @@ export const CourseFormSheet = ({ ref, course }: CourseFormSheetProps) => {
   const { mutateAsync: upload, isPending: isUploading } =
     useUploadImages("exam");
   const { mutateAsync: attach, isPending: isAttaching } = useAddCourseFile();
-  const isSaving = isCreating || isUpdating || isUploading || isAttaching;
+  const { mutateAsync: deleteCourse, isPending: isDeleting } =
+    useDeleteCourse();
+  const isSaving =
+    isCreating || isUpdating || isUploading || isAttaching || isDeleting;
   const {
     control,
     handleSubmit,
@@ -157,6 +165,28 @@ export const CourseFormSheet = ({ ref, course }: CourseFormSheetProps) => {
       ],
     );
 
+  // only the edit sheet deletes, and it lives on the course page, which closes with it
+  const confirmDelete = async () => {
+    if (!course) return;
+    try {
+      await deleteCourse(course.id);
+      toast.success(t("study.courseDeleted"));
+      dismiss();
+      router.back();
+    } catch (error) {
+      toast.error(t(apiErrorKey(error)));
+    }
+  };
+  const handleDeletePress = () =>
+    Alert.alert(
+      t("study.deleteCourseTitle"),
+      t("study.deleteCourseDescription"),
+      [
+        { text: t("postComposer.cancel"), style: "cancel" },
+        { text: t("app.remove"), style: "destructive", onPress: confirmDelete },
+      ],
+    );
+
   return (
     <UIFormSheet
       ref={ref}
@@ -164,6 +194,8 @@ export const CourseFormSheet = ({ ref, course }: CourseFormSheetProps) => {
       actionLabel={t(course ? "apiState.save" : "study.create")}
       isActionDisabled={isSaving}
       onActionPress={handleSubmitPress}
+      destructiveLabel={course ? t("app.remove") : undefined}
+      onDestructivePress={handleDeletePress}
       onDismiss={handleDismiss}
       onDismissAttempt={isDirty && !isSaving ? handleDismissAttempt : undefined}
     >

@@ -204,7 +204,13 @@
     "proposalSubmit": "Отправить",
     "proposalSent": "Спасибо! Вопрос появится после одобрения модератором.",
     "proposalInvalid": "Проверьте вопрос и ответ и попробуйте снова.",
-    "proposalFailed": "Не удалось отправить вопрос. Попробуйте снова."
+    "proposalFailed": "Не удалось отправить вопрос. Попробуйте снова.",
+    "allQuestions": "Все вопросы",
+    "myProposals": "Мои предложения",
+    "noProposals": "Вы ещё не предложили ни одного вопроса.",
+    "statusProposed": "На проверке",
+    "statusPublished": "Опубликовано",
+    "statusRejected": "Отклонено"
   },
   "landing": {
     "navigation": "Разделы страницы",
@@ -626,6 +632,9 @@
     "deleteFileTitle": "Удалить файл?",
     "deleteFileDescription": "Файл будет удалён для всех.",
     "fileDeleted": "Файл удалён",
-    "deleteFile": "Удалить файл"
+    "deleteFile": "Удалить файл",
+    "deleteCourseTitle": "Удалить этот курс?",
+    "deleteCourseDescription": "Его файлы, комментарии и оценки тоже удалятся. Это нельзя отменить.",
+    "courseDeleted": "Курс удалён"
   }
 }
