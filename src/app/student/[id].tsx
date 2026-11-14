@@ -1,4 +1,9 @@
 import type { BottomSheetModal } from "@gorhom/bottom-sheet";
+import {
+  MenuAction,
+  MenuView,
+  NativeActionEvent,
+} from "@react-native-menu/menu";
 import { router, useLocalSearchParams } from "expo-router";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -23,15 +28,7 @@ import { ReportSheet } from "@/components/report";
 import { useBlockStudent } from "@/hooks/useConnections";
 import { useFeedPosts } from "@/hooks/useFeed";
 import { usePublicProfile } from "@/hooks/useProfiles";
-import {
-  Icon,
-  UIButton,
-  UIIconButton,
-  UIPage,
-  UIQueryError,
-  UISkeleton,
-  UIText,
-} from "@/ui";
+import { Icon, UIGlass, UIPage, UIQueryError, UISkeleton, UIText } from "@/ui";
 import { authorName, HEADER_COMPACT_OFFSET, GENDER_LABELS } from "@/utils";
 
 export default function PublicProfileScreen() {
@@ -87,27 +84,35 @@ export default function PublicProfileScreen() {
         onPress: confirmBlock,
       },
     ]);
-  // Android alerts hold at most three buttons
-  const handleMorePress = () =>
-    Alert.alert(t("students.actions"), undefined, [
-      { text: t("postComposer.cancel"), style: "cancel" },
-      { text: t("report.user"), onPress: handleReportPress },
-      {
-        text: t("students.block"),
-        style: "destructive",
-        onPress: handleBlockPress,
-      },
-    ]);
+  const handleMenuAction = ({ nativeEvent }: NativeActionEvent) => {
+    if (nativeEvent.event === "message") return handleMessagePress();
+    if (nativeEvent.event === "report") return handleReportPress();
+    if (nativeEvent.event === "block") return handleBlockPress();
+  };
+  const menuActions: MenuAction[] = [
+    { id: "message", title: t("app.message") },
+    { id: "report", title: t("report.user") },
+    {
+      id: "block",
+      title: t("students.block"),
+      attributes: { destructive: true },
+    },
+  ];
   const handleMessagePress = () => router.push("/(tabs)/chat");
 
+  // the same native menu as the own profile's ellipsis
   const reportAction = profile ? (
-    <UIIconButton
-      accessibilityRole="button"
-      accessibilityLabel={t("students.actions")}
-      onPress={handleMorePress}
-    >
-      <Icon name="ellipsis" size={18} />
-    </UIIconButton>
+    <MenuView actions={menuActions} onPressAction={handleMenuAction}>
+      <UIGlass
+        radius={12}
+        accessible
+        accessibilityRole="button"
+        accessibilityLabel={t("students.actions")}
+        style={styles.more}
+      >
+        <Icon name="ellipsis" size={18} />
+      </UIGlass>
+    </MenuView>
   ) : null;
 
   return (
@@ -155,21 +160,6 @@ export default function PublicProfileScreen() {
                   {profile.interests?.length ? (
                     <InterestChips interests={profile.interests} />
                   ) : null}
-                  <UIButton
-                    accessibilityRole="button"
-                    radius="md"
-                    onPress={handleMessagePress}
-                    style={styles.message}
-                  >
-                    <Icon
-                      name="message-circle"
-                      size={18}
-                      uniProps={(theme) => ({ color: theme.colors.ink })}
-                    />
-                    <UIText size="rg" weight="semibold" color="black">
-                      {t("app.message")}
-                    </UIText>
-                  </UIButton>
                 </ProfileHero>
                 {profile.programmes?.length ? (
                   <View style={styles.section}>
@@ -238,12 +228,13 @@ const styles = StyleSheet.create((theme, rt) => ({
   bio: {
     lineHeight: theme.vs(24),
   },
-  message: {
-    height: theme.vs(52),
-    flexDirection: "row",
-    gap: theme.s(8),
-  },
   section: {
     gap: theme.vs(12),
+  },
+  more: {
+    width: theme.vs(44),
+    height: theme.vs(44),
+    alignItems: "center",
+    justifyContent: "center",
   },
 }));
