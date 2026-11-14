@@ -134,11 +134,9 @@ const styles = StyleSheet.create((theme) => ({
     borderColor: theme.colors.sky15,
     backgroundColor: theme.colors.sky5,
   },
-  // no fill: the transparent fallback cat sits on the card tint, as in the design
   avatar: {
     borderWidth: 1,
     borderColor: theme.colors.sky15,
-    backgroundColor: "transparent",
     overflow: "hidden",
   },
   badge: {

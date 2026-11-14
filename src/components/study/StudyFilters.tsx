@@ -1,17 +1,8 @@
-import { BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import type { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { View } from "react-native";
-import { StyleSheet } from "react-native-unistyles";
 import { useUniversities } from "@/hooks/useUniversities";
-import {
-  Icon,
-  UIBottomSheet,
-  UIChip,
-  UIIconButton,
-  UIUniversityLogo,
-  UIText,
-} from "@/ui";
+import { UIChip, UIFilterRow, UIFilters, UIUniversityLogo } from "@/ui";
 
 type StudyFiltersProps = {
   universityId?: string;
@@ -33,85 +24,50 @@ export function StudyFilters({
   const { t } = useTranslation();
   const { data: universities = [] } = useUniversities();
   const sheetRef = useRef<BottomSheetModal>(null);
-  const handlePress = () => sheetRef.current?.present();
   const handleAllUniversitiesPress = () => onUniversityChange(undefined);
   const handleAnySemesterPress = () => onSemesterChange(undefined);
 
   return (
-    <>
-      <UIIconButton
-        accessibilityRole="button"
-        accessibilityLabel={t("study.filters")}
-        onPress={handlePress}
-      >
-        <Icon name="sliders-horizontal" size={18} />
-      </UIIconButton>
-      <UIBottomSheet ref={sheetRef} title={t("study.filters")}>
-        <BottomSheetScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.content}
-        >
-          <View style={styles.group}>
-            <UIText size="sm" weight="semibold">
-              {t("app.university")}
-            </UIText>
-            <View style={styles.options}>
+    <UIFilters ref={sheetRef} title={t("study.filters")}>
+      <UIFilterRow label={t("app.university")}>
+        <UIChip
+          label={t("app.allUniversities")}
+          selected={universityId === undefined}
+          onPress={handleAllUniversitiesPress}
+        />
+        {universities.map(({ id }) => {
+          const handleUniversityPress = () => onUniversityChange(id);
+          return (
+            <UIChip
+              key={id}
+              label={id.toLocaleUpperCase("en")}
+              leading={<UIUniversityLogo id={id} size="xxs" />}
+              selected={universityId === id}
+              onPress={handleUniversityPress}
+            />
+          );
+        })}
+      </UIFilterRow>
+      {showSemester ? (
+        <UIFilterRow label={t("app.semester")}>
+          <UIChip
+            label={t("study.anySemester")}
+            selected={semester === undefined}
+            onPress={handleAnySemesterPress}
+          />
+          {semesters.map((value) => {
+            const handleSemesterPress = () => onSemesterChange(value);
+            return (
               <UIChip
-                label={t("app.allUniversities")}
-                selected={universityId === undefined}
-                onPress={handleAllUniversitiesPress}
+                key={value}
+                label={String(value)}
+                selected={semester === value}
+                onPress={handleSemesterPress}
               />
-              {universities.map(({ id }) => {
-                const handleUniversityPress = () => onUniversityChange(id);
-                return (
-                  <UIChip
-                    key={id}
-                    label={id.toLocaleUpperCase("en")}
-                    leading={<UIUniversityLogo id={id} size="xxs" />}
-                    selected={universityId === id}
-                    onPress={handleUniversityPress}
-                  />
-                );
-              })}
-            </View>
-          </View>
-          {showSemester ? (
-            <View style={styles.group}>
-              <UIText size="sm" weight="semibold">
-                {t("app.semester")}
-              </UIText>
-              <View style={styles.options}>
-                <UIChip
-                  label={t("study.anySemester")}
-                  selected={semester === undefined}
-                  onPress={handleAnySemesterPress}
-                />
-                {semesters.map((value) => {
-                  const handleSemesterPress = () => onSemesterChange(value);
-                  return (
-                    <UIChip
-                      key={value}
-                      label={String(value)}
-                      selected={semester === value}
-                      onPress={handleSemesterPress}
-                    />
-                  );
-                })}
-              </View>
-            </View>
-          ) : null}
-        </BottomSheetScrollView>
-      </UIBottomSheet>
-    </>
+            );
+          })}
+        </UIFilterRow>
+      ) : null}
+    </UIFilters>
   );
 }
-
-const styles = StyleSheet.create((theme) => ({
-  content: {
-    gap: theme.vs(16),
-    paddingHorizontal: theme.s(16),
-    paddingBottom: theme.vs(16),
-  },
-  group: { gap: theme.vs(8) },
-  options: { flexDirection: "row", flexWrap: "wrap", gap: theme.s(8) },
-}));

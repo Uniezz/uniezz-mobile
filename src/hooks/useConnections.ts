@@ -1,4 +1,5 @@
 import {
+  keepPreviousData,
   useInfiniteQuery,
   useMutation,
   useQuery,
@@ -27,6 +28,7 @@ export function useDiscoverCards(filters: DiscoverFilters) {
     gcTime: 10 * 60_000,
     queryKey: ["connections", "discover", filters],
     queryFn: () => getDiscoverCards(filters),
+    placeholderData: keepPreviousData,
   });
 }
 

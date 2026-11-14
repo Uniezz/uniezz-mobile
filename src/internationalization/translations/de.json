@@ -89,7 +89,14 @@
     "men": "Männer",
     "datingRequiresAdult": "Um die Datierung zu aktivieren, geben Sie ein Geburtsdatum ein und bestätigen Sie, dass Sie mindestens 18 Jahre alt sind.",
     "interests": "Interessen",
-    "viewProfile": "Profil ansehen"
+    "viewProfile": "Profil ansehen",
+    "preferences": "Präferenzen",
+    "birthDate": "Geburtsdatum",
+    "birthDateHint": "Wird verwendet, um die Altersberechtigung zu überprüfen: Verbindungen gelten für die Altersgruppe 16–100; Dating erfordert 18+.",
+    "intent": "Ich möchte…",
+    "intentPlaceholder": "z.B. Schnapp dir einen Kaffee",
+    "preferencesSaved": "Einstellungen gespeichert.",
+    "closedToMode": "Du bist für diesen Modus noch nicht offen. Speichere deine Präferenzen in den Filtern, um Studierende zu sehen."
   },
   "exams": {
     "action": "Material hochladen",

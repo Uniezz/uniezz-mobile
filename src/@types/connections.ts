@@ -14,3 +14,15 @@ export type DiscoverFilters = Omit<
   "limit"
 >;
 export type DiscoverDeck = components["schemas"]["DiscoverOutputBody"];
+export type StudyLevel = NonNullable<DiscoverFilters["level"]>[number];
+export type ConnectionFilterValues = {
+  gender: NonNullable<DiscoverFilters["gender"]> | null;
+  universities: string[];
+  faculty: string | null;
+  levels: StudyLevel[];
+  matchInterests: boolean;
+};
+export type ConnectionPreferencesFormValues = {
+  birthDate: Date | null;
+  intent: string;
+};

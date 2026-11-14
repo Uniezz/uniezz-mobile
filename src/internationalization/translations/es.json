@@ -89,7 +89,14 @@
     "men": "Hombres",
     "datingRequiresAdult": "Para habilitar las citas, ingresa una fecha de nacimiento que confirme que tienes al menos 18 años.",
     "interests": "Intereses",
-    "viewProfile": "Ver perfil"
+    "viewProfile": "Ver perfil",
+    "preferences": "Preferencias",
+    "birthDate": "Fecha de nacimiento",
+    "birthDateHint": "Se utiliza para verificar la elegibilidad por edad: las conexiones son para edades entre 16 y 100 años; las citas requieren mayores de 18 años.",
+    "intent": "Yo quiero…",
+    "intentPlaceholder": "p.ej. tomar cafe",
+    "preferencesSaved": "Preferencias guardadas.",
+    "closedToMode": "Aún no estás abierto a este modo. Guarda tus preferencias en Filtros para ver estudiantes."
   },
   "exams": {
     "action": "Subir material",

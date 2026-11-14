@@ -6,12 +6,16 @@ import {
 } from "@gorhom/bottom-sheet";
 import type { ReactNode, Ref } from "react";
 import { View } from "react-native";
-import { StyleSheet } from "react-native-unistyles";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { StyleSheet, withUnistyles } from "react-native-unistyles";
 import { UIBottomSheet } from "./UIBottomSheet";
 import { UIButton } from "./UIButton";
 import { SHEET_FOOTER_FADE } from "@/utils";
 import { UIText } from "./UIText";
+
+// the device inset, not the screen's: inside a tab, useSafeAreaInsets() also counts the tab bar the sheet covers
+const ThemedFooter = withUnistyles(BottomSheetFooter, (_theme, rt) => ({
+  bottomInset: rt.insets.bottom,
+}));
 
 type UIFormSheetProps = {
   ref: Ref<BottomSheetModal>;
@@ -44,10 +48,8 @@ export const UIFormSheet = ({
   onDismiss,
   children,
 }: UIFormSheetProps) => {
-  const { bottom } = useSafeAreaInsets();
-
   const renderFooter = (props: BottomSheetFooterProps) => (
-    <BottomSheetFooter {...props} bottomInset={bottom}>
+    <ThemedFooter {...props}>
       <View style={styles.footer}>
         {destructiveLabel ? (
           <UIButton
@@ -72,7 +74,7 @@ export const UIFormSheet = ({
           </UIText>
         </UIButton>
       </View>
-    </BottomSheetFooter>
+    </ThemedFooter>
   );
 
   return (

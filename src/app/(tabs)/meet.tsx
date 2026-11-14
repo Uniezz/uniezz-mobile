@@ -1,12 +1,26 @@
-import type { BottomSheetModal } from "@gorhom/bottom-sheet";
+import {
+  useBottomSheetModal,
+  type BottomSheetModal,
+} from "@gorhom/bottom-sheet";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "expo-router";
 import { useRef, useState } from "react";
+import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Pressable, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
-import type { Connection, ConnectionMode } from "@/@types/connections";
-import { DiscoverCard } from "@/components/meet";
+import type {
+  Connection,
+  ConnectionFilterValues,
+  ConnectionMode,
+  ConnectionPreferencesFormValues,
+} from "@/@types/connections";
+import {
+  ConnectionFilters,
+  ConnectionPreferencesForm,
+  DiscoverCard,
+} from "@/components/meet";
 import { ReportSheet } from "@/components/report";
 import {
   useActOnCandidate,
@@ -18,15 +32,27 @@ import { useMyProfile } from "@/hooks/useMyProfile";
 import {
   Icon,
   UIAvatar,
-  UIButton,
   UIEmpty,
+  UIFadeScrollView,
+  UIFilters,
   UIGlass,
   UIPage,
   UIQueryError,
   UISkeleton,
   UIText,
 } from "@/ui";
-import { CONNECTION_MODES, DAILY_LIKE_LIMIT } from "@/utils";
+import {
+  connectionFiltersSchema,
+  connectionPreferencesSchema,
+} from "@/schemas";
+import {
+  CONNECTION_MODES,
+  DAILY_LIKE_LIMIT,
+  INITIAL_CONNECTION_FILTERS,
+  toCalendarDay,
+  toDiscoverFilters,
+  toPreferencesValues,
+} from "@/utils";
 import { apiErrorKey } from "@/utils/apiErrorKey";
 
 export default function MeetScreen() {
@@ -35,19 +61,32 @@ export default function MeetScreen() {
   // the match the last Connect made; its profile is revealed
   const [match, setMatch] = useState<Connection | null>(null);
   const reportRef = useRef<BottomSheetModal>(null);
-  const filters = { mode };
+  const filtersRef = useRef<BottomSheetModal>(null);
+  // the sheet edits the form; the deck uses `filterValues`, copied across when the sheet closes
+  const [filterValues, setFilterValues] = useState(INITIAL_CONNECTION_FILTERS);
+  const { control, reset, handleSubmit } = useForm<ConnectionFilterValues>({
+    resolver: zodResolver(connectionFiltersSchema),
+    defaultValues: INITIAL_CONNECTION_FILTERS,
+  });
+  const filters = toDiscoverFilters(mode, filterValues);
   const { data: profile } = useMyProfile();
   const {
     data: deck,
     isPending,
     isError,
     refetch,
-    isRefetching,
+    isPlaceholderData,
   } = useDiscoverCards(filters);
   const { data: preferences } = useConnectionPreferences();
-  const { mutateAsync: act, isPending: isActing } = useActOnCandidate(filters);
+  const { dismiss } = useBottomSheetModal();
   const { mutateAsync: savePreferences, isPending: isSaving } =
     useUpdateConnectionPreferences();
+  const { control: preferencesControl, handleSubmit: handlePreferencesSubmit } =
+    useForm<ConnectionPreferencesFormValues>({
+      resolver: zodResolver(connectionPreferencesSchema),
+      values: toPreferencesValues(preferences),
+    });
+  const { mutateAsync: act, isPending: isActing } = useActOnCandidate(filters);
   const card = deck?.items?.[0];
   const openTo = preferences?.openTo ?? [];
   // the server only deals cards for a mode the student is open to
@@ -57,6 +96,27 @@ export default function MeetScreen() {
     toast.error(t(apiErrorKey(error), { limit: DAILY_LIKE_LIMIT }));
 
   const handleStudentsPress = () => router.push("/students");
+  const handleFiltersOpen = () => reset(filterValues);
+  const handleFiltersClose = handleSubmit((values) => {
+    setFilterValues(values);
+    setMatch(null);
+  });
+  // as on the web: saving the preferences opens the student to this mode, then the sheet closes and applies the filters
+  const handleSavePress = handlePreferencesSubmit(
+    async ({ birthDate, intent }) => {
+      try {
+        await savePreferences({
+          ...(birthDate ? { birthDate: toCalendarDay(birthDate) } : {}),
+          intent,
+          openTo: openTo.includes(mode) ? openTo : [...openTo, mode],
+        });
+        toast.success(t("connections.preferencesSaved"));
+        dismiss();
+      } catch (error) {
+        showError(error);
+      }
+    },
+  );
   const handleProfilePress = () => router.push("/profile");
   const handleModePress = (value: ConnectionMode) => {
     setMode(value);
@@ -75,36 +135,19 @@ export default function MeetScreen() {
   const handlePassPress = () => handleAction("pass");
   const handleConnectPress = () => handleAction("like");
   const handleReportPress = () => reportRef.current?.present();
-  const handleRefreshPress = () => refetch();
   const handleMatchPress = () => {
     if (match) router.push(`/student/${match.profile.id}`);
   };
-  const handleOpenToModePress = async () => {
-    try {
-      await savePreferences({ openTo: [...openTo, mode] });
-    } catch (error) {
-      showError(error);
-    }
-  };
 
-  const emptyState = isClosedToMode ? (
-    <UIEmpty isScreenCentred message={t("connections.closedToMode")}>
-      <UIButton disabled={isSaving} onPress={handleOpenToModePress}>
-        <UIText weight="semibold" color="black">
-          {t("connections.openToMode")}
-        </UIText>
-      </UIButton>
-    </UIEmpty>
-  ) : (
-    <UIEmpty isScreenCentred message={t("connections.emptyDescription")}>
-      <UIButton
-        type="secondary"
-        disabled={isRefetching}
-        onPress={handleRefreshPress}
-      >
-        <UIText weight="semibold">{t("connections.refresh")}</UIText>
-      </UIButton>
-    </UIEmpty>
+  const emptyState = (
+    <UIEmpty
+      isScreenCentred
+      message={t(
+        isClosedToMode
+          ? "connections.closedToMode"
+          : "connections.emptyDescription",
+      )}
+    />
   );
 
   return (
@@ -126,6 +169,20 @@ export default function MeetScreen() {
               </UIText>
             </UIGlass>
           </Pressable>
+          <UIFilters
+            ref={filtersRef}
+            title={t("connections.filters")}
+            onOpen={handleFiltersOpen}
+            onClose={handleFiltersClose}
+            action={{
+              label: t("apiState.save"),
+              isDisabled: isSaving,
+              onPress: handleSavePress,
+            }}
+          >
+            <ConnectionFilters control={control} mode={mode} />
+            <ConnectionPreferencesForm control={preferencesControl} />
+          </UIFilters>
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={t("app.profile")}
@@ -134,7 +191,12 @@ export default function MeetScreen() {
             <UIAvatar imageSrc={profile?.avatarUrl} />
           </Pressable>
         </View>
-        <View style={styles.modes}>
+        <UIFadeScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.modesScroll}
+          contentContainerStyle={styles.modes}
+        >
           {CONNECTION_MODES.map(([value, label, icon]) => {
             const selected = mode === value;
             const handleChipPress = () => handleModePress(value);
@@ -163,7 +225,7 @@ export default function MeetScreen() {
               </Pressable>
             );
           })}
-        </View>
+        </UIFadeScrollView>
         {isPending ? (
           <View style={styles.cardSkeleton}>
             <UISkeleton height="100%" />
@@ -177,7 +239,7 @@ export default function MeetScreen() {
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel={t("app.pass")}
-                disabled={isActing}
+                disabled={isActing || isPlaceholderData}
                 onPress={handlePassPress}
                 style={styles.action}
               >
@@ -195,7 +257,7 @@ export default function MeetScreen() {
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel={t("app.connect")}
-                disabled={isActing}
+                disabled={isActing || isPlaceholderData}
                 onPress={handleConnectPress}
                 style={styles.action}
               >
@@ -240,7 +302,7 @@ export default function MeetScreen() {
   );
 }
 
-const styles = StyleSheet.create((theme) => ({
+const styles = StyleSheet.create((theme, rt) => ({
   page: {
     flex: 1,
     paddingTop: theme.vs(4),
@@ -265,9 +327,14 @@ const styles = StyleSheet.create((theme) => ({
     flex: 1,
     lineHeight: theme.vs(30),
   },
+  // edge to edge, so the pills scroll under the fades instead of being cut at the page inset
+  modesScroll: {
+    flexGrow: 0,
+    marginHorizontal: -theme.s(16),
+  },
   modes: {
-    flexDirection: "row",
     gap: theme.s(6),
+    paddingHorizontal: theme.s(16),
   },
   mode: (selected: boolean) => ({
     flexDirection: "row",
