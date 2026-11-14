@@ -1,6 +1,6 @@
 export { CourseCommentItem } from "./CourseCommentItem";
 export { CoursesPage } from "./CoursesPage";
-export { CreateCourseSheet } from "./CreateCourseSheet";
+export { CourseFormSheet } from "./CourseFormSheet";
 export { FilesPage } from "./FilesPage";
 export { ProfessorsPage } from "./ProfessorsPage";
 export { ProfessorRow } from "./ProfessorRow";

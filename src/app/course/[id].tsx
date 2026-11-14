@@ -25,7 +25,12 @@ import type { CommentFormValues } from "@/@types/feed";
 import type { CourseComment } from "@/@types/study";
 import { CommentComposer } from "@/components/feed";
 import { ReportSheet } from "@/components/report";
-import { CourseCommentItem, RatingInput, StudyRow } from "@/components/study";
+import {
+  CourseCommentItem,
+  CourseFormSheet,
+  RatingInput,
+  StudyRow,
+} from "@/components/study";
 import {
   useAddCourseComment,
   useCourseComments,
@@ -68,6 +73,7 @@ export default function CourseScreen() {
     useAddCourseComment();
   const { mutateAsync: deleteComment } = useDeleteCourseComment(id);
   const reportRef = useRef<BottomSheetModal>(null);
+  const editRef = useRef<BottomSheetModal>(null);
   // the API does not return the student's own rating, so it starts empty
   const [myRating, setMyRating] = useState(0);
   const [headerHeight, setHeaderHeight] = useState(0);
@@ -91,6 +97,7 @@ export default function CourseScreen() {
   const showError = (error: unknown) => toast.error(t(apiErrorKey(error)));
   const handleBackPress = () => router.back();
   const handleReportPress = () => reportRef.current?.present();
+  const handleEditPress = () => editRef.current?.present();
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     setIsHeaderCompact(
       event.nativeEvent.contentOffset.y > HEADER_COMPACT_OFFSET,
@@ -135,13 +142,24 @@ export default function CourseScreen() {
   };
 
   const headerActions = course ? (
-    <UIIconButton
-      accessibilityRole="button"
-      accessibilityLabel={t("report.course")}
-      onPress={handleReportPress}
-    >
-      <Icon name="flag" size={18} />
-    </UIIconButton>
+    <>
+      {course.isMine ? (
+        <UIIconButton
+          accessibilityRole="button"
+          accessibilityLabel={t("study.editCourse")}
+          onPress={handleEditPress}
+        >
+          <Icon name="pencil" size={18} />
+        </UIIconButton>
+      ) : null}
+      <UIIconButton
+        accessibilityRole="button"
+        accessibilityLabel={t("report.course")}
+        onPress={handleReportPress}
+      >
+        <Icon name="flag" size={18} />
+      </UIIconButton>
+    </>
   ) : null;
 
   return (
@@ -211,7 +229,7 @@ export default function CourseScreen() {
                       {t("study.files")}
                     </UIText>
                     {files.map((file) => {
-                      const [label, icon] = FILE_TYPES[file.type];
+                      const label = FILE_TYPES[file.type];
                       const handlePress = async () => {
                         try {
                           const { url } = await getStudyFile(file.id);
@@ -226,7 +244,6 @@ export default function CourseScreen() {
                       return (
                         <StudyRow
                           key={file.id}
-                          icon={icon}
                           title={file.title}
                           subtitle={t(label)}
                           onPress={handlePress}
@@ -270,6 +287,9 @@ export default function CourseScreen() {
         </KeyboardStickyView>
       ) : null}
       <ReportSheet ref={reportRef} targetId={id} targetType="course" />
+      {course?.isMine ? (
+        <CourseFormSheet ref={editRef} course={course} />
+      ) : null}
     </UIPage>
   );
 }

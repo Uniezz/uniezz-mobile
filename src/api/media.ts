@@ -1,22 +1,28 @@
 import type { PickedImage, UploadKind } from "@/@types/media";
-import { isImageType, MAX_IMAGE_MB } from "@/utils/media";
+import { isImageType, MAX_EXAM_PDF_MB, MAX_IMAGE_MB } from "@/utils/media";
 import { api, ApiRequestError, apiError } from "./client";
 
 export async function uploadImage(image: PickedImage, kind: UploadKind) {
   const size = image.fileSize ?? 0;
+  const isPdf = kind === "exam" && image.mimeType === "application/pdf";
+  const contentType = isImageType(image.mimeType)
+    ? image.mimeType
+    : isPdf
+      ? "application/pdf"
+      : null;
   if (
-    !isImageType(image.mimeType) ||
+    !contentType ||
     size === 0 ||
-    size > MAX_IMAGE_MB[kind] * 1024 * 1024
+    size > (isPdf ? MAX_EXAM_PDF_MB : MAX_IMAGE_MB[kind]) * 1024 * 1024
   ) {
     throw new ApiRequestError(
       "POST /media/uploads",
-      "image type or size is not allowed",
-      "postComposer.photosError",
+      "file type or size is not allowed",
+      kind === "exam" ? "study.materialsHint" : "postComposer.photosError",
     );
   }
   const { data } = await api.POST("/media/uploads", {
-    body: { kind, size, contentType: image.mimeType },
+    body: { kind, size, contentType },
   });
   // arrayBuffer skips React Native's Blob, which copies the file through base64
   const file = await fetch(image.uri).then((response) =>

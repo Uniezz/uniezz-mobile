@@ -1,3 +1,4 @@
+import type { PickedFile } from "./media";
 import type { components, operations } from "./schema";
 
 export type Course = components["schemas"]["Course"];
@@ -14,9 +15,17 @@ export type StudyFileFilters = Omit<
   NonNullable<operations["searchFiles"]["parameters"]["query"]>,
   "cursor" | "limit"
 >;
-export type CreateCourseFormValues = Omit<
+export type UpdateCourseInput = components["schemas"]["UpdateCourseInputBody"];
+export type AddCourseFileInput =
+  components["schemas"]["AddCourseFileInputBody"];
+export type CourseFormValues = Omit<
   CreateCourseInput,
-  "universityId" | "semester"
-> & { semester: string };
+  "universityId" | "description"
+> & {
+  description: string;
+  /** create only: uploaded and attached once the course exists */
+  materials: PickedFile[];
+  materialType: CourseFileType;
+};
 
 export type MaterialTab = "reviews" | "professors" | "mine";

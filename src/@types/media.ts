@@ -9,3 +9,5 @@ export type PickedImage = {
   mimeType?: string | null;
   fileSize?: number | null;
 };
+// a picked document; its name becomes the attached material's title
+export type PickedFile = PickedImage & { name: string };

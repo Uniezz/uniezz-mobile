@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import StarRating from "react-native-star-rating-widget";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
+import { Icon } from "@/ui";
 
 const ThemedStarRating = withUnistyles(StarRating, (theme) => ({
   color: theme.colors.amber,
@@ -14,7 +15,13 @@ type RatingInputProps = {
   onChange: (rating: number) => void;
   disabled?: boolean;
   size?: "default" | "compact";
+  /** flames for difficulty, as on the web; stars for ratings */
+  icon?: "star" | "flame";
 };
+
+const FlameIcon = ({ size, color }: { size: number; color: string }) => (
+  <Icon name="flame-filled" size={size} color={color} />
+);
 
 // whole stars from 1 to 5, as the API accepts
 export function RatingInput({
@@ -22,6 +29,7 @@ export function RatingInput({
   onChange,
   disabled,
   size = "default",
+  icon = "star",
 }: RatingInputProps) {
   const { t } = useTranslation();
   // swiping to the far left reports 0, which the API rejects
@@ -36,6 +44,7 @@ export function RatingInput({
         onChange={handleChange}
         maxStars={5}
         step="full"
+        StarIconComponent={icon === "flame" ? FlameIcon : undefined}
         starSize={size === "compact" ? 20 : 28}
         starStyle={size === "compact" ? styles.compactStar : undefined}
         accessibilityLabel={t("study.rateValue", { rating: "%value%" })}

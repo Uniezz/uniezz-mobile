@@ -16,7 +16,7 @@ import PagerView, {
 import { StyleSheet } from "react-native-unistyles";
 import {
   CoursesPage,
-  CreateCourseSheet,
+  CourseFormSheet,
   FilesPage,
   ProfessorsPage,
   StudyFilters,
@@ -183,12 +183,7 @@ export default function StudyScreen() {
         placeholder={searchPlaceholder}
         submitLabel={t("topbar.search")}
       />
-      {profile ? (
-        <CreateCourseSheet
-          ref={createCourseRef}
-          universityId={profile.universityId}
-        />
-      ) : null}
+      {profile ? <CourseFormSheet ref={createCourseRef} /> : null}
     </UIPage>
   );
 }

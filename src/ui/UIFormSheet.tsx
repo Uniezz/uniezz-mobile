@@ -31,6 +31,8 @@ type UIFormSheetProps = {
   backLabel?: string;
   /** e.g. reset the form, so a closed sheet drops unsaved edits */
   onDismiss?: () => void;
+  /** e.g. confirm discarding a dirty form; while set the sheet does not close on its own */
+  onDismissAttempt?: () => void;
   children: ReactNode;
 };
 
@@ -46,6 +48,7 @@ export const UIFormSheet = ({
   onBackPress,
   backLabel,
   onDismiss,
+  onDismissAttempt,
   children,
 }: UIFormSheetProps) => {
   const renderFooter = (props: BottomSheetFooterProps) => (
@@ -88,6 +91,7 @@ export const UIFormSheet = ({
       android_keyboardInputMode="adjustResize"
       footerComponent={renderFooter}
       onDismiss={onDismiss}
+      onDismissAttempt={onDismissAttempt}
     >
       <BottomSheetScrollView
         enableFooterMarginAdjustment
@@ -115,7 +119,9 @@ const styles = StyleSheet.create((theme, rt) => ({
     gap: theme.s(10),
     paddingHorizontal: theme.s(16),
     paddingTop: theme.vs(SHEET_FOOTER_FADE),
-    paddingBottom: theme.vs(12),
+    // the fill runs on under the home indicator inset, so fields scrolled below the button stay hidden
+    paddingBottom: theme.vs(12) + rt.insets.bottom,
+    marginBottom: -rt.insets.bottom,
     experimental_backgroundImage: `linear-gradient(to bottom, ${theme.colors.surface0}, ${theme.colors.surface} 40%)`,
   },
   destructive: {

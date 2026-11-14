@@ -3,6 +3,7 @@ import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useUniversities } from "@/hooks/useUniversities";
 import { UIChip, UIFilterRow, UIFilters, UIUniversityLogo } from "@/ui";
+import { SEMESTERS } from "@/utils";
 
 type StudyFiltersProps = {
   universityId?: string;
@@ -11,8 +12,6 @@ type StudyFiltersProps = {
   onUniversityChange: (universityId: string | undefined) => void;
   onSemesterChange: (semester: number | undefined) => void;
 };
-
-const semesters = Array.from({ length: 12 }, (_, index) => index + 1);
 
 export function StudyFilters({
   universityId,
@@ -55,7 +54,7 @@ export function StudyFilters({
             selected={semester === undefined}
             onPress={handleAnySemesterPress}
           />
-          {semesters.map((value) => {
+          {SEMESTERS.map((value) => {
             const handleSemesterPress = () => onSemesterChange(value);
             return (
               <UIChip

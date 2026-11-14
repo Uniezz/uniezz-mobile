@@ -1,10 +1,10 @@
-import type { ComponentProps } from "react";
+import type { ReactNode } from "react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, View } from "react-native";
 import { SymbolView } from "expo-symbols";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
-import { Icon, UIGlass, UIText } from "@/ui";
+import { UIGlass, UIText } from "@/ui";
 import { RatingInput } from "./RatingInput";
 
 const ThemedSymbol = withUnistyles(SymbolView, (theme) => ({
@@ -12,7 +12,6 @@ const ThemedSymbol = withUnistyles(SymbolView, (theme) => ({
 }));
 
 type StudyRowProps = {
-  icon?: ComponentProps<typeof Icon>["name"];
   title: string;
   subtitle: string;
   university?: string;
@@ -23,11 +22,12 @@ type StudyRowProps = {
   onRate?: (rating: number) => void;
   isRating?: boolean;
   onPress: () => void;
+  /** right side, e.g. a delete button for the student's own file */
+  action?: ReactNode;
 };
 
 // one glass card per file, course or professor, 8pt apart, as in the design
 export function StudyRow({
-  icon,
   title,
   subtitle,
   university,
@@ -37,6 +37,7 @@ export function StudyRow({
   onRate,
   isRating,
   onPress,
+  action,
 }: StudyRowProps) {
   const { t } = useTranslation();
   const [myRating, setMyRating] = useState(0);
@@ -48,15 +49,6 @@ export function StudyRow({
   return (
     <Pressable accessibilityRole="button" onPress={onPress} style={styles.cell}>
       <UIGlass radius={16} style={styles.row(rating !== undefined)}>
-        {icon ? (
-          <View style={styles.tile}>
-            <Icon
-              name={icon}
-              size={18}
-              uniProps={(theme) => ({ color: theme.colors.white80 })}
-            />
-          </View>
-        ) : null}
         <View style={styles.text(rating !== undefined)}>
           <UIText weight="semibold" numberOfLines={1}>
             {title}
@@ -93,6 +85,7 @@ export function StudyRow({
             )}
           </View>
         </View>
+        {action}
         {rating === undefined ? null : (
           <View style={styles.ratingRow}>
             <View style={styles.ratingSummary}>
@@ -145,16 +138,6 @@ const styles = StyleSheet.create((theme) => ({
     gap: theme.s(12),
     padding: theme.s(12),
   }),
-  tile: {
-    width: theme.vs(40),
-    height: theme.vs(40),
-    borderRadius: theme.vs(12),
-    borderWidth: 1,
-    borderColor: theme.colors.white10,
-    backgroundColor: theme.colors.white5,
-    alignItems: "center",
-    justifyContent: "center",
-  },
   text: (hasRating: boolean) => ({
     flex: hasRating ? undefined : 1,
     gap: theme.vs(3),

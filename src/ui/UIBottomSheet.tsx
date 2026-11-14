@@ -22,18 +22,10 @@ export type UIBottomSheetProps = {
   /** shows a back chevron left of the title, e.g. to leave a nested step */
   onBackPress?: () => void;
   backLabel?: string;
+  /** when set, swiping down is off and a backdrop tap calls this instead of closing, e.g. to confirm discarding a form */
+  onDismissAttempt?: () => void;
   children: ReactNode;
 } & Omit<BottomSheetModalProps, "children">;
-
-const renderBackdrop = (props: BottomSheetBackdropProps) => (
-  <BottomSheetBackdrop
-    {...props}
-    appearsOnIndex={0}
-    disappearsOnIndex={-1}
-    opacity={0.5}
-    pressBehavior="close"
-  />
-);
 
 // shortcut: Android shows only the translucent fill (no BlurTargetView behind the sheet), add one if Android needs real blur
 const renderBackground = ({ style }: BottomSheetBackgroundProps) => (
@@ -45,11 +37,22 @@ export const UIBottomSheet = ({
   title,
   onBackPress,
   backLabel,
+  onDismissAttempt,
   children,
   ...props
 }: UIBottomSheetProps) => {
   const { height } = useWindowDimensions();
   const { top } = useSafeAreaInsets();
+  const renderBackdrop = (backdropProps: BottomSheetBackdropProps) => (
+    <BottomSheetBackdrop
+      {...backdropProps}
+      appearsOnIndex={0}
+      disappearsOnIndex={-1}
+      opacity={0.5}
+      pressBehavior={onDismissAttempt ? "none" : "close"}
+      onPress={onDismissAttempt}
+    />
+  );
   // the title lives in the handle so dynamic sizing measures it
   const renderHandle = (handleProps: BottomSheetHandleProps) => (
     <BottomSheetHandle {...handleProps} indicatorStyle={styles.indicator}>
@@ -77,6 +80,7 @@ export const UIBottomSheet = ({
     <BottomSheetModal
       ref={ref}
       backdropComponent={renderBackdrop}
+      enablePanDownToClose={!onDismissAttempt}
       handleComponent={renderHandle}
       backgroundComponent={renderBackground}
       maxDynamicContentSize={height * SHEET_MAX_HEIGHT_RATIO}

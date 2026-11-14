@@ -1,7 +1,9 @@
 import type {
+  AddCourseFileInput,
   CourseFilters,
   CreateCourseInput,
   StudyFileFilters,
+  UpdateCourseInput,
 } from "@/@types/study";
 import { api } from "./client";
 
@@ -23,6 +25,36 @@ export async function getCourse(id: string) {
 
 export async function createCourse(body: CreateCourseInput) {
   const { data } = await api.POST("/study/courses", { body });
+
+  return data!;
+}
+
+export async function updateCourse({
+  id,
+  body,
+}: {
+  id: string;
+  body: UpdateCourseInput;
+}) {
+  const { data } = await api.PATCH("/study/courses/{id}", {
+    params: { path: { id } },
+    body,
+  });
+
+  return data!;
+}
+
+export async function addCourseFile({
+  id,
+  body,
+}: {
+  id: string;
+  body: AddCourseFileInput;
+}) {
+  const { data } = await api.POST("/study/courses/{id}/files", {
+    params: { path: { id } },
+    body,
+  });
 
   return data!;
 }

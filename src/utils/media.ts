@@ -16,5 +16,8 @@ export const MAX_IMAGE_MB: Record<UploadKind, number> = {
 
 export const MAX_POST_PHOTOS = 10;
 
+// exam uploads also take PDFs, with a larger limit than images
+export const MAX_EXAM_PDF_MB = 20;
+
 export const isImageType = (type?: string | null): type is UploadContentType =>
   IMAGE_TYPES.includes(type as UploadContentType);
