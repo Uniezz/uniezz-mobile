@@ -36,6 +36,7 @@ import {
   UIFadeScrollView,
   UIFilters,
   UIGlass,
+  UIIconButton,
   UIPage,
   UIQueryError,
   UISkeleton,
@@ -157,18 +158,13 @@ export default function MeetScreen() {
           <UIText size="xl" weight="bold" style={styles.title}>
             {t("tabs.connections")}
           </UIText>
-          <Pressable
+          <UIIconButton
             accessibilityRole="button"
             accessibilityLabel={t("app.searchStudents")}
             onPress={handleStudentsPress}
           >
-            <UIGlass radius={16} style={styles.students}>
-              <Icon name="search" size={18} />
-              <UIText size="sm" weight="semibold">
-                {t("app.students")}
-              </UIText>
-            </UIGlass>
-          </Pressable>
+            <Icon name="search" size={18} />
+          </UIIconButton>
           <UIFilters
             ref={filtersRef}
             title={t("connections.filters")}
@@ -315,13 +311,6 @@ const styles = StyleSheet.create((theme, rt) => ({
     flexDirection: "row",
     alignItems: "center",
     gap: theme.s(8),
-  },
-  students: {
-    height: theme.vs(44),
-    flexDirection: "row",
-    alignItems: "center",
-    gap: theme.s(8),
-    paddingHorizontal: theme.s(12),
   },
   title: {
     flex: 1,
