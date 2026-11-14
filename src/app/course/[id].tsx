@@ -12,14 +12,17 @@ import {
   LayoutChangeEvent,
   NativeScrollEvent,
   NativeSyntheticEvent,
+  ScrollViewProps,
   View,
 } from "react-native";
 import {
-  KeyboardAvoidingView,
+  KeyboardChatScrollView,
   KeyboardStickyView,
   useKeyboardState,
 } from "react-native-keyboard-controller";
-import { StyleSheet } from "react-native-unistyles";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { SymbolView } from "expo-symbols";
+import { StyleSheet, withUnistyles } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import type { CommentFormValues } from "@/@types/feed";
 import type { CourseComment } from "@/@types/study";
@@ -53,6 +56,16 @@ import { FILE_TYPES, HEADER_COMPACT_OFFSET } from "@/utils";
 import { captureAction } from "@/utils/analytics";
 import { getStudyFile } from "@/api";
 import { apiErrorKey } from "@/utils/apiErrorKey";
+
+const ThemedSymbol = withUnistyles(SymbolView, (theme) => ({
+  tintColor: theme.colors.amber,
+}));
+
+// as on the post page: the keyboard pads the list instead of pushing it off screen, so all of it stays scrollable
+const CommentsScrollView = (props: ScrollViewProps) => {
+  const { bottom } = useSafeAreaInsets();
+  return <KeyboardChatScrollView {...props} offset={bottom} />;
+};
 
 // shortcut: shows the first page of files only; add "show more" once courses carry many files
 export default function CourseScreen() {
@@ -172,48 +185,81 @@ export default function CourseScreen() {
         actions={headerActions}
         onLayout={handleHeaderLayout}
       />
-      <KeyboardAvoidingView
-        behavior="position"
-        style={styles.listViewport}
-        contentContainerStyle={styles.keyboardContent}
-      >
-        <FlashList
-          data={course ? comments : []}
-          keyExtractor={(comment) => comment.id}
-          onScroll={handleScroll}
-          scrollEventThrottle={16}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.list(headerHeight, composerHeight)}
-          onEndReached={handleEndReached}
-          ListHeaderComponent={
-            isPending ? (
-              <UISkeleton height={220} />
-            ) : isError ? (
-              <UIQueryError message={t("apiState.error")} onRetry={refetch} />
-            ) : (
-              <View style={styles.page}>
-                <UIGlass radius={16} style={styles.card}>
-                  <UIText color="secondary">
-                    {`${course.subject} · ${course.faculty} · ${t("study.semesterShort", { semester: course.semester })}`}
+      <FlashList
+        renderScrollComponent={CommentsScrollView}
+        keyboardShouldPersistTaps="handled"
+        data={course ? comments : []}
+        keyExtractor={(comment) => comment.id}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.list(headerHeight, composerHeight)}
+        onEndReached={handleEndReached}
+        ListHeaderComponent={
+          isPending ? (
+            <UISkeleton height={220} />
+          ) : isError ? (
+            <UIQueryError message={t("apiState.error")} onRetry={refetch} />
+          ) : (
+            <View style={styles.page}>
+              <UIGlass radius={16} style={styles.card}>
+                <View style={styles.meta}>
+                  <UIText weight="semibold">{course.subject}</UIText>
+                  <UIText size="sm" color="secondary">
+                    {`${course.faculty} · ${t("study.semesterShort", { semester: course.semester })}`}
                   </UIText>
-                  <UIText color="soft">
-                    {t("study.difficultyValue", {
+                </View>
+                {course.description ? (
+                  <UIText color="soft" style={styles.description}>
+                    {course.description}
+                  </UIText>
+                ) : null}
+                <View style={styles.stats}>
+                  <View
+                    accessible
+                    accessibilityLabel={t("study.difficultyValue", {
                       difficulty: course.difficulty,
                     })}
-                  </UIText>
-                  {course.description ? (
-                    <UIText style={styles.description}>
-                      {course.description}
+                    style={styles.stat}
+                  >
+                    <UIText size="xs" color="secondary">
+                      {t("study.difficulty")}
                     </UIText>
-                  ) : null}
-                  <UIText weight="semibold">
-                    {course.ratingAverage > 0
-                      ? t("study.ratingSummary", {
-                          rating: course.ratingAverage.toFixed(1),
-                          votes: course.ratingCount,
-                        })
-                      : t("study.noRatings")}
-                  </UIText>
+                    <View style={styles.flames}>
+                      {Array.from({ length: 5 }, (_, index) => (
+                        <ThemedSymbol
+                          key={index}
+                          name={{
+                            ios: "flame.fill",
+                            android: "local_fire_department",
+                            web: "local_fire_department",
+                          }}
+                          size={16}
+                          style={styles.flame(index < course.difficulty)}
+                        />
+                      ))}
+                    </View>
+                  </View>
+                  <View style={styles.stat}>
+                    <UIText size="xs" color="secondary">
+                      {t("study.averageRating")}
+                    </UIText>
+                    <UIText weight="semibold">
+                      {course.ratingAverage > 0 ? (
+                        <>
+                          <UIText style={styles.star}>★ </UIText>
+                          {t("study.ratingSummary", {
+                            rating: course.ratingAverage.toFixed(1),
+                            votes: course.ratingCount,
+                          })}
+                        </>
+                      ) : (
+                        t("study.noRatings")
+                      )}
+                    </UIText>
+                  </View>
+                </View>
+                <View style={styles.myRating}>
                   <UIText size="sm" color="secondary">
                     {t("study.yourRating")}
                   </UIText>
@@ -221,58 +267,56 @@ export default function CourseScreen() {
                     value={myRating}
                     onChange={handleRatingChange}
                     disabled={isRating}
+                    size="compact"
                   />
-                </UIGlass>
-                {files.length ? (
-                  <View style={styles.section}>
-                    <UIText size="md" weight="semibold">
-                      {t("study.files")}
-                    </UIText>
-                    {files.map((file) => {
-                      const label = FILE_TYPES[file.type];
-                      const handlePress = async () => {
-                        try {
-                          const { url } = await getStudyFile(file.id);
-                          await ExpoQuickLook.previewFile({
-                            uri: url,
-                            editingMode: "disabled",
-                          });
-                        } catch {
-                          toast.error(t("apiState.error"));
-                        }
-                      };
-                      return (
-                        <StudyRow
-                          key={file.id}
-                          title={file.title}
-                          subtitle={t(label)}
-                          onPress={handlePress}
-                        />
-                      );
-                    })}
-                  </View>
-                ) : null}
-                <UIText size="md" weight="semibold">
-                  {t("study.comments")}
-                </UIText>
-                {areCommentsPending ? <UISkeleton height={56} /> : null}
-                {!areCommentsPending && comments.length === 0 ? (
-                  <UIText color="secondary">{t("study.noComments")}</UIText>
-                ) : null}
-              </View>
-            )
-          }
-          ListFooterComponent={
-            isFetchingNextPage ? <UISkeleton height={56} /> : null
-          }
-          renderItem={({ item }) => (
-            <CourseCommentItem
-              comment={item}
-              onDeletePress={handleDeletePress}
-            />
-          )}
-        />
-      </KeyboardAvoidingView>
+                </View>
+              </UIGlass>
+              {files.length ? (
+                <View style={styles.section}>
+                  <UIText size="md" weight="semibold">
+                    {t("study.files")}
+                  </UIText>
+                  {files.map((file) => {
+                    const label = FILE_TYPES[file.type];
+                    const handlePress = async () => {
+                      try {
+                        const { url } = await getStudyFile(file.id);
+                        await ExpoQuickLook.previewFile({
+                          uri: url,
+                          editingMode: "disabled",
+                        });
+                      } catch {
+                        toast.error(t("apiState.error"));
+                      }
+                    };
+                    return (
+                      <StudyRow
+                        key={file.id}
+                        title={file.title}
+                        subtitle={t(label)}
+                        onPress={handlePress}
+                      />
+                    );
+                  })}
+                </View>
+              ) : null}
+              <UIText size="md" weight="semibold">
+                {t("study.comments")}
+              </UIText>
+              {areCommentsPending ? <UISkeleton height={56} /> : null}
+              {!areCommentsPending && comments.length === 0 ? (
+                <UIText color="secondary">{t("study.noComments")}</UIText>
+              ) : null}
+            </View>
+          )
+        }
+        ListFooterComponent={
+          isFetchingNextPage ? <UISkeleton height={56} /> : null
+        }
+        renderItem={({ item }) => (
+          <CourseCommentItem comment={item} onDeletePress={handleDeletePress} />
+        )}
+      />
       {course ? (
         // UIPage already lifts the composer off the home indicator; above the keyboard that gap is dropped
         <KeyboardStickyView
@@ -295,8 +339,6 @@ export default function CourseScreen() {
 }
 
 const styles = StyleSheet.create((theme, rt) => ({
-  listViewport: { flex: 1 },
-  keyboardContent: { flex: 1 },
   // UIPage already pads the status bar; the rest of the header height is added here
   list: (headerHeight: number, composerHeight: number) => ({
     paddingTop: Math.max(headerHeight - rt.insets.top, 0),
@@ -309,9 +351,30 @@ const styles = StyleSheet.create((theme, rt) => ({
   },
   card: {
     padding: theme.s(16),
-    gap: theme.vs(8),
+    gap: theme.vs(14),
   },
+  meta: { gap: theme.vs(2) },
   description: { lineHeight: theme.vs(22) },
+  // difficulty and rating side by side, set off from the text by a hairline
+  stats: {
+    flexDirection: "row",
+    gap: theme.s(16),
+    paddingTop: theme.vs(14),
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: theme.colors.white10,
+  },
+  stat: { flex: 1, gap: theme.vs(4) },
+  flames: { flexDirection: "row", gap: theme.s(2) },
+  flame: (filled: boolean) => ({ opacity: filled ? 1 : 0.25 }),
+  star: { color: theme.colors.amber },
+  myRating: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingTop: theme.vs(14),
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: theme.colors.white10,
+  },
   section: { gap: theme.vs(4) },
   composer: {
     position: "absolute",
