@@ -2,9 +2,8 @@ import { Control, Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Pressable, TextInput, View } from "react-native";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
-import type { CommentFormValues, FeedComment } from "@/@types/feed";
+import type { CommentFormValues } from "@/@types/feed";
 import { Icon, UIText } from "@/ui";
-import { authorName } from "@/utils";
 
 const ThemedTextInput = withUnistyles(TextInput, (theme) => ({
   placeholderTextColor: theme.colors.white60,
@@ -15,24 +14,24 @@ type CommentComposerProps = {
   control: Control<CommentFormValues>;
   isSendDisabled: boolean;
   onSendPress: () => void;
-  /** the comment being replied to, if any; comments without replies leave it out */
-  replyTo?: FeedComment | null;
-  onCancelReply?: () => void;
+  /** above the field while replying to or editing a comment; leave out for a new comment */
+  label?: string;
+  onCancel?: () => void;
 };
 
-// the comment field under a post; replies when a comment is picked
+// the comment field under a post; also replies to or edits a picked comment
 export const CommentComposer = ({
   control,
   isSendDisabled,
   onSendPress,
-  replyTo,
-  onCancelReply,
+  label,
+  onCancel,
 }: CommentComposerProps) => {
   const { t } = useTranslation();
 
   return (
     <View style={styles.container}>
-      {replyTo ? (
+      {label ? (
         <View style={styles.replying}>
           <UIText
             size="sm"
@@ -40,14 +39,12 @@ export const CommentComposer = ({
             numberOfLines={1}
             style={styles.grow}
           >
-            {t("apiState.replyingTo", {
-              name: authorName(replyTo.author) || t("apiState.student"),
-            })}
+            {label}
           </UIText>
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={t("postComposer.cancel")}
-            onPress={onCancelReply}
+            onPress={onCancel}
             hitSlop={8}
           >
             <Icon
@@ -65,6 +62,7 @@ export const CommentComposer = ({
           render={({ field }) => (
             <View style={styles.field}>
               <ThemedTextInput
+                ref={field.ref}
                 value={field.value}
                 onChangeText={field.onChange}
                 onBlur={field.onBlur}

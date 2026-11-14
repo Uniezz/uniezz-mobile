@@ -27,11 +27,15 @@ import type {
 import { CommentComposer, PostPage } from "@/components/feed";
 import { ReportSheet } from "@/components/report";
 import { useDeleteFeedPost, useFeedPost, useFeedPosts } from "@/hooks/useFeed";
-import { useCreateComment } from "@/hooks/useFeedComments";
+import {
+  useCreateComment,
+  useUpdateFeedComment,
+} from "@/hooks/useFeedComments";
 import { commentSchema } from "@/schemas";
 import { captureAction } from "@/utils/analytics";
 import { useMyProfile } from "@/hooks/useMyProfile";
 import { Icon, UIIconButton, UIPage, UIText } from "@/ui";
+import { authorName } from "@/utils";
 
 export default function PostScreen() {
   const { id, ...filters } = useLocalSearchParams<
@@ -61,10 +65,13 @@ export default function PostScreen() {
   const nextId = ids[index + 1] ?? "";
 
   const { createComment, isPending: isSending } = useCreateComment();
+  const { mutateAsync: updateComment, isPending: isUpdating } =
+    useUpdateFeedComment();
   const {
     control,
     handleSubmit,
     reset,
+    setFocus,
     formState: { isValid },
   } = useForm<CommentFormValues>({
     resolver: zodResolver(commentSchema),
@@ -77,6 +84,7 @@ export default function PostScreen() {
   const postReportRef = useRef<BottomSheetModal>(null);
   const commentReportRef = useRef<BottomSheetModal>(null);
   const [replyTo, setReplyTo] = useState<FeedComment | null>(null);
+  const [editing, setEditing] = useState<FeedComment | null>(null);
   const [reportTarget, setReportTarget] = useState<FeedComment | null>(null);
   const isAuthor = Boolean(post && profile?.id === post.author.id);
   const [composerHeight, setComposerHeight] = useState(0);
@@ -95,8 +103,7 @@ export default function PostScreen() {
   const openPost = (postId: string) => {
     if (!postId || postId === id) return;
     router.setParams({ id: postId });
-    reset();
-    setReplyTo(null);
+    handleCancel();
   };
   const handlePagerEndReached = () => {
     if (hasNextPage && !isFetchingNextPage) return fetchNextPage();
@@ -124,18 +131,37 @@ export default function PostScreen() {
     setReportTarget(comment);
     commentReportRef.current?.present();
   };
-  const handleCancelReply = () => setReplyTo(null);
+  // the field either replies to, edits or adds a comment; picking one drops the other
+  const handleCancel = () => {
+    if (editing) reset({ content: "" }, { keepFieldsRef: true });
+    setEditing(null);
+    setReplyTo(null);
+  };
+  const handleReply = (comment: FeedComment) => {
+    handleCancel();
+    setReplyTo(comment);
+    setFocus("content");
+  };
+  const handleEdit = (comment: FeedComment) => {
+    setReplyTo(null);
+    setEditing(comment);
+    reset({ content: comment.content ?? "" }, { keepFieldsRef: true });
+    setFocus("content");
+  };
   const handleSendPress = handleSubmit(
     async ({ content }) => {
       try {
-        await createComment({
-          id,
-          content,
-          replyToCommentId: replyTo?.id,
-        });
-        reset();
+        if (editing) await updateComment({ id: editing.id, content });
+        else
+          await createComment({
+            id,
+            content,
+            replyToCommentId: replyTo?.id,
+          });
+        reset({ content: "" });
+        setEditing(null);
         setReplyTo(null);
-        toast.success(t("apiState.commentSent"));
+        toast.success(t(editing ? "app.saved" : "apiState.commentSent"));
       } catch {
         toast.error(t("apiState.error"));
       }
@@ -228,6 +254,8 @@ export default function PostScreen() {
               // renders the neighbour pages before they scroll into view
               drawDistance={width}
               showsHorizontalScrollIndicator={false}
+              // nested scroll views each need it, or a tap on Reply or Edit first closes the keyboard
+              keyboardShouldPersistTaps="handled"
               onMomentumScrollEnd={handlePageSettled}
               renderItem={({ item }) => (
                 // keyed so a page never shows another post's scroll position or summary state
@@ -238,7 +266,8 @@ export default function PostScreen() {
                   width={width}
                   height={pagerHeight}
                   composerHeight={composerHeight}
-                  onReply={setReplyTo}
+                  onReply={handleReply}
+                  onEdit={handleEdit}
                   onReport={handleCommentReport}
                 />
               )}
@@ -254,10 +283,19 @@ export default function PostScreen() {
           >
             <CommentComposer
               control={control}
-              isSendDisabled={isSending || !isValid}
+              isSendDisabled={isSending || isUpdating || !isValid}
               onSendPress={handleSendPress}
-              replyTo={replyTo}
-              onCancelReply={handleCancelReply}
+              label={
+                editing
+                  ? t("apiState.editComment")
+                  : replyTo
+                    ? t("apiState.replyingTo", {
+                        name:
+                          authorName(replyTo.author) || t("apiState.student"),
+                      })
+                    : undefined
+              }
+              onCancel={handleCancel}
             />
           </KeyboardStickyView>
         ) : null}

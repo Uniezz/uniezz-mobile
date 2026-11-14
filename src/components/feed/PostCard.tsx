@@ -65,6 +65,7 @@ export const PostCard = ({ post }: PostCardProps) => {
           liked={post.likedByMe}
           count={post.likesCount}
         />
+        <SaveButton id={post.id} saved={post.savedByMe} />
         <View style={[styles.row, styles.grow]}>
           <Icon
             name="users"
@@ -77,7 +78,6 @@ export const PostCard = ({ post }: PostCardProps) => {
               : post.university.toUpperCase()}
           </UIText>
         </View>
-        <SaveButton id={post.id} saved={post.savedByMe} />
       </View>
     </View>
   );

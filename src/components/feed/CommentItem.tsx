@@ -1,14 +1,13 @@
 import { router } from "expo-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, Pressable, TextInput, View } from "react-native";
+import { Alert, Pressable, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import type { FeedComment } from "@/@types/feed";
 import {
   useCommentReplies,
   useDeleteFeedComment,
-  useUpdateFeedComment,
 } from "@/hooks/useFeedComments";
 import { UIAvatar, UIText, UIUniversityLogo } from "@/ui";
 import { authorName, postDate, profileHref } from "@/utils";
@@ -18,6 +17,8 @@ type CommentItemProps = {
   comment: FeedComment;
   myId?: string;
   onReply: (comment: FeedComment) => void;
+  /** edits happen in the post's comment field */
+  onEdit: (comment: FeedComment) => void;
   onReport: (comment: FeedComment) => void;
 };
 
@@ -25,19 +26,17 @@ export const CommentItem = ({
   comment,
   myId,
   onReply,
+  onEdit,
   onReport,
 }: CommentItemProps) => {
   const { t, i18n } = useTranslation();
   const [expanded, setExpanded] = useState(false);
-  const [draft, setDraft] = useState<string | null>(null);
   const isTopLevel = comment.parentId === null;
   const isMine = Boolean(myId && comment.author?.id === myId);
   const { data: replies } = useCommentReplies(
     comment.id,
     expanded && isTopLevel,
   );
-  const { mutateAsync: updateComment, isPending: isSaving } =
-    useUpdateFeedComment();
   const { mutateAsync: deleteComment } = useDeleteFeedComment();
   const name = authorName(comment.author) || t("apiState.student");
 
@@ -47,21 +46,8 @@ export const CommentItem = ({
   };
   const handleReplyPress = () => onReply(comment);
   const handleReportPress = () => onReport(comment);
-  const handleEditPress = () => setDraft(comment.content ?? "");
-  const handleCancelEdit = () => setDraft(null);
+  const handleEditPress = () => onEdit(comment);
   const handleToggleReplies = () => setExpanded(!expanded);
-
-  const handleSavePress = async () => {
-    const content = draft?.trim();
-    if (!content) return;
-    try {
-      await updateComment({ id: comment.id, content });
-      setDraft(null);
-      toast.success(t("app.saved"));
-    } catch {
-      toast.error(t("apiState.error"));
-    }
-  };
 
   const confirmDelete = async () => {
     try {
@@ -123,48 +109,13 @@ export const CommentItem = ({
               )}
             </UIText>
           </Pressable>
-          {draft === null ? (
-            <UIText
-              color={comment.deleted ? "secondary" : "soft"}
-              style={styles.text}
-            >
-              {comment.deleted ? t("apiState.deletedComment") : comment.content}
-            </UIText>
-          ) : (
-            <View style={styles.editor}>
-              <TextInput
-                value={draft}
-                onChangeText={setDraft}
-                maxLength={1000}
-                multiline
-                autoFocus
-                accessibilityLabel={t("apiState.editComment")}
-                style={styles.input}
-              />
-              <View style={styles.actions}>
-                <Pressable
-                  accessibilityRole="button"
-                  onPress={handleCancelEdit}
-                  hitSlop={6}
-                >
-                  <UIText size="sm" weight="semibold" color="secondary">
-                    {t("postComposer.cancel")}
-                  </UIText>
-                </Pressable>
-                <Pressable
-                  accessibilityRole="button"
-                  disabled={isSaving || !draft.trim()}
-                  onPress={handleSavePress}
-                  hitSlop={6}
-                >
-                  <UIText size="sm" weight="semibold" color="link">
-                    {t("app.saveChanges")}
-                  </UIText>
-                </Pressable>
-              </View>
-            </View>
-          )}
-          {comment.deleted || draft !== null ? null : (
+          <UIText
+            color={comment.deleted ? "secondary" : "soft"}
+            style={styles.text}
+          >
+            {comment.deleted ? t("apiState.deletedComment") : comment.content}
+          </UIText>
+          {comment.deleted ? null : (
             <View style={styles.actions}>
               <LikeButton
                 id={comment.id}
@@ -241,6 +192,7 @@ export const CommentItem = ({
                 comment={reply}
                 myId={myId}
                 onReply={onReply}
+                onEdit={onEdit}
                 onReport={onReport}
               />
             ))
@@ -278,20 +230,5 @@ const styles = StyleSheet.create((theme) => ({
     flexDirection: "row",
     alignItems: "center",
     gap: theme.s(16),
-  },
-  editor: {
-    gap: theme.vs(8),
-  },
-  input: {
-    minHeight: theme.vs(44),
-    borderRadius: theme.vs(16),
-    borderWidth: 1,
-    borderColor: theme.colors.white40,
-    backgroundColor: theme.colors.surface60,
-    paddingHorizontal: theme.s(12),
-    paddingVertical: theme.vs(10),
-    color: theme.colors.white,
-    fontFamily: theme.fonts.Geist,
-    fontSize: theme.vs(15),
   },
 }));

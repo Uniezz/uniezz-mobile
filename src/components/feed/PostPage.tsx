@@ -39,6 +39,7 @@ type PostPageProps = {
   /** the composer floats over the list's end, so the list reserves its height */
   composerHeight: number;
   onReply: (comment: FeedComment) => void;
+  onEdit: (comment: FeedComment) => void;
   onReport: (comment: FeedComment) => void;
 };
 
@@ -50,6 +51,7 @@ export const PostPage = ({
   height,
   composerHeight,
   onReply,
+  onEdit,
   onReport,
 }: PostPageProps) => {
   const { t } = useTranslation();
@@ -142,6 +144,7 @@ export const PostPage = ({
             comment={item}
             myId={profile?.id}
             onReply={onReply}
+            onEdit={onEdit}
             onReport={onReport}
           />
         )}
