@@ -667,7 +667,15 @@
     "earnTab": "Verdienen",
     "spendTab": "Ausgeben",
     "shopSoonTitle": "Der Shop kommt bald",
-    "shopSoonDescription": "Bald kannst du hier deine Münzen ausgeben. Sammle bis dahin weiter!"
+    "shopSoonDescription": "Bald kannst du hier deine Münzen ausgeben. Sammle bis dahin weiter!",
+    "invitePitch": "Komm zu Uniezz",
+    "redeemTitle": "Hast du einen Einladungscode?",
+    "redeemHint": "Gib in deinen ersten 7 Tagen den Code eines Freundes ein. Du bekommst 50 Münzen, er 100.",
+    "redeemSubmit": "Einlösen",
+    "redeemApplied": "Einladungscode eingelöst.",
+    "redeemInvalid": "Diesen Code gibt es nicht. Prüf ihn und versuch es noch mal.",
+    "redeemAlreadySet": "Du hast schon einen anderen Einladungscode eingelöst.",
+    "redeemWindowClosed": "Einladungscodes gelten nur in den ersten 7 Tagen."
   },
   "guide": {
     "action": "Ort vorschlagen",

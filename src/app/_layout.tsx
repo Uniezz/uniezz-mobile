@@ -31,6 +31,7 @@ function RootNavigator(): React.JSX.Element {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />
       <Stack.Screen name="finish" />
+      <Stack.Screen name="invite/[code]" options={{ animation: "fade" }} />
       <Stack.Protected guard={!session}>
         <Stack.Screen name="(auth)" options={{ animation: "fade" }} />
       </Stack.Protected>

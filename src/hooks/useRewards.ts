@@ -1,9 +1,16 @@
 import {
   useInfiniteQuery,
+  useMutation,
   useQuery,
+  useQueryClient,
   type QueryClient,
 } from "@tanstack/react-query";
-import { getMyCoinGrants, getMyDailyQuests, getMyInviteCode } from "@/api";
+import {
+  getMyCoinGrants,
+  getMyDailyQuests,
+  getMyInviteCode,
+  redeemInvite,
+} from "@/api";
 
 export function useMyInviteCode() {
   return useQuery({
@@ -40,3 +47,13 @@ export const invalidateRewards = (queryClient: QueryClient) =>
     queryClient.invalidateQueries({ queryKey: ["rewards"] }),
     queryClient.invalidateQueries({ queryKey: ["profile", "me"] }),
   ]);
+
+// the provider's coin toast shows what it paid; the balance and history change with it
+export function useRedeemInvite() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    meta: { analyticsAction: "invite_redeem" },
+    mutationFn: redeemInvite,
+    onSuccess: () => invalidateRewards(queryClient),
+  });
+}

@@ -6,11 +6,17 @@ import {
   LayoutChangeEvent,
   NativeScrollEvent,
   NativeSyntheticEvent,
+  Platform,
   Share,
   View,
 } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { GrantRow, QuestCard, ShopPreview } from "@/components/rewards";
+import {
+  GrantRow,
+  QuestCard,
+  RedeemInviteCard,
+  ShopPreview,
+} from "@/components/rewards";
 import {
   useMyCoinGrants,
   useMyDailyQuests,
@@ -29,7 +35,12 @@ import {
   UIGlass,
   UIText,
 } from "@/ui";
-import { formatCompactCount, HEADER_COMPACT_OFFSET, inviteUrl } from "@/utils";
+import {
+  canRedeemInvite,
+  formatCompactCount,
+  HEADER_COMPACT_OFFSET,
+  inviteUrl,
+} from "@/utils";
 
 export default function RewardsScreen() {
   const { t, i18n } = useTranslation();
@@ -77,10 +88,16 @@ export default function RewardsScreen() {
   const handleInvitePress = () => {
     if (!invite) return;
     const link = inviteUrl(invite.code);
-    return Share.share({
-      message: t("rewards.inviteMessage", { link }),
-      title: t("rewards.inviteFriends"),
-    });
+    // iOS gets the link as its own item, so the share sheet and messengers build the preview card from it;
+    // Android shares one text, and the messenger previews the link inside it
+    return Share.share(
+      Platform.OS === "ios"
+        ? { message: t("rewards.invitePitch"), url: link }
+        : {
+            message: t("rewards.inviteMessage", { link }),
+            title: t("rewards.inviteFriends"),
+          },
+    );
   };
   const handleEndReached = () => {
     if (isEarn && hasNextPage && !isFetchingNextPage) return fetchNextPage();
@@ -156,6 +173,9 @@ export default function RewardsScreen() {
                   </UIText>
                 </UIButton>
               </UIGlass>
+            ) : null}
+            {profile && canRedeemInvite(profile.createdAt) ? (
+              <RedeemInviteCard />
             ) : null}
             {isEarn ? (
               <>

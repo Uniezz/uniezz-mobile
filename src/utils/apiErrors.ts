@@ -6,6 +6,7 @@ import {
 } from "./connections";
 import { FAQ_PROPOSAL_ERRORS } from "./faq";
 import { OTP_REQUEST_ERRORS, OTP_VERIFY_ERRORS } from "./otp";
+import { REDEEM_INVITE_CODES } from "./invites";
 import { REPORT_ERRORS } from "./report";
 import { STUDY_CREATE_ERRORS } from "./study";
 
@@ -27,6 +28,7 @@ export const ENDPOINT_ERRORS: Partial<Record<string, EndpointErrors>> = {
     statuses: OTP_VERIFY_ERRORS,
     fallback: "otp.verifyFailed",
   },
+  "/auth/invites/redeem": { statuses: {}, codes: REDEEM_INVITE_CODES },
   "/reports": { statuses: REPORT_ERRORS },
   "/connections/candidates/{id}": { statuses: CANDIDATE_ERRORS },
   "/connections/me": {

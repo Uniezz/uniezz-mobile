@@ -20,7 +20,8 @@ export function redirectSystemPath({
         ? url.pathname.slice(1)
         : url.pathname.match(/^\/(?:--\/)?invite\/([A-Z0-9]{7})$/i)?.[1];
     if (inviteCode && /^[A-Z0-9]{7}$/i.test(inviteCode)) {
-      return `/(auth)?referralCode=${encodeURIComponent(inviteCode)}`;
+      // the invite screen decides: sign-up with the code, or apply it to the signed-in account
+      return `/invite/${encodeURIComponent(inviteCode)}`;
     }
   } catch {
     return path;

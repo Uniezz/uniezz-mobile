@@ -672,7 +672,15 @@
     "earnTab": "Earn",
     "spendTab": "Spend",
     "shopSoonTitle": "Shop is coming soon",
-    "shopSoonDescription": "Soon you'll spend your coins here. Keep earning them!"
+    "shopSoonDescription": "Soon you'll spend your coins here. Keep earning them!",
+    "invitePitch": "Join me on Uniezz",
+    "redeemTitle": "Got an invite code?",
+    "redeemHint": "Enter a friend’s code in your first 7 days. You get 50 coins, they get 100.",
+    "redeemSubmit": "Apply",
+    "redeemApplied": "Invite code applied.",
+    "redeemInvalid": "There’s no invite code like that. Check it and try again.",
+    "redeemAlreadySet": "You’ve already used a different invite code.",
+    "redeemWindowClosed": "Invite codes only work in your first 7 days."
   },
   "onboarding": {
     "details": {

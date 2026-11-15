@@ -41,6 +41,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/auth/invites/redeem": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Apply an invitation code to the logged-in student's account
+     * @description Works for accounts created in the last 7 days that have no inviter, and awards 100 coins to the inviter and 50 to you. Sending the applied code again changes nothing; a different code returns 409 referral_already_set.
+     */
+    post: operations["redeemInvite"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/auth/otp/request": {
     parameters: {
       query?: never;
@@ -1954,6 +1974,21 @@ export interface components {
        */
       rating: number;
     };
+    RedeemInviteInputBody: {
+      /**
+       * @description Seven-character invitation code from an /invite/{code} link
+       * @example A1B2C3D
+       */
+      code: string;
+    };
+    RedeemInviteOutputBody: {
+      /**
+       * Format: int64
+       * @description Uniezz coins this request paid you; 0 when this code was already applied
+       * @example 50
+       */
+      coinsEarned: number;
+    };
     Report: {
       /** Format: date-time */
       createdAt: string;
@@ -2298,6 +2333,84 @@ export interface operations {
       };
       /** @description Unauthorized */
       401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  redeemInvite: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["RedeemInviteInputBody"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["RedeemInviteOutputBody"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
         headers: {
           [name: string]: unknown;
         };

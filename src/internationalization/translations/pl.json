@@ -678,7 +678,15 @@
     "earnTab": "Zdobywaj",
     "spendTab": "Wydawaj",
     "shopSoonTitle": "Sklep już wkrótce",
-    "shopSoonDescription": "Wkrótce wydasz tu swoje monety. Na razie zbieraj je dalej!"
+    "shopSoonDescription": "Wkrótce wydasz tu swoje monety. Na razie zbieraj je dalej!",
+    "invitePitch": "Dołącz do Uniezz",
+    "redeemTitle": "Masz kod zaproszenia?",
+    "redeemHint": "Wpisz kod znajomego w ciągu pierwszych 7 dni. Ty dostajesz 50 monet, a on 100.",
+    "redeemSubmit": "Użyj",
+    "redeemApplied": "Kod zaproszenia został użyty.",
+    "redeemInvalid": "Nie ma takiego kodu. Sprawdź go i spróbuj ponownie.",
+    "redeemAlreadySet": "Użyłeś już innego kodu zaproszenia.",
+    "redeemWindowClosed": "Kod zaproszenia działa tylko przez pierwsze 7 dni."
   },
   "onboarding": {
     "details": {

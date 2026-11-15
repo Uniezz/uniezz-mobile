@@ -667,7 +667,15 @@
     "earnTab": "Ganar",
     "spendTab": "Gastar",
     "shopSoonTitle": "La tienda llegará pronto",
-    "shopSoonDescription": "Pronto podrás gastar tus monedas aquí. ¡Sigue ganándolas!"
+    "shopSoonDescription": "Pronto podrás gastar tus monedas aquí. ¡Sigue ganándolas!",
+    "invitePitch": "Únete a Uniezz",
+    "redeemTitle": "¿Tienes un código de invitación?",
+    "redeemHint": "Introduce el código de un amigo en tus primeros 7 días. Tú recibes 50 monedas y él 100.",
+    "redeemSubmit": "Aplicar",
+    "redeemApplied": "Código de invitación aplicado.",
+    "redeemInvalid": "Ese código no existe. Revísalo y vuelve a intentarlo.",
+    "redeemAlreadySet": "Ya usaste otro código de invitación.",
+    "redeemWindowClosed": "Los códigos de invitación solo funcionan en tus primeros 7 días."
   },
   "guide": {
     "action": "Sugerir un lugar",
