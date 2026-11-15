@@ -603,6 +603,8 @@
     "rateValue": "{{rating}} of 5",
     "courseCreated": "Course added.",
     "addCourse": "Add course",
+    "noProgrammeTitle": "Add a study programme first",
+    "noProgrammeDescription": "Courses belong to your study programme. Add one in your profile, then try again.",
     "create": "Add",
     "name": "Course name",
     "subject": "Subject",

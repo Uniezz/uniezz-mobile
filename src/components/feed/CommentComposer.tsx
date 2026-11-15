@@ -62,6 +62,7 @@ export const CommentComposer = ({
           render={({ field }) => (
             <View style={styles.field}>
               <ThemedTextInput
+                allowFontScaling={false}
                 ref={field.ref}
                 value={field.value}
                 onChangeText={field.onChange}

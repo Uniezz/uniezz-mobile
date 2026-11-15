@@ -12,6 +12,7 @@ import PagerView, {
   type PagerViewOnPageSelectedEvent,
 } from "react-native-pager-view";
 import { StyleSheet } from "react-native-unistyles";
+import { toast } from "sonner-native";
 import {
   CoursesPage,
   CourseFormSheet,
@@ -93,7 +94,16 @@ export default function StudyScreen() {
     }
     Keyboard.dismiss();
   };
-  const handleAddPress = () => createCourseRef.current?.present();
+  // a course lives in the student's study programme, so without one the sheet can't be filled in
+  const handleAddPress = () => {
+    if (!profile?.programmes?.length) {
+      toast.error(t("study.noProgrammeTitle"), {
+        description: t("study.noProgrammeDescription"),
+      });
+      return;
+    }
+    createCourseRef.current?.present();
+  };
 
   const headerActions = (
     <>

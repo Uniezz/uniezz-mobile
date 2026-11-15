@@ -24,6 +24,7 @@ const colors = {
   ink40: "rgba(12, 13, 20, 0.4)",
   ink0: "rgba(12, 13, 20, 0)",
   surface: "rgb(22, 24, 34)",
+  surface85: "rgba(22, 24, 34, 0.85)",
   surface60: "rgba(22, 24, 34, 0.6)",
   surface0: "rgba(22, 24, 34, 0)",
   black50: "rgba(0, 0, 0, 0.5)",

@@ -609,6 +609,8 @@
     "rateValue": "{{rating}} z 5",
     "courseCreated": "Dodano przedmiot.",
     "addCourse": "Dodaj przedmiot",
+    "noProgrammeTitle": "Najpierw dodaj kierunek studiów",
+    "noProgrammeDescription": "Przedmioty należą do kierunku studiów. Dodaj kierunek w profilu i spróbuj ponownie.",
     "create": "Dodaj",
     "name": "Nazwa przedmiotu",
     "subject": "Przedmiot",

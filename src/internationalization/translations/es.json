@@ -620,6 +620,8 @@
     "deleteCourseDescription": "También se eliminarán tus archivos, comentarios y valoraciones. Esta acción no se puede deshacer.",
     "courseDeleted": "Curso eliminado",
     "addCourse": "Añadir asignatura",
+    "noProgrammeTitle": "Primero añade un programa de estudios",
+    "noProgrammeDescription": "Las asignaturas pertenecen a tu programa de estudios. Añádelo en tu perfil y vuelve a intentarlo.",
     "courseCreated": "Asignatura añadida.",
     "deleteCommentTitle": "¿Eliminar este comentario?",
     "difficulty": "Dificultad",

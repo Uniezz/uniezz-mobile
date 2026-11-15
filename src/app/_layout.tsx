@@ -72,7 +72,11 @@ export default function RootLayout() {
             <SessionProvider>
               <BottomSheetModalProvider>
                 <RootNavigator />
-                <Toaster theme="dark" styles={styles} />
+                <Toaster
+                  theme="dark"
+                  allowFontScaling={false}
+                  styles={styles}
+                />
               </BottomSheetModalProvider>
             </SessionProvider>
           </QueryProvider>

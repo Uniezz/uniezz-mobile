@@ -25,6 +25,7 @@ export function UISearch({ onSubmit, submitLabel, ...props }: UISearchProps) {
         uniProps={(theme) => ({ color: theme.colors.white60 })}
       />
       <ThemedTextInput
+        allowFontScaling={false}
         {...props}
         accessibilityRole="search"
         autoCorrect={false}

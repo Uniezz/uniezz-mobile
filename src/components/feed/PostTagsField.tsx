@@ -48,6 +48,7 @@ export const PostTagsField = ({ value, onChange }: PostTagsFieldProps) => {
       </View>
       <View style={styles.inputRow}>
         <ThemedTextInput
+          allowFontScaling={false}
           value={draft}
           onChangeText={setDraft}
           onSubmitEditing={handleAdd}

@@ -56,6 +56,7 @@ export const PostMedia = ({ urls }: PostMediaProps) => {
       <ScrollView
         horizontal
         pagingEnabled
+        nestedScrollEnabled
         showsHorizontalScrollIndicator={false}
         onMomentumScrollEnd={handleScrollEnd}
       >

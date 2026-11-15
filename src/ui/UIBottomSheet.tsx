@@ -9,7 +9,7 @@ import {
 } from "@gorhom/bottom-sheet";
 import { BlurView } from "expo-blur";
 import type { ReactNode, Ref } from "react";
-import { Pressable, useWindowDimensions, View } from "react-native";
+import { Platform, Pressable, useWindowDimensions, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
 import { Icon } from "./icons";
@@ -82,6 +82,9 @@ export const UIBottomSheet = ({
       ref={ref}
       backdropComponent={renderBackdrop}
       enablePanDownToClose={!onDismissAttempt}
+      // a sideways swipe fails the sheet's pan, so horizontal rows inside (filter chips, photos) scroll on Android
+      activeOffsetY={[-1, 1]}
+      failOffsetX={[-5, 5]}
       handleComponent={renderHandle}
       backgroundComponent={renderBackground}
       maxDynamicContentSize={height * SHEET_MAX_HEIGHT_RATIO}
@@ -98,7 +101,9 @@ const styles = StyleSheet.create((theme) => ({
   // strong blur of the screen behind, tinted so the sheet still reads as a surface
   background: {
     overflow: "hidden",
-    backgroundColor: theme.colors.surface60,
+    // iOS blurs what's behind for real, which read too see-through; Android shows only this fill
+    backgroundColor:
+      Platform.OS === "ios" ? theme.colors.surface85 : theme.colors.surface,
     borderTopLeftRadius: theme.vs(28),
     borderTopRightRadius: theme.vs(28),
   },

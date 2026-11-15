@@ -58,6 +58,7 @@ export const UIInput = ({
       >
         {leftIcon}
         <Input
+          allowFontScaling={false}
           {...props}
           hitSlop={{ top: vs(12), bottom: vs(12), left: s(12), right: s(12) }}
           style={[styles.input(props.multiline), style]}

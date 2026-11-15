@@ -620,6 +620,8 @@
     "deleteCourseDescription": "Seine Dateien, Kommentare und Bewertungen werden ebenfalls gelöscht. Das kann nicht rückgängig gemacht werden.",
     "courseDeleted": "Kurs gelöscht",
     "addCourse": "Kurs hinzufügen",
+    "noProgrammeTitle": "Füge zuerst einen Studiengang hinzu",
+    "noProgrammeDescription": "Kurse gehören zu deinem Studiengang. Füge ihn in deinem Profil hinzu und versuche es erneut.",
     "courseCreated": "Kurs hinzugefügt.",
     "deleteCommentTitle": "Diesen Kommentar löschen?",
     "difficulty": "Schwierigkeit",

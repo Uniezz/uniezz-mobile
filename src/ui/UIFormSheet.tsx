@@ -110,7 +110,6 @@ export const UIFormSheet = ({
       backLabel={backLabel}
       keyboardBehavior="interactive"
       keyboardBlurBehavior="restore"
-      android_keyboardInputMode="adjustResize"
       footerComponent={renderFooter}
       onDismiss={onDismiss}
       onDismissAttempt={isDirty ? handleDismissAttempt : undefined}

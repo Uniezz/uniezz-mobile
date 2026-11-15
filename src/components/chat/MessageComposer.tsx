@@ -51,6 +51,7 @@ export const MessageComposer = ({
             style={styles.field}
           >
             <ThemedTextInput
+              allowFontScaling={false}
               value={field.value}
               onChangeText={field.onChange}
               onBlur={field.onBlur}

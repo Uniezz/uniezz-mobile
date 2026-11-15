@@ -34,6 +34,7 @@ export const PostField = ({
       </UIText>
     </View>
     <ThemedTextInput
+      allowFontScaling={false}
       {...props}
       value={value}
       maxLength={maxLength}

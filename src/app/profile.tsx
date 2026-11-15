@@ -10,7 +10,7 @@ import { BlurView } from "expo-blur";
 import { router } from "expo-router";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, LayoutChangeEvent, View } from "react-native";
+import { Alert, LayoutChangeEvent, Platform, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
@@ -88,9 +88,26 @@ export default function ProfileScreen() {
     { query: savedPosts, emptyMessage: t("students.noSavedPosts") },
   ];
 
+  // where a tab's list must sit to match the shown one: the same offset while the overview shows, at least pinned after
+  const syncedOffset = (current: number, own: number) => {
+    const pinnedAt = overviewHeight.current;
+    return current < pinnedAt - 1 ? current : Math.max(own, pinnedAt);
+  };
   const handleListScroll = (index: number, offset: number) => {
     tabOffsets.current[index] = offset;
-    if (index === tabIndex) setIsScrolled(offset > HEADER_COMPACT_OFFSET);
+    if (index !== tabIndex) return;
+    setIsScrolled(offset > HEADER_COMPACT_OFFSET);
+    // Android applies scrollTo a frame late, so a list scrolled and shown in the same tap jerks;
+    // there the hidden lists follow now and a tab switch scrolls nothing. iOS scrolls at once.
+    if (Platform.OS !== "android") return;
+    listRefs.forEach((ref, other) => {
+      if (other === index) return;
+      const own = tabOffsets.current[other] ?? 0;
+      const target = syncedOffset(offset, own);
+      if (target === own) return;
+      tabOffsets.current[other] = target;
+      ref.current?.scrollToOffset({ offset: target, animated: false });
+    });
   };
   const handleOverviewLayout = (event: LayoutChangeEvent) => {
     overviewHeight.current = event.nativeEvent.layout.height;
@@ -98,8 +115,8 @@ export default function ProfileScreen() {
   const handleTabPress = (index: number) => {
     const current = tabOffsets.current[tabIndex] ?? 0;
     const own = tabOffsets.current[index] ?? 0;
-    const pinnedAt = overviewHeight.current;
-    const target = current < pinnedAt - 1 ? current : Math.max(own, pinnedAt);
+    const target = syncedOffset(current, own);
+    // on Android the list is already in place after handleListScroll
     if (target !== own)
       listRefs[index]?.current?.scrollToOffset({
         offset: target,

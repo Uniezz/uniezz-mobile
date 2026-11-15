@@ -12,11 +12,16 @@ export const UIText = ({
   color,
   weight,
   style,
+  allowFontScaling = false,
   ...props
 }: UITextProps) => {
   styles.useVariants({ size, color, weight });
   return (
-    <Text style={[styles.text, style]} {...props}>
+    <Text
+      allowFontScaling={allowFontScaling}
+      style={[styles.text, style]}
+      {...props}
+    >
       {children}
     </Text>
   );
