@@ -1,5 +1,5 @@
 import { usePostHog } from "posthog-react-native";
-import { captureAction } from "@/utils/analytics";
+import { captureAction, apiErrorKey } from "@/utils";
 import {
   useBottomSheetModal,
   type BottomSheetModal,
@@ -10,11 +10,10 @@ import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
-import type { FaqProposalFormValues } from "@/@types/faq";
-import { useCreateFaqProposal } from "@/hooks/useFaq";
+import type { FaqProposalFormValues } from "@/@types";
+import { useCreateFaqProposal } from "@/hooks";
 import { faqProposalSchema } from "@/schemas";
 import { UIFormSheet, UIInput, UIText } from "@/ui";
-import { apiErrorKey } from "@/utils/apiErrorKey";
 
 type FaqProposalSheetProps = {
   ref: Ref<BottomSheetModal>;

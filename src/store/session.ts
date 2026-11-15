@@ -1,5 +1,5 @@
 import * as SecureStore from "expo-secure-store";
-import type { IssuedSession } from "@/@types/auth";
+import type { IssuedSession } from "@/@types";
 import { z } from "zod";
 
 const SESSION_STORAGE_KEY = "uniezz.session";

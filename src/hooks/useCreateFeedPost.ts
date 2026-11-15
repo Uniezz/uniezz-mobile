@@ -1,7 +1,7 @@
 import { idempotencyKey } from "@/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFeedPost } from "@/api";
-import type { CreatePostInput } from "@/@types/feed";
+import type { CreatePostInput } from "@/@types";
 
 export function useCreateFeedPost() {
   const queryClient = useQueryClient();

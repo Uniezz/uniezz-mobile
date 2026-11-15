@@ -7,10 +7,9 @@ import type { ReactElement, Ref } from "react";
 import { useTranslation } from "react-i18next";
 import { NativeScrollEvent, NativeSyntheticEvent, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import type { FeedFilters } from "@/@types/feed";
-import type { ProfileListItem } from "@/@types/profile";
+import type { FeedFilters, ProfileListItem } from "@/@types";
 import { FeedPostCard } from "@/components/feed";
-import { useFeedPosts } from "@/hooks/useFeed";
+import { useFeedPosts } from "@/hooks";
 import { UIEmpty, UIQueryError, UISkeleton } from "@/ui";
 
 type PostsQuery = ReturnType<typeof useFeedPosts>;

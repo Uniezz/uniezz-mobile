@@ -16,9 +16,9 @@ import {
   setFeedSave,
   updateFeedPost,
 } from "@/api";
-import type { FeedFilters } from "@/@types/feed";
+import type { FeedFilters } from "@/@types";
 import { patchFeedItem } from "./patchFeedItem";
-import { removeFromLists } from "@/utils/removeFromLists";
+import { removeFromLists } from "@/utils";
 
 export function useUpdateFeedPost() {
   const queryClient = useQueryClient();

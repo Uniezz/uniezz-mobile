@@ -1,8 +1,4 @@
-import type {
-  Profile,
-  ProgrammeInput,
-  UpdateProfileInput,
-} from "@/@types/profile";
+import type { Profile, ProgrammeInput, UpdateProfileInput } from "@/@types";
 import { api } from "./client";
 
 export async function getMyProfile(): Promise<Profile> {

@@ -1,14 +1,18 @@
 import { usePostHog } from "posthog-react-native";
-import { captureAction } from "@/utils/analytics";
+import {
+  captureAction,
+  isImageType,
+  MAX_IMAGE_MB,
+  MAX_POST_PHOTOS,
+} from "@/utils";
 import { Image } from "expo-image";
 import { launchImageLibraryAsync } from "expo-image-picker";
 import { useTranslation } from "react-i18next";
 import { Pressable, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
-import type { PickedImage } from "@/@types/media";
+import type { PickedImage } from "@/@types";
 import { Icon, UIFadeScrollView, UIText } from "@/ui";
-import { isImageType, MAX_IMAGE_MB, MAX_POST_PHOTOS } from "@/utils";
 
 type PostPhotosFieldProps = {
   value: PickedImage[];

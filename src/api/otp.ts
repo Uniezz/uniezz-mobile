@@ -1,4 +1,4 @@
-import type { OtpRequestInputBody, OtpVerifyInputBody } from "@/@types/auth";
+import type { OtpRequestInputBody, OtpVerifyInputBody } from "@/@types";
 import { api } from "./client";
 
 export async function requestOtpCode(body: OtpRequestInputBody) {

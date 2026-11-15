@@ -1,4 +1,5 @@
 import * as z from "zod";
+// a file, not the @/utils barrel: utils imports @/schemas back, so the barrel cycles
 import { splitInterests } from "@/utils/profile";
 
 export const personalDetailsSchema = z.object({

@@ -2,7 +2,7 @@ import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { Pressable, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import type { ApiFeedPost, FeedFilters } from "@/@types/feed";
+import type { ApiFeedPost, FeedFilters } from "@/@types";
 import { UIGlass, UIImage, UIText } from "@/ui";
 import { postDate } from "@/utils";
 import { AuthorRow } from "./AuthorRow";

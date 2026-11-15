@@ -2,7 +2,7 @@ import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { Pressable, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { useFeaturedFeedPosts } from "@/hooks/useFeed";
+import { useFeaturedFeedPosts } from "@/hooks";
 import { Icon, UIFadeScrollView, UIImage, UIText } from "@/ui";
 import { isLive } from "@/utils";
 

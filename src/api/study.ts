@@ -4,7 +4,7 @@ import type {
   CreateCourseInput,
   StudyFileFilters,
   UpdateCourseInput,
-} from "@/@types/study";
+} from "@/@types";
 import { api } from "./client";
 
 export async function getCourses(filters: CourseFilters, cursor?: string) {

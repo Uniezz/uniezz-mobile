@@ -8,7 +8,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
-import { useFeedLike } from "@/hooks/useFeed";
+import { useFeedLike } from "@/hooks";
 import { Icon, UIText } from "@/ui";
 
 type LikeButtonProps = {

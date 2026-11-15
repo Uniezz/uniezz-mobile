@@ -12,16 +12,16 @@ import { useTranslation } from "react-i18next";
 import { Alert, Pressable, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
-import type { Course, CourseFormValues } from "@/@types/study";
+import type { Course, CourseFormValues } from "@/@types";
 import {
   useCreateCourse,
   useDeleteCourse,
   useUpdateCourse,
-} from "@/hooks/useCourses";
-import { useUploadImages } from "@/hooks/useMedia";
-import { useMyProfile } from "@/hooks/useMyProfile";
-import { useAddCourseFile } from "@/hooks/useStudyFiles";
-import { useUniversities } from "@/hooks/useUniversities";
+  useUploadImages,
+  useMyProfile,
+  useAddCourseFile,
+  useUniversities,
+} from "@/hooks";
 import { courseSchema } from "@/schemas";
 import {
   Icon,
@@ -38,10 +38,10 @@ import {
   FILE_TYPES,
   SEMESTERS,
   toCourseValues,
+  captureAction,
+  apiErrorKey,
+  IMAGE_TYPES,
 } from "@/utils";
-import { captureAction } from "@/utils/analytics";
-import { apiErrorKey } from "@/utils/apiErrorKey";
-import { IMAGE_TYPES } from "@/utils/media";
 import { RatingInput } from "./RatingInput";
 
 const MATERIAL_TYPES = [...IMAGE_TYPES, "application/pdf"];

@@ -5,11 +5,11 @@ import {
   useEffect,
   useState,
 } from "react";
-import type { IssuedSession } from "@/@types/auth";
+import type { IssuedSession } from "@/@types";
 import { api, setApiAccessToken } from "@/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { usePostHog } from "posthog-react-native";
-import { captureAction } from "@/utils/analytics";
+import { captureAction } from "@/utils";
 import {
   deleteStoredSession,
   loadStoredSession,

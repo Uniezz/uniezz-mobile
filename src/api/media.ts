@@ -1,4 +1,5 @@
-import type { PickedImage, UploadKind } from "@/@types/media";
+import type { PickedImage, UploadKind } from "@/@types";
+// not the @/utils barrel: utils/apiErrorKey imports @/api, so the barrel would cycle
 import { isImageType, MAX_EXAM_PDF_MB, MAX_IMAGE_MB } from "@/utils/media";
 import { api, ApiRequestError, apiError } from "./client";
 

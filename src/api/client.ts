@@ -1,5 +1,7 @@
 import createFetchClient, { type Middleware } from "openapi-fetch";
 import createQueryClient from "openapi-react-query";
+// direct paths, not barrels: schema.d.ts is generated and not in @/@types; the @/schemas and @/utils barrels
+// load React Native (tests can't) and utils/apiErrorKey imports this file back
 import type { paths } from "@/@types/schema";
 import { env } from "@/schemas/env";
 import { ENDPOINT_ERRORS } from "@/utils/apiErrors";

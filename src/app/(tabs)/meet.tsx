@@ -17,7 +17,7 @@ import type {
   ConnectionMode,
   ConnectionPreferences,
   ConnectionPreferencesFormValues,
-} from "@/@types/connections";
+} from "@/@types";
 import {
   BirthDateSheet,
   ConnectionFilters,
@@ -30,8 +30,8 @@ import {
   useConnectionPreferences,
   useDiscoverCards,
   useUpdateConnectionPreferences,
-} from "@/hooks/useConnections";
-import { useMyProfile } from "@/hooks/useMyProfile";
+  useMyProfile,
+} from "@/hooks";
 import {
   Icon,
   UIAvatar,
@@ -55,8 +55,8 @@ import {
   INITIAL_CONNECTION_FILTERS,
   toDiscoverFilters,
   toPreferencesValues,
+  apiErrorKey,
 } from "@/utils";
-import { apiErrorKey } from "@/utils/apiErrorKey";
 
 export default function MeetScreen() {
   const { t } = useTranslation();

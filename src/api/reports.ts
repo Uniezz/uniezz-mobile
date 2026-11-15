@@ -1,4 +1,4 @@
-import type { CreateReportInput } from "@/@types/report";
+import type { CreateReportInput } from "@/@types";
 import { api } from "./client";
 
 export async function createReport(body: CreateReportInput) {

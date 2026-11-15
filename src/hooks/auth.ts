@@ -1,8 +1,8 @@
 import { usePostHog } from "posthog-react-native";
-import { captureAction } from "@/utils/analytics";
+import { captureAction } from "@/utils";
 import { $api, requestOtpCode, verifyOtpCode } from "@/api";
 import { useMutation } from "@tanstack/react-query";
-import type { IssuedSession } from "@/@types/auth";
+import type { IssuedSession } from "@/@types";
 import { useSession } from "@/contexts";
 import { router } from "expo-router";
 import { toast } from "sonner-native";

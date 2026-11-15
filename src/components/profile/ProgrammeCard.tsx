@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import type { PublicProgramme } from "@/@types/profile";
+import type { PublicProgramme } from "@/@types";
 import { UIText } from "@/ui";
 
 type ProgrammeCardProps = {

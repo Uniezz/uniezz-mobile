@@ -8,8 +8,8 @@ import {
   getMyProfile,
   replaceMyProgramme,
   updateMyProfile,
-} from "@/api/profile";
-import type { Profile, ProgrammeInput } from "@/@types/profile";
+} from "@/api";
+import type { Profile, ProgrammeInput } from "@/@types";
 
 export function useMyProfile() {
   return useQuery({

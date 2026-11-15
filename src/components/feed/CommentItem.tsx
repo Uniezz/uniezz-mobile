@@ -4,11 +4,8 @@ import { useTranslation } from "react-i18next";
 import { Alert, Pressable, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
-import type { FeedComment } from "@/@types/feed";
-import {
-  useCommentReplies,
-  useDeleteFeedComment,
-} from "@/hooks/useFeedComments";
+import type { FeedComment } from "@/@types";
+import { useCommentReplies, useDeleteFeedComment } from "@/hooks";
 import { UIAvatar, UIText, UIUniversityLogo } from "@/ui";
 import { authorName, postDate, profileHref } from "@/utils";
 import { LikeButton } from "./LikeButton";

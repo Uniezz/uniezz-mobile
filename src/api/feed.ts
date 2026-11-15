@@ -1,8 +1,4 @@
-import type {
-  CreatePostInput,
-  FeedFilters,
-  UpdatePostInput,
-} from "@/@types/feed";
+import type { CreatePostInput, FeedFilters, UpdatePostInput } from "@/@types";
 import { api } from "./client";
 
 export async function updateFeedComment({

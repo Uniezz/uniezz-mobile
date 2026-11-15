@@ -2,7 +2,7 @@ import { Controller, type Control } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import type { ConnectionPreferencesFormValues } from "@/@types/connections";
+import type { ConnectionPreferencesFormValues } from "@/@types";
 import { UIInput, UIText } from "@/ui";
 
 type ConnectionPreferencesFormProps = {

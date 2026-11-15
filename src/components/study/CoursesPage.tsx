@@ -2,10 +2,9 @@ import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import type { NativeScrollEvent, NativeSyntheticEvent } from "react-native";
 import { toast } from "sonner-native";
-import type { Course } from "@/@types/study";
-import { useCourses, useRateCourse } from "@/hooks/useCourses";
-import { useUniversities } from "@/hooks/useUniversities";
-import { apiErrorKey } from "@/utils/apiErrorKey";
+import type { Course } from "@/@types";
+import { useCourses, useRateCourse, useUniversities } from "@/hooks";
+import { apiErrorKey } from "@/utils";
 import { StudyList } from "./StudyList";
 import { StudyRow } from "./StudyRow";
 

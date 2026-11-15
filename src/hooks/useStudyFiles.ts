@@ -3,14 +3,14 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import type { CourseFile, StudyFileFilters } from "@/@types/study";
+import type { CourseFile, StudyFileFilters } from "@/@types";
 import {
   addCourseFile,
   deleteStudyFile,
   getCourseFiles,
   searchStudyFiles,
 } from "@/api";
-import { removeFromLists } from "@/utils/removeFromLists";
+import { removeFromLists } from "@/utils";
 
 // file urls are short-lived links, so lists refresh often
 export function useStudyFiles(filters: StudyFileFilters = {}) {

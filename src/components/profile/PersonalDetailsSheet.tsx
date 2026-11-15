@@ -7,8 +7,8 @@ import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
-import type { PersonalDetailsFormValues, Profile } from "@/@types/profile";
-import { useUpdateMyProfile } from "@/hooks/useMyProfile";
+import type { PersonalDetailsFormValues, Profile } from "@/@types";
+import { useUpdateMyProfile } from "@/hooks";
 import { personalDetailsSchema } from "@/schemas";
 import { UIChip, UIFormSheet, UIInput, UIText } from "@/ui";
 import {
@@ -16,8 +16,8 @@ import {
   GENDERS,
   splitInterests,
   toDetailsValues,
+  captureAction,
 } from "@/utils";
-import { captureAction } from "@/utils/analytics";
 
 type PersonalDetailsSheetProps = {
   ref: Ref<BottomSheetModal>;

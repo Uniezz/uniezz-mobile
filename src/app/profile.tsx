@@ -5,7 +5,12 @@ import {
   NativeActionEvent,
 } from "@react-native-menu/menu";
 import { usePostHog } from "posthog-react-native";
-import { captureAction } from "@/utils/analytics";
+import {
+  captureAction,
+  authorName,
+  HEADER_COMPACT_OFFSET,
+  apiErrorKey,
+} from "@/utils";
 import type { FlashListRef } from "@shopify/flash-list";
 import { BlurView } from "expo-blur";
 import { router } from "expo-router";
@@ -22,7 +27,7 @@ import {
   LANGUAGES,
   useLanguageStore,
 } from "@/store/languageStore";
-import type { ProfileListItem } from "@/@types/profile";
+import type { ProfileListItem } from "@/@types";
 import {
   PersonalDetailsSheet,
   PrivacySheet,
@@ -35,19 +40,15 @@ import {
   useFeedPosts,
   useLikedFeedPosts,
   useSavedFeedPosts,
-} from "@/hooks/useFeed";
-import { launchImageLibraryAsync } from "expo-image-picker";
-import { useUploadImages } from "@/hooks/useMedia";
-import {
+  useUploadImages,
   useDeleteMyAvatar,
   useDeleteMyBanner,
   useDeleteMyProfile,
   useMyProfile,
   useUpdateMyProfile,
-} from "@/hooks/useMyProfile";
+} from "@/hooks";
+import { launchImageLibraryAsync } from "expo-image-picker";
 import { Icon, UIGlass, UIPage, UISubTabs } from "@/ui";
-import { authorName, HEADER_COMPACT_OFFSET } from "@/utils";
-import { apiErrorKey } from "@/utils/apiErrorKey";
 import { ApiRequestError } from "@/api";
 
 export default function ProfileScreen() {

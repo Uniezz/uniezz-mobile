@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import type { ApiFeedPost } from "@/@types/feed";
+import type { ApiFeedPost } from "@/@types";
 import { Icon, UIText } from "@/ui";
 import { postDate } from "@/utils";
 import { AuthorRow } from "./AuthorRow";

@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import type { DiscoverCard as DiscoverCardData } from "@/@types/connections";
+import type { DiscoverCard as DiscoverCardData } from "@/@types";
 import { InterestChips } from "@/components/profile";
 import { Icon, UIFadeScrollView, UIIconButton, UIText } from "@/ui";
 import { STUDY_LEVELS, UNIVERSITY_SHORT_NAMES } from "@/utils";

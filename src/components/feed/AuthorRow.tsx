@@ -2,8 +2,8 @@ import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { Pressable, StyleProp, ViewStyle } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import type { Author } from "@/@types/feed";
-import { useMyProfile } from "@/hooks/useMyProfile";
+import type { Author } from "@/@types";
+import { useMyProfile } from "@/hooks";
 import { UIAvatar, UIText, UIUniversityLogo } from "@/ui";
 import { authorName, profileHref } from "@/utils";
 

@@ -1,4 +1,4 @@
-import type { CreateReportInput } from "@/@types/report";
+import type { CreateReportInput } from "@/@types";
 
 export const REPORT_REASONS = [
   ["spam", "report.spam"],

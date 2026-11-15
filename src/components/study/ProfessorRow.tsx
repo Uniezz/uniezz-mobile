@@ -2,11 +2,10 @@ import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
-import type { Professor } from "@/@types/study";
-import { useRateProfessor } from "@/hooks/useProfessors";
+import type { Professor } from "@/@types";
+import { useRateProfessor } from "@/hooks";
 import { UIGlass, UIText } from "@/ui";
-import { UNIVERSITY_SHORT_NAMES } from "@/utils";
-import { apiErrorKey } from "@/utils/apiErrorKey";
+import { UNIVERSITY_SHORT_NAMES, apiErrorKey } from "@/utils";
 import { RatingInput } from "./RatingInput";
 
 export function ProfessorRow({ professor }: { professor: Professor }) {

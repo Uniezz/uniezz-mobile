@@ -1,4 +1,4 @@
-import type { FaqEntry } from "@/@types/faq";
+import type { FaqEntry } from "@/@types";
 
 export const FAQ_PROPOSAL_ERRORS: Record<number, string> = {
   422: "faq.proposalInvalid",

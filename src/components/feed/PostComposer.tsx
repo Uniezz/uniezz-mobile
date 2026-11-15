@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { StyleSheet } from "react-native-unistyles";
 import { UIButton, UIGlass, UIInput, UIText } from "@/ui";
-import type { FeedPost } from "@/@types/feed";
+import type { FeedPost } from "@/@types";
 
 export function PostComposer({
   onPublish,

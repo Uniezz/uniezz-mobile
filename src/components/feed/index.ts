@@ -20,3 +20,4 @@ export { PostCard } from "./PostCard";
 export { PostSummary } from "./PostSummary";
 export { CommentComposer } from "./CommentComposer";
 export { SaveButton } from "./SaveButton";
+export { AudienceOption } from "./AudienceOption";

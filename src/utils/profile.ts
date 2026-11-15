@@ -5,7 +5,7 @@ import type {
   Programme,
   ProgrammeFormValues,
   ProgrammeInput,
-} from "@/@types/profile";
+} from "@/@types";
 import { vs } from "@/theme/scale";
 
 export const STUDY_LEVELS = [

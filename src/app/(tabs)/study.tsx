@@ -21,7 +21,7 @@ import {
   ProfessorsPage,
   StudyFilters,
 } from "@/components/study";
-import { useMyProfile } from "@/hooks/useMyProfile";
+import { useMyProfile } from "@/hooks";
 import {
   Icon,
   UIAvatar,

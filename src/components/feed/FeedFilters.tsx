@@ -2,8 +2,8 @@ import { Controller, type Control } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import type { FeedFilterValues } from "@/@types/feed";
-import { useUniversities } from "@/hooks/useUniversities";
+import type { FeedFilterValues } from "@/@types";
+import { useUniversities } from "@/hooks";
 import { UIChip, UIFilterRow } from "@/ui";
 import { DATE_PRESETS, FEED_TYPE_LABELS, FEED_TYPES } from "@/utils";
 

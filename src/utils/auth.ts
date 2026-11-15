@@ -1,5 +1,6 @@
-import type { StartUsosLoginParams } from "@/@types/auth";
-import { env } from "@/schemas";
+import type { StartUsosLoginParams } from "@/@types";
+// a file, not the @/schemas barrel: schemas imports utils back, so the barrel cycles
+import { env } from "@/schemas/env";
 
 export function getUsosStartUrl(
   university: StartUsosLoginParams["university"],

@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import type { PickedImage, UploadKind } from "@/@types/media";
+import type { PickedImage, UploadKind } from "@/@types";
 import { uploadImage } from "@/api";
 
 export function useUploadImages(kind: UploadKind) {

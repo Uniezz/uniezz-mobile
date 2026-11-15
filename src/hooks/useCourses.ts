@@ -6,7 +6,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import type { Course, CourseFile, CourseFilters } from "@/@types/study";
+import type { Course, CourseFile, CourseFilters } from "@/@types";
 import {
   createCourse,
   deleteCourse,
@@ -15,7 +15,7 @@ import {
   rateCourse,
   updateCourse,
 } from "@/api";
-import { removeFromLists } from "@/utils/removeFromLists";
+import { removeFromLists } from "@/utils";
 
 export function useCourses(
   filters: CourseFilters = {},

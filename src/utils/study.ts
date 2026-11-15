@@ -1,10 +1,11 @@
-import type { Profile, Programme } from "@/@types/profile";
 import type {
+  Profile,
+  Programme,
   Course,
   CourseFileType,
   CourseFormValues,
   MaterialTab,
-} from "@/@types/study";
+} from "@/@types";
 
 export const MATERIAL_TABS: readonly (readonly [MaterialTab, string])[] = [
   ["reviews", "app.courseReviews"],

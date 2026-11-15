@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { LayoutChangeEvent, View } from "react-native";
 import { EaseView } from "react-native-ease";
 import { StyleSheet } from "react-native-unistyles";
-import { useUniversities } from "@/hooks/useUniversities";
+import { useUniversities } from "@/hooks";
 import { Icon, UIAvatar, UIIconButton, UIText, UIUniversityLogo } from "@/ui";
 import { HEADER_TRANSITION, PROFILE_HEADER_TITLE_SHIFT } from "@/utils";
 

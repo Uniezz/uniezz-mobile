@@ -5,10 +5,10 @@ import {
   type NativeScrollEvent,
   type NativeSyntheticEvent,
 } from "react-native";
-import type { CourseFile } from "@/@types/study";
+import type { CourseFile } from "@/@types";
 import { getStudyFile } from "@/api";
 import { toast } from "sonner-native";
-import { useDeleteStudyFile, useStudyFiles } from "@/hooks/useStudyFiles";
+import { useDeleteStudyFile, useStudyFiles } from "@/hooks";
 import { Icon, UIIconButton } from "@/ui";
 import { FILE_TYPES } from "@/utils";
 import { StudyList } from "./StudyList";

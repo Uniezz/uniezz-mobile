@@ -9,7 +9,7 @@ import type {
   ConnectionPreferences,
   DiscoverDeck,
   DiscoverFilters,
-} from "@/@types/connections";
+} from "@/@types";
 import {
   actOnCandidate,
   ApiRequestError,
@@ -20,7 +20,7 @@ import {
   setStudentBlocked,
   updateConnectionPreferences,
 } from "@/api";
-import { removeFromLists } from "@/utils/removeFromLists";
+import { removeFromLists } from "@/utils";
 
 export function useDiscoverCards(filters: DiscoverFilters) {
   return useQuery({

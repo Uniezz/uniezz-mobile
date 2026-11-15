@@ -1,4 +1,4 @@
-import type { FaqProposalInput } from "@/@types/faq";
+import type { FaqProposalInput } from "@/@types";
 import { api } from "./client";
 
 export async function getFaqEntries(cursor?: string) {

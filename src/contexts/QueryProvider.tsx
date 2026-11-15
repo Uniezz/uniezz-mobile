@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { usePostHog } from "posthog-react-native";
-import { createAnalyticsMutationCache } from "@/utils/analytics";
+import { createAnalyticsMutationCache } from "@/utils";
 
 export function QueryProvider({ children }: { children: React.ReactNode }) {
   const posthog = usePostHog();

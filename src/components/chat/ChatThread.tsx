@@ -4,7 +4,7 @@ import { ScrollViewProps, View } from "react-native";
 import { KeyboardChatScrollView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
-import type { ChatMessage } from "@/@types/chat";
+import type { ChatMessage } from "@/@types";
 import { UIText } from "@/ui";
 import { chatDay, isSameDay } from "@/utils";
 

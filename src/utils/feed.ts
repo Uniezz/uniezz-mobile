@@ -1,4 +1,4 @@
-import type { FeedFilterValues } from "@/@types/feed";
+import type { FeedFilterValues } from "@/@types";
 
 export const FEED_TYPES = ["all", "announcement", "question", "event"] as const;
 

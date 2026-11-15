@@ -19,23 +19,20 @@ import { KeyboardStickyView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
-import type {
-  CommentFormValues,
-  FeedComment,
-  FeedFilters,
-} from "@/@types/feed";
+import type { CommentFormValues, FeedComment, FeedFilters } from "@/@types";
 import { CommentComposer, PostPage } from "@/components/feed";
 import { ReportSheet } from "@/components/report";
-import { useDeleteFeedPost, useFeedPost, useFeedPosts } from "@/hooks/useFeed";
 import {
+  useDeleteFeedPost,
+  useFeedPost,
+  useFeedPosts,
   useCreateComment,
   useUpdateFeedComment,
-} from "@/hooks/useFeedComments";
+  useMyProfile,
+} from "@/hooks";
 import { commentSchema } from "@/schemas";
-import { captureAction } from "@/utils/analytics";
-import { useMyProfile } from "@/hooks/useMyProfile";
+import { captureAction, authorName } from "@/utils";
 import { Icon, UIIconButton, UIPage, UIText } from "@/ui";
-import { authorName } from "@/utils";
 
 export default function PostScreen() {
   const { id, ...filters } = useLocalSearchParams<

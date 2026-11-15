@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { FlashList } from "@shopify/flash-list";
 import { Pressable, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import type { Conversation } from "@/@types/chat";
+import type { Conversation } from "@/@types";
 import { chatTime } from "@/utils";
 import { ConnectionAvatarList } from "./ConnectionAvatarList";
 import {

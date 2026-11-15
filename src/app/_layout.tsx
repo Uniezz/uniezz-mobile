@@ -10,7 +10,7 @@ import { useEffect } from "react";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { StyleSheet } from "react-native-unistyles";
 import { PostHogProvider, useFeatureFlag } from "posthog-react-native";
-import { useScreenTracking } from "@/hooks/useScreenTracking";
+import { useScreenTracking } from "@/hooks";
 
 // must run before the first render: iOS hides the splash as soon as any RN content appears,
 // unless prevent was already called. The splash route hides it once its logo is laid out.

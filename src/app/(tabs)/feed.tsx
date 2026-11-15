@@ -16,9 +16,8 @@ import {
 import { EaseView } from "react-native-ease";
 import { StyleSheet } from "react-native-unistyles";
 import { FeaturedPosts, FeedFilters, FeedPostCard } from "@/components/feed";
-import type { FeedFilterValues } from "@/@types/feed";
-import { useFeedPosts } from "@/hooks/useFeed";
-import { useMyProfile } from "@/hooks/useMyProfile";
+import type { FeedFilterValues } from "@/@types";
+import { useFeedPosts, useMyProfile } from "@/hooks";
 import { feedFiltersSchema } from "@/schemas";
 import {
   Icon,

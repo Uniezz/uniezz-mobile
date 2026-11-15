@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import type { FaqEntry } from "@/@types/faq";
+import type { FaqEntry } from "@/@types";
 import { Icon, UIGlass, UIText } from "@/ui";
 import { FAQ_STATUS_LABELS } from "@/utils";
 

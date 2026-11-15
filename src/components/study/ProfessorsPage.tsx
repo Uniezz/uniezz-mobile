@@ -1,6 +1,6 @@
 import type { NativeScrollEvent, NativeSyntheticEvent } from "react-native";
-import type { Professor } from "@/@types/study";
-import { useProfessors } from "@/hooks/useProfessors";
+import type { Professor } from "@/@types";
+import { useProfessors } from "@/hooks";
 import { StudyList } from "./StudyList";
 import { ProfessorRow } from "./ProfessorRow";
 

@@ -1,4 +1,4 @@
-import type { UploadContentType, UploadKind } from "@/@types/media";
+import type { UploadContentType, UploadKind } from "@/@types";
 
 export const IMAGE_TYPES: readonly UploadContentType[] = [
   "image/jpeg",

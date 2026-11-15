@@ -4,8 +4,8 @@ import { FlashList } from "@shopify/flash-list";
 import { Alert, Pressable, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
-import type { Connection } from "@/@types/connections";
-import { useConnections, useDeleteConnection } from "@/hooks/useConnections";
+import type { Connection } from "@/@types";
+import { useConnections, useDeleteConnection } from "@/hooks";
 import { UIAvatar, UIText } from "@/ui";
 
 // shortcut: opens the revealed profile, not a thread; open the match's chat once the chat backend lands (UNI-43)

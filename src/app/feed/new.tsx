@@ -1,7 +1,6 @@
 import { usePostHog } from "posthog-react-native";
-import { captureAction } from "@/utils/analytics";
+import { captureAction, HEADER_COMPACT_OFFSET, apiErrorKey } from "@/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { HEADER_COMPACT_OFFSET } from "@/utils";
 import { router } from "expo-router";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { useState } from "react";
@@ -14,7 +13,7 @@ import {
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
-import type { NewPostFormValues } from "@/@types/feed";
+import type { NewPostFormValues } from "@/@types";
 import {
   ComposerHeader,
   PostAudienceField,
@@ -23,13 +22,14 @@ import {
   PostPhotosField,
   PostTagsField,
 } from "@/components/feed";
-import { useUploadImages } from "@/hooks/useMedia";
-import { useCreateFeedPost } from "@/hooks/useCreateFeedPost";
-import { useMyProfile } from "@/hooks/useMyProfile";
-import { useUniversities } from "@/hooks/useUniversities";
+import {
+  useUploadImages,
+  useCreateFeedPost,
+  useMyProfile,
+  useUniversities,
+} from "@/hooks";
 import { newPostSchema } from "@/schemas";
 import { UIPage, UISegmented } from "@/ui";
-import { apiErrorKey } from "@/utils/apiErrorKey";
 
 const POST_TYPES = ["question", "announcement", "event"] as const;
 

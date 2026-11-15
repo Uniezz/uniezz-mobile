@@ -4,7 +4,7 @@ import { useState, type ReactNode } from "react";
 import { Pressable, ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { UIChip, UIGlass, UIInput, UIText } from "@/ui";
-import type { FeedPost } from "@/@types/feed";
+import type { FeedPost } from "@/@types";
 
 const stories = [
   "Your story",

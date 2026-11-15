@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import type { CourseComment } from "@/@types/study";
+import type { CourseComment } from "@/@types";
 import { Icon, UIIconButton, UIText } from "@/ui";
 import { chatTime } from "@/utils";
 

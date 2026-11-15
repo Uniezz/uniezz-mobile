@@ -2,7 +2,7 @@ import { Control, Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Pressable, TextInput, View } from "react-native";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
-import type { CommentFormValues } from "@/@types/feed";
+import type { CommentFormValues } from "@/@types";
 import { Icon, UIText } from "@/ui";
 
 const ThemedTextInput = withUnistyles(TextInput, (theme) => ({

@@ -5,7 +5,7 @@ import type {
   ConnectionPreferencesFormValues,
   DiscoverFilters,
   StudyLevel,
-} from "@/@types/connections";
+} from "@/@types";
 
 export const CONNECTION_MODES = [
   ["friends", "app.friends", "face-slightly-smiling"],

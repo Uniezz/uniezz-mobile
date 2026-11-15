@@ -5,8 +5,8 @@ import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
-import type { Profile } from "@/@types/profile";
-import { useUpdateMyProfile } from "@/hooks/useMyProfile";
+import type { Profile } from "@/@types";
+import { useUpdateMyProfile } from "@/hooks";
 import { UIFormSheet, UISwitch, UIText } from "@/ui";
 import { PRIVACY_SETTINGS } from "@/utils";
 

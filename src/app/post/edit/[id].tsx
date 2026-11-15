@@ -1,7 +1,6 @@
 import { usePostHog } from "posthog-react-native";
-import { captureAction } from "@/utils/analytics";
+import { captureAction, HEADER_COMPACT_OFFSET } from "@/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { HEADER_COMPACT_OFFSET } from "@/utils";
 import { router, useLocalSearchParams } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 import { useState } from "react";
@@ -15,9 +14,9 @@ import {
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
-import type { EditPostFormValues } from "@/@types/feed";
+import type { EditPostFormValues } from "@/@types";
 import { ComposerHeader, PostField, PostTagsField } from "@/components/feed";
-import { useFeedPost, useUpdateFeedPost } from "@/hooks/useFeed";
+import { useFeedPost, useUpdateFeedPost } from "@/hooks";
 import { editPostSchema } from "@/schemas";
 import { Icon, UIPage, UIQueryError, UISkeleton, UIText } from "@/ui";
 

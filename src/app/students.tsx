@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { StudentRow } from "@/components/meet";
-import { useProfileSearch } from "@/hooks/useProfiles";
+import { useProfileSearch } from "@/hooks";
 import {
   Icon,
   UICollapsingHeader,

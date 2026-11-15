@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { ChatStore } from "@/@types/chat";
+import type { ChatStore } from "@/@types";
 import { idempotencyKey } from "@/utils";
 
 let nextGroupId = 1;

@@ -1,7 +1,7 @@
 import type { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { useUniversities } from "@/hooks/useUniversities";
+import { useUniversities } from "@/hooks";
 import { UIChip, UIFilterRow, UIFilters, UIUniversityLogo } from "@/ui";
 import { SEMESTERS } from "@/utils";
 

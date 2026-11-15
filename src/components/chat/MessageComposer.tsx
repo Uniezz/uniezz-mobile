@@ -2,7 +2,7 @@ import { Control, Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Pressable, TextInput } from "react-native";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
-import type { MessageFormValues } from "@/@types/chat";
+import type { MessageFormValues } from "@/@types";
 import { Icon, UIGlass, UIIconButton } from "@/ui";
 
 const ThemedTextInput = withUnistyles(TextInput, (theme) => ({

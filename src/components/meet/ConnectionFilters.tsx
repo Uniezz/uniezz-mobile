@@ -2,11 +2,8 @@ import { Controller, type Control, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import type {
-  ConnectionFilterValues,
-  ConnectionMode,
-} from "@/@types/connections";
-import { useUniversities } from "@/hooks/useUniversities";
+import type { ConnectionFilterValues, ConnectionMode } from "@/@types";
+import { useUniversities } from "@/hooks";
 import { UIChip, UIFilterRow, UISwitch, UIText, UIUniversityLogo } from "@/ui";
 import { CONNECTION_GENDERS, STUDY_LEVEL_OPTIONS, toggleValues } from "@/utils";
 

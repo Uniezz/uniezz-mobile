@@ -15,10 +15,9 @@ import {
 import { KeyboardStickyView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
-import type { CreateGroupFormValues } from "@/@types/chat";
+import type { CreateGroupFormValues } from "@/@types";
 import { RowPickerItem } from "@/components";
-import { useProfileSearch } from "@/hooks/useProfiles";
-import { useUniversities } from "@/hooks/useUniversities";
+import { useProfileSearch, useUniversities } from "@/hooks";
 import { createGroupSchema } from "@/schemas";
 import { useChatStore } from "@/store/chat";
 import {
@@ -36,8 +35,7 @@ import {
   UIText,
   UIUniversityLogo,
 } from "@/ui";
-import { authorName, HEADER_COMPACT_OFFSET } from "@/utils";
-import { captureAction } from "@/utils/analytics";
+import { authorName, HEADER_COMPACT_OFFSET, captureAction } from "@/utils";
 
 export default function NewGroupScreen() {
   const { t } = useTranslation();

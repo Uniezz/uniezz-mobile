@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { Pressable } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
-import { useFeedSave } from "@/hooks/useFeed";
+import { useFeedSave } from "@/hooks";
 import { Icon } from "@/ui";
 
 type SaveButtonProps = {

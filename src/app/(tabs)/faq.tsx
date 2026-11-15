@@ -13,8 +13,7 @@ import {
 } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { FaqItem, FaqProposalSheet } from "@/components/faq";
-import { useFaqEntries, useMyFaqProposals } from "@/hooks/useFaq";
-import { useMyProfile } from "@/hooks/useMyProfile";
+import { useFaqEntries, useMyFaqProposals, useMyProfile } from "@/hooks";
 import {
   Icon,
   UIAvatar,

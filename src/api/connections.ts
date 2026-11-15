@@ -2,7 +2,7 @@ import type {
   CandidateActionInput,
   DiscoverFilters,
   SaveConnectionPreferencesInput,
-} from "@/@types/connections";
+} from "@/@types";
 import { api } from "./client";
 
 export async function getDiscoverCards(filters: DiscoverFilters) {

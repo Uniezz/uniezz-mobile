@@ -1,3 +1,4 @@
+// a file, not the @/api barrel: api/client imports utils back, so the barrel cycles
 import { ApiRequestError } from "@/api/client";
 import i18n from "@/internationalization";
 

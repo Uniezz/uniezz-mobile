@@ -1,14 +1,12 @@
 import { usePostHog } from "posthog-react-native";
-import { captureAction } from "@/utils/analytics";
+import { captureAction, autoComplete, CELL_COUNT, apiErrorKey } from "@/utils";
 import { otpDefaultValues, otpSchema, type OtpSchema } from "@/schemas";
-import { autoComplete, CELL_COUNT } from "@/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router, useLocalSearchParams } from "expo-router";
 import { useForm, useWatch } from "react-hook-form";
 import { useClearByFocusCell } from "react-native-confirmation-code-field";
 import { useRequestOtpCode, useVerifyOtpCode } from "./auth";
 import { useTranslation } from "react-i18next";
-import { apiErrorKey } from "@/utils/apiErrorKey";
 
 export const useOtpScreen = () => {
   const { t } = useTranslation();

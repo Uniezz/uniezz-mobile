@@ -8,11 +8,11 @@ import { LayoutChangeEvent, View } from "react-native";
 import { KeyboardStickyView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
-import type { ChatMessage, MessageFormValues } from "@/@types/chat";
+import type { ChatMessage, MessageFormValues } from "@/@types";
 import { ChatThread, MessageComposer } from "@/components/chat";
 import { messageSchema } from "@/schemas";
 import { useChatStore } from "@/store/chat";
-import { captureAction } from "@/utils/analytics";
+import { captureAction } from "@/utils";
 import { Icon, UIAvatar, UIEmpty, UIIconButton, UIPage, UIText } from "@/ui";
 
 const emptyMessages: ChatMessage[] = [];

@@ -26,9 +26,7 @@ import {
 } from "@/components/profile";
 import { FeedPostCard } from "@/components/feed";
 import { ReportSheet } from "@/components/report";
-import { useBlockStudent } from "@/hooks/useConnections";
-import { useFeedPosts } from "@/hooks/useFeed";
-import { usePublicProfile } from "@/hooks/useProfiles";
+import { useBlockStudent, useFeedPosts, usePublicProfile } from "@/hooks";
 import { Icon, UIGlass, UIPage, UIQueryError, UISkeleton, UIText } from "@/ui";
 import { authorName, HEADER_COMPACT_OFFSET, GENDER_LABELS } from "@/utils";
 

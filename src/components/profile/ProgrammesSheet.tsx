@@ -11,12 +11,12 @@ import type {
   Programme,
   ProgrammeFormValues,
   ProgrammeSelection,
-} from "@/@types/profile";
+} from "@/@types";
 import {
   useAddMyProgramme,
   useDeleteMyProgramme,
   useReplaceMyProgramme,
-} from "@/hooks/useMyProfile";
+} from "@/hooks";
 import { programmeSchema } from "@/schemas";
 import {
   Icon,
@@ -33,8 +33,8 @@ import {
   STUDY_STATUSES,
   toProgrammeBody,
   toProgrammeValues,
+  captureAction,
 } from "@/utils";
-import { captureAction } from "@/utils/analytics";
 
 type ProgrammesSheetProps = {
   ref: Ref<BottomSheetModal>;

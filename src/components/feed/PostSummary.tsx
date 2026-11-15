@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Pressable, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import type { ApiFeedPost } from "@/@types/feed";
+import type { ApiFeedPost } from "@/@types";
 import { UIAvatar, UIGlass, UIText } from "@/ui";
 import { authorName } from "@/utils";
 

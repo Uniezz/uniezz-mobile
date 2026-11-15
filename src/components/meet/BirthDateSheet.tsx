@@ -13,12 +13,11 @@ import { useTranslation } from "react-i18next";
 import { Platform, Pressable, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
-import type { BirthDateFormValues } from "@/@types/connections";
-import { useUpdateConnectionPreferences } from "@/hooks/useConnections";
+import type { BirthDateFormValues } from "@/@types";
+import { useUpdateConnectionPreferences } from "@/hooks";
 import { birthDateSchema } from "@/schemas";
 import { UIFormSheet, UIText } from "@/ui";
-import { toCalendarDay } from "@/utils";
-import { apiErrorKey } from "@/utils/apiErrorKey";
+import { toCalendarDay, apiErrorKey } from "@/utils";
 
 type BirthDateSheetProps = {
   ref: Ref<BottomSheetModal>;

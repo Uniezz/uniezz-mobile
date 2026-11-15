@@ -24,8 +24,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SymbolView } from "expo-symbols";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
 import { toast } from "sonner-native";
-import type { CommentFormValues } from "@/@types/feed";
-import type { CourseComment } from "@/@types/study";
+import type { CommentFormValues, CourseComment } from "@/@types";
 import { CommentComposer } from "@/components/feed";
 import { ReportSheet } from "@/components/report";
 import {
@@ -38,9 +37,10 @@ import {
   useAddCourseComment,
   useCourseComments,
   useDeleteCourseComment,
-} from "@/hooks/useCourseComments";
-import { useCourse, useRateCourse } from "@/hooks/useCourses";
-import { useCourseFiles } from "@/hooks/useStudyFiles";
+  useCourse,
+  useRateCourse,
+  useCourseFiles,
+} from "@/hooks";
 import { commentSchema } from "@/schemas";
 import {
   Icon,
@@ -52,10 +52,13 @@ import {
   UISkeleton,
   UIText,
 } from "@/ui";
-import { FILE_TYPES, HEADER_COMPACT_OFFSET } from "@/utils";
-import { captureAction } from "@/utils/analytics";
+import {
+  FILE_TYPES,
+  HEADER_COMPACT_OFFSET,
+  captureAction,
+  apiErrorKey,
+} from "@/utils";
 import { getStudyFile } from "@/api";
-import { apiErrorKey } from "@/utils/apiErrorKey";
 
 const ThemedSymbol = withUnistyles(SymbolView, (theme) => ({
   tintColor: theme.colors.amber,

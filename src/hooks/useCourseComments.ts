@@ -8,7 +8,7 @@ import {
   deleteCourseComment,
   getCourseComments,
 } from "@/api";
-import { removeFromLists } from "@/utils/removeFromLists";
+import { removeFromLists } from "@/utils";
 
 export function useCourseComments(courseId: string) {
   return useInfiniteQuery({

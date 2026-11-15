@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import type { Profile } from "@/@types/profile";
+import type { Profile } from "@/@types";
 import { UIQueryError, UISkeleton, UIText } from "@/ui";
 import { authorName } from "@/utils";
 import { InterestChips } from "./InterestChips";

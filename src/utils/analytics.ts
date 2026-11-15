@@ -1,6 +1,6 @@
 import { MutationCache } from "@tanstack/react-query";
 import type PostHog from "posthog-react-native";
-import type { ActionOutcome, ActionProperties } from "@/@types/analytics";
+import type { ActionOutcome, ActionProperties } from "@/@types";
 
 export function captureAction(
   posthog: Pick<PostHog, "capture">,
