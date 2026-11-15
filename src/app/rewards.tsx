@@ -50,7 +50,7 @@ export default function RewardsScreen() {
   // 0: earn (quests and history), 1: spend (a blurred preview until there is a shop)
   const [tab, setTab] = useState(0);
   const isEarn = tab === 0;
-  const { data: profile, refetch: refetchProfile } = useMyProfile();
+  const { data: profile } = useMyProfile();
   const {
     data: invite,
     isPending: isInvitePending,
@@ -84,9 +84,7 @@ export default function RewardsScreen() {
   const handleHeaderLayout = (event: LayoutChangeEvent) => {
     setHeaderHeight(event.nativeEvent.layout.height);
   };
-  // the balance comes from the profile, so pulling refreshes it too, e.g. after a friend redeems your code
-  const handleRefresh = () =>
-    Promise.all([refetch(), refetchQuests(), refetchProfile()]);
+  const handleRefresh = () => Promise.all([refetch(), refetchQuests()]);
   const handleInvitePress = () => {
     if (!invite) return;
     const link = inviteUrl(invite.code);
