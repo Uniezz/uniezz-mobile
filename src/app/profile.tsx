@@ -12,6 +12,7 @@ import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Alert, LayoutChangeEvent, Platform, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useFeatureFlag } from "posthog-react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import { useSession } from "@/contexts";
@@ -58,6 +59,7 @@ export default function ProfileScreen() {
   const { pickImage: handleChangeBannerPress, isPending: isUploadingBanner } =
     usePickProfileImage("banner");
   const { clearSession } = useSession();
+  const coinsEnabled = useFeatureFlag("coins") !== false;
   const programmesRef = useRef<BottomSheetModal>(null);
   const detailsRef = useRef<BottomSheetModal>(null);
   const privacyRef = useRef<BottomSheetModal>(null);
@@ -253,7 +255,7 @@ export default function ProfileScreen() {
   // the coin balance sits beside the menu and opens the rewards screen
   const headerAction = profile ? (
     <View style={styles.headerActions}>
-      <CoinBalance coins={profile.coins} />
+      {coinsEnabled ? <CoinBalance coins={profile.coins} /> : null}
       <MenuView actions={menuActions} onPressAction={handleMenuAction}>
         <UIGlass
           radius={12}

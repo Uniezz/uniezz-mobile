@@ -19,8 +19,10 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
       return () => subscription.remove();
     });
     const mutationCache = createAnalyticsMutationCache(posthog);
-    // one place for the "+N coins" toast, whichever mutation paid them
+    // one place for the "+N coins" toast, whichever mutation paid them;
+    // PostHog reads its cached flags synchronously, so the latest value is right here
     mutationCache.subscribe((event) => {
+      if (posthog.getFeatureFlag("coins") === false) return;
       if (event.type === "updated" && event.action.type === "success") {
         toastCoinsEarned(event.action.data);
       }

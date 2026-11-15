@@ -68,6 +68,8 @@ export const UIFadeScrollView = ({
       <Animated.ScrollView
         ref={ref}
         horizontal={horizontal}
+        // a sideways row inside a vertical list needs its own nested scrolling, or Android steals the gesture
+        nestedScrollEnabled={horizontal === true}
         onLayout={handleLayout}
         onContentSizeChange={handleContentSizeChange}
         {...props}

@@ -1,5 +1,6 @@
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
+import { useFeatureFlag } from "posthog-react-native";
 import { Pressable, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { useMyProfile } from "@/hooks";
@@ -10,20 +11,21 @@ import { formatCompactCount } from "@/utils";
 export const ProfileButton = () => {
   const { t, i18n } = useTranslation();
   const { data: profile } = useMyProfile();
+  const coinsEnabled = useFeatureFlag("coins") !== false;
   const handlePress = () => router.push("/profile");
 
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={
-        profile
+        profile && coinsEnabled
           ? `${t("app.profile")}, ${t("rewards.balance")}: ${profile.coins}`
           : t("app.profile")
       }
       onPress={handlePress}
     >
       <UIAvatar imageSrc={profile?.avatarUrl} />
-      {profile ? (
+      {profile && coinsEnabled ? (
         // overlaps the avatar's bottom edge, so the header keeps its height
         <View style={styles.coins}>
           <UICoin size="xs" />

@@ -19,6 +19,7 @@ SplashScreen.preventAutoHideAsync();
 function RootNavigator(): React.JSX.Element {
   const { session } = useSession();
   const chatEnabled = useFeatureFlag("chat") === true;
+  const coinsEnabled = useFeatureFlag("coins") !== false;
   const segments = useSegments();
   useScreenTracking();
 
@@ -46,7 +47,9 @@ function RootNavigator(): React.JSX.Element {
         <Stack.Screen name="post" />
         <Stack.Screen name="student/[id]" />
         <Stack.Screen name="students" />
-        <Stack.Screen name="rewards" />
+        <Stack.Protected guard={coinsEnabled}>
+          <Stack.Screen name="rewards" />
+        </Stack.Protected>
         <Stack.Screen name="course/[id]" />
       </Stack.Protected>
     </Stack>
