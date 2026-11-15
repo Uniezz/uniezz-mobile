@@ -425,7 +425,7 @@ export interface paths {
     };
     /**
      * List feed posts
-     * @description Newest first by createdAt, then ID descending. All signed-in students can browse posts across universities. Keep the same search and filters when following a cursor; results reflect current data.
+     * @description Newest first by createdAt, then ID descending. All signed-in students can browse posts across universities. Keep the same search and filters when following a cursor; results reflect current data. Pass nextCursor as cursor to load older posts or previousCursor as beforeCursor to load newer posts.
      */
     get: operations["listFeedPosts"];
     put?: never;
@@ -1595,6 +1595,8 @@ export interface components {
       items: components["schemas"]["Post"][] | null;
       /** @description Pass as cursor to get the next page; null on the last page */
       nextCursor: string | null;
+      /** @description Pass as beforeCursor to get the previous page; null on the first page */
+      previousCursor: string | null;
     };
     ListProfessorsOutputBody: {
       items: components["schemas"]["Professor"][] | null;
@@ -3798,6 +3800,8 @@ export interface operations {
         from?: string;
         /** @description Created before this time */
         to?: string;
+        /** @description Pass a previousCursor to load the page before it */
+        beforeCursor?: string;
       };
       header?: never;
       path?: never;

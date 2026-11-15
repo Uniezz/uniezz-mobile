@@ -16,7 +16,7 @@ import {
   setFeedSave,
   updateFeedPost,
 } from "@/api";
-import type { FeedFilters } from "@/@types";
+import type { FeedFilters, FeedPostsPageParam } from "@/@types";
 import { patchFeedItem } from "./patchFeedItem";
 import { removeFromLists } from "@/utils";
 import { invalidateRewards } from "./useRewards";
@@ -103,7 +103,7 @@ export function useFeedSave() {
 
 export function useFeedPosts(
   filters: FeedFilters = {},
-  { enabled = true } = {},
+  { enabled = true, maxPages }: { enabled?: boolean; maxPages?: number } = {},
 ) {
   return useInfiniteQuery({
     enabled,
@@ -113,8 +113,12 @@ export function useFeedPosts(
     queryFn: ({ pageParam }) => getFeedPosts(filters, pageParam),
     // Keeps the current posts on screen while a filter change loads, instead of a skeleton flash.
     placeholderData: keepPreviousData,
-    initialPageParam: undefined as string | undefined,
-    getNextPageParam: (page) => page.nextCursor ?? undefined,
+    initialPageParam: {} as FeedPostsPageParam,
+    getNextPageParam: (page): FeedPostsPageParam | undefined =>
+      page.nextCursor ? { cursor: page.nextCursor } : undefined,
+    getPreviousPageParam: (page): FeedPostsPageParam | undefined =>
+      page.previousCursor ? { beforeCursor: page.previousCursor } : undefined,
+    maxPages,
   });
 }
 

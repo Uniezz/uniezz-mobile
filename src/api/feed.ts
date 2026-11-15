@@ -1,4 +1,9 @@
-import type { CreatePostInput, FeedFilters, UpdatePostInput } from "@/@types";
+import type {
+  CreatePostInput,
+  FeedFilters,
+  FeedPostsPageParam,
+  UpdatePostInput,
+} from "@/@types";
 import { api } from "./client";
 
 export async function updateFeedComment({
@@ -67,9 +72,12 @@ export async function setFeedLike({
   return result.data!;
 }
 
-export async function getFeedPosts(filters: FeedFilters = {}, cursor?: string) {
+export async function getFeedPosts(
+  filters: FeedFilters = {},
+  page: FeedPostsPageParam = {},
+) {
   const { data } = await api.GET("/feed/posts", {
-    params: { query: { limit: 20, ...filters, cursor } },
+    params: { query: { limit: 20, ...filters, ...page } },
   });
 
   return data!;

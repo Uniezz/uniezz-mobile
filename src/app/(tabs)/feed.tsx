@@ -33,6 +33,7 @@ import {
 import {
   DATE_PRESETS,
   datePresetFrom,
+  FEED_MAX_CACHED_PAGES,
   HEADER_COMPACT_OFFSET,
   HEADER_TRANSITION,
   INITIAL_FILTERS,
@@ -87,13 +88,27 @@ export default function FeedScreen() {
     isPending,
     isError,
     refetch,
+    isFetching,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
     isRefetching,
     isPlaceholderData,
-  } = useFeedPosts(feedFilters);
+    fetchPreviousPage,
+    hasPreviousPage,
+  } = useFeedPosts(feedFilters, { maxPages: FEED_MAX_CACHED_PAGES });
   const posts = data?.pages.flatMap((page) => page.items ?? []) ?? [];
+
+  const handleStartReached = () => {
+    if (!isPlaceholderData && hasPreviousPage && !isFetching) {
+      return fetchPreviousPage();
+    }
+  };
+  const handleEndReached = () => {
+    if (!isPlaceholderData && hasNextPage && !isFetching) {
+      return fetchNextPage();
+    }
+  };
 
   const headerActions = (
     <>
@@ -152,8 +167,8 @@ export default function FeedScreen() {
       />
       <FlashList
         onScroll={handleScroll}
-        // shortcut: a card can shift when an image above it loads, turn anchoring back on if that shows up
-        maintainVisibleContentPosition={{ disabled: true }}
+        // Keep the visible post anchored while pages are prepended or evicted.
+        maintainVisibleContentPosition={{ disabled: false }}
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
         progressViewOffset={headerHeight}
@@ -163,9 +178,8 @@ export default function FeedScreen() {
         onRefresh={refetch}
         // placeholder data is the previous filter's posts, so that fetch is not a pull
         refreshing={isRefetching && !isPlaceholderData}
-        onEndReached={() => {
-          if (hasNextPage && !isFetchingNextPage) return fetchNextPage();
-        }}
+        onStartReached={handleStartReached}
+        onEndReached={handleEndReached}
         ListHeaderComponent={
           query ? null : (
             <View style={styles.header}>

@@ -31,8 +31,9 @@ export type NewPostFormValues = {
 export type UpdatePostInput = components["schemas"]["UpdatePostInputBody"];
 export type FeedFilters = Omit<
   NonNullable<operations["listFeedPosts"]["parameters"]["query"]>,
-  "cursor"
+  "cursor" | "beforeCursor"
 >;
+export type FeedPostsPageParam = { cursor?: string; beforeCursor?: string };
 export type EditPostFormValues = Pick<
   NewPostFormValues,
   "title" | "content" | "tags"

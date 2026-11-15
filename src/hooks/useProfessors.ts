@@ -6,12 +6,12 @@ import {
 } from "@tanstack/react-query";
 import { getProfessors, rateProfessor } from "@/api";
 
-export function useProfessors(universityId?: string) {
+export function useProfessors(universityId?: string, query?: string) {
   return useInfiniteQuery({
     staleTime: 10 * 60_000,
     gcTime: 30 * 60_000,
-    queryKey: ["study", "professors", universityId],
-    queryFn: ({ pageParam }) => getProfessors(universityId, pageParam),
+    queryKey: ["study", "professors", universityId, query],
+    queryFn: ({ pageParam }) => getProfessors(universityId, pageParam, query),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (page) => page.nextCursor ?? undefined,
   });

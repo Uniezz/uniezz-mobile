@@ -37,6 +37,7 @@ export default function StudyScreen() {
   // `search` is the text being typed; `query` is applied on submit and searches past papers
   const [search, setSearch] = useState("");
   const [query, setQuery] = useState("");
+  const [professorQuery, setProfessorQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   // the selected page; the chips and a swipe both change it
   const [tabIndex, setTabIndex] = useState(0);
@@ -85,7 +86,11 @@ export default function StudyScreen() {
   const handleSearchPress = () => setIsSearching(true);
   const handleSearchClose = () => setIsSearching(false);
   const handleSearchSubmit = () => {
-    if (tabIndex !== 1) setQuery(search.trim());
+    if (tabIndex === 1) {
+      setProfessorQuery(search.trim());
+    } else {
+      setQuery(search.trim());
+    }
     Keyboard.dismiss();
   };
   const handleAddPress = () => createCourseRef.current?.present();
@@ -151,6 +156,7 @@ export default function StudyScreen() {
         <View key="professors" style={styles.pager}>
           <ProfessorsPage
             universityId={universityId}
+            query={professorQuery}
             headerHeight={headerHeight}
             onScroll={handleProfessorsScroll}
           />

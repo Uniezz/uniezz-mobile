@@ -6,12 +6,14 @@ import { ProfessorRow } from "./ProfessorRow";
 
 type ProfessorsPageProps = {
   universityId?: string;
+  query: string;
   headerHeight: number;
   onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
 };
 
 export function ProfessorsPage({
   universityId,
+  query,
   headerHeight,
   onScroll,
 }: ProfessorsPageProps) {
@@ -24,7 +26,7 @@ export function ProfessorsPage({
     hasNextPage,
     fetchNextPage,
     refetch,
-  } = useProfessors(universityId);
+  } = useProfessors(universityId, query);
   const professors = data?.pages.flatMap((page) => page.items ?? []) ?? [];
 
   const handleEndReached = () => {

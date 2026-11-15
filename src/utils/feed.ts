@@ -1,6 +1,7 @@
 import type { FeedFilterValues } from "@/@types";
 
 export const FEED_TYPES = ["all", "announcement", "question", "event"] as const;
+export const FEED_MAX_CACHED_PAGES = 5;
 
 export const INITIAL_FILTERS: FeedFilterValues = {
   type: "all",

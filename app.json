@@ -11,6 +11,7 @@
     "ios": {
       "icon": "./assets/images/icon.png",
       "bundleIdentifier": "com.uniezz",
+      "associatedDomains": ["applinks:uniezz.pl"],
       "appleTeamId": "ZSVCJ3UTY6"
     },
     "android": {
@@ -20,6 +21,16 @@
       },
       "predictiveBackGestureEnabled": false,
       "package": "com.uniezz",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            { "scheme": "https", "host": "uniezz.pl", "pathPrefix": "/invite" }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ],
       "permissions": ["android.permission.MODIFY_AUDIO_SETTINGS"]
     },
     "web": {
