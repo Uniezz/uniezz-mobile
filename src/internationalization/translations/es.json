@@ -446,7 +446,8 @@
     "trending": "Tendencias",
     "uploadedBy": "Subido por",
     "visibilityDescription": "Permite que otros estudiantes te encuentren por tu nombre y titulación.",
-    "visibleToStudents": "Visible para estudiantes"
+    "visibleToStudents": "Visible para estudiantes",
+    "openImage": "Abrir imagen"
   },
   "postComposer": {
     "duplicatePhoto": "Esta foto ya ha sido agregada.",

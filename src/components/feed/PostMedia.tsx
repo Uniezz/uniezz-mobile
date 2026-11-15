@@ -1,5 +1,9 @@
+import ExpoQuickLook from "@magrinj/expo-quick-look";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
+  Platform,
+  Pressable,
   ScrollView,
   View,
   type LayoutChangeEvent,
@@ -7,6 +11,7 @@ import {
   type NativeSyntheticEvent,
 } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
+import { toast } from "sonner-native";
 import { UIImage } from "@/ui";
 
 type PostMediaProps = {
@@ -14,6 +19,7 @@ type PostMediaProps = {
 };
 
 export const PostMedia = ({ urls }: PostMediaProps) => {
+  const { t } = useTranslation();
   const [width, setWidth] = useState(0);
   const [page, setPage] = useState(0);
 
@@ -25,18 +31,41 @@ export const PostMedia = ({ urls }: PostMediaProps) => {
     if (width) setPage(Math.round(event.nativeEvent.contentOffset.x / width));
   };
 
+  // iOS swipes through every photo of the post; previewFiles is iOS-only, so Android opens the one tapped
+  const handleImagePress = async (index: number) => {
+    try {
+      await (Platform.OS === "ios"
+        ? ExpoQuickLook.previewFiles({
+            uris: urls,
+            initialIndex: index,
+            editingMode: "disabled",
+          })
+        : ExpoQuickLook.previewFile({
+            uri: urls[index] ?? "",
+            editingMode: "disabled",
+          }));
+    } catch {
+      toast.error(t("apiState.error"));
+    }
+  };
+
   if (urls.length <= 1) {
     const url = urls[0];
     if (!url) return null;
     return (
-      <View style={styles.container}>
+      <Pressable
+        accessibilityRole="imagebutton"
+        accessibilityLabel={t("app.openImage")}
+        onPress={() => handleImagePress(0)}
+        style={styles.container}
+      >
         <UIImage
           source={{ uri: url }}
           fallback={undefined}
           contentFit="cover"
           style={StyleSheet.absoluteFill}
         />
-      </View>
+      </Pressable>
     );
   }
 
@@ -48,14 +77,21 @@ export const PostMedia = ({ urls }: PostMediaProps) => {
         showsHorizontalScrollIndicator={false}
         onMomentumScrollEnd={handleScrollEnd}
       >
-        {urls.map((url) => (
-          <UIImage
+        {urls.map((url, index) => (
+          <Pressable
             key={url}
-            source={{ uri: url }}
-            fallback={undefined}
-            contentFit="cover"
+            accessibilityRole="imagebutton"
+            accessibilityLabel={t("app.openImage")}
+            onPress={() => handleImagePress(index)}
             style={styles.image(width)}
-          />
+          >
+            <UIImage
+              source={{ uri: url }}
+              fallback={undefined}
+              contentFit="cover"
+              style={StyleSheet.absoluteFill}
+            />
+          </Pressable>
         ))}
       </ScrollView>
       <View style={styles.dots}>

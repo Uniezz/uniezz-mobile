@@ -455,7 +455,8 @@
     "studyLevelDoctoral": "Doctoral",
     "moreOptions": "More options",
     "students": "Students",
-    "changeBanner": "Change banner"
+    "changeBanner": "Change banner",
+    "openImage": "Open image"
   },
   "postComposer": {
     "audience": "Who can see it",

@@ -446,7 +446,8 @@
     "trending": "Im Trend",
     "uploadedBy": "Hochgeladen von",
     "visibilityDescription": "Andere Studierende können dich anhand deines Namens und Studiengangs finden.",
-    "visibleToStudents": "Für Studierende sichtbar"
+    "visibleToStudents": "Für Studierende sichtbar",
+    "openImage": "Bild öffnen"
   },
   "postComposer": {
     "duplicatePhoto": "Dieses Foto wurde bereits hinzugefügt.",

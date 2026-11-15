@@ -461,7 +461,8 @@
     "studyLevelDoctoral": "Докторантура",
     "moreOptions": "Другие действия",
     "students": "Студенты",
-    "changeBanner": "Изменить баннер"
+    "changeBanner": "Изменить баннер",
+    "openImage": "Открыть фото"
   },
   "postComposer": {
     "audience": "Кто может видеть",

@@ -452,7 +452,8 @@
     "trending": "Папулярнае",
     "uploadedBy": "Загрузіў",
     "visibilityDescription": "Дазвольце іншым студэнтам знаходзіць вас па імені і напрамку навучання.",
-    "visibleToStudents": "Бачны студэнтам"
+    "visibleToStudents": "Бачны студэнтам",
+    "openImage": "Адкрыць фота"
   },
   "postComposer": {
     "duplicatePhoto": "Гэта фота ўжо дададзена.",

@@ -6,6 +6,10 @@ import i18n from "@/internationalization";
 // the file, not the @/ui barrel: ui imports @/utils back, so the barrel cycles
 import { UICoin } from "@/ui/UICoin";
 
+// an https link opens the app where it's installed (associated domains, verified app links) and the web sign-up elsewhere
+export const inviteUrl = (code: string) =>
+  `https://uniezz.pl/invite/${encodeURIComponent(code)}`;
+
 // every reason the schema lists; the backend may add more, so lookups still fall back to rewards.reasonOther
 export const COIN_GRANT_REASON_LABELS: Record<string, string> = {
   welcome: "rewards.reasonWelcome",

@@ -461,7 +461,8 @@
     "studyLevelDoctoral": "Doktoranckie",
     "moreOptions": "Więcej opcji",
     "students": "Studenci",
-    "changeBanner": "Zmień baner"
+    "changeBanner": "Zmień baner",
+    "openImage": "Otwórz zdjęcie"
   },
   "postComposer": {
     "audience": "Kto może to zobaczyć",

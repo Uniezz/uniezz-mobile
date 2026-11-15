@@ -2,7 +2,6 @@ import { FlashList } from "@shopify/flash-list";
 import { router } from "expo-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import * as Linking from "expo-linking";
 import {
   LayoutChangeEvent,
   NativeScrollEvent,
@@ -30,7 +29,7 @@ import {
   UIGlass,
   UIText,
 } from "@/ui";
-import { formatCompactCount, HEADER_COMPACT_OFFSET } from "@/utils";
+import { formatCompactCount, HEADER_COMPACT_OFFSET, inviteUrl } from "@/utils";
 
 export default function RewardsScreen() {
   const { t, i18n } = useTranslation();
@@ -77,7 +76,7 @@ export default function RewardsScreen() {
   const handleRefresh = () => Promise.all([refetch(), refetchQuests()]);
   const handleInvitePress = () => {
     if (!invite) return;
-    const link = Linking.createURL(`invite/${invite.code}`);
+    const link = inviteUrl(invite.code);
     return Share.share({
       message: t("rewards.inviteMessage", { link }),
       title: t("rewards.inviteFriends"),

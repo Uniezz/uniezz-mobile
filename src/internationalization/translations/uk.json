@@ -461,7 +461,8 @@
     "studyLevelDoctoral": "Докторантура",
     "moreOptions": "Інші дії",
     "students": "Студенти",
-    "changeBanner": "Змінити банер"
+    "changeBanner": "Змінити банер",
+    "openImage": "Відкрити фото"
   },
   "postComposer": {
     "audience": "Хто може бачити",
