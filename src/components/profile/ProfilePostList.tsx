@@ -85,7 +85,6 @@ export function ProfilePostList({
       scrollEventThrottle={16}
       onEndReached={handleEndReached}
       showsVerticalScrollIndicator={false}
-      pointerEvents={isActive ? "auto" : "none"}
       style={styles.list(isActive)}
       contentContainerStyle={styles.content}
       ListFooterComponent={
@@ -108,9 +107,12 @@ export function ProfilePostList({
 }
 
 const styles = StyleSheet.create((theme, rt) => ({
+  // FlashList puts `style` on its outer view and the `pointerEvents` prop on the inner scroll view;
+  // in the style it reaches the outer view, so a hidden list stacked on top no longer swallows the swipe
   list: (isActive: boolean) => ({
     ...StyleSheet.absoluteFillObject,
     opacity: isActive ? 1 : 0,
+    pointerEvents: isActive ? "auto" : "none",
   }),
   content: {
     paddingBottom: theme.vs(60),
