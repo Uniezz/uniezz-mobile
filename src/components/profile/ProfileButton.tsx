@@ -4,10 +4,11 @@ import { Pressable, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { useMyProfile } from "@/hooks";
 import { UIAvatar, UICoin, UIText } from "@/ui";
+import { formatCompactCount } from "@/utils";
 
 // the avatar in every tab's header: opens the profile, with the coin balance pinned under it
 export const ProfileButton = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { data: profile } = useMyProfile();
   const handlePress = () => router.push("/profile");
 
@@ -27,7 +28,10 @@ export const ProfileButton = () => {
         <View style={styles.coins}>
           <UICoin size="xs" />
           <UIText size="xs" weight="semibold" style={styles.count}>
-            {profile.coins}
+            {formatCompactCount(
+              profile.coins,
+              i18n.resolvedLanguage ?? i18n.language,
+            )}
           </UIText>
         </View>
       ) : null}

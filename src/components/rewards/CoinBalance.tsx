@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Pressable } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { UICoin, UIGlass, UIText } from "@/ui";
+import { formatCompactCount } from "@/utils";
 
 type CoinBalanceProps = {
   coins: number;
@@ -10,7 +11,7 @@ type CoinBalanceProps = {
 
 // the student's balance in the profile header, styled like the glass menu button beside it; opens the rewards screen
 export const CoinBalance = ({ coins }: CoinBalanceProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const handlePress = () => router.push("/rewards");
 
   return (
@@ -21,7 +22,9 @@ export const CoinBalance = ({ coins }: CoinBalanceProps) => {
     >
       <UIGlass radius={12} style={styles.button}>
         <UICoin size="sm" />
-        <UIText weight="semibold">{coins}</UIText>
+        <UIText weight="semibold">
+          {formatCompactCount(coins, i18n.resolvedLanguage ?? i18n.language)}
+        </UIText>
       </UIGlass>
     </Pressable>
   );

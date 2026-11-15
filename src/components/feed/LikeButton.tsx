@@ -9,6 +9,7 @@ import Animated, {
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import { useFeedLike } from "@/hooks";
+import { formatCompactCount } from "@/utils";
 import { Icon, UIText } from "@/ui";
 
 type LikeButtonProps = {
@@ -19,7 +20,7 @@ type LikeButtonProps = {
 };
 
 export const LikeButton = ({ id, kind, liked, count }: LikeButtonProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { mutateAsync: setLike, isPending } = useFeedLike();
 
   const scale = useSharedValue(1);
@@ -64,7 +65,7 @@ export const LikeButton = ({ id, kind, liked, count }: LikeButtonProps) => {
         />
       </Animated.View>
       <UIText size="sm" weight="semibold" color={liked ? "error" : "secondary"}>
-        {count}
+        {formatCompactCount(count, i18n.resolvedLanguage ?? i18n.language)}
       </UIText>
     </Pressable>
   );

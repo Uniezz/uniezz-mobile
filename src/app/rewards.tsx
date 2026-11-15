@@ -21,10 +21,10 @@ import {
   UISubTabs,
   UIText,
 } from "@/ui";
-import { HEADER_COMPACT_OFFSET } from "@/utils";
+import { formatCompactCount, HEADER_COMPACT_OFFSET } from "@/utils";
 
 export default function RewardsScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   // the header floats over the list; the list starts below it and turns the header compact once scrolled
   const [headerHeight, setHeaderHeight] = useState(0);
   const [isHeaderCompact, setIsHeaderCompact] = useState(false);
@@ -99,7 +99,10 @@ export default function RewardsScreen() {
               <View style={styles.coinsRow}>
                 <UICoin size="lg" />
                 <UIText size="xl" weight="bold" style={styles.coins}>
-                  {profile?.coins ?? 0}
+                  {formatCompactCount(
+                    profile?.coins ?? 0,
+                    i18n.resolvedLanguage ?? i18n.language,
+                  )}
                 </UIText>
               </View>
             </View>
