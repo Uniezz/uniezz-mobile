@@ -4,7 +4,7 @@ import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import type { FeedFilterValues } from "@/@types";
 import { useUniversities } from "@/hooks";
-import { UIChip, UIFilterRow } from "@/ui";
+import { UIChip, UIFilterRow, UIUniversityFilterRow } from "@/ui";
 import { DATE_PRESETS, FEED_TYPE_LABELS, FEED_TYPES } from "@/utils";
 
 type FeedFiltersProps = {
@@ -36,23 +36,20 @@ export const FeedFilters = ({ control }: FeedFiltersProps) => {
       <Controller
         control={control}
         name="university"
-        render={({ field }) => (
-          <UIFilterRow label={t("app.university")}>
-            <UIChip
-              label={t("app.all")}
-              selected={field.value === null}
-              onPress={() => field.onChange(null)}
+        render={({ field }) => {
+          const handleAllPress = () => field.onChange(null);
+          const handleUniversityPress = (id: string) => field.onChange(id);
+          return (
+            <UIUniversityFilterRow
+              universities={universities}
+              selectedIds={field.value ? [field.value] : []}
+              allLabel={t("app.all")}
+              isAllSelected={field.value === null}
+              onAllPress={handleAllPress}
+              onUniversityPress={handleUniversityPress}
             />
-            {universities.map(({ id }) => (
-              <UIChip
-                key={id}
-                label={id.toUpperCase()}
-                selected={field.value === id}
-                onPress={() => field.onChange(id)}
-              />
-            ))}
-          </UIFilterRow>
-        )}
+          );
+        }}
       />
       <Controller
         control={control}

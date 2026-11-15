@@ -22,6 +22,7 @@ export * from "./UISwitch";
 export * from "./UICheckbox";
 export * from "./UISlider";
 export * from "./UIUniversityLogo";
+export * from "./UIUniversityFilterRow";
 export * from "./UIBottomSheet";
 export * from "./UIFadeScrollView";
 export * from "./UIFilterRow";

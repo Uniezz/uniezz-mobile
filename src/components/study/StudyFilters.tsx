@@ -2,7 +2,7 @@ import type { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useUniversities } from "@/hooks";
-import { UIChip, UIFilterRow, UIFilters, UIUniversityLogo } from "@/ui";
+import { UIChip, UIFilterRow, UIFilters, UIUniversityFilterRow } from "@/ui";
 import { SEMESTERS } from "@/utils";
 
 type StudyFiltersProps = {
@@ -28,25 +28,14 @@ export function StudyFilters({
 
   return (
     <UIFilters ref={sheetRef} title={t("study.filters")}>
-      <UIFilterRow label={t("app.university")}>
-        <UIChip
-          label={t("app.allUniversities")}
-          selected={universityId === undefined}
-          onPress={handleAllUniversitiesPress}
-        />
-        {universities.map(({ id }) => {
-          const handleUniversityPress = () => onUniversityChange(id);
-          return (
-            <UIChip
-              key={id}
-              label={id.toLocaleUpperCase("en")}
-              leading={<UIUniversityLogo id={id} size="xxs" />}
-              selected={universityId === id}
-              onPress={handleUniversityPress}
-            />
-          );
-        })}
-      </UIFilterRow>
+      <UIUniversityFilterRow
+        universities={universities}
+        selectedIds={universityId ? [universityId] : []}
+        allLabel={t("app.allUniversities")}
+        isAllSelected={universityId === undefined}
+        onAllPress={handleAllUniversitiesPress}
+        onUniversityPress={onUniversityChange}
+      />
       {showSemester ? (
         <UIFilterRow label={t("app.semester")}>
           <UIChip

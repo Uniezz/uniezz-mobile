@@ -4,7 +4,13 @@ import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import type { ConnectionFilterValues, ConnectionMode } from "@/@types";
 import { useUniversities } from "@/hooks";
-import { UIChip, UIFilterRow, UISwitch, UIText, UIUniversityLogo } from "@/ui";
+import {
+  UIChip,
+  UIFilterRow,
+  UISwitch,
+  UIText,
+  UIUniversityFilterRow,
+} from "@/ui";
 import { CONNECTION_GENDERS, STUDY_LEVEL_OPTIONS, toggleValues } from "@/utils";
 
 type ConnectionFiltersProps = {
@@ -51,19 +57,21 @@ export const ConnectionFilters = ({
       <Controller
         control={control}
         name="universities"
-        render={({ field }) => (
-          <UIFilterRow label={t("app.university")}>
-            {universities.map(({ id }) => (
-              <UIChip
-                key={id}
-                label={id.toUpperCase()}
-                leading={<UIUniversityLogo id={id} size="xxs" />}
-                selected={field.value.includes(id)}
-                onPress={() => field.onChange(toggleValues(field.value, [id]))}
-              />
-            ))}
-          </UIFilterRow>
-        )}
+        render={({ field }) => {
+          const handleUniversityPress = (id: string) =>
+            field.onChange(toggleValues(field.value, [id]));
+          const handleAllPress = () => field.onChange([]);
+          return (
+            <UIUniversityFilterRow
+              universities={universities}
+              selectedIds={field.value}
+              allLabel={t("app.all")}
+              isAllSelected={field.value.length === 0}
+              onAllPress={handleAllPress}
+              onUniversityPress={handleUniversityPress}
+            />
+          );
+        }}
       />
       {mode === "studyBuddy" ? (
         <>
