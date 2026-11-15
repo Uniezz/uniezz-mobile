@@ -22,7 +22,7 @@
     "logOut": "Log out",
     "deleteAccount": "Delete account",
     "deleteAccountTitle": "Delete account?",
-    "deleteAccountDescription": "Your profile, posts, and study programmes will be deleted. This can’t be undone.",
+    "deleteAccountDescription": "Your coins and matches will be lost. Your profile, posts, and study programmes will also be deleted. This can’t be undone.",
     "reauthenticateToDelete": "Sign in again, then retry deleting your account.",
     "usosSignInError": "Couldn’t sign in with USOS.",
     "signInError": "Couldn’t sign in.",
