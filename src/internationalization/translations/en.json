@@ -172,7 +172,8 @@
     "preferencesSaved": "Preferences saved.",
     "ageSubmitted": "Age submitted",
     "birthDateInvalid": "Enter a valid birth date. You must be at least 16.",
-    "birthDateOnce": "Enter your real birth date — it can be set only once."
+    "birthDateOnce": "Enter your real birth date — it can be set only once.",
+    "birthDateImmutable": "Your birth date is already set and can't be changed."
   },
   "exams": {
     "nextExam": "Your next exam",
@@ -207,7 +208,11 @@
     "noProposals": "You haven't suggested any questions yet.",
     "statusProposed": "Pending",
     "statusPublished": "Published",
-    "statusRejected": "Rejected"
+    "statusRejected": "Rejected",
+    "pending": "Moderation",
+    "approve": "Publish",
+    "approved": "Published",
+    "noPending": "Nothing waiting for moderation."
   },
   "landing": {
     "navigation": "Page sections",
@@ -633,5 +638,29 @@
     "deleteCourseTitle": "Delete this course?",
     "deleteCourseDescription": "Its files, comments and ratings will be deleted too. This can't be undone.",
     "courseDeleted": "Course deleted"
+  },
+  "rewards": {
+    "title": "Rewards",
+    "balance": "Your coins",
+    "questsTitle": "Today's quests",
+    "questsReward": "Finish all for {{count}} coins",
+    "questsDone": "All done! {{count}} coins earned",
+    "questsResets": "Resets at {{time}}",
+    "questLike": "Like other students' posts",
+    "questReply": "Reply to a comment",
+    "questPost": "Create a post",
+    "questOther": "Quest",
+    "historyTitle": "History",
+    "historyEmpty": "No coins yet. Like, reply and post to earn them.",
+    "reasonWelcome": "Welcome bonus",
+    "reasonLikeGiven": "You liked a post",
+    "reasonLikeReceived": "Your post got a like",
+    "reasonComment": "You replied",
+    "reasonProfileComplete": "Profile completed",
+    "reasonBirthDate": "Birth date added",
+    "reasonReferral": "Invited a friend",
+    "reasonDailyQuests": "Daily quests done",
+    "reasonFaqApproved": "Your FAQ question was published",
+    "reasonOther": "Reward"
   }
 }

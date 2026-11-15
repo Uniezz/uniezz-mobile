@@ -21,3 +21,4 @@ export * from "./analytics";
 export * from "./apiErrorKey";
 export * from "./apiErrors";
 export * from "./removeFromLists";
+export * from "./rewards";

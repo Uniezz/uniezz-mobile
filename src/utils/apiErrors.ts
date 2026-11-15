@@ -1,5 +1,9 @@
 import type { paths } from "@/@types/schema";
-import { CANDIDATE_ERRORS, CONNECTION_PREFERENCES_ERRORS } from "./connections";
+import {
+  CANDIDATE_ERRORS,
+  CONNECTION_PREFERENCES_CODES,
+  CONNECTION_PREFERENCES_ERRORS,
+} from "./connections";
 import { FAQ_PROPOSAL_ERRORS } from "./faq";
 import { OTP_REQUEST_ERRORS, OTP_VERIFY_ERRORS } from "./otp";
 import { REPORT_ERRORS } from "./report";
@@ -7,6 +11,8 @@ import { STUDY_CREATE_ERRORS } from "./study";
 
 type EndpointErrors = {
   statuses: Record<number, string>;
+  /** backend error codes, checked before `statuses` when one status covers several errors */
+  codes?: Record<string, string>;
   // used for unmapped statuses and for network failures
   fallback?: string;
 };
@@ -23,7 +29,10 @@ export const ENDPOINT_ERRORS: Partial<Record<string, EndpointErrors>> = {
   },
   "/reports": { statuses: REPORT_ERRORS },
   "/connections/candidates/{id}": { statuses: CANDIDATE_ERRORS },
-  "/connections/me": { statuses: CONNECTION_PREFERENCES_ERRORS },
+  "/connections/me": {
+    statuses: CONNECTION_PREFERENCES_ERRORS,
+    codes: CONNECTION_PREFERENCES_CODES,
+  },
   "/study/courses": { statuses: STUDY_CREATE_ERRORS },
   "/study/courses/{id}/comments": { statuses: STUDY_CREATE_ERRORS },
   "/study/courses/{id}/files": { statuses: STUDY_CREATE_ERRORS },

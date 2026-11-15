@@ -99,7 +99,8 @@
     "closedToMode": "Ты пакуль не адкрыты да гэтага рэжыму. Захавай перавагі ў фільтрах, каб бачыць студэнтаў.",
     "ageSubmitted": "Узрост захаваны",
     "birthDateInvalid": "Пазнач карэктную дату нараджэння. Табе павінна быць не менш за 16 гадоў.",
-    "birthDateOnce": "Пазнач сапраўдную дату нараджэння — яе можна задаць толькі адзін раз."
+    "birthDateOnce": "Пазнач сапраўдную дату нараджэння — яе можна задаць толькі адзін раз.",
+    "birthDateImmutable": "Дата нараджэння ўжо пазначана, змяніць яе нельга."
   },
   "exams": {
     "action": "Загрузіць матэрыял",
@@ -120,7 +121,11 @@
     "noProposals": "Вы яшчэ не прапанавалі ніводнага пытання.",
     "statusProposed": "У чаканні",
     "statusPublished": "Апублікавана",
-    "statusRejected": "Адхілена"
+    "statusRejected": "Адхілена",
+    "pending": "Мадэрацыя",
+    "approve": "Апублікаваць",
+    "approved": "Апублікавана",
+    "noPending": "Няма пытанняў на мадэрацыі."
   },
   "landing": {
     "navigation": "Раздзелы старонкі",
@@ -475,5 +480,29 @@
   "language": {
     "select": "Выберыце мову праграмы",
     "title": "Мова"
+  },
+  "rewards": {
+    "title": "Узнагароды",
+    "balance": "Твае манеты",
+    "questsTitle": "Заданні на сёння",
+    "questsReward": "Выканай усе і атрымай {{count}} манет",
+    "questsDone": "Усё выканана! Атрымана {{count}} манет",
+    "questsResets": "Абновяцца ў {{time}}",
+    "questLike": "Лайкні допісы іншых студэнтаў",
+    "questReply": "Адкажы на каментар",
+    "questPost": "Ствары допіс",
+    "questOther": "Заданне",
+    "historyTitle": "Гісторыя",
+    "historyEmpty": "Манет пакуль няма. Лайкай, адказвай і публікуй, каб іх атрымаць.",
+    "reasonWelcome": "Вітальны бонус",
+    "reasonLikeGiven": "Ты лайкнуў допіс",
+    "reasonLikeReceived": "Твой допіс лайкнулі",
+    "reasonComment": "Ты адказаў",
+    "reasonProfileComplete": "Профіль запоўнены",
+    "reasonBirthDate": "Дата нараджэння пазначана",
+    "reasonReferral": "Запрошаны сябар",
+    "reasonDailyQuests": "Заданні дня выкананы",
+    "reasonFaqApproved": "Тваё пытанне апублікавана ў FAQ",
+    "reasonOther": "Узнагарода"
   }
 }

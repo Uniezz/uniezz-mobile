@@ -16,3 +16,4 @@ export * from "./useProfiles";
 export * from "./useReports";
 export * from "./useScreenTracking";
 export * from "./useStudyFiles";
+export * from "./useRewards";

@@ -7,4 +7,5 @@ export * from "./feed";
 export * from "./media";
 export * from "./profile";
 export * from "./report";
+export * from "./rewards";
 export * from "./study";

@@ -99,7 +99,8 @@
     "closedToMode": "Aún no estás abierto a este modo. Guarda tus preferencias en Filtros para ver estudiantes.",
     "ageSubmitted": "Edad enviada",
     "birthDateInvalid": "Introduce una fecha de nacimiento válida. Debes tener al menos 16 años.",
-    "birthDateOnce": "Introduce tu fecha de nacimiento real: solo se puede establecer una vez."
+    "birthDateOnce": "Introduce tu fecha de nacimiento real: solo se puede establecer una vez.",
+    "birthDateImmutable": "Tu fecha de nacimiento ya está guardada y no se puede cambiar."
   },
   "exams": {
     "action": "Subir material",
@@ -120,7 +121,11 @@
     "noProposals": "Aún no has sugerido ninguna pregunta.",
     "statusProposed": "Pendiente",
     "statusPublished": "Publicado",
-    "statusRejected": "Rechazado"
+    "statusRejected": "Rechazado",
+    "pending": "Moderación",
+    "approve": "Publicar",
+    "approved": "Publicado",
+    "noPending": "No hay nada pendiente de moderación."
   },
   "landing": {
     "navigation": "Secciones de página",
@@ -475,5 +480,29 @@
   "language": {
     "select": "Seleccionar idioma de la aplicación",
     "title": "Idioma"
+  },
+  "rewards": {
+    "title": "Recompensas",
+    "balance": "Tus monedas",
+    "questsTitle": "Misiones de hoy",
+    "questsReward": "Completa todas y gana {{count}} monedas",
+    "questsDone": "¡Todo listo! Ganaste {{count}} monedas",
+    "questsResets": "Se renuevan a las {{time}}",
+    "questLike": "Da me gusta a publicaciones de otros",
+    "questReply": "Responde a un comentario",
+    "questPost": "Crea una publicación",
+    "questOther": "Misión",
+    "historyTitle": "Historial",
+    "historyEmpty": "Aún no tienes monedas. Da me gusta, responde y publica para ganarlas.",
+    "reasonWelcome": "Bono de bienvenida",
+    "reasonLikeGiven": "Diste me gusta a una publicación",
+    "reasonLikeReceived": "Tu publicación recibió un me gusta",
+    "reasonComment": "Respondiste",
+    "reasonProfileComplete": "Perfil completado",
+    "reasonBirthDate": "Fecha de nacimiento añadida",
+    "reasonReferral": "Invitaste a un amigo",
+    "reasonDailyQuests": "Misiones del día completadas",
+    "reasonFaqApproved": "Tu pregunta se publicó en FAQ",
+    "reasonOther": "Recompensa"
   }
 }

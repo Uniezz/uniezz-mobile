@@ -176,7 +176,8 @@
     "preferencesSaved": "Preferencje zapisane.",
     "ageSubmitted": "Wiek zapisany",
     "birthDateInvalid": "Podaj poprawną datę urodzenia. Musisz mieć co najmniej 16 lat.",
-    "birthDateOnce": "Podaj prawdziwą datę urodzenia — można ją ustawić tylko raz."
+    "birthDateOnce": "Podaj prawdziwą datę urodzenia — można ją ustawić tylko raz.",
+    "birthDateImmutable": "Data urodzenia jest już ustawiona i nie można jej zmienić."
   },
   "exams": {
     "nextExam": "Twój najbliższy egzamin",
@@ -213,7 +214,11 @@
     "noProposals": "Nie zaproponowano jeszcze żadnych pytań.",
     "statusProposed": "Oczekuje",
     "statusPublished": "Opublikowano",
-    "statusRejected": "Odrzucono"
+    "statusRejected": "Odrzucono",
+    "pending": "Moderacja",
+    "approve": "Opublikuj",
+    "approved": "Opublikowano",
+    "noPending": "Brak pytań do moderacji."
   },
   "landing": {
     "navigation": "Sekcje strony",
@@ -639,5 +644,29 @@
     "deleteCourseTitle": "Usunąć ten kurs?",
     "deleteCourseDescription": "Jego pliki, komentarze i oceny też zostaną usunięte. Tego nie można cofnąć.",
     "courseDeleted": "Kurs usunięty"
+  },
+  "rewards": {
+    "title": "Nagrody",
+    "balance": "Twoje monety",
+    "questsTitle": "Dzisiejsze zadania",
+    "questsReward": "Wykonaj wszystkie i zdobądź {{count}} monet",
+    "questsDone": "Wszystko gotowe! Zdobyto {{count}} monet",
+    "questsResets": "Odnowią się o {{time}}",
+    "questLike": "Polub posty innych studentów",
+    "questReply": "Odpowiedz na komentarz",
+    "questPost": "Utwórz post",
+    "questOther": "Zadanie",
+    "historyTitle": "Historia",
+    "historyEmpty": "Nie masz jeszcze monet. Lajkuj, odpowiadaj i publikuj, aby je zdobyć.",
+    "reasonWelcome": "Bonus powitalny",
+    "reasonLikeGiven": "Polubiłeś post",
+    "reasonLikeReceived": "Twój post zdobył polubienie",
+    "reasonComment": "Odpowiedziałeś",
+    "reasonProfileComplete": "Profil uzupełniony",
+    "reasonBirthDate": "Dodano datę urodzenia",
+    "reasonReferral": "Zaproszony znajomy",
+    "reasonDailyQuests": "Zadania dnia wykonane",
+    "reasonFaqApproved": "Twoje pytanie trafiło do FAQ",
+    "reasonOther": "Nagroda"
   }
 }

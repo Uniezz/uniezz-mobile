@@ -176,7 +176,8 @@
     "preferencesSaved": "Переваги збережено.",
     "ageSubmitted": "Вік збережено",
     "birthDateInvalid": "Вкажи коректну дату народження. Тобі має бути щонайменше 16 років.",
-    "birthDateOnce": "Вкажи справжню дату народження — її можна встановити лише один раз."
+    "birthDateOnce": "Вкажи справжню дату народження — її можна встановити лише один раз.",
+    "birthDateImmutable": "Дату народження вже вказано, змінити її не можна."
   },
   "exams": {
     "nextExam": "Твій найближчий іспит",
@@ -213,7 +214,11 @@
     "noProposals": "Ви ще не запропонували жодного запитання.",
     "statusProposed": "Очікує",
     "statusPublished": "Опубліковано",
-    "statusRejected": "Відхилено"
+    "statusRejected": "Відхилено",
+    "pending": "Модерація",
+    "approve": "Опублікувати",
+    "approved": "Опубліковано",
+    "noPending": "Немає питань на модерації."
   },
   "landing": {
     "navigation": "Розділи сторінки",
@@ -639,5 +644,29 @@
     "deleteCourseTitle": "Видалити цей курс?",
     "deleteCourseDescription": "Його файли, коментарі й оцінки теж буде видалено. Це не можна скасувати.",
     "courseDeleted": "Курс видалено"
+  },
+  "rewards": {
+    "title": "Нагороди",
+    "balance": "Твої монети",
+    "questsTitle": "Завдання на сьогодні",
+    "questsReward": "Виконай усі й отримай {{count}} монет",
+    "questsDone": "Усе виконано! Отримано {{count}} монет",
+    "questsResets": "Оновляться о {{time}}",
+    "questLike": "Лайкни дописи інших студентів",
+    "questReply": "Відповідай на коментар",
+    "questPost": "Створи допис",
+    "questOther": "Завдання",
+    "historyTitle": "Історія",
+    "historyEmpty": "Монет поки немає. Лайкай, відповідай і публікуй, щоб їх отримати.",
+    "reasonWelcome": "Вітальний бонус",
+    "reasonLikeGiven": "Ти лайкнув допис",
+    "reasonLikeReceived": "Твій допис лайкнули",
+    "reasonComment": "Ти відповів",
+    "reasonProfileComplete": "Профіль заповнено",
+    "reasonBirthDate": "Дату народження вказано",
+    "reasonReferral": "Запрошено друга",
+    "reasonDailyQuests": "Завдання дня виконано",
+    "reasonFaqApproved": "Твоє питання опубліковано в FAQ",
+    "reasonOther": "Нагорода"
   }
 }

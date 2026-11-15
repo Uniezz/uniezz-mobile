@@ -1,5 +1,4 @@
 import type { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { router } from "expo-router";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -7,7 +6,6 @@ import {
   LayoutChangeEvent,
   NativeScrollEvent,
   NativeSyntheticEvent,
-  Pressable,
   View,
 } from "react-native";
 import PagerView, {
@@ -22,9 +20,9 @@ import {
   StudyFilters,
 } from "@/components/study";
 import { useMyProfile } from "@/hooks";
+import { ProfileButton } from "@/components/profile";
 import {
   Icon,
-  UIAvatar,
   UICollapsingHeader,
   UIIconButton,
   UIPage,
@@ -91,7 +89,6 @@ export default function StudyScreen() {
     Keyboard.dismiss();
   };
   const handleAddPress = () => createCourseRef.current?.present();
-  const handleProfilePress = () => router.push("/profile");
 
   const headerActions = (
     <>
@@ -117,13 +114,7 @@ export default function StudyScreen() {
       >
         <Icon name="plus" size={18} />
       </UIIconButton>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={t("app.profile")}
-        onPress={handleProfilePress}
-      >
-        <UIAvatar imageSrc={profile?.avatarUrl} />
-      </Pressable>
+      <ProfileButton />
     </>
   );
 

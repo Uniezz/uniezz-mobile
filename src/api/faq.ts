@@ -22,3 +22,19 @@ export async function createFaqProposal(body: FaqProposalInput) {
 
   return data!;
 }
+
+export async function getPendingFaqProposals(cursor?: string) {
+  const { data } = await api.GET("/faq/proposals/pending", {
+    params: { query: { cursor, limit: 20 } },
+  });
+
+  return data!;
+}
+
+export async function approveFaqProposal(id: string) {
+  const { data } = await api.PUT("/faq/proposals/{id}/approval", {
+    params: { path: { id } },
+  });
+
+  return data!;
+}

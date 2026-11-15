@@ -12,6 +12,7 @@ import {
   updateFeedComment,
 } from "@/api";
 import { patchFeedItem } from "./patchFeedItem";
+import { invalidateRewards } from "./useRewards";
 
 export function useFeedComments(id: string) {
   return useInfiniteQuery({
@@ -73,6 +74,8 @@ export function useCreateComment() {
           queryClient.invalidateQueries({
             queryKey: ["feed", "replies", replyToCommentId],
           }),
+        // a reply can pay coins and counts toward today's quests
+        invalidateRewards(queryClient),
       ]),
   });
 

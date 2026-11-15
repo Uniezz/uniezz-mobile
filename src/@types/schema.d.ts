@@ -221,7 +221,7 @@ export interface paths {
     head?: never;
     /**
      * Set what Connections may show about the logged-in student
-     * @description A missing field keeps its current value. Birth date is used only to compute age.
+     * @description A missing field keeps its current value. Birth date is used only to compute age; saving it for the first time pays 10 Uniezz coins.
      */
     patch: operations["updateMyConnectionPreferences"];
     trace?: never;
@@ -285,6 +285,46 @@ export interface paths {
      * @description Stores the question and answer as proposed. It stays out of the published list until a moderator decides.
      */
     post: operations["createFaqProposal"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/faq/proposals/pending": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List FAQ proposals waiting for a moderator
+     * @description Every student's proposals that are not published yet, newest first. Only an FAQ publisher may call this; everyone else gets 403.
+     */
+    get: operations["listPendingFaqProposals"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/faq/proposals/{id}/approval": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /**
+     * Approve an FAQ proposal and publish it
+     * @description Only an FAQ publisher may call this. Approving pays the author 5 Uniezz coins once, unless the publisher approves their own proposal; approving an entry that is already published changes nothing. A rejected or unknown entry is 404.
+     */
+    put: operations["approveFaqProposal"];
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -475,7 +515,10 @@ export interface paths {
      */
     get: operations["listFeedComments"];
     put?: never;
-    /** Comment on a post or reply to a comment */
+    /**
+     * Comment on a post or reply to a comment
+     * @description The first comment or reply on another student's post pays 1 Uniezz coin.
+     */
     post: operations["createFeedComment"];
     delete?: never;
     options?: never;
@@ -493,7 +536,7 @@ export interface paths {
     get?: never;
     /**
      * Like a post
-     * @description Idempotent: repeating it changes nothing.
+     * @description Idempotent: repeating it changes nothing. The first like on another student's post pays you and the author 1 Uniezz coin each; unliking does not take them back.
      */
     put: operations["likeFeedPost"];
     post?: never;
@@ -634,7 +677,7 @@ export interface paths {
     head?: never;
     /**
      * Update the logged-in student's profile
-     * @description Changes only the fields that are present. Returns the updated profile.
+     * @description Changes only the fields that are present. Returns the updated profile. The update that first fills first name, last name, gender, avatar, banner, bio, song link and interests pays 50 Uniezz coins once.
      */
     patch: operations["updateMyProfile"];
     trace?: never;
@@ -735,6 +778,46 @@ export interface paths {
      * @description One report per target and reporter; at most 5 reports per clock hour (UTC).
      */
     post: operations["createReport"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/rewards/me/grants": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List the coins the logged-in student has earned
+     * @description Newest first, paginated by cursor. Coins are only earned; nothing spends them yet.
+     */
+    get: operations["listMyCoinGrants"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/rewards/me/quests": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get the logged-in student's quests for today
+     * @description Progress resets at midnight Europe/Warsaw. Finishing every quest pays the reward once a day; undoing an action later does not take progress back.
+     */
+    get: operations["getMyDailyQuests"];
+    put?: never;
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -1064,6 +1147,17 @@ export interface components {
       /** @example umcs */
       universityId: string;
     };
+    CoinGrant: {
+      /**
+       * Format: int64
+       * @example 10
+       */
+      amount: number;
+      /** Format: date-time */
+      createdAt: string;
+      /** @description What earned the coins */
+      reason: string;
+    };
     Comment: {
       /** @description Missing when deleted */
       author?: components["schemas"]["Author"];
@@ -1253,6 +1347,28 @@ export interface components {
        */
       size: number;
     };
+    DailyQuests: {
+      /** @description True once every quest is done today and the reward was paid */
+      completed: boolean;
+      /**
+       * Format: date
+       * @description Today in Europe/Warsaw
+       * @example 2026-11-15
+       */
+      day: string;
+      quests: components["schemas"]["QuestProgress"][] | null;
+      /**
+       * Format: date-time
+       * @description Next midnight in Europe/Warsaw, when progress starts over
+       */
+      resetsAt: string;
+      /**
+       * Format: int64
+       * @description Coins paid once every quest of the day is done
+       * @example 10
+       */
+      reward: number;
+    };
     DiscoverOutputBody: {
       items: components["schemas"]["Card"][] | null;
     };
@@ -1358,6 +1474,16 @@ export interface components {
       nextCursor: string | null;
     };
     ListEntriesOutputBody: {
+      items: components["schemas"]["Entry"][] | null;
+      /** @description Pass as cursor to get the next page; null on the last page */
+      nextCursor: string | null;
+    };
+    ListMyCoinGrantsOutputBody: {
+      items: components["schemas"]["CoinGrant"][] | null;
+      /** @description Pass as cursor to get the next page; null on the last page */
+      nextCursor: string | null;
+    };
+    ListPendingProposalsOutputBody: {
       items: components["schemas"]["Entry"][] | null;
       /** @description Pass as cursor to get the next page; null on the last page */
       nextCursor: string | null;
@@ -1504,6 +1630,12 @@ export interface components {
        * @example Second-year CS student, into climbing.
        */
       bio: string | null;
+      /**
+       * Format: int64
+       * @description Uniezz coins the student has earned. Only the student sees them, and nothing spends them yet.
+       * @example 100
+       */
+      coins: number;
       /** Format: date-time */
       createdAt: string;
       /**
@@ -1686,6 +1818,21 @@ export interface components {
        */
       yearOfStudy: number | null;
     };
+    QuestProgress: {
+      done: boolean;
+      /**
+       * Format: int64
+       * @example 1
+       */
+      progress: number;
+      /** @description like: like other students' posts; reply: reply to another student's comment; post: create a post */
+      quest: string;
+      /**
+       * Format: int64
+       * @example 3
+       */
+      target: number;
+    };
     RateCourseInputBody: {
       /**
        * Format: int64
@@ -1717,7 +1864,7 @@ export interface components {
     SavePreferencesInputBody: {
       /**
        * Format: date
-       * @description Age must be 16 to 100
+       * @description Age must be 16 to 100. Can be set only once: sending a different date after one is saved returns 400 birth_date_immutable; sending the same date again succeeds.
        * @example 2003-05-17
        */
       birthDate?: string;
@@ -2886,6 +3033,143 @@ export interface operations {
       };
       /** @description Unauthorized */
       401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  listPendingFaqProposals: {
+    parameters: {
+      query?: {
+        /** @description nextCursor from the previous page; omit for the first page */
+        cursor?: string;
+        /** @description Maximum number of items in the page */
+        limit?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ListPendingProposalsOutputBody"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  approveFaqProposal: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Entry"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
         headers: {
           [name: string]: unknown;
         };
@@ -4913,6 +5197,105 @@ export interface operations {
       };
       /** @description Too Many Requests */
       429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  listMyCoinGrants: {
+    parameters: {
+      query?: {
+        /** @description nextCursor from the previous page; omit for the first page */
+        cursor?: string;
+        /** @description Maximum number of items in the page */
+        limit?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ListMyCoinGrantsOutputBody"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  getMyDailyQuests: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["DailyQuests"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
         headers: {
           [name: string]: unknown;
         };

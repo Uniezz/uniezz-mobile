@@ -3,16 +3,24 @@ import { useTranslation } from "react-i18next";
 import { Pressable, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import type { FaqEntry } from "@/@types";
-import { Icon, UIGlass, UIText } from "@/ui";
+import { Icon, UIButton, UIGlass, UIText } from "@/ui";
 import { FAQ_STATUS_LABELS } from "@/utils";
 
 type FaqItemProps = {
   entry: FaqEntry;
   /** for the student's own proposals: pending, published or rejected */
   hasStatus?: boolean;
+  /** for publishers' moderation list: a Publish button under the answer */
+  onApprovePress?: () => void;
+  isApproveDisabled?: boolean;
 };
 
-export function FaqItem({ entry, hasStatus }: FaqItemProps) {
+export function FaqItem({
+  entry,
+  hasStatus,
+  onApprovePress,
+  isApproveDisabled,
+}: FaqItemProps) {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -42,6 +50,19 @@ export function FaqItem({ entry, hasStatus }: FaqItemProps) {
           <Icon name={isOpen ? "chevron-up" : "chevron-down"} size={16} />
         </View>
         {isOpen ? <UIText color="secondary">{entry.answer}</UIText> : null}
+        {isOpen && onApprovePress ? (
+          <UIButton
+            size="sm"
+            radius="sm"
+            accessibilityRole="button"
+            disabled={isApproveDisabled}
+            onPress={onApprovePress}
+          >
+            <UIText size="sm" weight="semibold" color="black">
+              {t("faq.approve")}
+            </UIText>
+          </UIButton>
+        ) : null}
       </UIGlass>
     </Pressable>
   );

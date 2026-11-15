@@ -25,6 +25,12 @@ export const CONNECTION_PREFERENCES_ERRORS: Record<number, string> = {
   400: "connections.datingRequiresAdult",
 };
 
+// both are 400 on PUT /connections/me
+export const CONNECTION_PREFERENCES_CODES: Record<string, string> = {
+  dating_requires_adult: "connections.datingRequiresAdult",
+  birth_date_immutable: "connections.birthDateImmutable",
+};
+
 export const INITIAL_CONNECTION_FILTERS: ConnectionFilterValues = {
   gender: null,
   universities: [],

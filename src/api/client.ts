@@ -108,7 +108,9 @@ const apiMiddleware: Middleware = {
         : undefined;
     const errors = ENDPOINT_ERRORS[schemaPath];
     const translationKey =
-      errors?.statuses[response.status] ?? errors?.fallback;
+      (code ? errors?.codes?.[code] : undefined) ??
+      errors?.statuses[response.status] ??
+      errors?.fallback;
     throw apiError(
       `${request.method} ${schemaPath}`,
       response,

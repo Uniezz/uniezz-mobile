@@ -32,8 +32,11 @@ export function useUpdateMyProfile() {
   return useMutation({
     meta: { analyticsAction: "profile_update" },
     mutationFn: updateMyProfile,
-    onSuccess: (profile) =>
-      queryClient.setQueryData(["profile", "me"], profile),
+    onSuccess: (profile) => {
+      queryClient.setQueryData(["profile", "me"], profile);
+      // completing the profile pays coins once; the returned profile already carries the balance
+      return queryClient.invalidateQueries({ queryKey: ["rewards"] });
+    },
   });
 }
 

@@ -1,5 +1,5 @@
-import { router } from "expo-router";
 import { useState } from "react";
+import { ProfileButton } from "@/components/profile";
 import { useTranslation } from "react-i18next";
 import { FlashList } from "@shopify/flash-list";
 import { Pressable, View } from "react-native";
@@ -57,13 +57,7 @@ export function ConversationList({
           >
             <Icon name="square-pen" size={18} />
           </UIIconButton>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={t("app.profile")}
-            onPress={() => router.push("/profile")}
-          >
-            <UIAvatar />
-          </Pressable>
+          <ProfileButton />
         </View>
         <UISearch
           placeholder={t("app.searchConversations")}

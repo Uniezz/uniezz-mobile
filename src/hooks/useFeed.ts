@@ -19,6 +19,7 @@ import {
 import type { FeedFilters } from "@/@types";
 import { patchFeedItem } from "./patchFeedItem";
 import { removeFromLists } from "@/utils";
+import { invalidateRewards } from "./useRewards";
 
 export function useUpdateFeedPost() {
   const queryClient = useQueryClient();
@@ -71,12 +72,13 @@ export function useFeedLike() {
       patchFeedItem(queryClient, id, { likedByMe: !liked, likesCount }),
     onSuccess: ({ liked, likesCount }, { id, kind }) => {
       patchFeedItem(queryClient, id, { likedByMe: liked, likesCount });
-      // Featured ranking follows this week's post likes.
-      if (kind === "post") {
-        return queryClient.invalidateQueries({
-          queryKey: ["feed", "featured"],
-        });
-      }
+      // a like can pay coins and counts toward today's quests
+      return Promise.all([
+        invalidateRewards(queryClient),
+        // Featured ranking follows this week's post likes.
+        kind === "post" &&
+          queryClient.invalidateQueries({ queryKey: ["feed", "featured"] }),
+      ]);
     },
   });
 }

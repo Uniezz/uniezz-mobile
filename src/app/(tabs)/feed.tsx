@@ -10,18 +10,17 @@ import {
   LayoutChangeEvent,
   NativeScrollEvent,
   NativeSyntheticEvent,
-  Pressable,
   View,
 } from "react-native";
 import { EaseView } from "react-native-ease";
 import { StyleSheet } from "react-native-unistyles";
 import { FeaturedPosts, FeedFilters, FeedPostCard } from "@/components/feed";
 import type { FeedFilterValues } from "@/@types";
-import { useFeedPosts, useMyProfile } from "@/hooks";
+import { useFeedPosts } from "@/hooks";
+import { ProfileButton } from "@/components/profile";
 import { feedFiltersSchema } from "@/schemas";
 import {
   Icon,
-  UIAvatar,
   UICollapsingHeader,
   UIEmpty,
   UIFilters,
@@ -52,7 +51,6 @@ export default function FeedScreen() {
     resolver: zodResolver(feedFiltersSchema),
     defaultValues: INITIAL_FILTERS,
   });
-  const { data: profile } = useMyProfile();
   const filtersRef = useRef<BottomSheetModal>(null);
   // the header floats over the list; the list starts below it and turns the header compact once scrolled
   const [headerHeight, setHeaderHeight] = useState(0);
@@ -74,7 +72,6 @@ export default function FeedScreen() {
   const handleSearchBlur = () => setIsSearching(false);
   const handleFiltersOpen = () => reset(filters);
   const handleFiltersClose = handleSubmit(setFilters);
-  const handleProfilePress = () => router.push("/profile");
   const handleNewPostPress = () => router.push("/feed/new");
   const isNewPostShown = isHeaderCompact || Boolean(query);
   const feedFilters = {
@@ -139,13 +136,7 @@ export default function FeedScreen() {
         >
           <FeedFilters control={control} />
         </UIFilters>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={t("app.profile")}
-          onPress={handleProfilePress}
-        >
-          <UIAvatar imageSrc={profile?.avatarUrl} />
-        </Pressable>
+        <ProfileButton />
       </View>
     </>
   );

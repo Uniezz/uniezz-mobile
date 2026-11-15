@@ -99,7 +99,8 @@
     "closedToMode": "Du bist für diesen Modus noch nicht offen. Speichere deine Präferenzen in den Filtern, um Studierende zu sehen.",
     "ageSubmitted": "Alter gespeichert",
     "birthDateInvalid": "Gib ein gültiges Geburtsdatum ein. Du musst mindestens 16 sein.",
-    "birthDateOnce": "Gib dein echtes Geburtsdatum ein – es kann nur einmal festgelegt werden."
+    "birthDateOnce": "Gib dein echtes Geburtsdatum ein – es kann nur einmal festgelegt werden.",
+    "birthDateImmutable": "Dein Geburtsdatum ist bereits gesetzt und kann nicht geändert werden."
   },
   "exams": {
     "action": "Material hochladen",
@@ -120,7 +121,11 @@
     "noProposals": "Sie haben noch keine Fragen vorgeschlagen.",
     "statusProposed": "Ausstehend",
     "statusPublished": "Veröffentlicht",
-    "statusRejected": "Abgelehnt"
+    "statusRejected": "Abgelehnt",
+    "pending": "Moderation",
+    "approve": "Veröffentlichen",
+    "approved": "Veröffentlicht",
+    "noPending": "Nichts wartet auf Moderation."
   },
   "landing": {
     "navigation": "Seitenabschnitte",
@@ -475,5 +480,29 @@
   "language": {
     "select": "App-Sprache auswählen",
     "title": "Sprache"
+  },
+  "rewards": {
+    "title": "Belohnungen",
+    "balance": "Deine Münzen",
+    "questsTitle": "Heutige Aufgaben",
+    "questsReward": "Schaffe alle für {{count}} Münzen",
+    "questsDone": "Alles erledigt! {{count}} Münzen verdient",
+    "questsResets": "Neu um {{time}}",
+    "questLike": "Beiträge anderer Studierender liken",
+    "questReply": "Auf einen Kommentar antworten",
+    "questPost": "Einen Beitrag erstellen",
+    "questOther": "Aufgabe",
+    "historyTitle": "Verlauf",
+    "historyEmpty": "Noch keine Münzen. Like, antworte und poste, um welche zu verdienen.",
+    "reasonWelcome": "Willkommensbonus",
+    "reasonLikeGiven": "Du hast einen Beitrag geliked",
+    "reasonLikeReceived": "Dein Beitrag wurde geliked",
+    "reasonComment": "Du hast geantwortet",
+    "reasonProfileComplete": "Profil vervollständigt",
+    "reasonBirthDate": "Geburtsdatum hinzugefügt",
+    "reasonReferral": "Freund eingeladen",
+    "reasonDailyQuests": "Tagesaufgaben erledigt",
+    "reasonFaqApproved": "Deine FAQ-Frage wurde veröffentlicht",
+    "reasonOther": "Belohnung"
   }
 }

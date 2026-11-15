@@ -44,6 +44,7 @@ function RootNavigator(): React.JSX.Element {
         <Stack.Screen name="post" />
         <Stack.Screen name="student/[id]" />
         <Stack.Screen name="students" />
+        <Stack.Screen name="rewards" />
         <Stack.Screen name="course/[id]" />
       </Stack.Protected>
     </Stack>

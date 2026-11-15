@@ -21,6 +21,7 @@ import {
   updateConnectionPreferences,
 } from "@/api";
 import { removeFromLists } from "@/utils";
+import { invalidateRewards } from "./useRewards";
 
 export function useDiscoverCards(filters: DiscoverFilters) {
   return useQuery({
@@ -108,10 +109,13 @@ export function useUpdateConnectionPreferences() {
         ["connections", "me"],
         preferences,
       );
-      // the decks depend on which modes the student is open to
-      return queryClient.invalidateQueries({
-        queryKey: ["connections", "discover"],
-      });
+      // the decks depend on which modes the student is open to; the first birth date pays coins
+      return Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["connections", "discover"],
+        }),
+        invalidateRewards(queryClient),
+      ]);
     },
   });
 }

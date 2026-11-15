@@ -2,6 +2,7 @@ import { idempotencyKey } from "@/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFeedPost } from "@/api";
 import type { CreatePostInput } from "@/@types";
+import { invalidateRewards } from "./useRewards";
 
 export function useCreateFeedPost() {
   const queryClient = useQueryClient();
@@ -12,7 +13,11 @@ export function useCreateFeedPost() {
       createFeedPost(body, key),
     onSuccess: (post) => {
       queryClient.setQueryData(["feed", "post", post.id], post);
-      return queryClient.invalidateQueries({ queryKey: ["feed"] });
+      // a post counts toward today's quests
+      return Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["feed"] }),
+        invalidateRewards(queryClient),
+      ]);
     },
   });
   return {

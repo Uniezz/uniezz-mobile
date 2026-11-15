@@ -176,7 +176,8 @@
     "preferencesSaved": "Предпочтения сохранены.",
     "ageSubmitted": "Возраст сохранён",
     "birthDateInvalid": "Укажи корректную дату рождения. Тебе должно быть не меньше 16 лет.",
-    "birthDateOnce": "Укажи настоящую дату рождения — её можно задать только один раз."
+    "birthDateOnce": "Укажи настоящую дату рождения — её можно задать только один раз.",
+    "birthDateImmutable": "Дата рождения уже указана, изменить её нельзя."
   },
   "exams": {
     "nextExam": "Твой ближайший экзамен",
@@ -213,7 +214,11 @@
     "noProposals": "Вы ещё не предложили ни одного вопроса.",
     "statusProposed": "На проверке",
     "statusPublished": "Опубликовано",
-    "statusRejected": "Отклонено"
+    "statusRejected": "Отклонено",
+    "pending": "Модерация",
+    "approve": "Опубликовать",
+    "approved": "Опубликовано",
+    "noPending": "Нет вопросов на модерации."
   },
   "landing": {
     "navigation": "Разделы страницы",
@@ -639,5 +644,29 @@
     "deleteCourseTitle": "Удалить этот курс?",
     "deleteCourseDescription": "Его файлы, комментарии и оценки тоже удалятся. Это нельзя отменить.",
     "courseDeleted": "Курс удалён"
+  },
+  "rewards": {
+    "title": "Награды",
+    "balance": "Твои монеты",
+    "questsTitle": "Задания на сегодня",
+    "questsReward": "Выполни все и получи {{count}} монет",
+    "questsDone": "Все выполнено! Получено {{count}} монет",
+    "questsResets": "Обновятся в {{time}}",
+    "questLike": "Лайкни посты других студентов",
+    "questReply": "Ответь на комментарий",
+    "questPost": "Создай пост",
+    "questOther": "Задание",
+    "historyTitle": "История",
+    "historyEmpty": "Монет пока нет. Лайкай, отвечай и публикуй, чтобы их получить.",
+    "reasonWelcome": "Приветственный бонус",
+    "reasonLikeGiven": "Ты лайкнул пост",
+    "reasonLikeReceived": "Твой пост лайкнули",
+    "reasonComment": "Ты ответил",
+    "reasonProfileComplete": "Профиль заполнен",
+    "reasonBirthDate": "Дата рождения указана",
+    "reasonReferral": "Приглашён друг",
+    "reasonDailyQuests": "Задания дня выполнены",
+    "reasonFaqApproved": "Твой вопрос опубликован в FAQ",
+    "reasonOther": "Награда"
   }
 }

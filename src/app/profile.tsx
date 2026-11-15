@@ -36,6 +36,7 @@ import {
   ProfilePostList,
   ProgrammesSheet,
 } from "@/components/profile";
+import { CoinBalance } from "@/components/rewards";
 import {
   useFeedPosts,
   useLikedFeedPosts,
@@ -296,18 +297,22 @@ export default function ProfileScreen() {
       attributes: { destructive: true, disabled: isDeletingProfile },
     },
   ];
+  // the coin balance sits beside the menu and opens the rewards screen
   const headerAction = profile ? (
-    <MenuView actions={menuActions} onPressAction={handleMenuAction}>
-      <UIGlass
-        radius={12}
-        accessible
-        accessibilityRole="button"
-        accessibilityLabel={t("app.moreOptions")}
-        style={styles.more}
-      >
-        <Icon name="ellipsis" size={18} />
-      </UIGlass>
-    </MenuView>
+    <View style={styles.headerActions}>
+      <CoinBalance coins={profile.coins} />
+      <MenuView actions={menuActions} onPressAction={handleMenuAction}>
+        <UIGlass
+          radius={12}
+          accessible
+          accessibilityRole="button"
+          accessibilityLabel={t("app.moreOptions")}
+          style={styles.more}
+        >
+          <Icon name="ellipsis" size={18} />
+        </UIGlass>
+      </MenuView>
+    </View>
   ) : null;
 
   const overview = (
@@ -409,6 +414,11 @@ const styles = StyleSheet.create((theme) => ({
   tabBarBlur: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: theme.colors.ink40,
+  },
+  headerActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: theme.s(8),
   },
   more: {
     width: theme.vs(44),

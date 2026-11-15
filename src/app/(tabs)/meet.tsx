@@ -30,11 +30,10 @@ import {
   useConnectionPreferences,
   useDiscoverCards,
   useUpdateConnectionPreferences,
-  useMyProfile,
 } from "@/hooks";
+import { ProfileButton } from "@/components/profile";
 import {
   Icon,
-  UIAvatar,
   UIEmpty,
   UIFadeScrollView,
   UIFilters,
@@ -78,7 +77,6 @@ export default function MeetScreen() {
     defaultValues: INITIAL_CONNECTION_FILTERS,
   });
   const filters = toDiscoverFilters(mode, filterValues);
-  const { data: profile } = useMyProfile();
   const {
     data: deck,
     isPending,
@@ -137,7 +135,6 @@ export default function MeetScreen() {
       showError(error);
     }
   });
-  const handleProfilePress = () => router.push("/profile");
   const handleModePress = (value: ConnectionMode) => {
     setMode(value);
     setMatch(null);
@@ -214,13 +211,7 @@ export default function MeetScreen() {
               <ConnectionFilters control={control} mode={mode} />
               <ConnectionPreferencesForm control={preferencesControl} />
             </UIFilters>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel={t("app.profile")}
-              onPress={handleProfilePress}
-            >
-              <UIAvatar imageSrc={profile?.avatarUrl} />
-            </Pressable>
+            <ProfileButton />
           </View>
           <UIFadeScrollView
             horizontal

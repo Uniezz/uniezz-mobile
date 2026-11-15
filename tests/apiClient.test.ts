@@ -82,6 +82,24 @@ test("uses the endpoint translation key for a mapped status and falls back", asy
   assert.equal(unmapped.translationKey, "otp.sendFailed");
 });
 
+test("prefers the backend code's key when one status covers several errors", async () => {
+  const save = () =>
+    api
+      .PATCH("/connections/me", { body: { birthDate: "2000-01-01" } })
+      .catch((reason: unknown) => reason);
+
+  handleFetch = async () =>
+    jsonResponse(400, { error: "birth_date_immutable" });
+  const immutable = await save();
+  assert.ok(immutable instanceof ApiRequestError);
+  assert.equal(immutable.translationKey, "connections.birthDateImmutable");
+
+  handleFetch = async () => jsonResponse(400, { error: "something_else" });
+  const other = await save();
+  assert.ok(other instanceof ApiRequestError);
+  assert.equal(other.translationKey, "connections.datingRequiresAdult");
+});
+
 test("rejects a successful response that has no body", async () => {
   handleFetch = async () => new Response(null, { status: 200 });
 
