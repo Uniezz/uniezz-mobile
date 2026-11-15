@@ -7,13 +7,21 @@ import { WebView } from "react-native-webview";
 import { StyleSheet } from "react-native-unistyles";
 
 export default function UsosScreen() {
-  const { university } = useLocalSearchParams<{ university?: string }>();
+  const { university, referralCode } = useLocalSearchParams<{
+    university?: string;
+    referralCode?: string;
+  }>();
   const handleNavigation = useUsosLogin();
 
   return (
     <View style={styles.container}>
       <WebView
-        source={{ uri: getUsosStartUrl(university ?? "umcs") }}
+        source={{
+          uri: getUsosStartUrl({
+            university: university ?? "umcs",
+            referralCode,
+          }),
+        }}
         incognito
         onShouldStartLoadWithRequest={handleNavigation}
         startInLoadingState

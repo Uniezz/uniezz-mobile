@@ -8,7 +8,7 @@ import {
   UIUniversityLogo,
 } from "@/ui";
 import { UNIVERSITY_SHORT_NAMES } from "@/utils";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { StyleSheet } from "react-native-unistyles";
@@ -18,6 +18,7 @@ const buttonEntering = FadeInDown.duration(380).delay(400);
 
 export default function WelcomeScreen() {
   const { t } = useTranslation();
+  const { referralCode } = useLocalSearchParams<{ referralCode?: string }>();
   const [selected, setSelected] = useState<number>(0);
   const {
     data: universities = [],
@@ -42,7 +43,7 @@ export default function WelcomeScreen() {
 
     router.push({
       pathname: selectedUniversity.authMethod === "USOS" ? "/usos" : "/otp",
-      params: { university: selectedUniversity.id },
+      params: { university: selectedUniversity.id, referralCode },
     });
   };
   return (

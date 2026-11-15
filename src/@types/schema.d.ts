@@ -21,6 +21,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/auth/invites/me": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get the logged-in student's invitation code
+     * @description Use the code in the /invite/{code} link. New accounts created with it award 100 coins to you and 50 to the new student.
+     */
+    get: operations["getMyInviteCode"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/auth/otp/request": {
     parameters: {
       query?: never;
@@ -52,7 +72,7 @@ export interface paths {
     put?: never;
     /**
      * Log in with an emailed code
-     * @description Returns a session. A code allows 5 attempts; after that, or after it expires, request a new one.
+     * @description Returns a session. A referralCode is applied only when this login creates a new account. A code allows 5 attempts; after that, or after it expires, request a new one.
      */
     post: operations["verifyOtpCode"];
     delete?: never;
@@ -110,7 +130,7 @@ export interface paths {
     };
     /**
      * Start a USOS login
-     * @description Redirects to the university's USOS authorization page. Errors after the platform is known are sent to the app as a redirect with ?error=<code>.
+     * @description Redirects to the university's USOS authorization page. An optional referralCode is applied only when this login creates a new account. Errors after the platform is known are sent to the app as a redirect with ?error=<code>.
      */
     get: operations["startUsosLogin"];
     put?: never;
@@ -1155,20 +1175,8 @@ export interface components {
       amount: number;
       /** Format: date-time */
       createdAt: string;
-      /**
-       * @description What earned the coins. welcome: the new account. like_given: liking another student's post. like_received: another student liked your post. comment: the first comment or reply on another student's post. profile_complete: filling every profile field. birth_date: the first birth date saved in connections. referral: a student you invited signed up. daily_quests: finishing every daily quest. faq_approved: a moderator approved your FAQ proposal. More values may be added; show a generic label for unknown ones.
-       * @enum {string}
-       */
-      reason:
-        | "welcome"
-        | "like_given"
-        | "like_received"
-        | "comment"
-        | "profile_complete"
-        | "birth_date"
-        | "referral"
-        | "daily_quests"
-        | "faq_approved";
+      /** @description What earned the coins. welcome: the new account. like_given: liking another student's post. like_received: another student liked your post. comment: the first comment or reply on another student's post. profile_complete: filling every profile field. birth_date: the first birth date saved in connections. referral: inviting another student who signs up. referral_joined: signing up with an invitation code. daily_quests: finishing every daily quest. faq_approved: a moderator approved your FAQ proposal. More values may be added; show a generic label for unknown ones. */
+      reason: string;
     };
     Comment: {
       /** @description Missing when deleted */
@@ -1511,6 +1519,13 @@ export interface components {
        */
       longitude: number;
     };
+    InviteCodeOutputBody: {
+      /**
+       * @description Your seven-character invitation code
+       * @example A1B2C3D
+       */
+      code: string;
+    };
     IssuedSession: {
       /**
        * Format: date-time
@@ -1617,6 +1632,8 @@ export interface components {
        * @example jan.kowalski@student.kul.pl
        */
       email: string;
+      /** @description Optional seven-character invitation code for a new account */
+      referralCode?: string;
       /**
        * @description University to log in to
        * @example kul
@@ -2259,6 +2276,44 @@ export interface operations {
       };
     };
   };
+  getMyInviteCode: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["InviteCodeOutputBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
   requestOtpCode: {
     parameters: {
       query?: never;
@@ -2473,6 +2528,8 @@ export interface operations {
         university: string;
         /** @description App to send the browser back to when the login is done */
         platform: "web" | "mobile";
+        /** @description Optional seven-character invitation code for a new account */
+        referralCode?: string;
       };
       header?: never;
       path?: never;

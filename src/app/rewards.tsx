@@ -2,15 +2,22 @@ import { FlashList } from "@shopify/flash-list";
 import { router } from "expo-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import * as Linking from "expo-linking";
 import {
   LayoutChangeEvent,
   NativeScrollEvent,
   NativeSyntheticEvent,
+  Share,
   View,
 } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { GrantRow, QuestCard, ShopPreview } from "@/components/rewards";
-import { useMyCoinGrants, useMyDailyQuests, useMyProfile } from "@/hooks";
+import {
+  useMyCoinGrants,
+  useMyDailyQuests,
+  useMyInviteCode,
+  useMyProfile,
+} from "@/hooks";
 import {
   UICoin,
   UICollapsingHeader,
@@ -19,6 +26,8 @@ import {
   UIQueryError,
   UISkeleton,
   UISubTabs,
+  UIButton,
+  UIGlass,
   UIText,
 } from "@/ui";
 import { formatCompactCount, HEADER_COMPACT_OFFSET } from "@/utils";
@@ -32,6 +41,12 @@ export default function RewardsScreen() {
   const [tab, setTab] = useState(0);
   const isEarn = tab === 0;
   const { data: profile } = useMyProfile();
+  const {
+    data: invite,
+    isPending: isInvitePending,
+    isError: isInviteError,
+    refetch: refetchInvite,
+  } = useMyInviteCode();
   const {
     data: quests,
     isPending: isQuestsPending,
@@ -60,6 +75,14 @@ export default function RewardsScreen() {
     setHeaderHeight(event.nativeEvent.layout.height);
   };
   const handleRefresh = () => Promise.all([refetch(), refetchQuests()]);
+  const handleInvitePress = () => {
+    if (!invite) return;
+    const link = Linking.createURL(`invite/${invite.code}`);
+    return Share.share({
+      message: t("rewards.inviteMessage", { link }),
+      title: t("rewards.inviteFriends"),
+    });
+  };
   const handleEndReached = () => {
     if (isEarn && hasNextPage && !isFetchingNextPage) return fetchNextPage();
   };
@@ -106,6 +129,35 @@ export default function RewardsScreen() {
                 </UIText>
               </View>
             </View>
+            {isInvitePending ? (
+              <UISkeleton height={116} />
+            ) : isInviteError ? (
+              <UIQueryError
+                message={t("apiState.error")}
+                onRetry={refetchInvite}
+              />
+            ) : invite ? (
+              <UIGlass radius={16} style={styles.invite}>
+                <View style={styles.inviteCode}>
+                  <UIText size="sm" color="secondary">
+                    {t("rewards.inviteCode")}
+                  </UIText>
+                  <UIText weight="semibold">{invite.code}</UIText>
+                </View>
+                <UIButton
+                  onPress={handleInvitePress}
+                  type="secondary"
+                  size="sm"
+                  radius="sm"
+                  accessibilityRole="button"
+                  accessibilityLabel={t("rewards.inviteFriends")}
+                >
+                  <UIText weight="semibold">
+                    {t("rewards.inviteFriends")}
+                  </UIText>
+                </UIButton>
+              </UIGlass>
+            ) : null}
             {isEarn ? (
               <>
                 {isQuestsPending ? (
@@ -154,6 +206,15 @@ const styles = StyleSheet.create((theme, rt) => ({
   header: {
     gap: theme.vs(16),
     paddingBottom: theme.vs(4),
+  },
+  invite: {
+    gap: theme.vs(12),
+    padding: theme.s(16),
+  },
+  inviteCode: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   balance: { gap: theme.vs(2) },
   coinsRow: {

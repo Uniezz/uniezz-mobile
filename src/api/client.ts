@@ -50,7 +50,10 @@ export function setApiAccessToken(token: string | null): void {
 
 const apiMiddleware: Middleware = {
   onRequest({ request, schemaPath }) {
-    if (!accessToken || schemaPath.startsWith("/auth/")) {
+    if (
+      !accessToken ||
+      (schemaPath.startsWith("/auth/") && schemaPath !== "/auth/invites/me")
+    ) {
       return;
     }
 

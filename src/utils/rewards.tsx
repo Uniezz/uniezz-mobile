@@ -15,6 +15,7 @@ export const COIN_GRANT_REASON_LABELS: Record<string, string> = {
   profile_complete: "rewards.reasonProfileComplete",
   birth_date: "rewards.reasonBirthDate",
   referral: "rewards.reasonReferral",
+  referral_joined: "rewards.reasonReferralJoined",
   daily_quests: "rewards.reasonDailyQuests",
   faq_approved: "rewards.reasonFaqApproved",
 } satisfies Record<CoinGrant["reason"], string>;

@@ -10,7 +10,10 @@ import { useTranslation } from "react-i18next";
 
 export const useOtpScreen = () => {
   const { t } = useTranslation();
-  const { university = "" } = useLocalSearchParams<{ university?: string }>();
+  const { university = "", referralCode } = useLocalSearchParams<{
+    university?: string;
+    referralCode?: string;
+  }>();
   const { mutateAsync: requestCode, isPending: isRequesting } =
     useRequestOtpCode();
   const { mutateAsync: verifyCode, isPending: isVerifying } =
@@ -64,7 +67,12 @@ export const useOtpScreen = () => {
           setValue("step", "code");
           setValue("code", "");
         } else {
-          await verifyCode({ code: data.code, email: data.email, university });
+          await verifyCode({
+            code: data.code,
+            email: data.email,
+            university,
+            referralCode,
+          });
         }
       } catch (error) {
         const errorMessage = apiErrorKey(error, "common.tryAgain");

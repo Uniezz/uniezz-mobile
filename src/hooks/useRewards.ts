@@ -3,7 +3,16 @@ import {
   useQuery,
   type QueryClient,
 } from "@tanstack/react-query";
-import { getMyCoinGrants, getMyDailyQuests } from "@/api";
+import { getMyCoinGrants, getMyDailyQuests, getMyInviteCode } from "@/api";
+
+export function useMyInviteCode() {
+  return useQuery({
+    staleTime: 10 * 60_000,
+    gcTime: 60 * 60_000,
+    queryKey: ["rewards", "inviteCode"],
+    queryFn: getMyInviteCode,
+  });
+}
 
 export function useMyDailyQuests() {
   return useQuery({
