@@ -77,9 +77,9 @@
     }
   },
   "otp": {
-    "provideUniversityEmail": "Podaj uczelniany adres e-mail",
+    "provideUniversityEmail": "Podaj e-mail uczelniany",
     "checkInbox": "Sprawdź skrzynkę",
-    "emailInstructions": "Wyślemy sześciocyfrowy kod na ten adres. Użyj adresu otrzymanego od uczelni.",
+    "emailInstructions": "Wyślemy na niego 6-cyfrowy kod.",
     "codeSent": "Wysłaliśmy 6-cyfrowy kod na Twój uczelniany adres e-mail. Kod wygaśnie za 10 minut.",
     "sendCode": "Wyślij kod",
     "verifyAndContinue": "Zweryfikuj kod",
