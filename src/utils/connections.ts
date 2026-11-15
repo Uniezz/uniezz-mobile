@@ -86,16 +86,8 @@ export const toCalendarDay = (date: Date) =>
     String(date.getDate()).padStart(2, "0"),
   ].join("-");
 
-export const fromCalendarDay = (day: string) => {
-  const [year, month, date] = day.split("-").map(Number);
-  return new Date(year ?? 0, (month ?? 1) - 1, date ?? 1);
-};
-
 export const toPreferencesValues = (
   preferences?: ConnectionPreferences,
 ): ConnectionPreferencesFormValues => ({
-  birthDate: preferences?.birthDate
-    ? fromCalendarDay(preferences.birthDate)
-    : null,
   intent: preferences?.intent ?? "",
 });

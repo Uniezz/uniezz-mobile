@@ -6,6 +6,7 @@ import {
 } from "@react-native-menu/menu";
 import { router, useLocalSearchParams } from "expo-router";
 import { useRef, useState } from "react";
+import { useFeatureFlag } from "posthog-react-native";
 import { useTranslation } from "react-i18next";
 import { FlashList } from "@shopify/flash-list";
 import {
@@ -34,6 +35,7 @@ import { authorName, HEADER_COMPACT_OFFSET, GENDER_LABELS } from "@/utils";
 export default function PublicProfileScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { t } = useTranslation();
+  const chatEnabled = useFeatureFlag("chat") === true;
   const { data: profile, isPending, isError, refetch } = usePublicProfile(id);
   const reportRef = useRef<BottomSheetModal>(null);
   const { mutateAsync: block } = useBlockStudent();
@@ -90,7 +92,7 @@ export default function PublicProfileScreen() {
     if (nativeEvent.event === "block") return handleBlockPress();
   };
   const menuActions: MenuAction[] = [
-    { id: "message", title: t("app.message") },
+    ...(chatEnabled ? [{ id: "message", title: t("app.message") }] : []),
     { id: "report", title: t("report.user") },
     {
       id: "block",

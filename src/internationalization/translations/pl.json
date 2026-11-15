@@ -170,10 +170,13 @@
     "removeHint": "Przytrzymaj, aby usunąć dopasowanie",
     "preferences": "Preferencje",
     "birthDate": "Data urodzenia",
-    "birthDateHint": "Sprawdzamy wiek: znajomości są dla osób w wieku 16–100 lat, a randki od 18 lat.",
+    "birthDateHint": "Sprawdzamy wiek: znajomości są dla osób od 16 lat, a randki od 18 lat.",
     "intent": "Chcę…",
     "intentPlaceholder": "np. Znajdźmy się na kawę",
-    "preferencesSaved": "Preferencje zapisane."
+    "preferencesSaved": "Preferencje zapisane.",
+    "ageSubmitted": "Wiek zapisany",
+    "birthDateInvalid": "Podaj poprawną datę urodzenia. Musisz mieć co najmniej 16 lat.",
+    "birthDateOnce": "Podaj prawdziwą datę urodzenia — można ją ustawić tylko raz."
   },
   "exams": {
     "nextExam": "Twój najbliższy egzamin",

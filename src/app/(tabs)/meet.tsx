@@ -3,8 +3,9 @@ import {
   type BottomSheetModal,
 } from "@gorhom/bottom-sheet";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { router } from "expo-router";
-import { useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Pressable, View } from "react-native";
@@ -14,9 +15,11 @@ import type {
   Connection,
   ConnectionFilterValues,
   ConnectionMode,
+  ConnectionPreferences,
   ConnectionPreferencesFormValues,
 } from "@/@types/connections";
 import {
+  BirthDateSheet,
   ConnectionFilters,
   ConnectionPreferencesForm,
   DiscoverCard,
@@ -50,7 +53,6 @@ import {
   CONNECTION_MODES,
   DAILY_LIKE_LIMIT,
   INITIAL_CONNECTION_FILTERS,
-  toCalendarDay,
   toDiscoverFilters,
   toPreferencesValues,
 } from "@/utils";
@@ -63,9 +65,15 @@ export default function MeetScreen() {
   const [match, setMatch] = useState<Connection | null>(null);
   const reportRef = useRef<BottomSheetModal>(null);
   const filtersRef = useRef<BottomSheetModal>(null);
+  const birthDateRef = useRef<BottomSheetModal>(null);
   // the sheet edits the form; the deck uses `filterValues`, copied across when the sheet closes
   const [filterValues, setFilterValues] = useState(INITIAL_CONNECTION_FILTERS);
-  const { control, reset, handleSubmit } = useForm<ConnectionFilterValues>({
+  const {
+    control,
+    reset,
+    handleSubmit,
+    formState: { isDirty: isFiltersDirty },
+  } = useForm<ConnectionFilterValues>({
     resolver: zodResolver(connectionFiltersSchema),
     defaultValues: INITIAL_CONNECTION_FILTERS,
   });
@@ -80,18 +88,32 @@ export default function MeetScreen() {
   } = useDiscoverCards(filters);
   const { data: preferences } = useConnectionPreferences();
   const { dismiss } = useBottomSheetModal();
+  const queryClient = useQueryClient();
   const { mutateAsync: savePreferences, isPending: isSaving } =
     useUpdateConnectionPreferences();
-  const { control: preferencesControl, handleSubmit: handlePreferencesSubmit } =
-    useForm<ConnectionPreferencesFormValues>({
-      resolver: zodResolver(connectionPreferencesSchema),
-      values: toPreferencesValues(preferences),
-    });
+  const {
+    control: preferencesControl,
+    handleSubmit: handlePreferencesSubmit,
+    formState: { isDirty: isPreferencesDirty },
+  } = useForm<ConnectionPreferencesFormValues>({
+    resolver: zodResolver(connectionPreferencesSchema),
+    values: toPreferencesValues(preferences),
+  });
   const { mutateAsync: act, isPending: isActing } = useActOnCandidate(filters);
   const card = deck?.items?.[0];
   const openTo = preferences?.openTo ?? [];
   // the server only deals cards for a mode the student is open to
   const isClosedToMode = preferences !== undefined && !openTo.includes(mode);
+
+  const isBirthDateMissing =
+    preferences !== undefined && !preferences.birthDate;
+
+  // as the web's dialog: ask on every visit to the tab; BottomSheetModal opens only through present()
+  useFocusEffect(
+    useCallback(() => {
+      if (isBirthDateMissing) birthDateRef.current?.present();
+    }, [isBirthDateMissing]),
+  );
 
   const showError = (error: unknown) =>
     toast.error(t(apiErrorKey(error), { limit: DAILY_LIKE_LIMIT }));
@@ -103,21 +125,18 @@ export default function MeetScreen() {
     setMatch(null);
   });
   // as on the web: saving the preferences opens the student to this mode, then the sheet closes and applies the filters
-  const handleSavePress = handlePreferencesSubmit(
-    async ({ birthDate, intent }) => {
-      try {
-        await savePreferences({
-          ...(birthDate ? { birthDate: toCalendarDay(birthDate) } : {}),
-          intent,
-          openTo: openTo.includes(mode) ? openTo : [...openTo, mode],
-        });
-        toast.success(t("connections.preferencesSaved"));
-        dismiss();
-      } catch (error) {
-        showError(error);
-      }
-    },
-  );
+  const handleSavePress = handlePreferencesSubmit(async ({ intent }) => {
+    try {
+      await savePreferences({
+        intent,
+        openTo: openTo.includes(mode) ? openTo : [...openTo, mode],
+      });
+      toast.success(t("connections.preferencesSaved"));
+      dismiss();
+    } catch (error) {
+      showError(error);
+    }
+  });
   const handleProfilePress = () => router.push("/profile");
   const handleModePress = (value: ConnectionMode) => {
     setMode(value);
@@ -136,6 +155,17 @@ export default function MeetScreen() {
   const handlePassPress = () => handleAction("pass");
   const handleConnectPress = () => handleAction("like");
   const handleReportPress = () => reportRef.current?.present();
+  // skipping the birth date returns to the tab the student came from. Reads the cache, not this render:
+  // Save closes the sheet before the screen re-renders with the saved date
+  const handleBirthDateDismiss = () => {
+    const saved = queryClient.getQueryData<ConnectionPreferences>([
+      "connections",
+      "me",
+    ]);
+    if (saved?.birthDate) return;
+    if (router.canGoBack()) router.back();
+    else router.navigate("/(tabs)/feed");
+  };
   const handleMatchPress = () => {
     if (match) router.push(`/student/${match.profile.id}`);
   };
@@ -153,139 +183,147 @@ export default function MeetScreen() {
 
   return (
     <UIPage>
-      <View style={styles.page}>
-        <View style={styles.header}>
-          <UIText size="xl" weight="bold" style={styles.title}>
-            {t("tabs.connections")}
-          </UIText>
-          <UIIconButton
-            accessibilityRole="button"
-            accessibilityLabel={t("app.searchStudents")}
-            onPress={handleStudentsPress}
-          >
-            <Icon name="search" size={18} />
-          </UIIconButton>
-          <UIFilters
-            ref={filtersRef}
-            title={t("connections.filters")}
-            onOpen={handleFiltersOpen}
-            onClose={handleFiltersClose}
-            action={{
-              label: t("apiState.save"),
-              isDisabled: isSaving,
-              onPress: handleSavePress,
-            }}
-          >
-            <ConnectionFilters control={control} mode={mode} />
-            <ConnectionPreferencesForm control={preferencesControl} />
-          </UIFilters>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={t("app.profile")}
-            onPress={handleProfilePress}
-          >
-            <UIAvatar imageSrc={profile?.avatarUrl} />
-          </Pressable>
-        </View>
-        <UIFadeScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.modesScroll}
-          contentContainerStyle={styles.modes}
-        >
-          {CONNECTION_MODES.map(([value, label, icon]) => {
-            const selected = mode === value;
-            const handleChipPress = () => handleModePress(value);
-            return (
-              <Pressable
-                key={value}
-                accessibilityRole="button"
-                accessibilityState={{ selected }}
-                onPress={handleChipPress}
-                style={styles.mode(selected)}
-              >
-                <Icon
-                  name={icon}
-                  size={14}
-                  uniProps={(theme) => ({
-                    color: selected ? theme.colors.ink : theme.colors.white,
-                  })}
-                />
-                <UIText
-                  size="sm"
-                  weight="semibold"
-                  color={selected ? "black" : "white"}
-                >
-                  {t(label)}
-                </UIText>
-              </Pressable>
-            );
-          })}
-        </UIFadeScrollView>
-        {isPending ? (
-          <View style={styles.cardSkeleton}>
-            <UISkeleton height="100%" />
-          </View>
-        ) : isError ? (
-          <UIQueryError message={t("apiState.error")} onRetry={refetch} />
-        ) : card ? (
-          <>
-            <DiscoverCard card={card} onReportPress={handleReportPress} />
-            <View style={styles.actions}>
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel={t("app.pass")}
-                disabled={isActing || isPlaceholderData}
-                onPress={handlePassPress}
-                style={styles.action}
-              >
-                <UIGlass radius={32} style={styles.actionCircle}>
-                  <Icon
-                    name="x"
-                    size={24}
-                    uniProps={(theme) => ({ color: theme.colors.red })}
-                  />
-                </UIGlass>
-                <UIText size="sm" color="soft">
-                  {t("app.pass")}
-                </UIText>
-              </Pressable>
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel={t("app.connect")}
-                disabled={isActing || isPlaceholderData}
-                onPress={handleConnectPress}
-                style={styles.action}
-              >
-                <View style={[styles.actionCircle, styles.connect]}>
-                  <Icon
-                    name="heart"
-                    size={24}
-                    uniProps={(theme) => ({ color: theme.colors.ink })}
-                  />
-                </View>
-                <UIText size="sm" color="soft">
-                  {t("app.connect")}
-                </UIText>
-              </Pressable>
-            </View>
-          </>
-        ) : null}
-        {match ? (
-          <Pressable
-            accessibilityRole="button"
-            onPress={handleMatchPress}
-            style={styles.notice}
-          >
-            <UIText color="success">{t("app.connected")}</UIText>
-            <UIText weight="semibold" color="link">
-              {t("connections.viewProfile")}
+      {/* blank behind the birth date sheet; the sheet stays mounted so Save can animate it closed */}
+      {isBirthDateMissing ? null : (
+        <View style={styles.page}>
+          <View style={styles.header}>
+            <UIText size="xl" weight="bold" style={styles.title}>
+              {t("tabs.connections")}
             </UIText>
-          </Pressable>
-        ) : null}
-      </View>
+            <UIIconButton
+              accessibilityRole="button"
+              accessibilityLabel={t("app.searchStudents")}
+              onPress={handleStudentsPress}
+            >
+              <Icon name="search" size={18} />
+            </UIIconButton>
+            <UIFilters
+              ref={filtersRef}
+              title={t("connections.filters")}
+              onOpen={handleFiltersOpen}
+              onClose={handleFiltersClose}
+              action={{
+                label: t("apiState.save"),
+                // any change in the sheet enables it; Save also opens the student to this mode, so it stays enabled while they're closed to it
+                isDisabled:
+                  isSaving ||
+                  (!isFiltersDirty && !isPreferencesDirty && !isClosedToMode),
+                onPress: handleSavePress,
+              }}
+            >
+              <ConnectionFilters control={control} mode={mode} />
+              <ConnectionPreferencesForm control={preferencesControl} />
+            </UIFilters>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={t("app.profile")}
+              onPress={handleProfilePress}
+            >
+              <UIAvatar imageSrc={profile?.avatarUrl} />
+            </Pressable>
+          </View>
+          <UIFadeScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.modesScroll}
+            contentContainerStyle={styles.modes}
+          >
+            {CONNECTION_MODES.map(([value, label, icon]) => {
+              const selected = mode === value;
+              const handleChipPress = () => handleModePress(value);
+              return (
+                <Pressable
+                  key={value}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected }}
+                  onPress={handleChipPress}
+                  style={styles.mode(selected)}
+                >
+                  <Icon
+                    name={icon}
+                    size={14}
+                    uniProps={(theme) => ({
+                      color: selected ? theme.colors.ink : theme.colors.white,
+                    })}
+                  />
+                  <UIText
+                    size="sm"
+                    weight="semibold"
+                    color={selected ? "black" : "white"}
+                  >
+                    {t(label)}
+                  </UIText>
+                </Pressable>
+              );
+            })}
+          </UIFadeScrollView>
+          {isPending ? (
+            <View style={styles.cardSkeleton}>
+              <UISkeleton height="100%" />
+            </View>
+          ) : isError ? (
+            <UIQueryError message={t("apiState.error")} onRetry={refetch} />
+          ) : card ? (
+            <>
+              <DiscoverCard card={card} onReportPress={handleReportPress} />
+              <View style={styles.actions}>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={t("app.pass")}
+                  disabled={isActing || isPlaceholderData}
+                  onPress={handlePassPress}
+                  style={styles.action}
+                >
+                  <UIGlass radius={32} style={styles.actionCircle}>
+                    <Icon
+                      name="x"
+                      size={24}
+                      uniProps={(theme) => ({ color: theme.colors.red })}
+                    />
+                  </UIGlass>
+                  <UIText size="sm" color="soft">
+                    {t("app.pass")}
+                  </UIText>
+                </Pressable>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={t("app.connect")}
+                  disabled={isActing || isPlaceholderData}
+                  onPress={handleConnectPress}
+                  style={styles.action}
+                >
+                  <View style={[styles.actionCircle, styles.connect]}>
+                    <Icon
+                      name="heart"
+                      size={24}
+                      uniProps={(theme) => ({ color: theme.colors.ink })}
+                    />
+                  </View>
+                  <UIText size="sm" color="soft">
+                    {t("app.connect")}
+                  </UIText>
+                </Pressable>
+              </View>
+            </>
+          ) : null}
+          {match ? (
+            <Pressable
+              accessibilityRole="button"
+              onPress={handleMatchPress}
+              style={styles.notice}
+            >
+              <UIText color="success">{t("app.connected")}</UIText>
+              <UIText weight="semibold" color="link">
+                {t("connections.viewProfile")}
+              </UIText>
+            </Pressable>
+          ) : null}
+        </View>
+      )}
       {/* a direct child of UIPage, so the cat centres like every other empty state */}
-      {!isPending && !isError && !card ? emptyState : null}
+      {!isBirthDateMissing && !isPending && !isError && !card
+        ? emptyState
+        : null}
       {card ? (
         <ReportSheet
           ref={reportRef}
@@ -294,6 +332,7 @@ export default function MeetScreen() {
           onSent={refetch}
         />
       ) : null}
+      <BirthDateSheet ref={birthDateRef} onDismiss={handleBirthDateDismiss} />
     </UIPage>
   );
 }

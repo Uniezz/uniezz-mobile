@@ -9,7 +9,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { StyleSheet } from "react-native-unistyles";
-import { PostHogProvider } from "posthog-react-native";
+import { PostHogProvider, useFeatureFlag } from "posthog-react-native";
 import { useScreenTracking } from "@/hooks/useScreenTracking";
 
 // must run before the first render: iOS hides the splash as soon as any RN content appears,
@@ -18,6 +18,7 @@ SplashScreen.preventAutoHideAsync();
 
 function RootNavigator(): React.JSX.Element {
   const { session } = useSession();
+  const chatEnabled = useFeatureFlag("chat") === true;
   const segments = useSegments();
   useScreenTracking();
 
@@ -35,7 +36,9 @@ function RootNavigator(): React.JSX.Element {
       </Stack.Protected>
       <Stack.Protected guard={!!session}>
         <Stack.Screen name="(tabs)" options={{ animation: "fade" }} />
-        <Stack.Screen name="chat" />
+        <Stack.Protected guard={chatEnabled}>
+          <Stack.Screen name="chat" />
+        </Stack.Protected>
         <Stack.Screen name="profile" />
         <Stack.Screen name="feed" />
         <Stack.Screen name="post" />

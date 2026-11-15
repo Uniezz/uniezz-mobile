@@ -1,6 +1,6 @@
 import DateTimePicker, {
   DateTimePickerAndroid,
-  type DateTimePickerEvent,
+  type DateTimePickerChangeEvent,
 } from "@react-native-community/datetimepicker";
 import { useTranslation } from "react-i18next";
 import { Platform, Pressable, View } from "react-native";
@@ -24,9 +24,8 @@ export const PostEventField = ({
   const date = value ?? new Date();
   const locale = i18n.resolvedLanguage ?? "en";
 
-  const handleChange = (_event: DateTimePickerEvent, next?: Date) => {
-    if (next) onChange(next);
-  };
+  const handleChange = (_event: DateTimePickerChangeEvent, next: Date) =>
+    onChange(next);
 
   // Android has no inline picker: rendering one opens a dialog, so open it on demand
   const openAndroidPicker = (mode: PickerMode) =>
@@ -34,7 +33,7 @@ export const PostEventField = ({
       value: date,
       mode,
       minimumDate: mode === "date" ? new Date() : undefined,
-      onChange: handleChange,
+      onValueChange: handleChange,
     });
 
   const renderPicker = (mode: PickerMode) =>
@@ -58,7 +57,7 @@ export const PostEventField = ({
         mode={mode}
         minimumDate={mode === "date" ? new Date() : undefined}
         themeVariant="dark"
-        onChange={handleChange}
+        onValueChange={handleChange}
       />
     );
 

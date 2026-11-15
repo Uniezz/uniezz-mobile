@@ -92,11 +92,14 @@
     "viewProfile": "Ver perfil",
     "preferences": "Preferencias",
     "birthDate": "Fecha de nacimiento",
-    "birthDateHint": "Se utiliza para verificar la elegibilidad por edad: las conexiones son para edades entre 16 y 100 años; las citas requieren mayores de 18 años.",
+    "birthDateHint": "Se utiliza para verificar la elegibilidad por edad: las conexiones son para mayores de 16 años; las citas requieren mayores de 18 años.",
     "intent": "Yo quiero…",
     "intentPlaceholder": "p.ej. tomar cafe",
     "preferencesSaved": "Preferencias guardadas.",
-    "closedToMode": "Aún no estás abierto a este modo. Guarda tus preferencias en Filtros para ver estudiantes."
+    "closedToMode": "Aún no estás abierto a este modo. Guarda tus preferencias en Filtros para ver estudiantes.",
+    "ageSubmitted": "Edad enviada",
+    "birthDateInvalid": "Introduce una fecha de nacimiento válida. Debes tener al menos 16 años.",
+    "birthDateOnce": "Introduce tu fecha de nacimiento real: solo se puede establecer una vez."
   },
   "exams": {
     "action": "Subir material",

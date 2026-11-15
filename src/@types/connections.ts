@@ -23,6 +23,8 @@ export type ConnectionFilterValues = {
   matchInterests: boolean;
 };
 export type ConnectionPreferencesFormValues = {
-  birthDate: Date | null;
   intent: string;
+};
+export type BirthDateFormValues = {
+  birthDate: Date | null;
 };

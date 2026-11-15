@@ -17,6 +17,19 @@ export const connectionFiltersSchema = z.object({
 });
 
 export const connectionPreferencesSchema = z.object({
-  birthDate: z.date().nullable(),
   intent: z.string().trim().max(200),
+});
+
+const MIN_AGE = 16;
+
+// set once, before discovery: the student must be at least MIN_AGE
+export const birthDateSchema = z.object({
+  birthDate: z
+    .date()
+    .nullable()
+    .refine((value) => {
+      const latest = new Date();
+      latest.setFullYear(latest.getFullYear() - MIN_AGE);
+      return value !== null && value <= latest;
+    }, "connections.birthDateInvalid"),
 });

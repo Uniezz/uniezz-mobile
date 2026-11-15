@@ -2,7 +2,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
-  fromCalendarDay,
   INITIAL_CONNECTION_FILTERS,
   toCalendarDay,
   toDiscoverFilters,
@@ -48,9 +47,6 @@ test("toggles a group of values together", () => {
   assert.deepEqual(toggleValues(["b"], ["b", "c"]), ["b", "c"]);
 });
 
-test("keeps a birth date on the same calendar day both ways", () => {
-  const date = fromCalendarDay("2004-01-09");
-  assert.equal(date.getDate(), 9);
-  assert.equal(date.getMonth(), 0);
-  assert.equal(toCalendarDay(date), "2004-01-09");
+test("writes a birth date as its local calendar day", () => {
+  assert.equal(toCalendarDay(new Date(2004, 0, 9)), "2004-01-09");
 });

@@ -166,10 +166,13 @@
     "removeHint": "Long press to remove the match",
     "preferences": "Preferences",
     "birthDate": "Birth date",
-    "birthDateHint": "Used to check age eligibility: connections are for ages 16–100; dating requires 18+.",
+    "birthDateHint": "Used to check age eligibility: connections are for ages 16+; dating requires 18+.",
     "intent": "I want to…",
     "intentPlaceholder": "e.g. Grab coffee",
-    "preferencesSaved": "Preferences saved."
+    "preferencesSaved": "Preferences saved.",
+    "ageSubmitted": "Age submitted",
+    "birthDateInvalid": "Enter a valid birth date. You must be at least 16.",
+    "birthDateOnce": "Enter your real birth date — it can be set only once."
   },
   "exams": {
     "nextExam": "Your next exam",
