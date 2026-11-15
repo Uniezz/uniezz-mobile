@@ -38,10 +38,17 @@ export function useUpdateMyProfile() {
   return useMutation({
     meta: { analyticsAction: "profile_update" },
     mutationFn: updateMyProfile,
-    onSuccess: (profile) => {
+    onSuccess: (profile, change) => {
       queryClient.setQueryData(["profile", "me"], profile);
-      // completing the profile pays coins once; the returned profile already carries the balance
-      return queryClient.invalidateQueries({ queryKey: ["rewards"] });
+      return Promise.all([
+        // completing the profile pays coins once; the returned profile already carries the balance
+        queryClient.invalidateQueries({ queryKey: ["rewards"] }),
+        // posts and comments carry their author's name and avatar
+        (change.firstName !== undefined ||
+          change.lastName !== undefined ||
+          change.avatarMediaId !== undefined) &&
+          queryClient.invalidateQueries({ queryKey: ["feed"] }),
+      ]);
     },
   });
 }
@@ -82,11 +89,14 @@ export function useDeleteMyAvatar() {
   return useMutation({
     meta: { analyticsAction: "avatar_delete" },
     mutationFn: deleteMyAvatar,
-    onSuccess: () =>
+    onSuccess: () => {
       queryClient.setQueryData<Profile>(
         ["profile", "me"],
         (profile) => profile && { ...profile, avatarUrl: null },
-      ),
+      );
+      // posts and comments carry their author's avatar
+      return queryClient.invalidateQueries({ queryKey: ["feed"] });
+    },
   });
 }
 

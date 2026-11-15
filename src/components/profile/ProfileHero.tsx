@@ -5,6 +5,7 @@ import { Pressable, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import { Icon, UIAvatar, UIGlass, UIImage, UIText } from "@/ui";
+import { previewImages } from "@/utils";
 import { UniversityCard } from "./UniversityCard";
 
 type ProfileHeroProps = {
@@ -37,6 +38,7 @@ export const ProfileHero = ({
   children,
 }: ProfileHeroProps) => {
   const { t } = useTranslation();
+  const handleAvatarPreviewPress = () => avatar && previewImages([avatar]);
   const handleSongPress = async () => {
     if (!songUrl) return;
     try {
@@ -75,6 +77,19 @@ export const ProfileHero = ({
               <UIGlass radius={16} style={styles.badge}>
                 <Icon name="camera" size={15} />
               </UIGlass>
+            </Pressable>
+          ) : avatar ? (
+            <Pressable
+              accessibilityRole="imagebutton"
+              accessibilityLabel={t("app.openImage")}
+              onPress={handleAvatarPreviewPress}
+            >
+              <UIAvatar
+                size="xxl"
+                color="borderless"
+                imageSrc={avatar}
+                style={styles.avatar}
+              />
             </Pressable>
           ) : (
             <UIAvatar

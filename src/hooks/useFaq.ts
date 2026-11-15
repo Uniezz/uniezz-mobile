@@ -23,9 +23,8 @@ export function useFaqEntries() {
   });
 }
 
-export function useMyFaqProposals({ enabled = true } = {}) {
+export function useMyFaqProposals() {
   return useInfiniteQuery({
-    enabled,
     staleTime: 60_000,
     gcTime: 10 * 60_000,
     queryKey: ["faq", "proposals"],

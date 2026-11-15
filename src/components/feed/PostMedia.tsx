@@ -1,8 +1,6 @@
-import ExpoQuickLook from "@magrinj/expo-quick-look";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  Platform,
   Pressable,
   ScrollView,
   View,
@@ -11,8 +9,8 @@ import {
   type NativeSyntheticEvent,
 } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { toast } from "sonner-native";
 import { UIImage } from "@/ui";
+import { previewImages } from "@/utils";
 
 type PostMediaProps = {
   urls: string[];
@@ -31,23 +29,7 @@ export const PostMedia = ({ urls }: PostMediaProps) => {
     if (width) setPage(Math.round(event.nativeEvent.contentOffset.x / width));
   };
 
-  // iOS swipes through every photo of the post; previewFiles is iOS-only, so Android opens the one tapped
-  const handleImagePress = async (index: number) => {
-    try {
-      await (Platform.OS === "ios"
-        ? ExpoQuickLook.previewFiles({
-            uris: urls,
-            initialIndex: index,
-            editingMode: "disabled",
-          })
-        : ExpoQuickLook.previewFile({
-            uri: urls[index] ?? "",
-            editingMode: "disabled",
-          }));
-    } catch {
-      toast.error(t("apiState.error"));
-    }
-  };
+  const handleImagePress = (index: number) => previewImages(urls, index);
 
   if (urls.length <= 1) {
     const url = urls[0];

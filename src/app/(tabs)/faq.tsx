@@ -29,7 +29,6 @@ import {
   UISearchOverlay,
   UISkeleton,
   UISubTabs,
-  UIText,
 } from "@/ui";
 import { apiErrorKey, HEADER_COMPACT_OFFSET } from "@/utils";
 
@@ -40,7 +39,8 @@ export default function FaqScreen() {
   const isMine = tab === 1;
   const isModeration = tab === 2;
   const all = useFaqEntries();
-  const mine = useMyFaqProposals({ enabled: isMine });
+  // loaded with the screen, so switching tabs neither waits for it nor refetches it
+  const mine = useMyFaqProposals();
   // a 403 here means the student isn't a publisher, so the moderation tab stays hidden
   const pending = usePendingFaqProposals();
   const isPublisher = pending.data !== undefined;
@@ -120,10 +120,21 @@ export default function FaqScreen() {
     <UIPage>
       <UICollapsingHeader
         title={t("tabs.faq")}
+        subtitle={t("faq.subtitle")}
         isCompact={isHeaderCompact}
         actions={headerActions}
         onLayout={handleHeaderLayout}
-      />
+      >
+        <UISubTabs
+          items={[
+            t("faq.allQuestions"),
+            t("faq.myProposals"),
+            ...(isPublisher ? [t("faq.pending")] : []),
+          ]}
+          selectedItemIndex={tab}
+          onPress={setTab}
+        />
+      </UICollapsingHeader>
       <FlashList
         data={visible}
         keyExtractor={(entry) => entry.id}
@@ -135,23 +146,6 @@ export default function FaqScreen() {
         onRefresh={refetch}
         refreshing={isRefetching}
         onEndReached={handleEndReached}
-        ListHeaderComponent={
-          // under the title, as in the design; a header subtitle would sit above it and shift the row off the other tabs'
-          <View style={styles.listHeader}>
-            <UIText color="secondary">{t("faq.subtitle")}</UIText>
-            <View style={styles.tabs}>
-              <UISubTabs
-                items={[
-                  t("faq.allQuestions"),
-                  t("faq.myProposals"),
-                  ...(isPublisher ? [t("faq.pending")] : []),
-                ]}
-                selectedItemIndex={tab}
-                onPress={setTab}
-              />
-            </View>
-          </View>
-        }
         ListEmptyComponent={
           isPending ? (
             <UISkeleton height={56} />
@@ -206,12 +200,10 @@ export default function FaqScreen() {
 const styles = StyleSheet.create((theme, rt) => ({
   // UIPage already pads the status bar; the rest of the header height is added here
   list: (headerHeight: number) => ({
-    paddingTop: Math.max(headerHeight - rt.insets.top, 0),
+    // the gap the subtabs used to leave above the first question
+    paddingTop: Math.max(headerHeight - rt.insets.top, 0) + theme.vs(12),
     paddingHorizontal: theme.s(16),
     paddingBottom: theme.vs(110),
   }),
-  listHeader: { gap: theme.vs(12), paddingBottom: theme.vs(12) },
-  // the tabs run edge to edge, past the list's side padding
-  tabs: { marginHorizontal: -theme.s(16) },
   cell: { paddingBottom: theme.vs(8) },
 }));
