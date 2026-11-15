@@ -672,5 +672,17 @@
     "action": "Ort vorschlagen",
     "subtitle": "Alles, was du für das Leben in Lublin brauchst",
     "title": "Guide"
+  },
+  "onboarding": {
+    "photosTitle": "Füge deine Fotos hinzu",
+    "photosDescription": "Ein Foto und ein Banner helfen anderen Studierenden, dich zu erkennen.",
+    "aboutTitle": "Über dich",
+    "aboutDescription": "Prüfe deinen Namen und erzähl ein wenig über dich.",
+    "interestsTitle": "Interessen und Song",
+    "interestsDescription": "Füge deine Interessen und einen Song hinzu, der zu dir passt.",
+    "step": "Schritt {{current}} von {{total}}",
+    "next": "Weiter",
+    "done": "Fertig",
+    "skip": "Überspringen"
   }
 }

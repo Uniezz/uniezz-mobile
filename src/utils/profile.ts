@@ -59,6 +59,42 @@ export const toDetailsValues = (
   songUrl: profile.songUrl ?? "",
 });
 
+// mirrors the backend's profile_complete rule (uniezz-backend profileRepository.isComplete)
+export const isProfileComplete = (profile: Profile) =>
+  Boolean(
+    profile.firstName &&
+    profile.lastName &&
+    profile.gender &&
+    profile.avatarUrl &&
+    profile.bannerUrl &&
+    profile.bio &&
+    profile.songUrl &&
+    profile.interests?.length,
+  );
+
+// first sign-in onboarding: each step saves only its own form fields
+export const ONBOARDING_STEPS: readonly {
+  title: string;
+  description: string;
+  fields: readonly (keyof PersonalDetailsFormValues)[];
+}[] = [
+  {
+    title: "onboarding.photosTitle",
+    description: "onboarding.photosDescription",
+    fields: [],
+  },
+  {
+    title: "onboarding.aboutTitle",
+    description: "onboarding.aboutDescription",
+    fields: ["firstName", "lastName", "gender", "bio"],
+  },
+  {
+    title: "onboarding.interestsTitle",
+    description: "onboarding.interestsDescription",
+    fields: ["interests", "songUrl"],
+  },
+];
+
 // how far the header titles slide while crossfading
 export const PROFILE_HEADER_TITLE_SHIFT = vs(10);
 

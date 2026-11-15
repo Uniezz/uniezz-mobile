@@ -678,5 +678,17 @@
     "spendTab": "Потратить",
     "shopSoonTitle": "Магазин скоро откроется",
     "shopSoonDescription": "Скоро здесь можно будет тратить монеты. А пока продолжай их копить!"
+  },
+  "onboarding": {
+    "photosTitle": "Добавь фото",
+    "photosDescription": "Фото и баннер помогают другим студентам тебя узнать.",
+    "aboutTitle": "О тебе",
+    "aboutDescription": "Проверь имя и расскажи немного о себе.",
+    "interestsTitle": "Интересы и песня",
+    "interestsDescription": "Добавь свои интересы и песню, которая тебе подходит.",
+    "step": "Шаг {{current}} из {{total}}",
+    "next": "Далее",
+    "done": "Готово",
+    "skip": "Пропустить"
   }
 }

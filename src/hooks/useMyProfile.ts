@@ -1,4 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { launchImageLibraryAsync } from "expo-image-picker";
+import { usePostHog } from "posthog-react-native";
+import { useTranslation } from "react-i18next";
+import { toast } from "sonner-native";
+import { apiErrorKey, captureAction } from "@/utils";
+import { useUploadImages } from "./useMedia";
 import {
   addMyProgramme,
   deleteMyAvatar,
@@ -95,4 +101,52 @@ export function useDeleteMyBanner() {
         (profile) => profile && { ...profile, bannerUrl: null },
       ),
   });
+}
+
+const PROFILE_IMAGE_ASPECTS = {
+  avatar: [1, 1],
+  banner: [3, 1],
+} as const;
+
+// picks, uploads and saves the avatar or banner, toasting the outcome
+export function usePickProfileImage(kind: keyof typeof PROFILE_IMAGE_ASPECTS) {
+  const { t } = useTranslation();
+  const posthog = usePostHog();
+  const { mutateAsync: uploadImages, isPending: isUploading } =
+    useUploadImages(kind);
+  const { mutateAsync: updateProfile, isPending: isSaving } =
+    useUpdateMyProfile();
+
+  const pickImage = async () => {
+    captureAction(posthog, `${kind}_pick`, "attempted");
+    const result = await launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [...PROFILE_IMAGE_ASPECTS[kind]],
+      quality: 0.8,
+    }).catch((error: unknown) => {
+      captureAction(posthog, `${kind}_pick`, "failed");
+      throw error;
+    });
+    if (result.canceled) {
+      captureAction(posthog, `${kind}_pick`, "cancelled");
+      return;
+    }
+    captureAction(posthog, `${kind}_pick`, "succeeded");
+    if (!result.assets[0]) return;
+    const { uri, mimeType, fileSize } = result.assets[0];
+    try {
+      const [mediaId] = await uploadImages([{ uri, mimeType, fileSize }]);
+      await updateProfile(
+        kind === "avatar"
+          ? { avatarMediaId: mediaId }
+          : { bannerMediaId: mediaId },
+      );
+      toast.success(t("app.saved"));
+    } catch (error) {
+      toast.error(t(apiErrorKey(error, "apiState.profileSaveError")));
+    }
+  };
+
+  return { pickImage, isPending: isUploading || isSaving };
 }

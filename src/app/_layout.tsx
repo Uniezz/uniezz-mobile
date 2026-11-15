@@ -36,6 +36,7 @@ function RootNavigator(): React.JSX.Element {
       </Stack.Protected>
       <Stack.Protected guard={!!session}>
         <Stack.Screen name="(tabs)" options={{ animation: "fade" }} />
+        <Stack.Screen name="onboarding" options={{ animation: "fade" }} />
         <Stack.Protected guard={chatEnabled}>
           <Stack.Screen name="chat" />
         </Stack.Protected>

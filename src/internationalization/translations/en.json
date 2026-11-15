@@ -672,5 +672,17 @@
     "spendTab": "Spend",
     "shopSoonTitle": "Shop is coming soon",
     "shopSoonDescription": "Soon you'll spend your coins here. Keep earning them!"
+  },
+  "onboarding": {
+    "photosTitle": "Add your photos",
+    "photosDescription": "A photo and a banner help other students recognise you.",
+    "aboutTitle": "About you",
+    "aboutDescription": "Check your name and tell others a bit about yourself.",
+    "interestsTitle": "Interests and song",
+    "interestsDescription": "Add what you're into and a song that sounds like you.",
+    "step": "Step {{current}} of {{total}}",
+    "next": "Next",
+    "done": "Done",
+    "skip": "Skip"
   }
 }

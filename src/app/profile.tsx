@@ -4,13 +4,7 @@ import {
   MenuView,
   NativeActionEvent,
 } from "@react-native-menu/menu";
-import { usePostHog } from "posthog-react-native";
-import {
-  captureAction,
-  authorName,
-  HEADER_COMPACT_OFFSET,
-  apiErrorKey,
-} from "@/utils";
+import { authorName, HEADER_COMPACT_OFFSET, apiErrorKey } from "@/utils";
 import type { FlashListRef } from "@shopify/flash-list";
 import { BlurView } from "expo-blur";
 import { router } from "expo-router";
@@ -41,20 +35,17 @@ import {
   useFeedPosts,
   useLikedFeedPosts,
   useSavedFeedPosts,
-  useUploadImages,
   useDeleteMyAvatar,
   useDeleteMyBanner,
   useDeleteMyProfile,
   useMyProfile,
-  useUpdateMyProfile,
+  usePickProfileImage,
 } from "@/hooks";
-import { launchImageLibraryAsync } from "expo-image-picker";
 import { Icon, UIGlass, UIPage, UISubTabs } from "@/ui";
 import { ApiRequestError } from "@/api";
 
 export default function ProfileScreen() {
   const { t, i18n } = useTranslation();
-  const posthog = usePostHog();
   const { data: profile, isPending, isError, refetch } = useMyProfile();
   const { mutateAsync: deleteAvatar, isPending: isRemovingPhoto } =
     useDeleteMyAvatar();
@@ -62,11 +53,10 @@ export default function ProfileScreen() {
     useDeleteMyBanner();
   const { mutateAsync: deleteProfile, isPending: isDeletingProfile } =
     useDeleteMyProfile();
-  const { mutateAsync: uploadImages, isPending: isUploadingPhoto } =
-    useUploadImages("avatar");
-  const { mutateAsync: uploadBanner, isPending: isUploadingBanner } =
-    useUploadImages("banner");
-  const { mutateAsync: updateProfile } = useUpdateMyProfile();
+  const { pickImage: handleChangePhotoPress, isPending: isUploadingPhoto } =
+    usePickProfileImage("avatar");
+  const { pickImage: handleChangeBannerPress, isPending: isUploadingBanner } =
+    usePickProfileImage("banner");
   const { clearSession } = useSession();
   const programmesRef = useRef<BottomSheetModal>(null);
   const detailsRef = useRef<BottomSheetModal>(null);
@@ -143,60 +133,6 @@ export default function ProfileScreen() {
       toast.success(t("app.saved"));
     } catch {
       toast.error(t("apiState.profileSaveError"));
-    }
-  };
-
-  const handleChangeBannerPress = async () => {
-    captureAction(posthog, "banner_pick", "attempted");
-    const result = await launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsEditing: true,
-      aspect: [3, 1],
-      quality: 0.8,
-    }).catch((error: unknown) => {
-      captureAction(posthog, "banner_pick", "failed");
-      throw error;
-    });
-    if (result.canceled) {
-      captureAction(posthog, "banner_pick", "cancelled");
-      return;
-    }
-    captureAction(posthog, "banner_pick", "succeeded");
-    if (!result.assets[0]) return;
-    const { uri, mimeType, fileSize } = result.assets[0];
-    try {
-      const [bannerMediaId] = await uploadBanner([{ uri, mimeType, fileSize }]);
-      await updateProfile({ bannerMediaId });
-      toast.success(t("app.saved"));
-    } catch (error) {
-      toast.error(t(apiErrorKey(error, "apiState.profileSaveError")));
-    }
-  };
-
-  const handleChangePhotoPress = async () => {
-    captureAction(posthog, "avatar_pick", "attempted");
-    const result = await launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.8,
-    }).catch((error: unknown) => {
-      captureAction(posthog, "avatar_pick", "failed");
-      throw error;
-    });
-    if (result.canceled) {
-      captureAction(posthog, "avatar_pick", "cancelled");
-      return;
-    }
-    captureAction(posthog, "avatar_pick", "succeeded");
-    if (!result.assets[0]) return;
-    const { uri, mimeType, fileSize } = result.assets[0];
-    try {
-      const [avatarMediaId] = await uploadImages([{ uri, mimeType, fileSize }]);
-      await updateProfile({ avatarMediaId });
-      toast.success(t("app.saved"));
-    } catch (error) {
-      toast.error(t(apiErrorKey(error, "apiState.profileSaveError")));
     }
   };
 

@@ -33,7 +33,8 @@ function useStartSession() {
       return;
     }
 
-    router.replace("/feed");
+    // onboarding sends a complete profile straight on to the feed
+    router.replace("/onboarding");
   };
 }
 

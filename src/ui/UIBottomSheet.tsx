@@ -49,7 +49,8 @@ export const UIBottomSheet = ({
       appearsOnIndex={0}
       disappearsOnIndex={-1}
       opacity={0.5}
-      pressBehavior={onDismissAttempt ? "none" : "close"}
+      // "none" drops the tap gesture and onPress with it; snapping to the open index 0 is a no-op that keeps both
+      pressBehavior={onDismissAttempt ? 0 : "close"}
       onPress={onDismissAttempt}
     />
   );
