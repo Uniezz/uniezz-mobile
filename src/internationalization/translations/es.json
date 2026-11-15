@@ -385,7 +385,8 @@
     "duplicate": "Ya has reportado este artículo.",
     "rateLimit": "Ha alcanzado el límite de informes. Vuelve a intentarlo más tarde.",
     "candidate": "Reportar perfil",
-    "course": "Informe del curso"
+    "course": "Informe del curso",
+    "action": "Reportar"
   },
   "apiState": {
     "editComment": "Editar comentario",
@@ -503,6 +504,11 @@
     "reasonReferral": "Invitaste a un amigo",
     "reasonDailyQuests": "Misiones del día completadas",
     "reasonFaqApproved": "Tu pregunta se publicó en FAQ",
-    "reasonOther": "Recompensa"
+    "reasonOther": "Recompensa",
+    "earned": "Monedas: +{{count}}",
+    "earnTab": "Ganar",
+    "spendTab": "Gastar",
+    "shopSoonTitle": "La tienda llegará pronto",
+    "shopSoonDescription": "Pronto podrás gastar tus monedas aquí. ¡Sigue ganándolas!"
   }
 }

@@ -2,13 +2,13 @@ import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { Pressable } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { Icon, UIText } from "@/ui";
+import { UICoin, UIGlass, UIText } from "@/ui";
 
 type CoinBalanceProps = {
   coins: number;
 };
 
-// the student's own balance under their name; opens the rewards screen
+// the student's balance in the profile header, styled like the glass menu button beside it; opens the rewards screen
 export const CoinBalance = ({ coins }: CoinBalanceProps) => {
   const { t } = useTranslation();
   const handlePress = () => router.push("/rewards");
@@ -18,32 +18,22 @@ export const CoinBalance = ({ coins }: CoinBalanceProps) => {
       accessibilityRole="button"
       accessibilityLabel={`${t("rewards.balance")}: ${coins}`}
       onPress={handlePress}
-      style={styles.pill}
     >
-      <Icon
-        name="star"
-        size={14}
-        uniProps={(theme) => ({ color: theme.colors.amber })}
-      />
-      <UIText size="sm" weight="semibold">
-        {coins}
-      </UIText>
-      <Icon name="chevron-right" size={14} />
+      <UIGlass radius={12} style={styles.button}>
+        <UICoin size="sm" />
+        <UIText weight="semibold">{coins}</UIText>
+      </UIGlass>
     </Pressable>
   );
 };
 
 const styles = StyleSheet.create((theme) => ({
-  pill: {
-    alignSelf: "flex-start",
+  // the same height as the 44pt menu button next to it
+  button: {
+    height: theme.vs(44),
     flexDirection: "row",
     alignItems: "center",
     gap: theme.s(6),
-    paddingVertical: theme.vs(6),
     paddingHorizontal: theme.s(12),
-    borderRadius: theme.vs(999),
-    borderWidth: 1,
-    borderColor: theme.colors.amber30,
-    backgroundColor: theme.colors.amber10,
   },
 }));

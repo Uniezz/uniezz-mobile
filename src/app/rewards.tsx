@@ -9,14 +9,16 @@ import {
   View,
 } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { GrantRow, QuestCard } from "@/components/rewards";
+import { GrantRow, QuestCard, ShopPreview } from "@/components/rewards";
 import { useMyCoinGrants, useMyDailyQuests, useMyProfile } from "@/hooks";
 import {
+  UICoin,
   UICollapsingHeader,
   UIEmpty,
   UIPage,
   UIQueryError,
   UISkeleton,
+  UISubTabs,
   UIText,
 } from "@/ui";
 import { HEADER_COMPACT_OFFSET } from "@/utils";
@@ -26,6 +28,9 @@ export default function RewardsScreen() {
   // the header floats over the list; the list starts below it and turns the header compact once scrolled
   const [headerHeight, setHeaderHeight] = useState(0);
   const [isHeaderCompact, setIsHeaderCompact] = useState(false);
+  // 0: earn (quests and history), 1: spend (a blurred preview until there is a shop)
+  const [tab, setTab] = useState(0);
+  const isEarn = tab === 0;
   const { data: profile } = useMyProfile();
   const {
     data: quests,
@@ -56,7 +61,7 @@ export default function RewardsScreen() {
   };
   const handleRefresh = () => Promise.all([refetch(), refetchQuests()]);
   const handleEndReached = () => {
-    if (hasNextPage && !isFetchingNextPage) return fetchNextPage();
+    if (isEarn && hasNextPage && !isFetchingNextPage) return fetchNextPage();
   };
 
   return (
@@ -67,9 +72,15 @@ export default function RewardsScreen() {
         onBackPress={handleBackPress}
         backLabel={t("app.back")}
         onLayout={handleHeaderLayout}
-      />
+      >
+        <UISubTabs
+          items={[t("rewards.earnTab"), t("rewards.spendTab")]}
+          selectedItemIndex={tab}
+          onPress={setTab}
+        />
+      </UICollapsingHeader>
       <FlashList
-        data={grants}
+        data={isEarn ? grants : []}
         keyExtractor={(grant, index) => `${grant.createdAt}-${index}`}
         onScroll={handleScroll}
         scrollEventThrottle={16}
@@ -85,25 +96,34 @@ export default function RewardsScreen() {
               <UIText size="sm" color="secondary">
                 {t("rewards.balance")}
               </UIText>
-              <UIText size="xl" weight="bold" style={styles.coins}>
-                {profile?.coins ?? 0}
-              </UIText>
+              <View style={styles.coinsRow}>
+                <UICoin size="lg" />
+                <UIText size="xl" weight="bold" style={styles.coins}>
+                  {profile?.coins ?? 0}
+                </UIText>
+              </View>
             </View>
-            {isQuestsPending ? (
-              <UISkeleton height={180} />
-            ) : isQuestsError ? (
-              <UIQueryError
-                message={t("apiState.error")}
-                onRetry={refetchQuests}
-              />
-            ) : (
-              <QuestCard quests={quests} />
-            )}
-            <UIText weight="semibold">{t("rewards.historyTitle")}</UIText>
+            {isEarn ? (
+              <>
+                {isQuestsPending ? (
+                  <UISkeleton height={180} />
+                ) : isQuestsError ? (
+                  <UIQueryError
+                    message={t("apiState.error")}
+                    onRetry={refetchQuests}
+                  />
+                ) : (
+                  <QuestCard quests={quests} />
+                )}
+                <UIText weight="semibold">{t("rewards.historyTitle")}</UIText>
+              </>
+            ) : null}
           </View>
         }
         ListEmptyComponent={
-          isPending ? (
+          !isEarn ? (
+            <ShopPreview />
+          ) : isPending ? (
             <UISkeleton height={56} />
           ) : isError ? (
             <UIQueryError message={t("apiState.error")} onRetry={refetch} />
@@ -113,7 +133,7 @@ export default function RewardsScreen() {
           )
         }
         ListFooterComponent={
-          isFetchingNextPage ? <UISkeleton height={56} /> : null
+          isEarn && isFetchingNextPage ? <UISkeleton height={56} /> : null
         }
         renderItem={({ item }) => <GrantRow grant={item} />}
       />
@@ -133,5 +153,10 @@ const styles = StyleSheet.create((theme, rt) => ({
     paddingBottom: theme.vs(4),
   },
   balance: { gap: theme.vs(2) },
+  coinsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: theme.s(8),
+  },
   coins: { color: theme.colors.amber },
 }));

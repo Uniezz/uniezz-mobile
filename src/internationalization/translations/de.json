@@ -385,7 +385,8 @@
     "duplicate": "Sie haben diesen Artikel bereits gemeldet.",
     "rateLimit": "Sie haben die Meldegrenze erreicht. Versuchen Sie es später noch einmal.",
     "candidate": "Profil melden",
-    "course": "Kurs melden"
+    "course": "Kurs melden",
+    "action": "Melden"
   },
   "apiState": {
     "editComment": "Kommentar bearbeiten",
@@ -503,6 +504,11 @@
     "reasonReferral": "Freund eingeladen",
     "reasonDailyQuests": "Tagesaufgaben erledigt",
     "reasonFaqApproved": "Deine FAQ-Frage wurde veröffentlicht",
-    "reasonOther": "Belohnung"
+    "reasonOther": "Belohnung",
+    "earned": "Münzen: +{{count}}",
+    "earnTab": "Verdienen",
+    "spendTab": "Ausgeben",
+    "shopSoonTitle": "Der Shop kommt bald",
+    "shopSoonDescription": "Bald kannst du hier deine Münzen ausgeben. Sammle bis dahin weiter!"
   }
 }

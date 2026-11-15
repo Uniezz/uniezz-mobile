@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Pressable, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { useMyProfile } from "@/hooks";
-import { Icon, UIAvatar, UIText } from "@/ui";
+import { UIAvatar, UICoin, UIText } from "@/ui";
 
 // the avatar in every tab's header: opens the profile, with the coin balance pinned under it
 export const ProfileButton = () => {
@@ -25,11 +25,7 @@ export const ProfileButton = () => {
       {profile ? (
         // overlaps the avatar's bottom edge, so the header keeps its height
         <View style={styles.coins}>
-          <Icon
-            name="star"
-            size={9}
-            uniProps={(theme) => ({ color: theme.colors.amber })}
-          />
+          <UICoin size="xs" />
           <UIText size="xs" weight="semibold" style={styles.count}>
             {profile.coins}
           </UIText>

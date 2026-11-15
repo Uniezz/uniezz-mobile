@@ -30,3 +30,4 @@ export * from "./UIFormSheet";
 export * from "./UICollapsingHeader";
 export * from "./UISearchOverlay";
 export * from "./UIEmpty";
+export * from "./UICoin";

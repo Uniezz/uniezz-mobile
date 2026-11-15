@@ -526,7 +526,8 @@
     "duplicate": "Ten element został już zgłoszony.",
     "rateLimit": "Osiągnięto limit zgłoszeń. Spróbuj ponownie później.",
     "candidate": "Zgłoś kartę",
-    "course": "Zgłoś przedmiot"
+    "course": "Zgłoś przedmiot",
+    "action": "Zgłoś"
   },
   "apiState": {
     "editComment": "Edytuj komentarz",
@@ -667,6 +668,11 @@
     "reasonReferral": "Zaproszony znajomy",
     "reasonDailyQuests": "Zadania dnia wykonane",
     "reasonFaqApproved": "Twoje pytanie trafiło do FAQ",
-    "reasonOther": "Nagroda"
+    "reasonOther": "Nagroda",
+    "earned": "Monety: +{{count}}",
+    "earnTab": "Zdobywaj",
+    "spendTab": "Wydawaj",
+    "shopSoonTitle": "Sklep już wkrótce",
+    "shopSoonDescription": "Wkrótce wydasz tu swoje monety. Na razie zbieraj je dalej!"
   }
 }

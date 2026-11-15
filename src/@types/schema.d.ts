@@ -1155,8 +1155,20 @@ export interface components {
       amount: number;
       /** Format: date-time */
       createdAt: string;
-      /** @description What earned the coins */
-      reason: string;
+      /**
+       * @description What earned the coins. welcome: the new account. like_given: liking another student's post. like_received: another student liked your post. comment: the first comment or reply on another student's post. profile_complete: filling every profile field. birth_date: the first birth date saved in connections. referral: a student you invited signed up. daily_quests: finishing every daily quest. faq_approved: a moderator approved your FAQ proposal. More values may be added; show a generic label for unknown ones.
+       * @enum {string}
+       */
+      reason:
+        | "welcome"
+        | "like_given"
+        | "like_received"
+        | "comment"
+        | "profile_complete"
+        | "birth_date"
+        | "referral"
+        | "daily_quests"
+        | "faq_approved";
     };
     Comment: {
       /** @description Missing when deleted */
@@ -1269,6 +1281,37 @@ export interface components {
       /** @description Comment to reply to; a reply to a reply joins the same thread */
       replyToCommentId?: string;
     };
+    CreateCommentOutputBody: {
+      /** @description Missing when deleted */
+      author?: components["schemas"]["Author"];
+      /**
+       * Format: int64
+       * @description Uniezz coins this request paid you, daily quest reward included; 0 when it paid nothing
+       * @example 1
+       */
+      coinsEarned: number;
+      /** @description Null when deleted */
+      content: string | null;
+      /** Format: date-time */
+      createdAt: string;
+      /** @description A deleted comment is listed only while it still has replies */
+      deleted: boolean;
+      /** Format: date-time */
+      editedAt: string | null;
+      /** Format: uuid */
+      id: string;
+      likedByMe: boolean;
+      /** Format: int64 */
+      likesCount: number;
+      /** @description Root comment of the thread; null for a root comment */
+      parentId: string | null;
+      /** Format: uuid */
+      postId: string;
+      /** Format: int64 */
+      repliesCount: number;
+      /** @description Comment this reply answers; null for a root comment or when that comment was deleted */
+      replyToCommentId: string | null;
+    };
     CreateCourseInputBody: {
       /** @description Up to 5000 characters after HTML is stripped */
       description: string;
@@ -1315,6 +1358,40 @@ export interface components {
       type: "announcement" | "event" | "question";
       /**
        * @description Your own university, or all
+       * @example umcs
+       */
+      university: string;
+    };
+    CreatePostOutputBody: {
+      author: components["schemas"]["Author"];
+      /**
+       * Format: int64
+       * @description Uniezz coins this request paid you, daily quest reward included; 0 when it paid nothing
+       * @example 1
+       */
+      coinsEarned: number;
+      /** Format: int64 */
+      commentsCount: number;
+      content: string;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      editedAt: string | null;
+      /** Format: date-time */
+      eventDate: string | null;
+      /** Format: uuid */
+      id: string;
+      likedByMe: boolean;
+      /** Format: int64 */
+      likesCount: number;
+      mediaUrls: string[] | null;
+      savedByMe: boolean;
+      tags: string[] | null;
+      title: string;
+      /** @enum {string} */
+      type: "announcement" | "event" | "question";
+      /**
+       * @description Target university, or all
        * @example umcs
        */
       university: string;
@@ -1442,6 +1519,17 @@ export interface components {
       expiresAt: string;
       /** @description token to be used in Authorization header for subsequent requests */
       token: string;
+    };
+    LikePostOutputBody: {
+      /**
+       * Format: int64
+       * @description Uniezz coins this request paid you, daily quest reward included; 0 when it paid nothing
+       * @example 1
+       */
+      coinsEarned: number;
+      liked: boolean;
+      /** Format: int64 */
+      likesCount: number;
     };
     LikeState: {
       liked: boolean;
@@ -1873,6 +1961,27 @@ export interface components {
       /** @description dating needs an age of at least 18, else returns 400 dating_requires_adult */
       openTo?: ("friends" | "studyBuddy" | "dating")[] | null;
     };
+    SavePreferencesOutputBody: {
+      /**
+       * Format: date
+       * @description Null until set
+       * @example 2003-05-17
+       */
+      birthDate: string | null;
+      /**
+       * Format: int64
+       * @description Uniezz coins this request paid you, daily quest reward included; 0 when it paid nothing
+       * @example 1
+       */
+      coinsEarned: number;
+      /**
+       * @description Shown on the student's discovery card. Null when unset.
+       * @example Looking for a climbing partner
+       */
+      intent: string | null;
+      /** @description Who the student can discover and be discovered as */
+      openTo: ("friends" | "studyBuddy" | "dating")[] | null;
+    };
     SaveState: {
       saved: boolean;
     };
@@ -1968,6 +2077,90 @@ export interface components {
       };
       /** @description http or https URL, up to 500 characters. An empty string clears it. Anything else returns 400 invalid_input and leaves the saved link unchanged. */
       songUrl?: string;
+    };
+    UpdateMeOutputBody: {
+      /** @description URL of the avatar image, null when the student has none */
+      avatarUrl: string | null;
+      /** @description URL of the banner image, null when the student has none */
+      bannerUrl: string | null;
+      /**
+       * @description Plain text, up to 500 characters
+       * @example Second-year CS student, into climbing.
+       */
+      bio: string | null;
+      /**
+       * Format: int64
+       * @description Uniezz coins the student has earned. Only the student sees them, and nothing spends them yet.
+       * @example 100
+       */
+      coins: number;
+      /**
+       * Format: int64
+       * @description Uniezz coins this request paid you, daily quest reward included; 0 when it paid nothing
+       * @example 1
+       */
+      coinsEarned: number;
+      /** Format: date-time */
+      createdAt: string;
+      /**
+       * @description University email, null when USOS did not share it
+       * @example jan.kowalski@umcs.pl
+       */
+      email: string | null;
+      /** @example Jan */
+      firstName: string | null;
+      /**
+       * @description Set once; null until set. Visible to other students, with no privacy toggle.
+       * @enum {string|null}
+       */
+      gender: "male" | "female" | null;
+      /**
+       * Format: uuid
+       * @description User ID
+       */
+      id: string;
+      /**
+       * @description Up to 10 tags
+       * @example [
+       *       "climbing",
+       *       "go"
+       *     ]
+       */
+      interests: string[] | null;
+      /**
+       * @description Interface language; defaults to pl
+       * @enum {string}
+       */
+      language: "en" | "pl" | "uk" | "ru" | "be" | "de" | "es";
+      /** @example Kowalski */
+      lastName: string | null;
+      /** @description Which profile fields other students see. A missing setting keeps its current value. */
+      privacy: {
+        /**
+         * @description Show the university email to other students
+         * @default false
+         */
+        showEmail: boolean;
+        /**
+         * @description Show the faculty of each study programme
+         * @default true
+         */
+        showFaculty: boolean;
+        /**
+         * @description Show the year of study of each study programme
+         * @default true
+         */
+        showYear: boolean;
+      };
+      /** @description Study programmes, primary first; empty when the student has none */
+      programmes: components["schemas"]["Programme"][] | null;
+      /**
+       * @description Link to the song the student associates with themselves. Null when unset.
+       * @example https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT
+       */
+      songUrl: string | null;
+      /** @example umcs */
+      universityId: string;
     };
     UpdatePostInputBody: {
       content?: string;
@@ -2712,7 +2905,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["Preferences"];
+          "application/json": components["schemas"]["SavePreferencesOutputBody"];
         };
       };
       /** @description Bad Request */
@@ -3625,7 +3818,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["Post"];
+          "application/json": components["schemas"]["CreatePostOutputBody"];
         };
       };
       /** @description Bad Request */
@@ -4135,7 +4328,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["Comment"];
+          "application/json": components["schemas"]["CreateCommentOutputBody"];
         };
       };
       /** @description Bad Request */
@@ -4211,7 +4404,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["LikeState"];
+          "application/json": components["schemas"]["LikePostOutputBody"];
         };
       };
       /** @description Unauthorized */
@@ -4739,7 +4932,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["Profile"];
+          "application/json": components["schemas"]["UpdateMeOutputBody"];
         };
       };
       /** @description Bad Request */

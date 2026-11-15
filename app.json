@@ -10,7 +10,8 @@
     "backgroundColor": "#0C0D14",
     "ios": {
       "icon": "./assets/images/icon.png",
-      "bundleIdentifier": "com.uniezz"
+      "bundleIdentifier": "com.uniezz",
+      "appleTeamId": "ZSVCJ3UTY6"
     },
     "android": {
       "adaptiveIcon": {
@@ -18,7 +19,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.uniezz"
+      "package": "com.uniezz",
+      "permissions": ["android.permission.MODIFY_AUDIO_SETTINGS"]
     },
     "web": {
       "output": "static",

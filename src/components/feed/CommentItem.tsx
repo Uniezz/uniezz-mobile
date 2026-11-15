@@ -155,11 +155,12 @@ export const CommentItem = ({
               ) : (
                 <Pressable
                   accessibilityRole="button"
+                  accessibilityLabel={t("report.comment")}
                   onPress={handleReportPress}
                   hitSlop={6}
                 >
                   <UIText size="sm" weight="semibold" color="secondary">
-                    {t("report.comment")}
+                    {t("report.action")}
                   </UIText>
                 </Pressable>
               )}

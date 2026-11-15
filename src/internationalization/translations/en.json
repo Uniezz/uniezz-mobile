@@ -520,7 +520,8 @@
     "duplicate": "You have already reported this item.",
     "rateLimit": "You have reached the reporting limit. Try again later.",
     "candidate": "Report card",
-    "course": "Report course"
+    "course": "Report course",
+    "action": "Report"
   },
   "apiState": {
     "editComment": "Edit comment",
@@ -661,6 +662,11 @@
     "reasonReferral": "Invited a friend",
     "reasonDailyQuests": "Daily quests done",
     "reasonFaqApproved": "Your FAQ question was published",
-    "reasonOther": "Reward"
+    "reasonOther": "Reward",
+    "earned": "Coins: +{{count}}",
+    "earnTab": "Earn",
+    "spendTab": "Spend",
+    "shopSoonTitle": "Shop is coming soon",
+    "shopSoonDescription": "Soon you'll spend your coins here. Keep earning them!"
   }
 }
