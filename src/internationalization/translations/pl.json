@@ -680,15 +680,22 @@
     "shopSoonDescription": "Wkrótce wydasz tu swoje monety. Na razie zbieraj je dalej!"
   },
   "onboarding": {
-    "photosTitle": "Dodaj zdjęcia",
-    "photosDescription": "Zdjęcie i baner pomagają innym studentom cię rozpoznać.",
-    "aboutTitle": "O tobie",
-    "aboutDescription": "Sprawdź imię i nazwisko i napisz kilka słów o sobie.",
-    "interestsTitle": "Zainteresowania i piosenka",
-    "interestsDescription": "Dodaj, czym się interesujesz, i piosenkę, która do ciebie pasuje.",
-    "step": "Krok {{current}} z {{total}}",
+    "details": {
+      "description": "Imię, kilka słów o sobie i to, czym się interesujesz.",
+      "title": "Przedstaw się."
+    },
+    "finish": "Zakończ",
     "next": "Dalej",
-    "done": "Gotowe",
-    "skip": "Pomiń"
+    "photo": {
+      "description": "Pojawi się przy Twoich postach i wiadomościach, żeby inni wiedzieli, z kim rozmawiają.",
+      "hint": "JPG, PNG lub WebP, maks. 5 MB.",
+      "title": "Dodaj zdjęcie."
+    },
+    "programmes": {
+      "description": "Dodaj kierunek, żeby osoby z Twojego wydziału mogły Cię znaleźć.",
+      "title": "Co studiujesz?"
+    },
+    "skip": "Pomiń",
+    "step": "Krok {{current}} z {{total}}"
   }
 }

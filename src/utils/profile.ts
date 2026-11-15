@@ -59,41 +59,13 @@ export const toDetailsValues = (
   songUrl: profile.songUrl ?? "",
 });
 
-// mirrors the backend's profile_complete rule (uniezz-backend profileRepository.isComplete)
-export const isProfileComplete = (profile: Profile) =>
-  Boolean(
-    profile.firstName &&
-    profile.lastName &&
-    profile.gender &&
-    profile.avatarUrl &&
-    profile.bannerUrl &&
-    profile.bio &&
-    profile.songUrl &&
-    profile.interests?.length,
-  );
+// shortcut: the API has no "new account" flag, so a profile created in the last 10 minutes
+// counts as a first sign-in, as on web; switch when the sign-in response returns one
+export const isNewProfile = (createdAt: string, now = Date.now()) =>
+  now - Date.parse(createdAt) < 10 * 60_000;
 
-// first sign-in onboarding: each step saves only its own form fields
-export const ONBOARDING_STEPS: readonly {
-  title: string;
-  description: string;
-  fields: readonly (keyof PersonalDetailsFormValues)[];
-}[] = [
-  {
-    title: "onboarding.photosTitle",
-    description: "onboarding.photosDescription",
-    fields: [],
-  },
-  {
-    title: "onboarding.aboutTitle",
-    description: "onboarding.aboutDescription",
-    fields: ["firstName", "lastName", "gender", "bio"],
-  },
-  {
-    title: "onboarding.interestsTitle",
-    description: "onboarding.interestsDescription",
-    fields: ["interests", "songUrl"],
-  },
-];
+// first sign-in onboarding, in web's order
+export const ONBOARDING_STEPS = ["photo", "details", "programmes"] as const;
 
 // how far the header titles slide while crossfading
 export const PROFILE_HEADER_TITLE_SHIFT = vs(10);

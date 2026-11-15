@@ -674,15 +674,22 @@
     "shopSoonDescription": "Soon you'll spend your coins here. Keep earning them!"
   },
   "onboarding": {
-    "photosTitle": "Add your photos",
-    "photosDescription": "A photo and a banner help other students recognise you.",
-    "aboutTitle": "About you",
-    "aboutDescription": "Check your name and tell others a bit about yourself.",
-    "interestsTitle": "Interests and song",
-    "interestsDescription": "Add what you're into and a song that sounds like you.",
-    "step": "Step {{current}} of {{total}}",
+    "details": {
+      "description": "Your name, a few words about you and what you’re into.",
+      "title": "Introduce yourself."
+    },
+    "finish": "Finish",
     "next": "Next",
-    "done": "Done",
-    "skip": "Skip"
+    "photo": {
+      "description": "It shows next to your posts and messages, so people know who they’re talking to.",
+      "hint": "JPG, PNG or WebP, up to 5 MB.",
+      "title": "Add a photo."
+    },
+    "programmes": {
+      "description": "Add your programme so people from your faculty can find you.",
+      "title": "What do you study?"
+    },
+    "skip": "Skip",
+    "step": "Step {{current}} of {{total}}"
   }
 }

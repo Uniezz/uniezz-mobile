@@ -53,12 +53,14 @@ const styles = StyleSheet.create((theme) => ({
         lg: {},
         xl: {},
         xxl: {},
+        hero: {},
       },
       color: {
         default: {
           borderWidth: 1,
           borderColor: theme.colors.white10,
         },
+        borderless: {},
       },
     },
   },
@@ -93,10 +95,15 @@ const styles = StyleSheet.create((theme) => ({
           width: theme.vs(112),
           height: theme.vs(112),
         },
+        hero: {
+          width: theme.vs(160),
+          height: theme.vs(160),
+        },
       },
       color: {
         // here too :(  https://unistyl.es/v3/references/variants/#defining-the-same-variant-across-multiple-styles
         default: {},
+        borderless: {},
       },
       rounded: {
         default: { borderRadius: theme.vs(999) },

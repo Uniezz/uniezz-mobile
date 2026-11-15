@@ -674,15 +674,22 @@
     "title": "Guía"
   },
   "onboarding": {
-    "photosTitle": "Añade tus fotos",
-    "photosDescription": "Una foto y un banner ayudan a otros estudiantes a reconocerte.",
-    "aboutTitle": "Sobre ti",
-    "aboutDescription": "Revisa tu nombre y cuenta un poco sobre ti.",
-    "interestsTitle": "Intereses y canción",
-    "interestsDescription": "Añade lo que te gusta y una canción que te represente.",
-    "step": "Paso {{current}} de {{total}}",
+    "details": {
+      "description": "Tu nombre, unas palabras sobre ti y lo que te gusta.",
+      "title": "Preséntate."
+    },
+    "finish": "Finalizar",
     "next": "Siguiente",
-    "done": "Listo",
-    "skip": "Omitir"
+    "photo": {
+      "description": "Aparecerá junto a tus publicaciones y mensajes, para que sepan con quién hablan.",
+      "hint": "JPG, PNG o WebP, hasta 5 MB.",
+      "title": "Añade una foto."
+    },
+    "programmes": {
+      "description": "Añade tu carrera para que te encuentre la gente de tu facultad.",
+      "title": "¿Qué estudias?"
+    },
+    "skip": "Omitir",
+    "step": "Paso {{current}} de {{total}}"
   }
 }

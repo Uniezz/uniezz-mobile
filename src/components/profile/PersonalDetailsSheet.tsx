@@ -79,32 +79,50 @@ export function PersonalDetailsSheet({
       <Controller
         control={control}
         name="firstName"
-        render={({ field, fieldState }) => (
-          <UIInput
-            isInSheet
-            captionText={t("app.firstName")}
-            value={field.value}
-            onChangeText={field.onChange}
-            onBlur={field.onBlur}
-            errorText={fieldState.error?.message && t(fieldState.error.message)}
-            maxLength={100}
-          />
-        )}
+        render={({ field, fieldState }) => {
+          // names are saved trimmed, so the field shows them that way
+          const handleBlur = () => {
+            field.onChange(field.value.trim());
+            field.onBlur();
+          };
+          return (
+            <UIInput
+              isInSheet
+              captionText={t("app.firstName")}
+              value={field.value}
+              onChangeText={field.onChange}
+              onBlur={handleBlur}
+              errorText={
+                fieldState.error?.message && t(fieldState.error.message)
+              }
+              maxLength={100}
+            />
+          );
+        }}
       />
       <Controller
         control={control}
         name="lastName"
-        render={({ field, fieldState }) => (
-          <UIInput
-            isInSheet
-            captionText={t("app.lastName")}
-            value={field.value}
-            onChangeText={field.onChange}
-            onBlur={field.onBlur}
-            errorText={fieldState.error?.message && t(fieldState.error.message)}
-            maxLength={100}
-          />
-        )}
+        render={({ field, fieldState }) => {
+          // names are saved trimmed, so the field shows them that way
+          const handleBlur = () => {
+            field.onChange(field.value.trim());
+            field.onBlur();
+          };
+          return (
+            <UIInput
+              isInSheet
+              captionText={t("app.lastName")}
+              value={field.value}
+              onChangeText={field.onChange}
+              onBlur={handleBlur}
+              errorText={
+                fieldState.error?.message && t(fieldState.error.message)
+              }
+              maxLength={100}
+            />
+          );
+        }}
       />
       <Controller
         control={control}

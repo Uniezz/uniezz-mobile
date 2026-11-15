@@ -1,203 +1,209 @@
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { BlurView } from "expo-blur";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Redirect, router } from "expo-router";
 import { usePostHog } from "posthog-react-native";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, Keyboard, Pressable, View } from "react-native";
+import {
+  KeyboardAwareScrollView,
+  KeyboardStickyView,
+} from "react-native-keyboard-controller";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
-import type { PersonalDetailsFormValues, UpdateProfileInput } from "@/@types";
+import type { PersonalDetailsFormValues } from "@/@types";
 import { AuthPage } from "@/components/auth";
-import { ProfileHero } from "@/components/profile";
+import { ProgrammeCard, ProgrammesSheet } from "@/components/profile";
 import { useMyProfile, usePickProfileImage, useUpdateMyProfile } from "@/hooks";
 import { personalDetailsSchema } from "@/schemas";
+import { isOnboardingDone, markOnboardingDone } from "@/store";
+import { vs } from "@/theme/scale";
 import {
+  Icon,
+  UIAvatar,
   UIButton,
-  UIChip,
-  UIFadeScrollView,
+  UIGlass,
+  UIIconButton,
   UIInput,
   UIPage,
   UIText,
 } from "@/ui";
 import {
-  apiErrorKey,
-  authorName,
   captureAction,
-  GENDER_LABELS,
-  GENDERS,
-  isProfileComplete,
+  isNewProfile,
   ONBOARDING_STEPS,
   splitInterests,
   toDetailsValues,
 } from "@/utils";
 
+// first sign-in onboarding, as on web: photo, details, programmes; skipping or finishing closes it for good
 export default function OnboardingScreen() {
   const { t } = useTranslation();
   const posthog = usePostHog();
   const { data: profile, isPending, isError } = useMyProfile();
   const { mutateAsync: updateProfile, isPending: isSaving } =
     useUpdateMyProfile();
-  const { pickImage: handleAvatarPress, isPending: isUploadingAvatar } =
+  const { pickImage: handlePhotoPress, isPending: isUploadingPhoto } =
     usePickProfileImage("avatar");
-  const { pickImage: handleBannerPress, isPending: isUploadingBanner } =
-    usePickProfileImage("banner");
+  const programmesRef = useRef<BottomSheetModal>(null);
+  const { bottom: bottomInset } = useSafeAreaInsets();
   const [step, setStep] = useState(0);
+  // decided once, so the 10-minute window can't close onboarding midway
+  const [isShown, setIsShown] = useState<boolean>();
   const {
     control,
-    trigger,
-    getValues,
-    formState: { dirtyFields },
+    handleSubmit,
+    formState: { isDirty },
   } = useForm<PersonalDetailsFormValues>({
     resolver: zodResolver(personalDetailsSchema),
-    // follows the saved profile, keeping edits on the current step
     values: profile && toDetailsValues(profile),
     resetOptions: { keepDirtyValues: true },
-    mode: "onChange",
   });
 
-  if (isPending) {
+  if (profile && isShown === undefined)
+    setIsShown(
+      isNewProfile(profile.createdAt) && !isOnboardingDone(profile.id),
+    );
+
+  if (isPending || (profile && isShown === undefined)) {
     return (
       <UIPage style={styles.loading}>
         <ActivityIndicator color="white" />
       </UIPage>
     );
   }
-  // nothing left to fill, or nothing to fill it with
-  if (isError || isProfileComplete(profile)) return <Redirect href="/feed" />;
+  if (isError || !isShown) return <Redirect href="/feed" />;
 
-  const { title, description, fields } = ONBOARDING_STEPS[step]!;
-  const isLastStep = step === ONBOARDING_STEPS.length - 1;
-  // the API rejects changing a saved gender (gender_immutable)
-  const isGenderLocked = Boolean(profile.gender);
+  const key = ONBOARDING_STEPS[step]!;
+  const isLast = step === ONBOARDING_STEPS.length - 1;
+  const programmes = profile.programmes ?? [];
+  const isBusy = isSaving || isUploadingPhoto;
 
-  const goToNextStep = () =>
-    isLastStep ? router.replace("/feed") : setStep(step + 1);
-
-  const handleNextPress = async () => {
-    if (!fields.some((field) => dirtyFields[field])) return goToNextStep();
-    if (!(await trigger([...fields]))) {
-      captureAction(posthog, "onboarding_form", "validation_failed");
-      return;
-    }
-    const { firstName, lastName, bio, gender, interests, songUrl } =
-      getValues();
-    const update: UpdateProfileInput =
-      step === 1
-        ? {
-            firstName,
-            lastName,
-            bio,
-            ...(isGenderLocked || !gender ? {} : { gender }),
-          }
-        : { interests: splitInterests(interests), songUrl: songUrl.trim() };
-    try {
-      const saved = await updateProfile(update);
-      // a now complete profile redirects to the feed on its own
-      if (!isProfileComplete(saved)) goToNextStep();
-    } catch (error) {
-      toast.error(t(apiErrorKey(error, "apiState.profileSaveError")));
-    }
+  const goToFeed = () => {
+    markOnboardingDone(profile.id);
+    router.replace("/feed");
   };
+  const saveDetails = handleSubmit(
+    async ({ interests, songUrl, gender: _gender, ...values }) => {
+      try {
+        if (isDirty)
+          await updateProfile({
+            ...values,
+            interests: splitInterests(interests),
+            songUrl: songUrl.trim(),
+          });
+        setStep(2);
+      } catch {
+        toast.error(t("apiState.profileSaveError"));
+      }
+    },
+    () => captureAction(posthog, "profile_form", "validation_failed"),
+  );
+  const handleNextPress = () => {
+    if (isLast) return goToFeed();
+    if (step === 1) return saveDetails();
+    setStep(step + 1);
+  };
+  const handleBackPress = () => setStep(step - 1);
+  const handleProgrammesPress = () => programmesRef.current?.present();
 
   return (
-    <AuthPage topText={t(title)} bottomText={t(description)}>
-      <UIText size="sm" color="secondary" style={styles.counter}>
-        {t("onboarding.step", {
-          current: step + 1,
-          total: ONBOARDING_STEPS.length,
-        })}
-      </UIText>
-      <UIFadeScrollView
+    <AuthPage
+      isTopAligned
+      labelText={t("onboarding.step", {
+        current: step + 1,
+        total: ONBOARDING_STEPS.length,
+      })}
+      topText={t(`onboarding.${key}.title`)}
+      bottomText={t(`onboarding.${key}.description`)}
+    >
+      <View onTouchStart={Keyboard.dismiss} style={styles.progress}>
+        {ONBOARDING_STEPS.map((item, index) => (
+          <View key={item} style={styles.segment(index <= step)} />
+        ))}
+      </View>
+      <KeyboardAwareScrollView
+        // keeps the focused field above the footer, not just the keyboard
+        bottomOffset={vs(FOOTER_HEIGHT)}
+        keyboardDismissMode="interactive"
         style={styles.content}
         contentContainerStyle={styles.fields}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {step === 0 ? (
-          <>
-            <ProfileHero
-              avatar={profile.avatarUrl}
-              name={authorName(profile) || t("apiState.student")}
-              universityId={profile.universityId}
-              bannerUrl={profile.bannerUrl}
-              onAvatarPress={handleAvatarPress}
-              avatarLabel={t("app.changePhoto")}
-              isAvatarDisabled={isUploadingAvatar}
-            />
-            <UIButton
-              type="secondary"
-              radius="sm"
-              disabled={isUploadingBanner}
-              onPress={handleBannerPress}
+        {key === "photo" ? (
+          <View style={styles.photoStep}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={t("app.changePhoto")}
+              disabled={isUploadingPhoto}
+              onPress={handlePhotoPress}
+              style={styles.photo}
             >
-              <UIText weight="semibold">{t("app.changeBanner")}</UIText>
-            </UIButton>
-          </>
+              <UIAvatar
+                size="hero"
+                color="borderless"
+                imageSrc={profile.avatarUrl}
+              />
+              <UIGlass radius={22} style={styles.photoBadge}>
+                <Icon name="camera" size={18} />
+              </UIGlass>
+            </Pressable>
+            <UIText size="sm" color="secondary" style={styles.photoHint}>
+              {t("onboarding.photo.hint")}
+            </UIText>
+          </View>
         ) : null}
-        {step === 1 ? (
+        {key === "details" ? (
           <>
             <Controller
               control={control}
               name="firstName"
-              render={({ field, fieldState }) => (
-                <UIInput
-                  captionText={t("app.firstName")}
-                  value={field.value}
-                  onChangeText={field.onChange}
-                  onBlur={field.onBlur}
-                  errorText={
-                    fieldState.error?.message && t(fieldState.error.message)
-                  }
-                  maxLength={100}
-                />
-              )}
+              render={({ field, fieldState }) => {
+                // names are saved trimmed, so the field shows them that way
+                const handleBlur = () => {
+                  field.onChange(field.value.trim());
+                  field.onBlur();
+                };
+                return (
+                  <UIInput
+                    captionText={t("app.firstName")}
+                    value={field.value}
+                    onChangeText={field.onChange}
+                    onBlur={handleBlur}
+                    errorText={
+                      fieldState.error?.message && t(fieldState.error.message)
+                    }
+                    maxLength={100}
+                  />
+                );
+              }}
             />
             <Controller
               control={control}
               name="lastName"
-              render={({ field, fieldState }) => (
-                <UIInput
-                  captionText={t("app.lastName")}
-                  value={field.value}
-                  onChangeText={field.onChange}
-                  onBlur={field.onBlur}
-                  errorText={
-                    fieldState.error?.message && t(fieldState.error.message)
-                  }
-                  maxLength={100}
-                />
-              )}
-            />
-            <Controller
-              control={control}
-              name="gender"
-              render={({ field }) => (
-                <View style={styles.group}>
-                  <UIText size="xs" weight="semibold" color="secondary">
-                    {t("students.gender")}
-                  </UIText>
-                  <View style={styles.chips}>
-                    {GENDERS.map((value) => (
-                      <UIChip
-                        key={value}
-                        label={t(GENDER_LABELS[value])}
-                        selected={field.value === value}
-                        onPress={
-                          isGenderLocked
-                            ? undefined
-                            : () => field.onChange(value)
-                        }
-                      />
-                    ))}
-                  </View>
-                  {isGenderLocked ? null : (
-                    <UIText size="xs" color="secondary">
-                      {t("students.genderHint")}
-                    </UIText>
-                  )}
-                </View>
-              )}
+              render={({ field, fieldState }) => {
+                // names are saved trimmed, so the field shows them that way
+                const handleBlur = () => {
+                  field.onChange(field.value.trim());
+                  field.onBlur();
+                };
+                return (
+                  <UIInput
+                    captionText={t("app.lastName")}
+                    value={field.value}
+                    onChangeText={field.onChange}
+                    onBlur={handleBlur}
+                    errorText={
+                      fieldState.error?.message && t(fieldState.error.message)
+                    }
+                    maxLength={100}
+                  />
+                );
+              }}
             />
             <Controller
               control={control}
@@ -216,10 +222,6 @@ export default function OnboardingScreen() {
                 />
               )}
             />
-          </>
-        ) : null}
-        {step === 2 ? (
-          <>
             <Controller
               control={control}
               name="interests"
@@ -257,59 +259,168 @@ export default function OnboardingScreen() {
             />
           </>
         ) : null}
-      </UIFadeScrollView>
-      <View style={styles.actions}>
-        <UIButton
-          size="rg"
-          radius="sm"
-          disabled={isSaving}
-          onPress={handleNextPress}
-        >
-          <UIText weight="semibold" size="md" color="black">
-            {t(isLastStep ? "onboarding.done" : "onboarding.next")}
-          </UIText>
-        </UIButton>
-        <UIButton
-          type="ghost"
-          radius="sm"
-          disabled={isSaving}
-          onPress={goToNextStep}
-        >
-          <UIText weight="semibold" color="soft">
-            {t("onboarding.skip")}
-          </UIText>
-        </UIButton>
-      </View>
+        {key === "programmes" ? (
+          <>
+            {programmes.map((item) => (
+              <ProgrammeCard key={item.id} programme={item} />
+            ))}
+            <UIButton
+              type="secondary"
+              radius="sm"
+              onPress={handleProgrammesPress}
+              style={styles.programmesButton}
+            >
+              <Icon name={programmes.length ? "pencil" : "plus"} size={18} />
+              <UIText weight="semibold">
+                {t(programmes.length ? "app.edit" : "app.addProgramme")}
+              </UIText>
+            </UIButton>
+          </>
+        ) : null}
+      </KeyboardAwareScrollView>
+      {/* UIPage already pads the home indicator, so the footer lifts by the rest of the keyboard */}
+      <KeyboardStickyView
+        offset={{ opened: bottomInset }}
+        style={styles.footer}
+      >
+        <BlurView intensity={50} tint="dark" style={styles.footerBlur} />
+        <View style={styles.actions}>
+          {step > 0 ? (
+            <UIIconButton
+              accessibilityRole="button"
+              accessibilityLabel={t("app.back")}
+              disabled={isBusy}
+              onPress={handleBackPress}
+            >
+              <Icon name="arrow-left" size={18} />
+            </UIIconButton>
+          ) : null}
+          {isLast ? null : (
+            <UIButton
+              type="ghost"
+              radius="sm"
+              disabled={isBusy}
+              onPress={goToFeed}
+              style={styles.skip}
+            >
+              <UIText weight="semibold" color="secondary">
+                {t("onboarding.skip")}
+              </UIText>
+            </UIButton>
+          )}
+          <UIButton
+            radius="sm"
+            disabled={isBusy}
+            onPress={handleNextPress}
+            style={styles.next}
+          >
+            <UIText weight="semibold" color="black">
+              {t(isLast ? "onboarding.finish" : "onboarding.next")}
+            </UIText>
+            <Icon
+              name={isLast ? "check" : "chevron-right"}
+              size={18}
+              uniProps={(theme) => ({ color: theme.colors.ink })}
+            />
+          </UIButton>
+        </View>
+      </KeyboardStickyView>
+      <ProgrammesSheet
+        ref={programmesRef}
+        programmes={programmes}
+        universityId={profile.universityId}
+      />
     </AuthPage>
   );
 }
 
-const styles = StyleSheet.create((theme) => ({
+// the footer button and its padding
+const FOOTER_HEIGHT = 80;
+const PHOTO_GLOW_BLUR = 48;
+const PHOTO_GLOW_SPREAD = 8;
+
+const styles = StyleSheet.create((theme, rt) => ({
   loading: {
     alignItems: "center",
     justifyContent: "center",
   },
-  counter: {
-    paddingHorizontal: theme.s(4),
-    paddingBottom: theme.vs(12),
+  progress: {
+    flexDirection: "row",
+    gap: theme.s(6),
+    paddingBottom: theme.vs(20),
   },
+  segment: (isReached: boolean) => ({
+    flex: 1,
+    height: theme.vs(4),
+    borderRadius: theme.vs(999),
+    backgroundColor: isReached ? theme.colors.white : theme.colors.white10,
+  }),
+  // fills the page, so the actions stay at the bottom on every step
   content: {
-    flexGrow: 0,
-    flexShrink: 1,
+    flex: 1,
   },
+  // the footer floats over the end of the content
   fields: {
     gap: theme.vs(16),
-    paddingBottom: theme.vs(16),
+    paddingBottom: theme.vs(FOOTER_HEIGHT + 16),
   },
-  group: {
-    gap: theme.vs(8),
+  // the scroll view clips the glow, so the step leaves room for all of it (blur + spread)
+  photoStep: {
+    alignItems: "center",
+    gap: theme.vs(20),
+    paddingTop: theme.vs(PHOTO_GLOW_BLUR + PHOTO_GLOW_SPREAD),
+    paddingBottom: theme.vs(24),
   },
-  chips: {
+  // the blue glow around the photo, as on web
+  photo: {
+    borderRadius: theme.vs(999),
+    boxShadow: `0 0 ${theme.vs(PHOTO_GLOW_BLUR)}px ${theme.vs(PHOTO_GLOW_SPREAD)}px ${theme.colors.blue20}`,
+  },
+  photoBadge: {
+    position: "absolute",
+    right: theme.vs(4),
+    bottom: theme.vs(4),
+    width: theme.vs(44),
+    height: theme.vs(44),
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  photoHint: {
+    maxWidth: theme.s(240),
+    textAlign: "center",
+  },
+  programmesButton: {
     flexDirection: "row",
     gap: theme.s(8),
   },
+  // floats over the content edge to edge, and on under the home indicator so nothing shows below it
+  footer: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: -rt.insets.bottom,
+    paddingTop: theme.vs(12),
+    paddingHorizontal: theme.s(20),
+    paddingBottom: theme.vs(8) + rt.insets.bottom,
+    overflow: "hidden",
+  },
+  footerBlur: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: theme.colors.ink40,
+  },
   actions: {
-    gap: theme.vs(4),
-    paddingBottom: theme.vs(8),
+    flexDirection: "row",
+    alignItems: "center",
+    gap: theme.s(8),
+  },
+  skip: {
+    flex: 1,
+    width: "auto",
+  },
+  next: {
+    flex: 1,
+    width: "auto",
+    flexDirection: "row",
+    gap: theme.s(6),
   },
 }));

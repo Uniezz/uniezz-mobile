@@ -2,7 +2,7 @@ import { AuthWordmark } from "./AuthWordmark";
 import { LanguagePicker } from "@/components/LanguagePicker";
 import { UIPage, UIText } from "@/ui";
 import { ReactNode } from "react";
-import { View } from "react-native";
+import { Keyboard, View } from "react-native";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { StyleSheet } from "react-native-unistyles";
@@ -13,18 +13,42 @@ type AuthPageProps = {
   children: ReactNode;
   topText: string;
   bottomText: string;
+  /** small caps line above the headline, e.g. onboarding's step */
+  labelText?: string;
+  /** headline under the top bar and content filling the page, which then handles the keyboard itself (e.g. onboarding) */
+  isTopAligned?: boolean;
 };
 
-export const AuthPage = ({ children, topText, bottomText }: AuthPageProps) => {
+export const AuthPage = ({
+  children,
+  topText,
+  bottomText,
+  labelText,
+  isTopAligned,
+}: AuthPageProps) => {
   return (
     <UIPage style={styles.page}>
       <View style={styles.topBar}>
         <AuthWordmark />
         <LanguagePicker />
       </View>
-      <KeyboardAvoidingView behavior="padding" style={styles.body}>
-        <View style={styles.grow} />
-        <Animated.View entering={headlineEntering} style={styles.head}>
+      <KeyboardAvoidingView
+        behavior="padding"
+        enabled={!isTopAligned}
+        style={styles.body}
+      >
+        <View style={isTopAligned ? styles.top : styles.grow} />
+        {/* a tap on the headline closes the keyboard, as it sits outside any scroll view */}
+        <Animated.View
+          entering={headlineEntering}
+          onTouchStart={Keyboard.dismiss}
+          style={styles.head}
+        >
+          {labelText ? (
+            <UIText size="xs" weight="semibold" style={styles.label}>
+              {labelText}
+            </UIText>
+          ) : null}
           <UIText weight="bold" size="xxl">
             {topText}
           </UIText>
@@ -52,6 +76,9 @@ const styles = StyleSheet.create((theme, rt) => ({
     alignItems: "center",
     justifyContent: "space-between",
   },
+  top: {
+    height: theme.vs(24),
+  },
   grow: {
     flex: 1,
     minHeight: theme.vs(24),
@@ -60,6 +87,11 @@ const styles = StyleSheet.create((theme, rt) => ({
     gap: theme.vs(8),
     paddingHorizontal: theme.s(4),
     paddingBottom: theme.vs(20),
+  },
+  label: {
+    color: theme.colors.sky,
+    letterSpacing: 1.5,
+    textTransform: "uppercase",
   },
   sub: {
     lineHeight: theme.vs(15 * 1.45),

@@ -66,13 +66,23 @@ export const ProfileHero = ({
               disabled={isAvatarDisabled}
               onPress={onAvatarPress}
             >
-              <UIAvatar size="xxl" imageSrc={avatar} style={styles.avatar} />
+              <UIAvatar
+                size="xxl"
+                color="borderless"
+                imageSrc={avatar}
+                style={styles.avatar}
+              />
               <UIGlass radius={16} style={styles.badge}>
                 <Icon name="camera" size={15} />
               </UIGlass>
             </Pressable>
           ) : (
-            <UIAvatar size="xxl" imageSrc={avatar} style={styles.avatar} />
+            <UIAvatar
+              size="xxl"
+              color="borderless"
+              imageSrc={avatar}
+              style={styles.avatar}
+            />
           )}
           <View style={styles.text}>
             <UIText size="xxl" weight="semibold" style={styles.name}>
