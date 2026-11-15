@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { Ref } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import type { FaqProposalFormValues } from "@/@types/faq";
 import { useCreateFaqProposal } from "@/hooks/useFaq";
@@ -72,6 +73,9 @@ export const FaqProposalSheet = ({ ref }: FaqProposalSheetProps) => {
             errorText={fieldState.error?.message && t(fieldState.error.message)}
             maxLength={200}
             multiline
+            scrollEnabled
+            inputContainerStyle={styles.question}
+            style={styles.input}
           />
         )}
       />
@@ -88,9 +92,19 @@ export const FaqProposalSheet = ({ ref }: FaqProposalSheetProps) => {
             errorText={fieldState.error?.message && t(fieldState.error.message)}
             maxLength={2000}
             multiline
+            scrollEnabled
+            inputContainerStyle={styles.answer}
+            style={styles.input}
           />
         )}
       />
     </UIFormSheet>
   );
 };
+
+// fixed heights, as the connections intent field: long text scrolls inside instead of growing the sheet
+const styles = StyleSheet.create((theme) => ({
+  question: { height: theme.vs(96) },
+  answer: { height: theme.vs(150) },
+  input: { alignSelf: "stretch" },
+}));
