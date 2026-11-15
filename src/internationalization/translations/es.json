@@ -202,8 +202,7 @@
     "proposalDescription": "Escribe una pregunta y su respuesta. Una persona moderadora las revisará antes de publicarlas.",
     "proposalFailed": "No se pudo enviar la pregunta. Inténtalo de nuevo.",
     "proposalInvalid": "Revisa la pregunta y la respuesta e inténtalo de nuevo.",
-    "questionError": "La pregunta debe tener entre 3 y 200 caracteres.",
-    "subtitle": "Respuestas de estudiantes de Lublin"
+    "questionError": "La pregunta debe tener entre 3 y 200 caracteres."
   },
   "landing": {
     "navigation": "Secciones de página",

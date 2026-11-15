@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { BirthDateSheet } from "@/components/meet";
 import { useConnectionPreferences } from "@/hooks";
 import type { ConnectionPreferences } from "@/@types";
+import { tabsHostNativeProps } from "@/utils";
 import { router } from "expo-router";
 
 export default function TabLayout() {
@@ -36,7 +37,10 @@ export default function TabLayout() {
 
   return (
     <>
-      <NativeTabs backBehavior="history">
+      <NativeTabs
+        backBehavior="history"
+        unstable_nativeProps={tabsHostNativeProps}
+      >
         <NativeTabs.Trigger name="feed">
           <NativeTabs.Trigger.Icon
             sf={{ default: "newspaper", selected: "newspaper.fill" }}

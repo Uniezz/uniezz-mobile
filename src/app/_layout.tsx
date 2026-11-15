@@ -6,15 +6,21 @@ import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { QueryProvider, SessionProvider, useSession } from "@/contexts";
 import { Stack, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
+import * as SystemUI from "expo-system-ui";
 import { useEffect } from "react";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { StyleSheet } from "react-native-unistyles";
 import { PostHogProvider, useFeatureFlag } from "posthog-react-native";
 import { useScreenTracking } from "@/hooks";
+import { darkTheme } from "@/theme";
+import { stackHostNativeProps, stackScreenOptions } from "@/utils";
 
 // must run before the first render: iOS hides the splash as soon as any RN content appears,
 // unless prevent was already called. The splash route hides it once its logo is laid out.
 SplashScreen.preventAutoHideAsync();
+
+// the window behind the navigator is white by default and shows through during push transitions
+SystemUI.setBackgroundColorAsync(darkTheme.colors.ink);
 
 function RootNavigator(): React.JSX.Element {
   const { session } = useSession();
@@ -29,7 +35,10 @@ function RootNavigator(): React.JSX.Element {
   }, [segments.length]);
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <Stack
+      screenOptions={stackScreenOptions}
+      unstable_nativeProps={stackHostNativeProps}
+    >
       <Stack.Screen name="index" />
       <Stack.Screen name="finish" />
       <Stack.Screen name="invite/[code]" options={{ animation: "fade" }} />

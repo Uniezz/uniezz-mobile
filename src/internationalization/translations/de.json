@@ -202,8 +202,7 @@
     "proposalDescription": "Schreibe eine Frage und die dazugehörige Antwort. Eine Moderation prüft beides vor der Veröffentlichung.",
     "proposalFailed": "Deine Frage konnte nicht gesendet werden. Bitte versuche es erneut.",
     "proposalInvalid": "Überprüfe die Frage und die Antwort und versuche es erneut.",
-    "questionError": "Die Frage muss zwischen 3 und 200 Zeichen lang sein.",
-    "subtitle": "Antworten von Studierenden in Lublin"
+    "questionError": "Die Frage muss zwischen 3 und 200 Zeichen lang sein."
   },
   "landing": {
     "navigation": "Seitenabschnitte",

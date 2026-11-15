@@ -120,7 +120,6 @@ export default function FaqScreen() {
     <UIPage>
       <UICollapsingHeader
         title={t("tabs.faq")}
-        subtitle={t("faq.subtitle")}
         isCompact={isHeaderCompact}
         actions={headerActions}
         onLayout={handleHeaderLayout}
