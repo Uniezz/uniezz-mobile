@@ -3,7 +3,7 @@ import { ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import type { DiscoverCard as DiscoverCardData } from "@/@types/connections";
 import { InterestChips } from "@/components/profile";
-import { Icon, UIIconButton, UIText } from "@/ui";
+import { Icon, UIFadeScrollView, UIIconButton, UIText } from "@/ui";
 import { STUDY_LEVELS, UNIVERSITY_SHORT_NAMES } from "@/utils";
 
 type DiscoverCardProps = {
@@ -44,7 +44,7 @@ export function DiscoverCard({ card, onReportPress }: DiscoverCardProps) {
             <UIText size="xs" weight="semibold" color="link">
               {t("connections.lookingFor")}
             </UIText>
-            <UIText size="xl" weight="bold">
+            <UIText size="lg" weight="bold">
               {card.intent}
             </UIText>
           </View>
@@ -59,7 +59,15 @@ export function DiscoverCard({ card, onReportPress }: DiscoverCardProps) {
             <UIText size="xs" weight="semibold" color="link">
               {t("connections.inCommon")}
             </UIText>
-            <InterestChips interests={card.sharedInterests} />
+            <UIFadeScrollView
+              horizontal
+              fadeColor="surface"
+              showsHorizontalScrollIndicator={false}
+              style={styles.chipsScroll}
+              contentContainerStyle={styles.chips}
+            >
+              <InterestChips interests={card.sharedInterests} />
+            </UIFadeScrollView>
           </View>
         ) : null}
         {card.interests?.length ? (
@@ -67,7 +75,15 @@ export function DiscoverCard({ card, onReportPress }: DiscoverCardProps) {
             <UIText size="xs" weight="semibold" color="secondary">
               {t("connections.interests")}
             </UIText>
-            <InterestChips interests={card.interests} />
+            <UIFadeScrollView
+              horizontal
+              fadeColor="surface"
+              showsHorizontalScrollIndicator={false}
+              style={styles.chipsScroll}
+              contentContainerStyle={styles.chips}
+            >
+              <InterestChips interests={card.interests} />
+            </UIFadeScrollView>
           </View>
         ) : null}
       </ScrollView>
@@ -94,5 +110,8 @@ const styles = StyleSheet.create((theme) => ({
   facts: { flex: 1 },
   content: { gap: theme.vs(16) },
   section: { gap: theme.vs(6) },
+  // one row that scrolls sideways, edge to edge in the card so chips slide under the fades
+  chipsScroll: { marginHorizontal: -theme.s(14) },
+  chips: { paddingHorizontal: theme.s(14) },
   bio: { lineHeight: theme.vs(24) },
 }));
