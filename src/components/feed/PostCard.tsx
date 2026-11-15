@@ -12,11 +12,12 @@ import { SaveButton } from "./SaveButton";
 
 type PostCardProps = {
   post: ApiFeedPost;
+  isAuthorDisabled?: boolean;
 };
 
 // the full post on its own screen: author, title, body, media, tags, likes and audience
 // (the comment count is in the "Comments" heading below it)
-export const PostCard = ({ post }: PostCardProps) => {
+export const PostCard = ({ post, isAuthorDisabled }: PostCardProps) => {
   const { t, i18n } = useTranslation();
   const locale = i18n.resolvedLanguage ?? "en";
   const createdAt = postDate(
@@ -27,7 +28,12 @@ export const PostCard = ({ post }: PostCardProps) => {
 
   return (
     <View style={styles.card}>
-      <AuthorRow author={post.author} meta={createdAt} style={styles.inset} />
+      <AuthorRow
+        author={post.author}
+        meta={createdAt}
+        disabled={isAuthorDisabled}
+        style={styles.inset}
+      />
       <View style={styles.text}>
         <UIText weight="semibold" style={[styles.title, styles.inset]}>
           {post.title}

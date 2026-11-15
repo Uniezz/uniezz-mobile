@@ -39,6 +39,8 @@ type PostPageProps = {
   onReply: (comment: FeedComment) => void;
   onEdit: (comment: FeedComment) => void;
   onReport: (comment: FeedComment) => void;
+  /** opened from the author's profile, which is the screen behind */
+  isAuthorDisabled?: boolean;
 };
 
 // one post in the post pager: its card, then its comments
@@ -51,6 +53,7 @@ export const PostPage = ({
   onReply,
   onEdit,
   onReport,
+  isAuthorDisabled,
 }: PostPageProps) => {
   const { t } = useTranslation();
   const { data: post, isPending, isError, refetch } = useFeedPost(id);
@@ -92,7 +95,7 @@ export const PostPage = ({
   ) : (
     <View style={styles.listHeader}>
       <View onLayout={handleCardLayout}>
-        <PostCard post={post} />
+        <PostCard post={post} isAuthorDisabled={isAuthorDisabled} />
       </View>
       <View style={styles.commentsHeading}>
         <UIText size="title3" weight="semibold">

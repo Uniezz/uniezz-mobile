@@ -266,6 +266,7 @@ export default function PostScreen() {
                   onReply={handleReply}
                   onEdit={handleEdit}
                   onReport={handleCommentReport}
+                  isAuthorDisabled={Boolean(filters.authorId)}
                 />
               )}
             />

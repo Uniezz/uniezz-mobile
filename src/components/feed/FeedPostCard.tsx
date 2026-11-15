@@ -39,6 +39,8 @@ export const FeedPostCard = ({ post, filters }: FeedPostCardProps) => {
         <AuthorRow
           author={post.author}
           meta={createdAt}
+          // an author-scoped list sits on that author's profile
+          disabled={Boolean(filters?.authorId)}
           style={styles.author}
         />
         <View style={styles.body}>

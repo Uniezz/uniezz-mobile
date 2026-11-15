@@ -11,11 +11,18 @@ type AuthorRowProps = {
   author: Author;
   /** shown after the university, e.g. the post date */
   meta?: string;
+  /** e.g. inside the author's own posts, where their profile is the screen behind */
+  disabled?: boolean;
   style?: StyleProp<ViewStyle>;
 };
 
 // avatar, name, university and meta; the whole row opens the author's profile
-export const AuthorRow = ({ author, meta, style }: AuthorRowProps) => {
+export const AuthorRow = ({
+  author,
+  meta,
+  disabled,
+  style,
+}: AuthorRowProps) => {
   const { t } = useTranslation();
   const { data: me } = useMyProfile();
   const name = authorName(author) || t("apiState.student");
@@ -26,6 +33,7 @@ export const AuthorRow = ({ author, meta, style }: AuthorRowProps) => {
       accessibilityRole="link"
       accessibilityLabel={name}
       onPress={handlePress}
+      disabled={disabled}
       hitSlop={6}
       style={[styles.row, style]}
     >
