@@ -17,6 +17,7 @@ export const FeaturedPosts = () => {
   return (
     <UIFadeScrollView
       horizontal
+      nestedScrollEnabled
       showsHorizontalScrollIndicator={false}
       style={styles.bleed}
       contentContainerStyle={styles.row}
