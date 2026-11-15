@@ -67,13 +67,9 @@ export const ProfileHero = ({
               onPress={onAvatarPress}
             >
               <UIAvatar size="xxl" imageSrc={avatar} style={styles.avatar} />
-              <View style={styles.badge}>
-                <Icon
-                  name="camera"
-                  size={15}
-                  uniProps={(theme) => ({ color: theme.colors.ink })}
-                />
-              </View>
+              <UIGlass radius={16} style={styles.badge}>
+                <Icon name="camera" size={15} />
+              </UIGlass>
             </Pressable>
           ) : (
             <UIAvatar size="xxl" imageSrc={avatar} style={styles.avatar} />
@@ -135,8 +131,6 @@ const styles = StyleSheet.create((theme) => ({
     backgroundColor: theme.colors.sky5,
   },
   avatar: {
-    borderWidth: 1,
-    borderColor: theme.colors.sky15,
     overflow: "hidden",
   },
   badge: {
@@ -147,10 +141,6 @@ const styles = StyleSheet.create((theme) => ({
     height: theme.vs(32),
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: theme.vs(16),
-    borderWidth: 2,
-    borderColor: theme.colors.ink,
-    backgroundColor: theme.colors.white,
   },
   text: {
     alignItems: "center",

@@ -3,9 +3,11 @@ import {
   BottomSheetFooterProps,
   BottomSheetModal,
   BottomSheetScrollView,
+  useBottomSheetModal,
 } from "@gorhom/bottom-sheet";
 import type { ReactNode, Ref } from "react";
-import { View } from "react-native";
+import { useTranslation } from "react-i18next";
+import { Alert, View } from "react-native";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
 import { UIBottomSheet } from "./UIBottomSheet";
 import { UIButton } from "./UIButton";
@@ -31,8 +33,8 @@ type UIFormSheetProps = {
   backLabel?: string;
   /** e.g. reset the form, so a closed sheet drops unsaved edits */
   onDismiss?: () => void;
-  /** e.g. confirm discarding a dirty form; while set the sheet does not close on its own */
-  onDismissAttempt?: () => void;
+  /** unsaved edits: swiping is off, and a backdrop tap or the back chevron asks before discarding them */
+  isDirty?: boolean;
   children: ReactNode;
 };
 
@@ -48,9 +50,29 @@ export const UIFormSheet = ({
   onBackPress,
   backLabel,
   onDismiss,
-  onDismissAttempt,
+  isDirty,
   children,
 }: UIFormSheetProps) => {
+  const { t } = useTranslation();
+  const { dismiss } = useBottomSheetModal();
+  // leaving with unsaved edits, by closing or going back, asks first
+  const confirmDiscard = (onDiscard: () => void) =>
+    Alert.alert(
+      t("app.unsavedChangesTitle"),
+      t("app.discardChangesDescription"),
+      [
+        { text: t("postComposer.cancel"), style: "cancel" },
+        {
+          text: t("app.discardChanges"),
+          style: "destructive",
+          onPress: onDiscard,
+        },
+      ],
+    );
+  const handleDismissAttempt = () => confirmDiscard(dismiss);
+  const handleBackPress =
+    onBackPress &&
+    (() => (isDirty ? confirmDiscard(onBackPress) : onBackPress()));
   const renderFooter = (props: BottomSheetFooterProps) => (
     <ThemedFooter {...props}>
       <View style={styles.footer}>
@@ -84,14 +106,14 @@ export const UIFormSheet = ({
     <UIBottomSheet
       ref={ref}
       title={title}
-      onBackPress={onBackPress}
+      onBackPress={handleBackPress}
       backLabel={backLabel}
       keyboardBehavior="interactive"
       keyboardBlurBehavior="restore"
       android_keyboardInputMode="adjustResize"
       footerComponent={renderFooter}
       onDismiss={onDismiss}
-      onDismissAttempt={onDismissAttempt}
+      onDismissAttempt={isDirty ? handleDismissAttempt : undefined}
     >
       <BottomSheetScrollView
         enableFooterMarginAdjustment

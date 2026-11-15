@@ -150,20 +150,6 @@ export const CourseFormSheet = ({ ref, course }: CourseFormSheetProps) => {
   const handleSubmitPress = () => onSubmit();
   // a closed sheet starts over next time
   const handleDismiss = () => reset();
-  // a stray swipe or tap does not drop edits: closing asks first
-  const handleDismissAttempt = () =>
-    Alert.alert(
-      t("app.unsavedChangesTitle"),
-      t("app.discardChangesDescription"),
-      [
-        { text: t("postComposer.cancel"), style: "cancel" },
-        {
-          text: t("app.discardChanges"),
-          style: "destructive",
-          onPress: dismiss,
-        },
-      ],
-    );
 
   // only the edit sheet deletes, and it lives on the course page, which closes with it
   const confirmDelete = async () => {
@@ -197,7 +183,7 @@ export const CourseFormSheet = ({ ref, course }: CourseFormSheetProps) => {
       destructiveLabel={course ? t("app.remove") : undefined}
       onDestructivePress={handleDeletePress}
       onDismiss={handleDismiss}
-      onDismissAttempt={isDirty && !isSaving ? handleDismissAttempt : undefined}
+      isDirty={isDirty && !isSaving}
     >
       {course ? null : (
         <Controller

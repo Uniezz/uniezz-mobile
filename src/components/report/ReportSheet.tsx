@@ -32,7 +32,12 @@ export const ReportSheet = ({
   const { t } = useTranslation();
   const { mutateAsync: report, isPending } = useCreateReport();
   const { dismiss } = useBottomSheetModal();
-  const { control, handleSubmit, reset } = useForm<ReportFormValues>({
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { isDirty },
+  } = useForm<ReportFormValues>({
     resolver: zodResolver(reportSchema),
     defaultValues: { reason: "spam", details: "" },
   });
@@ -70,6 +75,7 @@ export const ReportSheet = ({
       isActionDisabled={isPending}
       onActionPress={handleSubmitPress}
       onDismiss={handleDismiss}
+      isDirty={isDirty && !isPending}
     >
       <UIText size="sm" color="secondary">
         {t("report.description")}

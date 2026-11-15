@@ -23,7 +23,12 @@ export const FaqProposalSheet = ({ ref }: FaqProposalSheetProps) => {
   const { t } = useTranslation();
   const { mutateAsync: propose, isPending } = useCreateFaqProposal();
   const { dismiss } = useBottomSheetModal();
-  const { control, handleSubmit, reset } = useForm<FaqProposalFormValues>({
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { isDirty },
+  } = useForm<FaqProposalFormValues>({
     resolver: zodResolver(faqProposalSchema),
     defaultValues: { question: "", answer: "" },
   });
@@ -55,6 +60,7 @@ export const FaqProposalSheet = ({ ref }: FaqProposalSheetProps) => {
       isActionDisabled={isPending}
       onActionPress={handleSubmitPress}
       onDismiss={handleDismiss}
+      isDirty={isDirty && !isPending}
     >
       <UIText size="sm" color="secondary">
         {t("faq.proposalDescription")}

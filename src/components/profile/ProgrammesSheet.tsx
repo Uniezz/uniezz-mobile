@@ -264,6 +264,7 @@ export const ProgrammesSheet = ({
       onBackPress={isFormShown ? handleBackPress : undefined}
       backLabel={t("app.back")}
       onDismiss={handleDismiss}
+      isDirty={isFormShown && isDirty && !isReplacing && !isAdding}
     >
       {isFormShown ? form : list}
     </UIFormSheet>

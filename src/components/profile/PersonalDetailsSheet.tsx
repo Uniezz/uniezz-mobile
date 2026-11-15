@@ -74,6 +74,7 @@ export function PersonalDetailsSheet({
       isActionDisabled={!isDirty || !isValid || isPending}
       onActionPress={handleSavePress}
       onDismiss={handleDismiss}
+      isDirty={isDirty && !isPending}
     >
       <Controller
         control={control}
