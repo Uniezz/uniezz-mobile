@@ -30,7 +30,7 @@ afterEach(() => {
   setApiAccessToken(null);
 });
 
-test("adds the access token to API requests but not to auth endpoints", async () => {
+test("adds the access token to API requests and invites, but not to sign-in endpoints", async () => {
   const headers: (string | null)[] = [];
   handleFetch = async (input) => {
     const request = input as Request;
@@ -43,8 +43,10 @@ test("adds the access token to API requests but not to auth endpoints", async ()
   await api.POST("/auth/otp/request", {
     body: { email: "a@b.c", university: "kul" },
   });
+  // invite endpoints sit under /auth/ but belong to the signed-in student
+  await api.POST("/auth/invites/redeem", { body: { code: "A1B2C3D" } });
 
-  assert.deepEqual(headers, ["Bearer secret", null]);
+  assert.deepEqual(headers, ["Bearer secret", null, "Bearer secret"]);
 });
 
 test("turns an HTTP error into ApiRequestError with status, operation, and backend code", async () => {

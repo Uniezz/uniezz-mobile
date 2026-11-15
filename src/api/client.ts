@@ -50,9 +50,11 @@ export function setApiAccessToken(token: string | null): void {
 
 const apiMiddleware: Middleware = {
   onRequest({ request, schemaPath }) {
+    // sign-in under /auth/ is public; the invite endpoints are the signed-in student's, as on the backend
     if (
       !accessToken ||
-      (schemaPath.startsWith("/auth/") && schemaPath !== "/auth/invites/me")
+      (schemaPath.startsWith("/auth/") &&
+        !schemaPath.startsWith("/auth/invites/"))
     ) {
       return;
     }
