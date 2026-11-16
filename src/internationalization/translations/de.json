@@ -699,7 +699,6 @@
       "description": "Füg deinen Studiengang hinzu, damit dich Leute aus deiner Fakultät finden.",
       "title": "Was studierst du?"
     },
-    "skip": "Überspringen",
-    "step": "Schritt {{current}} von {{total}}"
+    "skip": "Überspringen"
   }
 }

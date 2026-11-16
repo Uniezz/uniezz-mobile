@@ -705,7 +705,6 @@
       "description": "Dodaj kierunek, żeby osoby z Twojego wydziału mogły Cię znaleźć.",
       "title": "Co studiujesz?"
     },
-    "skip": "Pomiń",
-    "step": "Krok {{current}} z {{total}}"
+    "skip": "Pomiń"
   }
 }

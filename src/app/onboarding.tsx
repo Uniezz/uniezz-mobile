@@ -81,6 +81,8 @@ export default function OnboardingScreen() {
   const isLast = step === ONBOARDING_STEPS.length - 1;
   const programmes = profile.programmes ?? [];
   const isBusy = isSaving || isUploadingPhoto;
+  // skip doesn't save the form, so it waits for a saved name
+  const canSkip = Boolean(profile.firstName && profile.lastName);
 
   const goToFeed = () => {
     markOnboardingDone(profile.id);
@@ -113,10 +115,6 @@ export default function OnboardingScreen() {
   return (
     <AuthPage
       isTopAligned
-      labelText={t("onboarding.step", {
-        current: step + 1,
-        total: ONBOARDING_STEPS.length,
-      })}
       topText={t(`onboarding.${key}.title`)}
       bottomText={t(`onboarding.${key}.description`)}
     >
@@ -149,7 +147,11 @@ export default function OnboardingScreen() {
                 imageSrc={profile.avatarUrl}
               />
               <UIGlass radius={22} style={styles.photoBadge}>
-                <Icon name="camera" size={18} />
+                {isUploadingPhoto ? (
+                  <ActivityIndicator color="white" />
+                ) : (
+                  <Icon name="camera" size={18} />
+                )}
               </UIGlass>
             </Pressable>
             <UIText size="sm" color="secondary" style={styles.photoHint}>
@@ -295,7 +297,7 @@ export default function OnboardingScreen() {
               <Icon name="arrow-left" size={18} />
             </UIIconButton>
           ) : null}
-          {isLast ? null : (
+          {isLast || !canSkip ? null : (
             <UIButton
               type="ghost"
               radius="sm"

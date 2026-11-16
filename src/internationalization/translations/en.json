@@ -699,7 +699,6 @@
       "description": "Add your programme so people from your faculty can find you.",
       "title": "What do you study?"
     },
-    "skip": "Skip",
-    "step": "Step {{current}} of {{total}}"
+    "skip": "Skip"
   }
 }

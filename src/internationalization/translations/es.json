@@ -699,7 +699,6 @@
       "description": "Añade tu carrera para que te encuentre la gente de tu facultad.",
       "title": "¿Qué estudias?"
     },
-    "skip": "Omitir",
-    "step": "Paso {{current}} de {{total}}"
+    "skip": "Omitir"
   }
 }

@@ -24,10 +24,12 @@ import {
   UIFadeScrollView,
   UIFormSheet,
   UIInput,
+  UISegmented,
   UIText,
   UIUniversityLogo,
 } from "@/ui";
 import {
+  STUDY_YEARS,
   STUDY_LEVELS,
   STUDY_MODES,
   STUDY_STATUSES,
@@ -160,14 +162,16 @@ export const ProgrammesSheet = ({
         control={control}
         name="yearOfStudy"
         render={({ field }) => (
-          <UIInput
-            isInSheet
-            captionText={t("app.yearOfStudy")}
-            keyboardType="number-pad"
-            maxLength={2}
-            value={field.value ? String(field.value) : ""}
-            onChangeText={(text) => field.onChange(text ? Number(text) : null)}
-          />
+          <View style={styles.group}>
+            <UIText size="xs" weight="semibold" color="secondary">
+              {t("app.yearOfStudy")}
+            </UIText>
+            <UISegmented
+              items={STUDY_YEARS}
+              selectedItemIndex={(field.value ?? 0) - 1}
+              onPress={(index) => field.onChange(index + 1)}
+            />
+          </View>
         )}
       />
       {(

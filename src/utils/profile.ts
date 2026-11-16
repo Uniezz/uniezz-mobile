@@ -8,6 +8,9 @@ import type {
 } from "@/@types";
 import { vs } from "@/theme/scale";
 
+// labels for UISegmented; index + 1 is the year
+export const STUDY_YEARS = ["1", "2", "3", "4", "5", "6"];
+
 export const STUDY_LEVELS = [
   ["first_cycle", "app.studyLevelFirstCycle"],
   ["second_cycle", "app.studyLevelSecondCycle"],
