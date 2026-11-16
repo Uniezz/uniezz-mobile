@@ -34,6 +34,7 @@ export function UISearch({ onSubmit, submitLabel, ...props }: UISearchProps) {
       />
       {onSubmit ? (
         <Pressable
+          hitSlop={8}
           accessibilityRole="button"
           accessibilityLabel={submitLabel}
           onPress={onSubmit}

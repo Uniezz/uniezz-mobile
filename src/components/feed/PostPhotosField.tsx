@@ -4,6 +4,7 @@ import {
   isImageType,
   MAX_IMAGE_MB,
   MAX_POST_PHOTOS,
+  previewImages,
 } from "@/utils";
 import { Image } from "expo-image";
 import { launchImageLibraryAsync } from "expo-image-picker";
@@ -62,6 +63,12 @@ export const PostPhotosField = ({ value, onChange }: PostPhotosFieldProps) => {
     onChange(value.filter((photo) => photo.uri !== uri));
   };
 
+  const handlePhotoPress = (index: number) =>
+    previewImages(
+      value.map((photo) => photo.uri),
+      index,
+    );
+
   return (
     <View style={styles.field}>
       <View style={styles.top}>
@@ -88,8 +95,14 @@ export const PostPhotosField = ({ value, onChange }: PostPhotosFieldProps) => {
             <Icon name="plus" size={20} />
           </Pressable>
         ) : null}
-        {value.map((photo) => (
-          <View key={photo.uri} style={styles.thumb}>
+        {value.map((photo, index) => (
+          <Pressable
+            key={photo.uri}
+            accessibilityRole="imagebutton"
+            accessibilityLabel={t("app.openImage")}
+            onPress={() => handlePhotoPress(index)}
+            style={styles.thumb}
+          >
             <Image
               source={{ uri: photo.uri }}
               contentFit="cover"
@@ -105,7 +118,7 @@ export const PostPhotosField = ({ value, onChange }: PostPhotosFieldProps) => {
             >
               <Icon name="x" size={13} />
             </Pressable>
-          </View>
+          </Pressable>
         ))}
       </UIFadeScrollView>
       <UIText size="xs" color="secondary" style={styles.hint}>

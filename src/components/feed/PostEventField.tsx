@@ -39,6 +39,7 @@ export const PostEventField = ({
   const renderPicker = (mode: PickerMode) =>
     Platform.OS === "android" ? (
       <Pressable
+        hitSlop={8}
         accessibilityRole="button"
         onPress={() => openAndroidPicker(mode)}
       >

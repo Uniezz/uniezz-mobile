@@ -69,6 +69,7 @@ export const CommentItem = ({
     <View style={styles.item(isTopLevel)}>
       <View style={styles.comment}>
         <Pressable
+          hitSlop={6}
           accessibilityRole="link"
           accessibilityLabel={name}
           disabled={!comment.author}

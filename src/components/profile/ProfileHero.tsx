@@ -113,6 +113,7 @@ export const ProfileHero = ({
         <UniversityCard universityId={universityId} />
         {songUrl ? (
           <Pressable
+            hitSlop={6}
             accessibilityRole="link"
             accessibilityLabel={t("students.song")}
             onPress={handleSongPress}

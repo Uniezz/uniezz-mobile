@@ -212,6 +212,7 @@ export const ProgrammesSheet = ({
       ))}
       {programme && !programme.isPrimary ? (
         <Pressable
+          hitSlop={8}
           accessibilityRole="button"
           onPress={handleMakePrimaryPress}
           style={styles.makePrimary}

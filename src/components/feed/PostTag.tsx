@@ -25,6 +25,7 @@ export const PostTag = ({ tag, onRemove, removeLabel }: PostTagProps) => {
 
   return (
     <Pressable
+      hitSlop={6}
       accessibilityRole="button"
       accessibilityLabel={removeLabel}
       onPress={onRemove}
