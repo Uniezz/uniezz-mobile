@@ -40,7 +40,8 @@ export const toCourseValues = (
   description: course?.description ?? "",
   difficulty: course?.difficulty ?? 3,
   faculty: course?.faculty ?? primaryProgramme(profile)?.faculty ?? "",
-  subject: course?.subject ?? "",
+  // the course belongs to a programme; uploads need it to match the primary one
+  subject: course?.subject ?? primaryProgramme(profile)?.programme ?? "",
   semester: course?.semester ?? 1,
   materials: [],
   materialType: "exam",

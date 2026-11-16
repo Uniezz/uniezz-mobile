@@ -378,7 +378,7 @@ export const CourseFormSheet = ({ ref, course }: CourseFormSheetProps) => {
             render={({ field, fieldState }) => (
               <UIInput
                 isInSheet
-                captionText={t("study.subject")}
+                captionText={t("app.programme")}
                 placeholder={t("study.subjectPlaceholder")}
                 value={field.value}
                 onChangeText={field.onChange}
