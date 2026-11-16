@@ -259,7 +259,7 @@ export const ProgrammesSheet = ({
     <UIFormSheet
       ref={ref}
       title={t("app.studyProgrammes")}
-      actionLabel={programme ? t("app.saveChanges") : t("app.addProgramme")}
+      actionLabel={programme ? t("apiState.save") : t("app.addProgramme")}
       isActionDisabled={
         isFormShown && (!isDirty || !isValid || isReplacing || isAdding)
       }

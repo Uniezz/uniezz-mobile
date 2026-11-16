@@ -69,7 +69,7 @@ export default function EditPostScreen() {
     <UIPage>
       <ComposerHeader
         title={t("apiState.editPost")}
-        actionLabel={t("app.saveChanges")}
+        actionLabel={t("apiState.save")}
         disabled={isSaving || !isDirty}
         onAction={handleSubmitPress}
         isScrolled={isScrolled}

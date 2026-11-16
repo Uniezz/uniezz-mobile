@@ -70,7 +70,7 @@ export function PersonalDetailsSheet({
     <UIFormSheet
       ref={ref}
       title={t("app.personalDetails")}
-      actionLabel={t("app.saveChanges")}
+      actionLabel={t("apiState.save")}
       isActionDisabled={!isDirty || !isValid || isPending}
       onActionPress={handleSavePress}
       onDismiss={handleDismiss}

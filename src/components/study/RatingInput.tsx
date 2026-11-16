@@ -32,9 +32,9 @@ export function RatingInput({
   icon = "star",
 }: RatingInputProps) {
   const { t } = useTranslation();
-  // swiping to the far left reports 0, which the API rejects
+  // step="full" is Math.ceil(x / width * 5) without a clamp: 0 left of the stars, 6 past them; the API takes 1..5
   const handleChange = (rating: number) => {
-    if (rating >= 1) onChange(rating);
+    if (rating >= 1) onChange(Math.min(rating, 5));
   };
 
   return (
@@ -44,6 +44,8 @@ export function RatingInput({
         onChange={handleChange}
         maxStars={5}
         step="full"
+        // a swipe that starts on the stars would rate while the list scrolls
+        enableSwiping={false}
         StarIconComponent={icon === "flame" ? FlameIcon : undefined}
         starSize={size === "compact" ? 20 : 28}
         starStyle={size === "compact" ? styles.compactStar : undefined}

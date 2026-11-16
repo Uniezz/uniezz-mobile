@@ -64,14 +64,16 @@ export const ProfileOverview = ({
           <InterestChips interests={profile.interests} />
         ) : null}
       </ProfileHero>
-      <View style={styles.section}>
-        <UIText size="md" weight="semibold">
-          {t("app.studyProgrammes")}
-        </UIText>
-        {(profile.programmes ?? []).map((item) => (
-          <ProgrammeCard key={item.id} programme={item} />
-        ))}
-      </View>
+      {profile.programmes?.length ? (
+        <View style={styles.section}>
+          <UIText size="md" weight="semibold">
+            {t("app.studyProgrammes")}
+          </UIText>
+          {profile.programmes.map((item) => (
+            <ProgrammeCard key={item.id} programme={item} />
+          ))}
+        </View>
+      ) : null}
     </View>
   );
 };

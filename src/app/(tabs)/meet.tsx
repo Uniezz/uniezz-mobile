@@ -7,7 +7,7 @@ import { router } from "expo-router";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { Pressable, View } from "react-native";
+import { Platform, Pressable, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import type {
@@ -235,7 +235,6 @@ export default function MeetScreen() {
                 accessibilityLabel={t("app.pass")}
                 disabled={isActing || isPlaceholderData}
                 onPress={handlePassPress}
-                style={styles.action}
               >
                 <UIGlass radius={32} style={styles.actionCircle}>
                   <Icon
@@ -244,16 +243,12 @@ export default function MeetScreen() {
                     uniProps={(theme) => ({ color: theme.colors.red })}
                   />
                 </UIGlass>
-                <UIText size="sm" color="soft">
-                  {t("app.pass")}
-                </UIText>
               </Pressable>
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel={t("app.connect")}
                 disabled={isActing || isPlaceholderData}
                 onPress={handleConnectPress}
-                style={styles.action}
               >
                 <View style={[styles.actionCircle, styles.connect]}>
                   <Icon
@@ -262,9 +257,6 @@ export default function MeetScreen() {
                     uniProps={(theme) => ({ color: theme.colors.ink })}
                   />
                 </View>
-                <UIText size="sm" color="soft">
-                  {t("app.connect")}
-                </UIText>
               </Pressable>
             </View>
           </>
@@ -301,8 +293,9 @@ const styles = StyleSheet.create((theme, rt) => ({
     flex: 1,
     paddingTop: theme.vs(4),
     paddingHorizontal: theme.s(16),
-    // the tab bar floats ~40pt above this page's bottom (UIPage pads the home indicator); +12 keeps the actions just above it, as in the design
-    paddingBottom: theme.vs(52),
+    // the tab bar floats above this page's bottom (UIPage pads the home indicator); +12 keeps the actions just above it.
+    // iOS: the system bar reaches ~40pt; Android: GlassTabBar is 8 offset + 6 + 6 + 20 icon + 2 + ~14 label + 6 + 6 ≈ 68pt
+    paddingBottom: theme.vs(Platform.OS === "android" ? 80 : 52),
     gap: theme.vs(16),
   },
   header: {
@@ -342,10 +335,6 @@ const styles = StyleSheet.create((theme, rt) => ({
     alignItems: "center",
     justifyContent: "center",
     gap: theme.s(28),
-  },
-  action: {
-    alignItems: "center",
-    gap: theme.vs(8),
   },
   actionCircle: {
     width: theme.vs(64),

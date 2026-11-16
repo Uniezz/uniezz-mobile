@@ -41,7 +41,7 @@ export const PrivacySheet = ({ ref, privacy, onSaved }: PrivacySheetProps) => {
     <UIFormSheet
       ref={ref}
       title={t("app.profileVisibility")}
-      actionLabel={t("app.saveChanges")}
+      actionLabel={t("apiState.save")}
       isActionDisabled={!isDirty || isPending}
       onActionPress={handleSavePress}
       onDismiss={handleDismiss}
