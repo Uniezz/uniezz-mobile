@@ -32,13 +32,13 @@ import { ProfileButton } from "@/components/profile";
 import {
   Icon,
   UIEmpty,
-  UIFadeScrollView,
   UIFilters,
   UIGlass,
   UIIconButton,
   UIPage,
   UIQueryError,
   UISkeleton,
+  UISubTabs,
   UIText,
 } from "@/ui";
 import {
@@ -120,9 +120,14 @@ export default function MeetScreen() {
       showError(error);
     }
   });
+  const modeIndex = CONNECTION_MODES.findIndex(([value]) => value === mode);
+
   const handleModePress = (value: ConnectionMode) => {
     setMode(value);
     setMatch(null);
+  };
+  const handleModeTabPress = (index: number) => {
+    handleModePress(CONNECTION_MODES[index]?.[0] ?? "friends");
   };
   const handleAction = async (action: "like" | "pass") => {
     if (!card) return;
@@ -185,41 +190,13 @@ export default function MeetScreen() {
           </UIFilters>
           <ProfileButton />
         </View>
-        <UIFadeScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.modesScroll}
-          contentContainerStyle={styles.modes}
-        >
-          {CONNECTION_MODES.map(([value, label, icon]) => {
-            const selected = mode === value;
-            const handleChipPress = () => handleModePress(value);
-            return (
-              <Pressable
-                key={value}
-                accessibilityRole="button"
-                accessibilityState={{ selected }}
-                onPress={handleChipPress}
-                style={styles.mode(selected)}
-              >
-                <Icon
-                  name={icon}
-                  size={14}
-                  uniProps={(theme) => ({
-                    color: selected ? theme.colors.ink : theme.colors.white,
-                  })}
-                />
-                <UIText
-                  size="sm"
-                  weight="semibold"
-                  color={selected ? "black" : "white"}
-                >
-                  {t(label)}
-                </UIText>
-              </Pressable>
-            );
-          })}
-        </UIFadeScrollView>
+        <View style={styles.modeTabs}>
+          <UISubTabs
+            items={CONNECTION_MODES.map(([, label]) => t(label))}
+            selectedItemIndex={modeIndex < 0 ? 0 : modeIndex}
+            onPress={handleModeTabPress}
+          />
+        </View>
         {isPending ? (
           <View style={styles.cardSkeleton}>
             <UISkeleton height="100%" />
@@ -307,27 +284,10 @@ const styles = StyleSheet.create((theme, rt) => ({
     flex: 1,
     lineHeight: theme.vs(30),
   },
-  // edge to edge, so the pills scroll under the fades instead of being cut at the page inset
-  modesScroll: {
-    flexGrow: 0,
+  // cancel page inset so subtabs span the screen like on FAQ and Study
+  modeTabs: {
     marginHorizontal: -theme.s(16),
   },
-  modes: {
-    gap: theme.s(6),
-    paddingHorizontal: theme.s(16),
-  },
-  mode: (selected: boolean) => ({
-    flexDirection: "row",
-    alignItems: "center",
-    gap: theme.s(6),
-    paddingVertical: theme.vs(7),
-    paddingHorizontal: theme.s(13),
-    borderRadius: theme.vs(999),
-    backgroundColor: selected ? theme.colors.white : theme.colors.white5,
-    // a border on every chip (white when selected, like UIChip) so selecting one doesn't change its size
-    borderWidth: 1,
-    borderColor: selected ? theme.colors.white : theme.colors.white10,
-  }),
   // fills the card's space while the deck loads
   cardSkeleton: { flex: 1 },
   actions: {
