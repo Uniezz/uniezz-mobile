@@ -2,12 +2,13 @@ import { useState } from "react";
 import { ProfileButton } from "@/components/profile";
 import { useTranslation } from "react-i18next";
 import { FlashList } from "@shopify/flash-list";
-import { Pressable, View } from "react-native";
+import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import type { Conversation } from "@/@types";
 import { chatTime } from "@/utils";
 import { ConnectionAvatarList } from "./ConnectionAvatarList";
 import {
+  UIPressable,
   Icon,
   UIAvatar,
   UIEmpty,
@@ -79,7 +80,7 @@ export function ConversationList({
           keyExtractor={(item) => item.id}
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => (
-            <Pressable
+            <UIPressable
               accessibilityRole="button"
               onPress={() => onOpen(item.id)}
             >
@@ -118,7 +119,7 @@ export function ConversationList({
                   </View>
                 </View>
               </View>
-            </Pressable>
+            </UIPressable>
           )}
         />
       </View>

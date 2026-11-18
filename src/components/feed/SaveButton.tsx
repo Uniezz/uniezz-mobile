@@ -1,9 +1,9 @@
 import { useTranslation } from "react-i18next";
-import { Pressable } from "react-native";
+
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import { useFeedSave } from "@/hooks";
-import { Icon } from "@/ui";
+import { UIPressable, Icon } from "@/ui";
 
 type SaveButtonProps = {
   id: string;
@@ -23,7 +23,7 @@ export const SaveButton = ({ id, saved }: SaveButtonProps) => {
   };
 
   return (
-    <Pressable
+    <UIPressable
       accessibilityRole="button"
       accessibilityLabel={t(saved ? "apiState.unsave" : "apiState.save")}
       accessibilityState={{ selected: saved }}
@@ -39,7 +39,7 @@ export const SaveButton = ({ id, saved }: SaveButtonProps) => {
           color: saved ? theme.colors.sky : theme.colors.white60,
         })}
       />
-    </Pressable>
+    </UIPressable>
   );
 };
 

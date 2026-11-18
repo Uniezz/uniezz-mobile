@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Pressable, View } from "react-native";
+import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import type { FaqEntry } from "@/@types";
-import { Icon, UIButton, UIGlass, UIText } from "@/ui";
+import { UIPressable, Icon, UIButton, UIGlass, UIText } from "@/ui";
 import { FAQ_STATUS_LABELS } from "@/utils";
 
 type FaqItemProps = {
@@ -27,7 +27,7 @@ export function FaqItem({
   const handlePress = () => setIsOpen((open) => !open);
 
   return (
-    <Pressable
+    <UIPressable
       accessibilityRole="button"
       accessibilityState={{ expanded: isOpen }}
       onPress={handlePress}
@@ -64,7 +64,7 @@ export function FaqItem({
           </UIButton>
         ) : null}
       </UIGlass>
-    </Pressable>
+    </UIPressable>
   );
 }
 

@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
-import { UIGlass, UIText } from "@/ui";
-import { View, Pressable } from "react-native";
+import { UIPressable, UIGlass, UIText } from "@/ui";
+import { View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { StyleSheet, UnistylesVariants } from "react-native-unistyles";
 
@@ -41,7 +41,7 @@ export const RowPickerItem = ({
 }: RowPickerItemProps) => {
   styles.useVariants({ appearance });
   return (
-    <Pressable
+    <UIPressable
       onPress={onPress}
       accessibilityRole={isMultiple ? "checkbox" : "radio"}
       accessibilityState={
@@ -71,7 +71,7 @@ export const RowPickerItem = ({
       <View style={styles.radio(isSelected)}>
         {isSelected ? <View style={styles.radioDot} /> : null}
       </View>
-    </Pressable>
+    </UIPressable>
   );
 };
 

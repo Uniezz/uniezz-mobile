@@ -1,8 +1,8 @@
 import { useTranslation } from "react-i18next";
-import { Pressable, View } from "react-native";
+import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import type { ApiFeedPost } from "@/@types";
-import { UIAvatar, UIGlass, UIText } from "@/ui";
+import { UIPressable, UIAvatar, UIGlass, UIText } from "@/ui";
 import { authorName } from "@/utils";
 
 type PostSummaryProps = {
@@ -16,7 +16,7 @@ export const PostSummary = ({ post, onPress }: PostSummaryProps) => {
   const { t } = useTranslation();
 
   return (
-    <Pressable accessibilityRole="button" onPress={onPress}>
+    <UIPressable accessibilityRole="button" onPress={onPress}>
       <UIGlass radius={14} style={styles.card}>
         <UIAvatar size="xs" imageSrc={post.author.avatarUrl} />
         <View style={styles.text}>
@@ -29,7 +29,7 @@ export const PostSummary = ({ post, onPress }: PostSummaryProps) => {
           </UIText>
         </View>
       </UIGlass>
-    </Pressable>
+    </UIPressable>
   );
 };
 

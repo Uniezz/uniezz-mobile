@@ -1,5 +1,6 @@
-import { Pressable, View } from "react-native";
+import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
+import { UIPressable } from "./UIPressable";
 import { UIText } from "./UIText";
 
 export function UICheckbox({
@@ -14,7 +15,7 @@ export function UICheckbox({
   disabled?: boolean;
 }) {
   return (
-    <Pressable
+    <UIPressable
       accessibilityRole="checkbox"
       accessibilityLabel={label}
       accessibilityState={{ checked, disabled }}
@@ -26,7 +27,7 @@ export function UICheckbox({
         {checked ? <UIText size="sm">✓</UIText> : null}
       </View>
       <UIText>{label}</UIText>
-    </Pressable>
+    </UIPressable>
   );
 }
 const styles = StyleSheet.create((theme) => ({

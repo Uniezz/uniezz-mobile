@@ -1,10 +1,17 @@
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { Pressable, View } from "react-native";
+import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import type { ProfileSummary } from "@/@types";
 import { useMyProfile, useUniversities } from "@/hooks";
-import { Icon, UIAvatar, UIGlass, UIText, UIUniversityLogo } from "@/ui";
+import {
+  UIPressable,
+  Icon,
+  UIAvatar,
+  UIGlass,
+  UIText,
+  UIUniversityLogo,
+} from "@/ui";
 import { authorName, profileHref } from "@/utils";
 
 // a student in the directory; opens their profile, or your own
@@ -19,7 +26,7 @@ export const StudentRow = ({ student }: { student: ProfileSummary }) => {
   const handlePress = () => router.push(profileHref(student.id, me?.id));
 
   return (
-    <Pressable
+    <UIPressable
       accessibilityRole="button"
       accessibilityLabel={name}
       onPress={handlePress}
@@ -48,7 +55,7 @@ export const StudentRow = ({ student }: { student: ProfileSummary }) => {
           uniProps={(theme) => ({ color: theme.colors.white40 })}
         />
       </UIGlass>
-    </Pressable>
+    </UIPressable>
   );
 };
 

@@ -4,7 +4,7 @@ import { usePostHog } from "posthog-react-native";
 import { type Ref, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { Alert, Pressable, View } from "react-native";
+import { Alert, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import type {
@@ -19,6 +19,7 @@ import {
 } from "@/hooks";
 import { programmeSchema } from "@/schemas";
 import {
+  UIPressable,
   Icon,
   UIChip,
   UIFadeScrollView,
@@ -211,7 +212,7 @@ export const ProgrammesSheet = ({
         />
       ))}
       {programme && !programme.isPrimary ? (
-        <Pressable
+        <UIPressable
           hitSlop={8}
           accessibilityRole="button"
           onPress={handleMakePrimaryPress}
@@ -220,7 +221,7 @@ export const ProgrammesSheet = ({
           <UIText size="sm" weight="semibold" color="link">
             {t("app.makePrimary")}
           </UIText>
-        </Pressable>
+        </UIPressable>
       ) : null}
     </>
   );
@@ -228,7 +229,7 @@ export const ProgrammesSheet = ({
   const list = programmes.map((item) => {
     const handleRowPress = () => setSelection(item.id);
     return (
-      <Pressable
+      <UIPressable
         key={item.id}
         accessibilityRole="button"
         onPress={handleRowPress}
@@ -251,7 +252,7 @@ export const ProgrammesSheet = ({
           ) : null}
         </View>
         <Icon name="chevron-right" size={16} />
-      </Pressable>
+      </UIPressable>
     );
   });
 

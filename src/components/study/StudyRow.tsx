@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { Pressable, View } from "react-native";
+import { View } from "react-native";
 import { SymbolView } from "expo-symbols";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
-import { UIGlass, UIText } from "@/ui";
+import { UIPressable, UIGlass, UIText } from "@/ui";
 import { RatingInput } from "./RatingInput";
 
 const ThemedSymbol = withUnistyles(SymbolView, (theme) => ({
@@ -44,7 +44,11 @@ export function StudyRow({
   const { t } = useTranslation();
 
   return (
-    <Pressable accessibilityRole="button" onPress={onPress} style={styles.cell}>
+    <UIPressable
+      accessibilityRole="button"
+      onPress={onPress}
+      style={styles.cell}
+    >
       <UIGlass radius={16} style={styles.row(rating !== undefined)}>
         <View style={styles.text(rating !== undefined)}>
           <UIText weight="semibold" numberOfLines={1}>
@@ -123,7 +127,7 @@ export function StudyRow({
           </View>
         )}
       </UIGlass>
-    </Pressable>
+    </UIPressable>
   );
 }
 

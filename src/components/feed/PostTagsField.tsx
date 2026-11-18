@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Pressable, TextInput, View } from "react-native";
+import { TextInput, View } from "react-native";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
-import { Icon, UIText } from "@/ui";
+import { UIPressable, Icon, UIText } from "@/ui";
 import { PostTag } from "./PostTag";
 
 const ThemedTextInput = withUnistyles(TextInput, (theme) => ({
@@ -59,7 +59,7 @@ export const PostTagsField = ({ value, onChange }: PostTagsFieldProps) => {
           submitBehavior="submit"
           style={styles.input}
         />
-        <Pressable
+        <UIPressable
           accessibilityRole="button"
           accessibilityLabel={t("postComposer.addTag")}
           disabled={!canAdd}
@@ -71,7 +71,7 @@ export const PostTagsField = ({ value, onChange }: PostTagsFieldProps) => {
             size={18}
             uniProps={(theme) => ({ color: theme.colors.ink })}
           />
-        </Pressable>
+        </UIPressable>
       </View>
       {value.length ? (
         <View style={styles.tags}>

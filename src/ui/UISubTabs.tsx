@@ -1,5 +1,6 @@
-import { Pressable, View } from "react-native";
+import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
+import { UIPressable } from "./UIPressable";
 import { UIText } from "./UIText";
 
 type UISubTabsProps = {
@@ -17,14 +18,14 @@ export const UISubTabs = ({
     <View style={styles.tabs}>
       {items.map((item, index) => {
         const isSelected = index === selectedItemIndex;
-        const handlePress = () => onPress(index);
 
         return (
-          <Pressable
+          <UIPressable
             key={item}
+            haptic={isSelected ? false : "selection"}
             accessibilityRole="tab"
             accessibilityState={{ selected: isSelected }}
-            onPress={handlePress}
+            onPress={() => onPress(index)}
             style={styles.tab(isSelected)}
           >
             <UIText
@@ -35,7 +36,7 @@ export const UISubTabs = ({
             >
               {item}
             </UIText>
-          </Pressable>
+          </UIPressable>
         );
       })}
     </View>

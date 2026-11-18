@@ -3,9 +3,9 @@ import DateTimePicker, {
   type DateTimePickerChangeEvent,
 } from "@react-native-community/datetimepicker";
 import { useTranslation } from "react-i18next";
-import { Platform, Pressable, View } from "react-native";
+import { Platform, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { UIGlass, UIText } from "@/ui";
+import { UIPressable, UIGlass, UIText } from "@/ui";
 
 type PickerMode = "date" | "time";
 
@@ -38,7 +38,7 @@ export const PostEventField = ({
 
   const renderPicker = (mode: PickerMode) =>
     Platform.OS === "android" ? (
-      <Pressable
+      <UIPressable
         hitSlop={8}
         accessibilityRole="button"
         onPress={() => openAndroidPicker(mode)}
@@ -51,7 +51,7 @@ export const PostEventField = ({
               }).format(value)
             : "—"}
         </UIText>
-      </Pressable>
+      </UIPressable>
     ) : (
       <DateTimePicker
         value={date}

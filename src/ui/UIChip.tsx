@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import { Pressable } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
+import { UIPressable } from "./UIPressable";
 import { UIText } from "./UIText";
 type UIChipProps = {
   label: string;
@@ -16,12 +16,12 @@ export const UIChip = ({
   onPress,
 }: UIChipProps) => {
   return (
-    <Pressable onPress={onPress} style={styles.chip({ selected })}>
+    <UIPressable onPress={onPress} style={styles.chip({ selected })}>
       {leading}
       <UIText size="sm" weight="semibold" color={selected ? "black" : "soft"}>
         {label}
       </UIText>
-    </Pressable>
+    </UIPressable>
   );
 };
 

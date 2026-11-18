@@ -1,10 +1,10 @@
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useFeatureFlag } from "posthog-react-native";
-import { Pressable, View } from "react-native";
+import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { useMyProfile } from "@/hooks";
-import { UIAvatar, UICoin, UIText } from "@/ui";
+import { UIPressable, UIAvatar, UICoin, UIText } from "@/ui";
 import { formatCompactCount } from "@/utils";
 
 // the avatar in every tab's header: opens the profile, with the coin balance pinned under it
@@ -15,7 +15,7 @@ export const ProfileButton = () => {
   const handlePress = () => router.push("/profile");
 
   return (
-    <Pressable
+    <UIPressable
       accessibilityRole="button"
       accessibilityLabel={
         profile && coinsEnabled
@@ -37,7 +37,7 @@ export const ProfileButton = () => {
           </UIText>
         </View>
       ) : null}
-    </Pressable>
+    </UIPressable>
   );
 };
 

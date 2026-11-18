@@ -9,11 +9,11 @@ import {
 import { Image } from "expo-image";
 import { launchImageLibraryAsync } from "expo-image-picker";
 import { useTranslation } from "react-i18next";
-import { Pressable, View } from "react-native";
+import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import type { PickedImage } from "@/@types";
-import { Icon, UIFadeScrollView, UIText } from "@/ui";
+import { UIPressable, Icon, UIFadeScrollView, UIText } from "@/ui";
 
 type PostPhotosFieldProps = {
   value: PickedImage[];
@@ -86,17 +86,17 @@ export const PostPhotosField = ({ value, onChange }: PostPhotosFieldProps) => {
         contentContainerStyle={styles.row}
       >
         {value.length < MAX_POST_PHOTOS ? (
-          <Pressable
+          <UIPressable
             accessibilityRole="button"
             accessibilityLabel={t("postComposer.addPhoto")}
             onPress={handleAddPress}
             style={styles.add}
           >
             <Icon name="plus" size={20} />
-          </Pressable>
+          </UIPressable>
         ) : null}
         {value.map((photo, index) => (
-          <Pressable
+          <UIPressable
             key={photo.uri}
             accessibilityRole="imagebutton"
             accessibilityLabel={t("app.openImage")}
@@ -109,7 +109,7 @@ export const PostPhotosField = ({ value, onChange }: PostPhotosFieldProps) => {
               style={StyleSheet.absoluteFill}
               accessibilityLabel={t("postComposer.photoPreview")}
             />
-            <Pressable
+            <UIPressable
               accessibilityRole="button"
               accessibilityLabel={t("postComposer.removePhoto")}
               onPress={() => removePhoto(photo.uri)}
@@ -117,8 +117,8 @@ export const PostPhotosField = ({ value, onChange }: PostPhotosFieldProps) => {
               style={styles.remove}
             >
               <Icon name="x" size={13} />
-            </Pressable>
-          </Pressable>
+            </UIPressable>
+          </UIPressable>
         ))}
       </UIFadeScrollView>
       <UIText size="xs" color="secondary" style={styles.hint}>

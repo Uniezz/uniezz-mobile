@@ -6,7 +6,7 @@ import { usePostHog } from "posthog-react-native";
 import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { ActivityIndicator, Keyboard, Pressable, View } from "react-native";
+import { ActivityIndicator, Keyboard, View } from "react-native";
 import {
   KeyboardAwareScrollView,
   KeyboardStickyView,
@@ -22,6 +22,7 @@ import { personalDetailsSchema } from "@/schemas";
 import { isOnboardingDone, markOnboardingDone } from "@/store";
 import { vs } from "@/theme/scale";
 import {
+  UIPressable,
   Icon,
   UIAvatar,
   UIButton,
@@ -134,7 +135,7 @@ export default function OnboardingScreen() {
       >
         {key === "photo" ? (
           <View style={styles.photoStep}>
-            <Pressable
+            <UIPressable
               accessibilityRole="button"
               accessibilityLabel={t("app.changePhoto")}
               disabled={isUploadingPhoto}
@@ -153,7 +154,7 @@ export default function OnboardingScreen() {
                   <Icon name="camera" size={18} />
                 )}
               </UIGlass>
-            </Pressable>
+            </UIPressable>
             <UIText size="sm" color="secondary" style={styles.photoHint}>
               {t("onboarding.photo.hint")}
             </UIText>

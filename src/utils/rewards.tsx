@@ -1,4 +1,5 @@
 import * as Haptics from "expo-haptics";
+import { useHapticsStore } from "@/store/hapticsStore";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import type { CoinGrant } from "@/@types";
@@ -44,7 +45,11 @@ export const toastCoinsEarned = (data: unknown) => {
       icon: <UICoin />,
       styles: coinToastStyles,
     });
-    return Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    if (useHapticsStore.getState().enabled) {
+      return Haptics.notificationAsync(
+        Haptics.NotificationFeedbackType.Success,
+      );
+    }
   }
 };
 

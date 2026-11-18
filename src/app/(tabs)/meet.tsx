@@ -7,7 +7,7 @@ import { router } from "expo-router";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { Platform, Pressable, View } from "react-native";
+import { Platform, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import type {
@@ -30,6 +30,7 @@ import {
 } from "@/hooks";
 import { ProfileButton } from "@/components/profile";
 import {
+  UIPressable,
   Icon,
   UIEmpty,
   UIFilters,
@@ -207,7 +208,7 @@ export default function MeetScreen() {
           <>
             <DiscoverCard card={card} onReportPress={handleReportPress} />
             <View style={styles.actions}>
-              <Pressable
+              <UIPressable
                 accessibilityRole="button"
                 accessibilityLabel={t("app.pass")}
                 disabled={isActing || isPlaceholderData}
@@ -220,8 +221,8 @@ export default function MeetScreen() {
                     uniProps={(theme) => ({ color: theme.colors.red })}
                   />
                 </UIGlass>
-              </Pressable>
-              <Pressable
+              </UIPressable>
+              <UIPressable
                 accessibilityRole="button"
                 accessibilityLabel={t("app.connect")}
                 disabled={isActing || isPlaceholderData}
@@ -234,12 +235,12 @@ export default function MeetScreen() {
                     uniProps={(theme) => ({ color: theme.colors.ink })}
                   />
                 </View>
-              </Pressable>
+              </UIPressable>
             </View>
           </>
         ) : null}
         {match ? (
-          <Pressable
+          <UIPressable
             accessibilityRole="button"
             onPress={handleMatchPress}
             style={styles.notice}
@@ -248,7 +249,7 @@ export default function MeetScreen() {
             <UIText weight="semibold" color="link">
               {t("connections.viewProfile")}
             </UIText>
-          </Pressable>
+          </UIPressable>
         ) : null}
       </View>
       {/* a direct child of UIPage, so the cat centres like every other empty state */}

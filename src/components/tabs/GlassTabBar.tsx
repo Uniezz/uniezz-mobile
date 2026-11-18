@@ -1,8 +1,8 @@
 import type { Tabs } from "expo-router";
 import type { ComponentProps } from "react";
-import { Pressable, View } from "react-native";
+import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { Icon, UIGlass, UIText } from "@/ui";
+import { UIPressable, Icon, UIGlass, UIText } from "@/ui";
 
 type IconName = ComponentProps<typeof Icon>["name"];
 
@@ -48,7 +48,7 @@ const GlassTabItem = ({
   };
 
   return (
-    <Pressable
+    <UIPressable
       accessibilityRole="tab"
       accessibilityLabel={label}
       accessibilityState={{ selected: isFocused }}
@@ -70,7 +70,7 @@ const GlassTabItem = ({
       >
         {label}
       </UIText>
-    </Pressable>
+    </UIPressable>
   );
 };
 

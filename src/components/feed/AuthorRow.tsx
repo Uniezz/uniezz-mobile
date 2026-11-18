@@ -1,10 +1,10 @@
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { Pressable, StyleProp, ViewStyle } from "react-native";
+import { StyleProp, ViewStyle } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import type { Author } from "@/@types";
 import { useMyProfile } from "@/hooks";
-import { UIAvatar, UIText, UIUniversityLogo } from "@/ui";
+import { UIPressable, UIAvatar, UIText, UIUniversityLogo } from "@/ui";
 import { authorName, profileHref } from "@/utils";
 
 type AuthorRowProps = {
@@ -29,7 +29,7 @@ export const AuthorRow = ({
   const handlePress = () => router.push(profileHref(author.id, me?.id));
 
   return (
-    <Pressable
+    <UIPressable
       accessibilityRole="link"
       accessibilityLabel={name}
       onPress={handlePress}
@@ -52,7 +52,7 @@ export const AuthorRow = ({
           · {meta}
         </UIText>
       ) : null}
-    </Pressable>
+    </UIPressable>
   );
 };
 

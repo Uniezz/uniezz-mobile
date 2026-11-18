@@ -1,6 +1,6 @@
-import { Pressable, View } from "react-native";
+import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { Icon, UIText } from "@/ui";
+import { UIPressable, Icon, UIText } from "@/ui";
 import { formatTag } from "@/utils";
 
 type PostTagProps = {
@@ -24,7 +24,7 @@ export const PostTag = ({ tag, onRemove, removeLabel }: PostTagProps) => {
   if (!onRemove) return <View style={styles.tag(false)}>{label}</View>;
 
   return (
-    <Pressable
+    <UIPressable
       hitSlop={6}
       accessibilityRole="button"
       accessibilityLabel={removeLabel}
@@ -37,7 +37,7 @@ export const PostTag = ({ tag, onRemove, removeLabel }: PostTagProps) => {
         size={14}
         uniProps={(theme) => ({ color: theme.colors.white60 })}
       />
-    </Pressable>
+    </UIPressable>
   );
 };
 

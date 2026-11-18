@@ -1,12 +1,12 @@
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { FlashList } from "@shopify/flash-list";
-import { Alert, Pressable, View } from "react-native";
+import { Alert, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import type { Connection } from "@/@types";
 import { useConnections, useDeleteConnection } from "@/hooks";
-import { UIAvatar, UIText } from "@/ui";
+import { UIPressable, UIAvatar, UIText } from "@/ui";
 
 // shortcut: opens the revealed profile, not a thread; open the match's chat once the chat backend lands (UNI-43)
 export function ConnectionAvatarList() {
@@ -55,7 +55,7 @@ export function ConnectionAvatarList() {
           const handlePress = () => handleOpen(connection);
           const handleLongPress = () => handleRemove(connection);
           return (
-            <Pressable
+            <UIPressable
               accessibilityRole="button"
               accessibilityHint={t("connections.removeHint")}
               onPress={handlePress}
@@ -69,7 +69,7 @@ export function ConnectionAvatarList() {
               <UIText size="xs" color="secondary" numberOfLines={1}>
                 {t(`app.${connection.mode}`)}
               </UIText>
-            </Pressable>
+            </UIPressable>
           );
         }}
       />

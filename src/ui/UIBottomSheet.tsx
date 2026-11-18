@@ -9,11 +9,12 @@ import {
 } from "@gorhom/bottom-sheet";
 import { BlurView } from "expo-blur";
 import type { ReactNode, Ref } from "react";
-import { Platform, Pressable, useWindowDimensions, View } from "react-native";
+import { Platform, useWindowDimensions, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
 import { Icon } from "./icons";
 import { SHEET_MAX_HEIGHT_RATIO } from "@/utils";
+import { UIPressable } from "./UIPressable";
 import { UIText } from "./UIText";
 
 export type UIBottomSheetProps = {
@@ -60,14 +61,14 @@ export const UIBottomSheet = ({
       {title ? (
         <View style={styles.titleRow}>
           {onBackPress ? (
-            <Pressable
+            <UIPressable
               accessibilityRole="button"
               accessibilityLabel={backLabel}
               onPress={onBackPress}
               hitSlop={12}
             >
               <Icon name="chevron-left" size={22} />
-            </Pressable>
+            </UIPressable>
           ) : null}
           <UIText size="lg" weight="semibold">
             {title}

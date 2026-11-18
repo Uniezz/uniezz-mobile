@@ -1,7 +1,7 @@
 import { AuthPage } from "@/components";
 import { useOtpScreen } from "@/hooks";
-import { Icon, UIButton, UIGlass, UIInput, UIText } from "@/ui";
-import { Pressable, View } from "react-native";
+import { UIPressable, Icon, UIButton, UIGlass, UIInput, UIText } from "@/ui";
+import { View } from "react-native";
 import { CodeField } from "react-native-confirmation-code-field";
 import { StyleSheet } from "react-native-unistyles";
 import { useTranslation } from "react-i18next";
@@ -63,7 +63,7 @@ export default function OtpScreen() {
             <UIText numberOfLines={1} style={styles.grow}>
               {email}
             </UIText>
-            <Pressable
+            <UIPressable
               accessibilityRole="button"
               onPress={onBackPress}
               hitSlop={8}
@@ -72,7 +72,7 @@ export default function OtpScreen() {
               <UIText size="body" weight="semibold" color="link">
                 {backText}
               </UIText>
-            </Pressable>
+            </UIPressable>
           </UIGlass>
           <CodeField
             {...props}
@@ -145,7 +145,7 @@ export default function OtpScreen() {
             <UIText size="sm" color="secondary">
               {t("auth.otp.didntGetIt")}
             </UIText>
-            <Pressable
+            <UIPressable
               accessibilityRole="button"
               disabled={isRequesting}
               onPress={onResendPress}
@@ -154,7 +154,7 @@ export default function OtpScreen() {
               <UIText size="sm" weight="semibold" color="link">
                 {t("auth.otp.resend")}
               </UIText>
-            </Pressable>
+            </UIPressable>
           </View>
         )}
       </View>

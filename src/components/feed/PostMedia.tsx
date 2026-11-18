@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  Pressable,
   ScrollView,
   View,
   type LayoutChangeEvent,
@@ -9,7 +8,7 @@ import {
   type NativeSyntheticEvent,
 } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { UIImage } from "@/ui";
+import { UIPressable, UIImage } from "@/ui";
 import { previewImages } from "@/utils";
 
 type PostMediaProps = {
@@ -35,7 +34,7 @@ export const PostMedia = ({ urls }: PostMediaProps) => {
     const url = urls[0];
     if (!url) return null;
     return (
-      <Pressable
+      <UIPressable
         accessibilityRole="imagebutton"
         accessibilityLabel={t("app.openImage")}
         onPress={() => handleImagePress(0)}
@@ -47,7 +46,7 @@ export const PostMedia = ({ urls }: PostMediaProps) => {
           contentFit="cover"
           style={StyleSheet.absoluteFill}
         />
-      </Pressable>
+      </UIPressable>
     );
   }
 
@@ -61,7 +60,7 @@ export const PostMedia = ({ urls }: PostMediaProps) => {
         onMomentumScrollEnd={handleScrollEnd}
       >
         {urls.map((url, index) => (
-          <Pressable
+          <UIPressable
             key={url}
             accessibilityRole="imagebutton"
             accessibilityLabel={t("app.openImage")}
@@ -74,7 +73,7 @@ export const PostMedia = ({ urls }: PostMediaProps) => {
               contentFit="cover"
               style={StyleSheet.absoluteFill}
             />
-          </Pressable>
+          </UIPressable>
         ))}
       </ScrollView>
       <View style={styles.dots}>

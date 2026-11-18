@@ -1,9 +1,9 @@
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { Pressable, View } from "react-native";
+import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { useFeaturedFeedPosts } from "@/hooks";
-import { Icon, UIFadeScrollView, UIImage, UIText } from "@/ui";
+import { UIPressable, Icon, UIFadeScrollView, UIImage, UIText } from "@/ui";
 import { isLive } from "@/utils";
 
 export const FeaturedPosts = () => {
@@ -21,7 +21,7 @@ export const FeaturedPosts = () => {
       style={styles.bleed}
       contentContainerStyle={styles.row}
     >
-      <Pressable
+      <UIPressable
         accessibilityRole="button"
         onPress={() => router.push("/feed/new")}
         style={styles.add}
@@ -36,11 +36,11 @@ export const FeaturedPosts = () => {
         <UIText size="xs" weight="semibold" style={styles.addLabel}>
           {t("app.newPost")}
         </UIText>
-      </Pressable>
+      </UIPressable>
       {events?.map((event) => {
         const live = isLive(event.eventDate);
         return (
-          <Pressable
+          <UIPressable
             key={event.id}
             accessibilityRole="button"
             accessibilityLabel={event.title}
@@ -78,7 +78,7 @@ export const FeaturedPosts = () => {
             >
               {event.title}
             </UIText>
-          </Pressable>
+          </UIPressable>
         );
       })}
     </UIFadeScrollView>

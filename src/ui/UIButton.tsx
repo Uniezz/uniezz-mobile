@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
-import { Pressable, PressableProps } from "react-native";
+import { PressableProps } from "react-native";
 import { StyleSheet, UnistylesVariants } from "react-native-unistyles";
+import { UIPressable } from "./UIPressable";
 
 type UIButtonProps = UnistylesVariants<typeof styles> & {
   children: ReactNode;
@@ -18,7 +19,7 @@ export const UIButton = ({
   styles.useVariants({ size, type, radius });
 
   return (
-    <Pressable
+    <UIPressable
       {...props}
       disabled={disabled}
       style={(state) => [
@@ -27,7 +28,7 @@ export const UIButton = ({
       ]}
     >
       {children}
-    </Pressable>
+    </UIPressable>
   );
 };
 

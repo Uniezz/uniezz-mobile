@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
-import { Pressable, View } from "react-native";
+import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { UIText } from "@/ui";
+import { UIPressable, UIText } from "@/ui";
 
 type AudienceOptionProps = {
   selected: boolean;
@@ -18,7 +18,7 @@ export const AudienceOption = ({
   title,
   subtitle,
 }: AudienceOptionProps) => (
-  <Pressable
+  <UIPressable
     accessibilityRole="radio"
     accessibilityState={{ selected }}
     onPress={onPress}
@@ -34,7 +34,7 @@ export const AudienceOption = ({
     <View style={styles.radio(selected)}>
       {selected ? <View style={styles.radioDot} /> : null}
     </View>
-  </Pressable>
+  </UIPressable>
 );
 
 const styles = StyleSheet.create((theme) => ({

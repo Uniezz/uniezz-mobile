@@ -1,7 +1,8 @@
 import { ReactNode } from "react";
-import { Pressable, PressableProps } from "react-native";
+import { PressableProps } from "react-native";
 import { StyleSheet, UnistylesVariants } from "react-native-unistyles";
 import { UIGlass } from "./UIGlass";
+import { UIPressable } from "./UIPressable";
 
 type UIIconButtonProps = UnistylesVariants<typeof styles> & {
   children?: ReactNode;
@@ -15,7 +16,7 @@ export const UIIconButton = ({
 }: UIIconButtonProps) => {
   styles.useVariants({ size });
   return (
-    <Pressable
+    <UIPressable
       style={(state) => [
         styles.iconContainer(state.pressed),
         typeof style === "function" ? style(state) : style,
@@ -23,7 +24,7 @@ export const UIIconButton = ({
       {...props}
     >
       <UIGlass style={styles.glass}>{children}</UIGlass>
-    </Pressable>
+    </UIPressable>
   );
 };
 

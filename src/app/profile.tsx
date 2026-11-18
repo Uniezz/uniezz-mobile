@@ -22,6 +22,8 @@ import {
   LANGUAGES,
   useLanguageStore,
 } from "@/store/languageStore";
+import { useHapticsStore } from "@/store/hapticsStore";
+import * as Haptics from "expo-haptics";
 import type { ProfileListItem } from "@/@types";
 import {
   PersonalDetailsSheet,
@@ -192,12 +194,19 @@ export default function ProfileScreen() {
     );
 
   const setLanguage = useLanguageStore((state) => state.setLanguage);
+  const { enabled: hapticEnabled, toggleEnabled: toggleHaptics } =
+    useHapticsStore();
   const handleLanguagePress = (code: Language) => {
     setLanguage(code);
   };
   const handleMenuAction = ({ nativeEvent }: NativeActionEvent) => {
     const language = LANGUAGES.find((code) => nativeEvent.event === code);
     if (language) return handleLanguagePress(language);
+    if (nativeEvent.event === "haptics") {
+      toggleHaptics();
+      if (useHapticsStore.getState().enabled) void Haptics.selectionAsync();
+      return;
+    }
     if (nativeEvent.event === "details") return detailsRef.current?.present();
     if (nativeEvent.event === "privacy") return privacyRef.current?.present();
     if (nativeEvent.event === "programmes")
@@ -213,6 +222,11 @@ export default function ProfileScreen() {
     { id: "details", title: t("app.personalDetails") },
     { id: "programmes", title: t("app.studyProgrammes") },
     { id: "privacy", title: t("app.profileVisibility") },
+    {
+      id: "haptics",
+      title: t("app.haptics"),
+      state: hapticEnabled ? "on" : "off",
+    },
     { id: "changeBanner", title: t("app.changeBanner") },
     {
       id: "language",

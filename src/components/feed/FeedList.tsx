@@ -1,9 +1,9 @@
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import { useState, type ReactNode } from "react";
-import { Pressable, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { UIChip, UIGlass, UIInput, UIText } from "@/ui";
+import { UIPressable, UIChip, UIGlass, UIInput, UIText } from "@/ui";
 import type { FeedPost } from "@/@types";
 
 const stories = [
@@ -59,11 +59,11 @@ export function FeedList({
                 onChangeText={setSearch}
               />
             </View>
-            <Pressable accessibilityRole="button" onPress={onCreate}>
+            <UIPressable accessibilityRole="button" onPress={onCreate}>
               <UIText color="link" weight="semibold">
                 + Post
               </UIText>
-            </Pressable>
+            </UIPressable>
           </View>
           <ScrollView
             horizontal
@@ -127,16 +127,16 @@ export function FeedList({
                 {post.detail}
               </UIText>
             </View>
-            <Pressable
+            <UIPressable
               accessibilityRole="button"
               onPress={() => onOpen(post.title)}
             >
               <UIText size="md" weight="bold">
                 {post.title}
               </UIText>
-            </Pressable>
+            </UIPressable>
             <UIText color="soft">{post.body}</UIText>
-            <Pressable
+            <UIPressable
               accessibilityRole="button"
               onPress={() =>
                 setLiked((current) =>
@@ -151,7 +151,7 @@ export function FeedList({
               >
                 {liked.includes(post.title) ? "♥ Liked" : "♡ Like"}
               </UIText>
-            </Pressable>
+            </UIPressable>
           </UIGlass>
         </View>
       )}

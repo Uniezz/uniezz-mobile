@@ -1,10 +1,10 @@
 import { BlurView } from "expo-blur";
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { LayoutChangeEvent, Pressable, View } from "react-native";
+import { LayoutChangeEvent, View } from "react-native";
 import { EaseView } from "react-native-ease";
 import { StyleSheet } from "react-native-unistyles";
-import { Icon, UIIconButton, UIText } from "@/ui";
+import { UIPressable, Icon, UIIconButton, UIText } from "@/ui";
 import { HEADER_TRANSITION } from "@/utils";
 
 type ComposerHeaderProps = {
@@ -53,7 +53,7 @@ export const ComposerHeader = ({
         <UIText size="md" weight="semibold" style={styles.title}>
           {title}
         </UIText>
-        <Pressable
+        <UIPressable
           accessibilityRole="button"
           disabled={disabled}
           onPress={onAction}
@@ -62,7 +62,7 @@ export const ComposerHeader = ({
           <UIText weight="semibold" color="black">
             {actionLabel}
           </UIText>
-        </Pressable>
+        </UIPressable>
       </View>
     </View>
   );

@@ -1,8 +1,9 @@
 import type { ComponentProps } from "react";
-import { Pressable, TextInput } from "react-native";
+import { TextInput } from "react-native";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
 import { Icon } from "./icons";
 import { UIGlass } from "./UIGlass";
+import { UIPressable } from "./UIPressable";
 
 const ThemedTextInput = withUnistyles(TextInput, (theme) => ({
   placeholderTextColor: theme.colors.white60,
@@ -33,7 +34,7 @@ export function UISearch({ onSubmit, submitLabel, ...props }: UISearchProps) {
         style={styles.input}
       />
       {onSubmit ? (
-        <Pressable
+        <UIPressable
           hitSlop={8}
           accessibilityRole="button"
           accessibilityLabel={submitLabel}
@@ -45,7 +46,7 @@ export function UISearch({ onSubmit, submitLabel, ...props }: UISearchProps) {
             size={16}
             uniProps={(theme) => ({ color: theme.colors.ink })}
           />
-        </Pressable>
+        </UIPressable>
       ) : null}
     </UIGlass>
   );

@@ -5,6 +5,7 @@ export * from "./UIInput";
 export * from "./UIRow";
 export * from "./UISegmented";
 export * from "./UISubTabs";
+export * from "./UIPressable";
 export * from "./UIButton";
 export * from "./UIIconButton";
 export * from "./UIPage";

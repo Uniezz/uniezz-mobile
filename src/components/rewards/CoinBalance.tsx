@@ -1,8 +1,8 @@
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { Pressable } from "react-native";
+
 import { StyleSheet } from "react-native-unistyles";
-import { UICoin, UIGlass, UIText } from "@/ui";
+import { UIPressable, UICoin, UIGlass, UIText } from "@/ui";
 import { formatCompactCount } from "@/utils";
 
 type CoinBalanceProps = {
@@ -15,7 +15,7 @@ export const CoinBalance = ({ coins }: CoinBalanceProps) => {
   const handlePress = () => router.push("/rewards");
 
   return (
-    <Pressable
+    <UIPressable
       accessibilityRole="button"
       accessibilityLabel={`${t("rewards.balance")}: ${coins}`}
       onPress={handlePress}
@@ -26,7 +26,7 @@ export const CoinBalance = ({ coins }: CoinBalanceProps) => {
           {formatCompactCount(coins, i18n.resolvedLanguage ?? i18n.language)}
         </UIText>
       </UIGlass>
-    </Pressable>
+    </UIPressable>
   );
 };
 

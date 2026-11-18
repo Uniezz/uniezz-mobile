@@ -1,12 +1,13 @@
-import { Pressable, PressableProps, View } from "react-native";
+import { View } from "react-native";
 import { UIText } from "./UIText";
 import { StyleSheet } from "react-native-unistyles";
+import { UIPressable, type UIPressableProps } from "./UIPressable";
 
 type UISegmentedProps = {
   items: string[];
   selectedItemIndex: number;
   onPress: (selectedIndex: number) => void;
-} & Omit<PressableProps, "onPress">;
+} & Omit<UIPressableProps, "onPress">;
 
 export const UISegmented = ({
   items,
@@ -19,7 +20,8 @@ export const UISegmented = ({
       {items?.map((item, index) => {
         const isSelected = index === selectedItemIndex;
         return (
-          <Pressable
+          <UIPressable
+            haptic={index === selectedItemIndex ? false : "selection"}
             style={styles.item({ isSelected })}
             key={item}
             {...props}
@@ -32,7 +34,7 @@ export const UISegmented = ({
             >
               {item}
             </UIText>
-          </Pressable>
+          </UIPressable>
         );
       })}
     </View>

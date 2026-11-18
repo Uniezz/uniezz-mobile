@@ -10,13 +10,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { Ref } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { Platform, Pressable, View } from "react-native";
+import { Platform, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import type { BirthDateFormValues } from "@/@types";
 import { useUpdateConnectionPreferences } from "@/hooks";
 import { birthDateSchema } from "@/schemas";
-import { UIFormSheet, UIText } from "@/ui";
+import { UIPressable, UIFormSheet, UIText } from "@/ui";
 import { toCalendarDay, apiErrorKey } from "@/utils";
 
 type BirthDateSheetProps = {
@@ -83,7 +83,7 @@ export const BirthDateSheet = ({ ref, onDismiss }: BirthDateSheetProps) => {
               <View style={styles.row}>
                 <UIText weight="medium">{t("connections.birthDate")}</UIText>
                 {Platform.OS === "android" ? (
-                  <Pressable
+                  <UIPressable
                     accessibilityRole="button"
                     onPress={handleAndroidPress}
                   >
@@ -94,7 +94,7 @@ export const BirthDateSheet = ({ ref, onDismiss }: BirthDateSheetProps) => {
                           }).format(field.value)
                         : "—"}
                     </UIText>
-                  </Pressable>
+                  </UIPressable>
                 ) : (
                   <DateTimePicker
                     value={field.value ?? today}

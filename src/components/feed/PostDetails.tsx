@@ -1,6 +1,5 @@
-import { Pressable } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { UIGlass, UIInput, UIText } from "@/ui";
+import { UIPressable, UIGlass, UIInput, UIText } from "@/ui";
 import { useState } from "react";
 import type { FeedPost } from "@/@types";
 
@@ -29,7 +28,7 @@ export function PostDetails({
         value={comment}
         onChangeText={setComment}
       />
-      <Pressable
+      <UIPressable
         accessibilityRole="button"
         onPress={() => {
           if (!comment.trim()) return;
@@ -38,7 +37,7 @@ export function PostDetails({
         }}
       >
         <UIText color="link">Post comment</UIText>
-      </Pressable>
+      </UIPressable>
     </UIGlass>
   );
 }

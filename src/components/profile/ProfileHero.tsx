@@ -1,10 +1,10 @@
 import * as WebBrowser from "expo-web-browser";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { Pressable, View } from "react-native";
+import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
-import { Icon, UIAvatar, UIGlass, UIImage, UIText } from "@/ui";
+import { UIPressable, Icon, UIAvatar, UIGlass, UIImage, UIText } from "@/ui";
 import { previewImages } from "@/utils";
 import { UniversityCard } from "./UniversityCard";
 
@@ -62,7 +62,7 @@ export const ProfileHero = ({
         ) : null}
         <View style={styles.identity}>
           {onAvatarPress ? (
-            <Pressable
+            <UIPressable
               accessibilityRole="button"
               accessibilityLabel={avatarLabel}
               disabled={isAvatarDisabled}
@@ -77,9 +77,9 @@ export const ProfileHero = ({
               <UIGlass radius={16} style={styles.badge}>
                 <Icon name="camera" size={15} />
               </UIGlass>
-            </Pressable>
+            </UIPressable>
           ) : avatar ? (
-            <Pressable
+            <UIPressable
               accessibilityRole="imagebutton"
               accessibilityLabel={t("app.openImage")}
               onPress={handleAvatarPreviewPress}
@@ -90,7 +90,7 @@ export const ProfileHero = ({
                 imageSrc={avatar}
                 style={styles.avatar}
               />
-            </Pressable>
+            </UIPressable>
           ) : (
             <UIAvatar
               size="xxl"
@@ -112,7 +112,7 @@ export const ProfileHero = ({
         </View>
         <UniversityCard universityId={universityId} />
         {songUrl ? (
-          <Pressable
+          <UIPressable
             hitSlop={6}
             accessibilityRole="link"
             accessibilityLabel={t("students.song")}
@@ -127,7 +127,7 @@ export const ProfileHero = ({
             <UIText size="sm" color="link" numberOfLines={1}>
               {new URL(songUrl).host}
             </UIText>
-          </Pressable>
+          </UIPressable>
         ) : null}
       </UIGlass>
       {children}

@@ -9,7 +9,7 @@ import { usePostHog } from "posthog-react-native";
 import type { Ref } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { Alert, Pressable, View } from "react-native";
+import { Alert, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import type { Course, CourseFormValues } from "@/@types";
@@ -24,6 +24,7 @@ import {
 } from "@/hooks";
 import { courseSchema } from "@/schemas";
 import {
+  UIPressable,
   Icon,
   UIButton,
   UIChip,
@@ -224,14 +225,14 @@ export const CourseFormSheet = ({ ref, course }: CourseFormSheetProps) => {
                       <UIText numberOfLines={1} style={styles.fileName}>
                         {file.name}
                       </UIText>
-                      <Pressable
+                      <UIPressable
                         accessibilityRole="button"
                         accessibilityLabel={t("study.removeMaterial")}
                         hitSlop={12}
                         onPress={handleRemovePress}
                       >
                         <Icon name="x" size={18} />
-                      </Pressable>
+                      </UIPressable>
                     </View>
                   );
                 })}

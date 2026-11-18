@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
-import { Pressable, PressableProps, View } from "react-native";
+import { PressableProps, View } from "react-native";
+import { UIPressable } from "./UIPressable";
 import { UIText } from "./UIText";
 import { StyleSheet, UnistylesVariants } from "react-native-unistyles";
 
@@ -18,7 +19,7 @@ export const UIRow = ({
 }: UIRowProps) => {
   styles.useVariants({ isSelected });
   return (
-    <Pressable style={styles.rowItem} {...props}>
+    <UIPressable style={styles.rowItem} {...props}>
       {leftItem}
       <View>
         <UIText weight="bold" style={styles.title}>
@@ -28,7 +29,7 @@ export const UIRow = ({
           {bottomText}
         </UIText>
       </View>
-    </Pressable>
+    </UIPressable>
   );
 };
 

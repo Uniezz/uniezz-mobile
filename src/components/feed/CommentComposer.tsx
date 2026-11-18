@@ -1,9 +1,9 @@
 import { Control, Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { Pressable, TextInput, View } from "react-native";
+import { TextInput, View } from "react-native";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
 import type { CommentFormValues } from "@/@types";
-import { Icon, UIText } from "@/ui";
+import { UIPressable, Icon, UIText } from "@/ui";
 
 const ThemedTextInput = withUnistyles(TextInput, (theme) => ({
   placeholderTextColor: theme.colors.white60,
@@ -41,7 +41,7 @@ export const CommentComposer = ({
           >
             {label}
           </UIText>
-          <Pressable
+          <UIPressable
             accessibilityRole="button"
             accessibilityLabel={t("postComposer.cancel")}
             onPress={onCancel}
@@ -52,7 +52,7 @@ export const CommentComposer = ({
               size={16}
               uniProps={(theme) => ({ color: theme.colors.white60 })}
             />
-          </Pressable>
+          </UIPressable>
         </View>
       ) : null}
       <View style={styles.row}>
@@ -75,7 +75,7 @@ export const CommentComposer = ({
             </View>
           )}
         />
-        <Pressable
+        <UIPressable
           accessibilityRole="button"
           accessibilityLabel={t("app.send")}
           disabled={isSendDisabled}
@@ -87,7 +87,7 @@ export const CommentComposer = ({
             size={18}
             uniProps={(theme) => ({ color: theme.colors.ink })}
           />
-        </Pressable>
+        </UIPressable>
       </View>
     </View>
   );

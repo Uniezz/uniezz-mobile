@@ -4,9 +4,9 @@ import {
   LANGUAGE_OPTIONS,
   useLanguageStore,
 } from "@/store/languageStore";
-import { Icon, UIText } from "@/ui";
+import { UIPressable, Icon, UIText } from "@/ui";
 import { useTranslation } from "react-i18next";
-import { Pressable, View } from "react-native";
+import { View } from "react-native";
 import { useState } from "react";
 import { StyleSheet } from "react-native-unistyles";
 
@@ -30,7 +30,7 @@ export const LanguagePicker = () => {
 
   return (
     <View style={styles.container}>
-      <Pressable
+      <UIPressable
         accessibilityLabel={t("language.select")}
         accessibilityRole="button"
         accessibilityState={{ expanded: isOpen }}
@@ -44,13 +44,13 @@ export const LanguagePicker = () => {
         <View style={styles.chevronContainer}>
           <View style={styles.chevron(isOpen)} />
         </View>
-      </Pressable>
+      </UIPressable>
       {isOpen ? (
         <View style={styles.menu}>
           {LANGUAGE_OPTIONS.map((option) => {
             const isSelected = option.code === currentLanguage;
             return (
-              <Pressable
+              <UIPressable
                 key={option.code}
                 accessibilityRole="button"
                 accessibilityState={{ selected: isSelected }}
@@ -72,7 +72,7 @@ export const LanguagePicker = () => {
                     uniProps={(theme) => ({ color: theme.colors.sky })}
                   />
                 ) : null}
-              </Pressable>
+              </UIPressable>
             );
           })}
         </View>

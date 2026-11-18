@@ -1,9 +1,9 @@
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { Pressable, View } from "react-native";
+import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import type { ApiFeedPost, FeedFilters } from "@/@types";
-import { UIGlass, UIImage, UIText } from "@/ui";
+import { UIPressable, UIGlass, UIImage, UIText } from "@/ui";
 import { postDate } from "@/utils";
 import { AuthorRow } from "./AuthorRow";
 
@@ -30,7 +30,7 @@ export const FeedPostCard = ({ post, filters }: FeedPostCardProps) => {
     });
 
   return (
-    <Pressable
+    <UIPressable
       accessibilityRole="button"
       accessibilityLabel={`${t("app.viewPost")}: ${post.title}`}
       onPress={handlePress}
@@ -71,7 +71,7 @@ export const FeedPostCard = ({ post, filters }: FeedPostCardProps) => {
           </View>
         ) : null}
       </UIGlass>
-    </Pressable>
+    </UIPressable>
   );
 };
 

@@ -1,12 +1,12 @@
 import { router } from "expo-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, Pressable, View } from "react-native";
+import { Alert, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import type { FeedComment } from "@/@types";
 import { useCommentReplies, useDeleteFeedComment } from "@/hooks";
-import { UIAvatar, UIText, UIUniversityLogo } from "@/ui";
+import { UIPressable, UIAvatar, UIText, UIUniversityLogo } from "@/ui";
 import { authorName, postDate, profileHref } from "@/utils";
 import { LikeButton } from "./LikeButton";
 
@@ -68,7 +68,7 @@ export const CommentItem = ({
   return (
     <View style={styles.item(isTopLevel)}>
       <View style={styles.comment}>
-        <Pressable
+        <UIPressable
           hitSlop={6}
           accessibilityRole="link"
           accessibilityLabel={name}
@@ -79,9 +79,9 @@ export const CommentItem = ({
             size={isTopLevel ? "sm" : "xs"}
             imageSrc={comment.author?.avatarUrl}
           />
-        </Pressable>
+        </UIPressable>
         <View style={styles.content}>
-          <Pressable
+          <UIPressable
             accessibilityRole="link"
             accessibilityLabel={name}
             disabled={!comment.author}
@@ -106,7 +106,7 @@ export const CommentItem = ({
                 i18n.resolvedLanguage ?? "en",
               )}
             </UIText>
-          </Pressable>
+          </UIPressable>
           <UIText
             color={comment.deleted ? "secondary" : "soft"}
             style={styles.text}
@@ -122,7 +122,7 @@ export const CommentItem = ({
                 count={comment.likesCount}
               />
               {isTopLevel ? (
-                <Pressable
+                <UIPressable
                   accessibilityRole="button"
                   onPress={handleReplyPress}
                   hitSlop={6}
@@ -130,11 +130,11 @@ export const CommentItem = ({
                   <UIText size="sm" weight="semibold" color="secondary">
                     {t("apiState.reply")}
                   </UIText>
-                </Pressable>
+                </UIPressable>
               ) : null}
               {isMine ? (
                 <>
-                  <Pressable
+                  <UIPressable
                     accessibilityRole="button"
                     onPress={handleEditPress}
                     hitSlop={6}
@@ -142,8 +142,8 @@ export const CommentItem = ({
                     <UIText size="sm" weight="semibold" color="secondary">
                       {t("app.edit")}
                     </UIText>
-                  </Pressable>
-                  <Pressable
+                  </UIPressable>
+                  <UIPressable
                     accessibilityRole="button"
                     onPress={handleDeletePress}
                     hitSlop={6}
@@ -151,10 +151,10 @@ export const CommentItem = ({
                     <UIText size="sm" weight="semibold" color="error">
                       {t("app.remove")}
                     </UIText>
-                  </Pressable>
+                  </UIPressable>
                 </>
               ) : (
-                <Pressable
+                <UIPressable
                   accessibilityRole="button"
                   accessibilityLabel={t("report.comment")}
                   onPress={handleReportPress}
@@ -163,12 +163,12 @@ export const CommentItem = ({
                   <UIText size="sm" weight="semibold" color="secondary">
                     {t("report.action")}
                   </UIText>
-                </Pressable>
+                </UIPressable>
               )}
             </View>
           )}
           {isTopLevel && comment.repliesCount > 0 ? (
-            <Pressable
+            <UIPressable
               accessibilityRole="button"
               onPress={handleToggleReplies}
               hitSlop={6}
@@ -178,7 +178,7 @@ export const CommentItem = ({
                   ? t("apiState.hideReplies")
                   : t("apiState.showReplies", { total: comment.repliesCount })}
               </UIText>
-            </Pressable>
+            </UIPressable>
           ) : null}
         </View>
       </View>

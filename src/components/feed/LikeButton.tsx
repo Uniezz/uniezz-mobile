@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Pressable } from "react-native";
+
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -10,7 +10,7 @@ import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import { useFeedLike } from "@/hooks";
 import { formatCompactCount } from "@/utils";
-import { Icon, UIText } from "@/ui";
+import { UIPressable, Icon, UIText } from "@/ui";
 
 type LikeButtonProps = {
   id: string;
@@ -46,7 +46,7 @@ export const LikeButton = ({ id, kind, liked, count }: LikeButtonProps) => {
   };
 
   return (
-    <Pressable
+    <UIPressable
       accessibilityRole="button"
       accessibilityLabel={t(liked ? "apiState.unlike" : "apiState.like")}
       accessibilityState={{ selected: liked }}
@@ -67,7 +67,7 @@ export const LikeButton = ({ id, kind, liked, count }: LikeButtonProps) => {
       <UIText size="sm" weight="semibold" color={liked ? "error" : "secondary"}>
         {formatCompactCount(count, i18n.resolvedLanguage ?? i18n.language)}
       </UIText>
-    </Pressable>
+    </UIPressable>
   );
 };
 
