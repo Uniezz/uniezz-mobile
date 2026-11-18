@@ -1,7 +1,7 @@
 {
   "main": "index.ts",
   "name": "uniezz",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "ios": "doppler run -p mobile -c stg -- bun run expo run:ios",
     "android": "doppler run -p mobile -c stg -- bun run expo run:android",
