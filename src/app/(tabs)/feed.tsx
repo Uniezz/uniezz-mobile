@@ -163,8 +163,7 @@ export default function FeedScreen() {
   return (
     <UIPage>
       <UICollapsingHeader
-        title={t("tabs.feed")}
-        subtitle={t("app.feedSubtitle")}
+        title={t("feed.title")}
         isCompact={isHeaderCompact}
         actions={headerActions}
         onLayout={handleHeaderLayout}

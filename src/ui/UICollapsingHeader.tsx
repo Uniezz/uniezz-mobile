@@ -99,12 +99,7 @@ export const UICollapsingHeader = ({
             transition={HEADER_TRANSITION}
             transformOrigin={HEADER_TITLE_ORIGIN}
           >
-            <UIText
-              size="title1"
-              weight="bold"
-              numberOfLines={1}
-              style={styles.h1}
-            >
+            <UIText size="xl" weight="bold" numberOfLines={1} style={styles.h1}>
               {title}
             </UIText>
           </EaseView>
@@ -153,8 +148,7 @@ const styles = StyleSheet.create((theme, rt) => ({
     gap: theme.vs(4),
   },
   h1: {
-    letterSpacing: -1,
-    // ~1.2× the 26pt size: a line height equal to the font size makes iOS draw the glyphs high, off-centre from the buttons
-    lineHeight: theme.vs(32),
+    // match Meet/Chat tab titles (xl / 30pt)
+    lineHeight: theme.vs(30),
   },
 }));

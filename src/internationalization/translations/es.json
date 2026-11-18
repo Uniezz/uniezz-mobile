@@ -97,7 +97,7 @@
     "feed": "Inicio",
     "chat": "Chat",
     "faq": "PREGUNTAS FRECUENTES",
-    "connections": "Conocer gente",
+    "connections": "Conocer",
     "exams": "Exámenes"
   },
   "feed": {
@@ -123,8 +123,7 @@
     "commentsCount_other": "{{count}} comentarios",
     "lastMonth": "Últimos 30 días",
     "lastWeek": "Últimos 7 días",
-    "search": "Buscar…",
-    "subtitle": "Qué está pasando en Lublin"
+    "search": "Buscar…"
   },
   "chat": {
     "action": "Nuevo grupo",
@@ -327,7 +326,6 @@
     "message": "Mensaje",
     "required": "Introduce un valor válido.",
     "submit": "Entregar",
-    "feedSubtitle": "¿Qué está pasando en Lublin?",
     "searchUniezz": "Buscar uniezz",
     "question": "Pregunta",
     "event": "Evento",

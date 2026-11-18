@@ -124,7 +124,6 @@
     "lastMonth": "Апошнія 30 дзён",
     "lastWeek": "Апошнія 7 дзён",
     "search": "Пошук…",
-    "subtitle": "Што адбываецца ў Любліне",
     "commentsCount_few": "{{count}} каментары",
     "commentsCount_many": "{{count}} каментарыяў"
   },
@@ -334,7 +333,6 @@
     "message": "паведамленне",
     "required": "Увядзіце сапраўднае значэнне.",
     "submit": "Падаць",
-    "feedSubtitle": "Што адбываецца ў Любліне",
     "searchUniezz": "Пошук uniezz",
     "question": "Пытанне",
     "event": "Падзея",

@@ -120,7 +120,6 @@
       "campus": "Kampus"
     },
     "action": "Dodaj post",
-    "subtitle": "Co się dzieje w Lublinie",
     "title": "Aktualności",
     "type": "Typ posta",
     "allTypes": "Wszystkie typy",
@@ -344,7 +343,6 @@
     "required": "Wprowadź poprawną wartość.",
     "submit": "Wyślij",
     "today": "Top posty",
-    "feedSubtitle": "Co słychać w Lublinie",
     "searchUniezz": "Szukaj w uniezz",
     "liveNow": "Trwa teraz",
     "going": "Wezmę udział",

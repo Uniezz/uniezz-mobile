@@ -162,8 +162,13 @@ export default function MeetScreen() {
     <UIPage>
       <View style={styles.page}>
         <View style={styles.header}>
-          <UIText size="xl" weight="bold" style={styles.title}>
-            {t("tabs.connections")}
+          <UIText
+            size="xl"
+            weight="bold"
+            numberOfLines={1}
+            style={styles.title}
+          >
+            {t("connections.title")}
           </UIText>
           <UIIconButton
             accessibilityRole="button"
@@ -274,7 +279,8 @@ const styles = StyleSheet.create((theme, rt) => ({
     // the tab bar floats above this page's bottom (UIPage pads the home indicator); +12 keeps the actions just above it.
     // iOS: the system bar reaches ~40pt; Android: GlassTabBar is 8 offset + 6 + 6 + 20 icon + 2 + ~14 label + 6 + 6 ≈ 68pt
     paddingBottom: theme.vs(Platform.OS === "android" ? 80 : 52),
-    gap: theme.vs(16),
+    // 12pt below the title row matches UICollapsingHeader → UISubTabs on Study and FAQ
+    gap: theme.vs(12),
   },
   header: {
     flexDirection: "row",

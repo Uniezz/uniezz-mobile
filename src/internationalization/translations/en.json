@@ -118,7 +118,6 @@
       "campus": "Campus"
     },
     "action": "Create post",
-    "subtitle": "What's happening across Lublin",
     "title": "Feed",
     "type": "Post type",
     "allTypes": "All types",
@@ -338,7 +337,6 @@
     "required": "Enter a valid value.",
     "submit": "Submit",
     "today": "Top posts",
-    "feedSubtitle": "What’s happening in Lublin",
     "searchUniezz": "Search uniezz",
     "liveNow": "Live now",
     "going": "Going",

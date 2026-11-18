@@ -97,7 +97,7 @@
     "feed": "Feed",
     "chat": "Chat",
     "faq": "FAQ",
-    "connections": "Leute kennenlernen",
+    "connections": "Kennenlernen",
     "exams": "Prüfungen"
   },
   "feed": {
@@ -123,8 +123,7 @@
     "commentsCount_other": "{{count}} Kommentare",
     "lastMonth": "Letzte 30 Tage",
     "lastWeek": "Letzte 7 Tage",
-    "search": "Suchen…",
-    "subtitle": "Was passiert in Lublin?"
+    "search": "Suchen…"
   },
   "chat": {
     "action": "Neue Gruppe",
@@ -137,7 +136,7 @@
   },
   "connections": {
     "subtitle": "Lerne Studierende aller fünf Hochschulen kennen",
-    "title": "Kontakte",
+    "title": "Kennenlernen",
     "filters": "Filter",
     "resetFilters": "Zurücksetzen",
     "anyFaculty": "Jede Fakultät",
@@ -327,7 +326,6 @@
     "message": "Nachricht",
     "required": "Gib einen gültigen Wert ein.",
     "submit": "Einreichen",
-    "feedSubtitle": "Was passiert in Lublin?",
     "searchUniezz": "uniezz durchsuchen",
     "question": "Frage",
     "event": "Ereignis",
