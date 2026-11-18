@@ -49,6 +49,7 @@ export default function RewardsScreen() {
   const [isHeaderCompact, setIsHeaderCompact] = useState(false);
   // 0: earn (quests and history), 1: spend (a blurred preview until there is a shop)
   const [tab, setTab] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
   const isEarn = tab === 0;
   const { data: profile } = useMyProfile();
   const {
@@ -71,7 +72,6 @@ export default function RewardsScreen() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    isRefetching,
   } = useMyCoinGrants();
   const grants = data?.pages.flatMap((page) => page.items ?? []) ?? [];
 
@@ -84,7 +84,12 @@ export default function RewardsScreen() {
   const handleHeaderLayout = (event: LayoutChangeEvent) => {
     setHeaderHeight(event.nativeEvent.layout.height);
   };
-  const handleRefresh = () => Promise.all([refetch(), refetchQuests()]);
+  const handleRefresh = () => {
+    setRefreshing(true);
+    return Promise.all([refetch(), refetchQuests()]).finally(() =>
+      setRefreshing(false),
+    );
+  };
   const handleInvitePress = () => {
     if (!invite) return;
     const link = inviteUrl(invite.code);
@@ -127,7 +132,7 @@ export default function RewardsScreen() {
         progressViewOffset={headerHeight}
         contentContainerStyle={styles.list(headerHeight)}
         onRefresh={handleRefresh}
-        refreshing={isRefetching}
+        refreshing={refreshing}
         onEndReached={handleEndReached}
         ListHeaderComponent={
           <View style={styles.header}>

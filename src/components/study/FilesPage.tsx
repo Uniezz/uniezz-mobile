@@ -35,7 +35,6 @@ export function FilesPage({
     data,
     isPending,
     isError,
-    isRefetching,
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
@@ -114,7 +113,6 @@ export function FilesPage({
       renderItem={renderFile}
       isPending={isPending}
       isError={isError}
-      isRefetching={isRefetching}
       isFetchingNextPage={isFetchingNextPage}
       onRefresh={handleRefresh}
       onEndReached={handleEndReached}

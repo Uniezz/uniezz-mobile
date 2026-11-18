@@ -6,6 +6,7 @@ export * from "./backdrop";
 export * from "./universities";
 export * from "./search";
 export * from "./feed";
+export * from "./patchFeed";
 export * from "./report";
 export * from "./profile";
 export * from "./media";

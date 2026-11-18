@@ -3,7 +3,7 @@ import { launchImageLibraryAsync } from "expo-image-picker";
 import { usePostHog } from "posthog-react-native";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner-native";
-import { apiErrorKey, captureAction } from "@/utils";
+import { apiErrorKey, captureAction, patchFeedAuthor } from "@/utils";
 import { useUploadImages } from "./useMedia";
 import {
   addMyProgramme,
@@ -40,15 +40,21 @@ export function useUpdateMyProfile() {
     mutationFn: updateMyProfile,
     onSuccess: (profile, change) => {
       queryClient.setQueryData(["profile", "me"], profile);
-      return Promise.all([
-        // completing the profile pays coins once; the returned profile already carries the balance
-        queryClient.invalidateQueries({ queryKey: ["rewards"] }),
-        // posts and comments carry their author's name and avatar
-        (change.firstName !== undefined ||
-          change.lastName !== undefined ||
-          change.avatarMediaId !== undefined) &&
-          queryClient.invalidateQueries({ queryKey: ["feed"] }),
-      ]);
+      const authorPatch = {
+        ...(change.firstName !== undefined
+          ? { firstName: profile.firstName }
+          : {}),
+        ...(change.lastName !== undefined
+          ? { lastName: profile.lastName }
+          : {}),
+        ...(change.avatarMediaId !== undefined
+          ? { avatarUrl: profile.avatarUrl }
+          : {}),
+      };
+      if (Object.keys(authorPatch).length > 0) {
+        patchFeedAuthor(queryClient, profile.id, authorPatch);
+      }
+      return queryClient.invalidateQueries({ queryKey: ["rewards"] });
     },
   });
 }
@@ -92,10 +98,12 @@ export function useDeleteMyAvatar() {
     onSuccess: () => {
       queryClient.setQueryData<Profile>(
         ["profile", "me"],
-        (profile) => profile && { ...profile, avatarUrl: null },
+        (current) => current && { ...current, avatarUrl: null },
       );
-      // posts and comments carry their author's avatar
-      return queryClient.invalidateQueries({ queryKey: ["feed"] });
+      const profile = queryClient.getQueryData<Profile>(["profile", "me"]);
+      if (profile) {
+        patchFeedAuthor(queryClient, profile.id, { avatarUrl: null });
+      }
     },
   });
 }

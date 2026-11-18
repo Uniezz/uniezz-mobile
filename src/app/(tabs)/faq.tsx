@@ -54,7 +54,6 @@ export default function FaqScreen() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    isRefetching,
   } = isModeration ? pending : isMine ? mine : all;
   const proposalRef = useRef<BottomSheetModal>(null);
   const [search, setSearch] = useState("");
@@ -62,6 +61,7 @@ export default function FaqScreen() {
   // the header floats over the list; the list starts below it and turns the header compact once scrolled
   const [headerHeight, setHeaderHeight] = useState(0);
   const [isHeaderCompact, setIsHeaderCompact] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const entries = data?.pages.flatMap((page) => page.items ?? []) ?? [];
   // shortcut: search filters only the loaded pages; use a server query once GET /faq takes one
@@ -94,6 +94,10 @@ export default function FaqScreen() {
   };
   const handleEndReached = () => {
     if (hasNextPage && !isFetchingNextPage) return fetchNextPage();
+  };
+  const handleRefresh = () => {
+    setRefreshing(true);
+    return refetch().finally(() => setRefreshing(false));
   };
 
   const headerActions = (
@@ -142,8 +146,8 @@ export default function FaqScreen() {
         showsVerticalScrollIndicator={false}
         progressViewOffset={headerHeight}
         contentContainerStyle={styles.list(headerHeight)}
-        onRefresh={refetch}
-        refreshing={isRefetching}
+        onRefresh={handleRefresh}
+        refreshing={refreshing}
         onEndReached={handleEndReached}
         ListEmptyComponent={
           isPending ? (

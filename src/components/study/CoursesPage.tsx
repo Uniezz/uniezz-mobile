@@ -34,7 +34,6 @@ export function CoursesPage({
     data,
     isPending,
     isError,
-    isRefetching,
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
@@ -91,7 +90,6 @@ export function CoursesPage({
       renderItem={renderCourse}
       isPending={isPending}
       isError={isError}
-      isRefetching={isRefetching}
       isFetchingNextPage={isFetchingNextPage}
       onRefresh={handleRefresh}
       onEndReached={handleEndReached}

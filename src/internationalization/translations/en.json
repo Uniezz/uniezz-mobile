@@ -395,6 +395,7 @@
     "noDocument": "No downloadable document was supplied with this design.",
     "metadataOnly": "Add material details locally. File uploading is unavailable in this mock.",
     "friends": "Friends",
+    "study": "Study",
     "studyBuddy": "Study buddy",
     "dating": "Dating",
     "pass": "Pass",

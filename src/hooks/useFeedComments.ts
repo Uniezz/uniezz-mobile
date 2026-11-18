@@ -1,4 +1,4 @@
-import { idempotencyKey } from "@/utils";
+import { idempotencyKey, patchFeedItem } from "@/utils";
 import {
   useInfiniteQuery,
   useMutation,
@@ -11,7 +11,6 @@ import {
   getFeedComments,
   updateFeedComment,
 } from "@/api";
-import { patchFeedItem } from "./patchFeedItem";
 import { invalidateRewards } from "./useRewards";
 
 export function useFeedComments(id: string) {

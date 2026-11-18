@@ -17,8 +17,7 @@ import {
   updateFeedPost,
 } from "@/api";
 import type { FeedFilters, FeedPostsPageParam } from "@/@types";
-import { patchFeedItem } from "./patchFeedItem";
-import { removeFromLists } from "@/utils";
+import { patchFeedItem, removeFromLists } from "@/utils";
 import { invalidateRewards } from "./useRewards";
 
 export function useUpdateFeedPost() {

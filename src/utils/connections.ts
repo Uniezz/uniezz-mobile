@@ -9,7 +9,7 @@ import type {
 
 export const CONNECTION_MODES = [
   ["friends", "app.friends", "face-slightly-smiling"],
-  ["studyBuddy", "app.studyBuddy", "book-open"],
+  ["studyBuddy", "app.study", "book-open"],
   ["dating", "app.dating", "heart"],
 ] as const satisfies readonly (readonly [ConnectionMode, string, string])[];
 

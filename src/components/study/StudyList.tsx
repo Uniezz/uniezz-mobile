@@ -1,5 +1,6 @@
 import { FlashList } from "@shopify/flash-list";
 import type { ReactElement } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { NativeScrollEvent, NativeSyntheticEvent } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
@@ -10,9 +11,8 @@ type StudyListProps<T extends { id: string }> = {
   renderItem: (item: T) => ReactElement;
   isPending: boolean;
   isError: boolean;
-  isRefetching: boolean;
   isFetchingNextPage: boolean;
-  onRefresh: () => void;
+  onRefresh: () => void | Promise<unknown>;
   onEndReached: () => void;
   /** the floating screen header's height, so the list starts below it */
   headerHeight: number;
@@ -25,7 +25,6 @@ export function StudyList<T extends { id: string }>({
   renderItem,
   isPending,
   isError,
-  isRefetching,
   isFetchingNextPage,
   onRefresh,
   onEndReached,
@@ -33,6 +32,11 @@ export function StudyList<T extends { id: string }>({
   onScroll,
 }: StudyListProps<T>) {
   const { t } = useTranslation();
+  const [refreshing, setRefreshing] = useState(false);
+  const handleRefresh = () => {
+    setRefreshing(true);
+    return Promise.resolve(onRefresh()).finally(() => setRefreshing(false));
+  };
 
   return (
     <>
@@ -47,14 +51,17 @@ export function StudyList<T extends { id: string }>({
         showsVerticalScrollIndicator={false}
         progressViewOffset={headerHeight}
         contentContainerStyle={styles.listContent(headerHeight)}
-        onRefresh={onRefresh}
-        refreshing={isRefetching}
+        onRefresh={handleRefresh}
+        refreshing={refreshing}
         onEndReached={onEndReached}
         ListEmptyComponent={
           isPending ? (
             <UISkeleton height={64} />
           ) : isError ? (
-            <UIQueryError message={t("apiState.error")} onRetry={onRefresh} />
+            <UIQueryError
+              message={t("apiState.error")}
+              onRetry={handleRefresh}
+            />
           ) : null
         }
         ListFooterComponent={

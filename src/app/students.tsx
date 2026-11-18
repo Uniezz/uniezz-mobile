@@ -33,6 +33,7 @@ export default function StudentsScreen() {
   // the header floats over the list; the list starts below it and turns the header compact once scrolled
   const [headerHeight, setHeaderHeight] = useState(0);
   const [isHeaderCompact, setIsHeaderCompact] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const {
     data,
     isPending,
@@ -41,7 +42,6 @@ export default function StudentsScreen() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    isRefetching,
   } = useProfileSearch(query);
   const students = data?.pages.flatMap((page) => page.items ?? []) ?? [];
 
@@ -63,6 +63,10 @@ export default function StudentsScreen() {
   };
   const handleEndReached = () => {
     if (hasNextPage && !isFetchingNextPage) return fetchNextPage();
+  };
+  const handleRefresh = () => {
+    setRefreshing(true);
+    return refetch().finally(() => setRefreshing(false));
   };
 
   const headerActions = (
@@ -93,8 +97,8 @@ export default function StudentsScreen() {
         showsVerticalScrollIndicator={false}
         progressViewOffset={headerHeight}
         contentContainerStyle={styles.list(headerHeight)}
-        onRefresh={refetch}
-        refreshing={isRefetching}
+        onRefresh={handleRefresh}
+        refreshing={refreshing}
         onEndReached={handleEndReached}
         ListEmptyComponent={
           isPending ? (

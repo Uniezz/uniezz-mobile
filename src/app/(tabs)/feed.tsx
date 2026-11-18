@@ -56,6 +56,7 @@ export default function FeedScreen() {
   // the header floats over the list; the list starts below it and turns the header compact once scrolled
   const [headerHeight, setHeaderHeight] = useState(0);
   const [isHeaderCompact, setIsHeaderCompact] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     setIsHeaderCompact(
       event.nativeEvent.contentOffset.y > HEADER_COMPACT_OFFSET,
@@ -92,7 +93,6 @@ export default function FeedScreen() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    isRefetching,
     isPlaceholderData,
     fetchPreviousPage,
     hasPreviousPage,
@@ -108,6 +108,10 @@ export default function FeedScreen() {
     if (!isPlaceholderData && hasNextPage && !isFetching) {
       return fetchNextPage();
     }
+  };
+  const handleRefresh = () => {
+    setRefreshing(true);
+    return refetch().finally(() => setRefreshing(false));
   };
 
   const headerActions = (
@@ -175,9 +179,8 @@ export default function FeedScreen() {
         data={posts}
         keyExtractor={(post) => post.id}
         contentContainerStyle={styles.list(headerHeight)}
-        onRefresh={refetch}
-        // placeholder data is the previous filter's posts, so that fetch is not a pull
-        refreshing={isRefetching && !isPlaceholderData}
+        onRefresh={handleRefresh}
+        refreshing={refreshing}
         onStartReached={handleStartReached}
         onEndReached={handleEndReached}
         ListHeaderComponent={

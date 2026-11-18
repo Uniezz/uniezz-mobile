@@ -2,7 +2,6 @@ export * from "./useOtpScreen";
 export * from "./auth";
 export * from "./useBirthDateGate";
 export * from "./useUniversities";
-export * from "./patchFeedItem";
 export * from "./useConnections";
 export * from "./useCourseComments";
 export * from "./useCourses";

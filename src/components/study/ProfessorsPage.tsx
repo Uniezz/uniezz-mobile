@@ -21,7 +21,6 @@ export function ProfessorsPage({
     data,
     isPending,
     isError,
-    isRefetching,
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
@@ -43,7 +42,6 @@ export function ProfessorsPage({
       renderItem={renderProfessor}
       isPending={isPending}
       isError={isError}
-      isRefetching={isRefetching}
       isFetchingNextPage={isFetchingNextPage}
       onRefresh={handleRefresh}
       onEndReached={handleEndReached}
