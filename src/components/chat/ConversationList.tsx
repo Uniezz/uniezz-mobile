@@ -157,18 +157,20 @@ const styles = StyleSheet.create((theme) => ({
     paddingTop: theme.vs(4),
     gap: theme.vs(16),
   },
+  // matches UICollapsingHeader without a subtitle: the title centred on the buttons
   header: {
     flexDirection: "row",
-    alignItems: "flex-end",
+    alignItems: "center",
     gap: theme.s(8),
   },
   title: {
     flex: 1,
     lineHeight: theme.vs(30),
   },
-  // the tabs run edge to edge, as in the study header
+  // the tabs run edge to edge, 12pt under the title row, as in UICollapsingHeader
   filters: {
     marginHorizontal: -theme.s(16),
+    marginTop: -theme.vs(4),
   },
   list: {
     flex: 1,
