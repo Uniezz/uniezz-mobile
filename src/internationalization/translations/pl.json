@@ -132,6 +132,7 @@
     "nextPost": "Następny post"
   },
   "chat": {
+    "noGroupAccess": "Nie jesteś członkiem tej grupy.",
     "selected_one": "{{count}} wybrana",
     "selected_few": "{{count}} wybrane",
     "selected_many": "{{count}} wybranych",

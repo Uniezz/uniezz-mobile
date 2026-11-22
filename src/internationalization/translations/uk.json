@@ -132,6 +132,7 @@
     "nextPost": "Наступний допис"
   },
   "chat": {
+    "noGroupAccess": "Ви не є учасником цієї групи.",
     "selected_one": "{{count}} вибрано",
     "selected_few": "{{count}} вибрано",
     "selected_many": "{{count}} вибрано",

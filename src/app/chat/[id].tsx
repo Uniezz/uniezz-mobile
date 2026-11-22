@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router, useLocalSearchParams } from "expo-router";
 import { usePostHog } from "posthog-react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { LayoutChangeEvent, View } from "react-native";
@@ -14,6 +14,7 @@ import { messageSchema } from "@/schemas";
 import { useChatStore } from "@/store/chat";
 import { captureAction } from "@/utils";
 import { Icon, UIAvatar, UIEmpty, UIIconButton, UIPage, UIText } from "@/ui";
+import { toast } from "sonner-native";
 
 const emptyMessages: ChatMessage[] = [];
 
@@ -41,11 +42,21 @@ export default function ConversationScreen() {
   const handleComposerLayout = (event: LayoutChangeEvent) => {
     setComposerHeight(event.nativeEvent.layout.height);
   };
+  useEffect(() => {
+    if (conversation?.isMember === false) {
+      toast.error(t("chat.noGroupAccess"));
+      router.replace("/(tabs)/chat");
+    }
+  }, [conversation?.isMember, t]);
 
   const handleSendPress = handleSubmit(({ text }) => {
     captureAction(posthog, "message_send", "attempted", { storage: "local" });
     try {
-      sendMessage(id, text);
+      if (!sendMessage(id, text)) {
+        toast.error(t("chat.noGroupAccess"));
+        router.replace("/(tabs)/chat");
+        return;
+      }
       reset();
       captureAction(posthog, "message_send", "succeeded", { storage: "local" });
     } catch (error) {
@@ -90,10 +101,10 @@ export default function ConversationScreen() {
             </>
           ) : null}
         </View>
-        {conversation ? (
+        {conversation?.isMember ? (
           <ChatThread messages={messages} composerHeight={composerHeight} />
         ) : null}
-        {conversation ? (
+        {conversation?.isMember ? (
           // UIPage already lifts the composer off the home indicator; above the keyboard that gap is dropped
           <KeyboardStickyView
             offset={{ opened: bottomInset }}

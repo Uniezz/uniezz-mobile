@@ -132,6 +132,7 @@
     "nextPost": "Следующая публикация"
   },
   "chat": {
+    "noGroupAccess": "Вы не являетесь участником этой группы.",
     "selected_one": "Выбрано: {{count}}",
     "selected_few": "Выбрано: {{count}}",
     "selected_many": "Выбрано: {{count}}",

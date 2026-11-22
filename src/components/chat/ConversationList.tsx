@@ -41,6 +41,7 @@ export function ConversationList({
     setFilter(FILTERS[index]?.[0] ?? "all");
   const visible = conversations.filter(
     (item) =>
+      item.isMember &&
       item.name.toLowerCase().includes(search.toLowerCase()) &&
       (filter !== "groups" || item.group),
   );

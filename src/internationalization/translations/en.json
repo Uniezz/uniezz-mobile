@@ -130,6 +130,7 @@
     "nextPost": "Next post"
   },
   "chat": {
+    "noGroupAccess": "You are not a member of this group.",
     "selected_one": "{{count}} selected",
     "selected_other": "{{count}} selected",
     "requests": "Requests",
