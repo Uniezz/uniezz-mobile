@@ -457,7 +457,11 @@
     "students": "Студенты",
     "changeBanner": "Изменить баннер",
     "openImage": "Открыть фото",
-    "processingPhotos": "Обрабатываем фото…"
+    "processingPhotos": "Обрабатываем фото…",
+    "notificationsPromptTitle": "Включить уведомления?",
+    "notificationsPromptMessage": "Узнавай о новых сообщениях, ответах на твои посты и новых знакомствах. Их можно отключить в любой момент в настройках.",
+    "notificationsEnable": "Включить",
+    "notNow": "Не сейчас"
   },
   "postComposer": {
     "audience": "Кто может видеть",

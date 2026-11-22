@@ -11,6 +11,7 @@ export * from "./useFeed";
 export * from "./useFeedComments";
 export * from "./useMedia";
 export * from "./useMyProfile";
+export * from "./useNotifications";
 export * from "./useProfessors";
 export * from "./useProfiles";
 export * from "./useReports";

@@ -457,7 +457,11 @@
     "students": "Студенти",
     "changeBanner": "Змінити банер",
     "openImage": "Відкрити фото",
-    "processingPhotos": "Обробляємо фото…"
+    "processingPhotos": "Обробляємо фото…",
+    "notificationsPromptTitle": "Увімкнути сповіщення?",
+    "notificationsPromptMessage": "Дізнавайся про нові повідомлення, відповіді на твої пости та нові знайомства. Їх можна вимкнути будь-коли в налаштуваннях.",
+    "notificationsEnable": "Увімкнути",
+    "notNow": "Не зараз"
   },
   "postComposer": {
     "audience": "Хто може бачити",

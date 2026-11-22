@@ -442,7 +442,11 @@
     "visibilityDescription": "Andere Studierende können dich anhand deines Namens und Studiengangs finden.",
     "visibleToStudents": "Für Studierende sichtbar",
     "openImage": "Bild öffnen",
-    "processingPhotos": "Fotos werden verarbeitet…"
+    "processingPhotos": "Fotos werden verarbeitet…",
+    "notificationsPromptTitle": "Benachrichtigungen aktivieren?",
+    "notificationsPromptMessage": "Erfahre von neuen Nachrichten, Antworten auf deine Beiträge und neuen Kontakten. Du kannst sie jederzeit in den Einstellungen ausschalten.",
+    "notificationsEnable": "Aktivieren",
+    "notNow": "Nicht jetzt"
   },
   "postComposer": {
     "duplicatePhoto": "Dieses Foto wurde bereits hinzugefügt.",

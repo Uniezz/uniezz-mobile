@@ -15,7 +15,13 @@ import { BlurView } from "expo-blur";
 import { router } from "expo-router";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, LayoutChangeEvent, Platform, View } from "react-native";
+import {
+  Alert,
+  LayoutChangeEvent,
+  Linking,
+  Platform,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFeatureFlag } from "posthog-react-native";
 import { StyleSheet } from "react-native-unistyles";
@@ -49,8 +55,10 @@ import {
   useDeleteMyProfilePhoto,
   useMyProfile,
   useMyProfilePhotos,
+  useNotificationPermission,
   usePickProfileImage,
   usePickProfilePhotos,
+  useRequestNotificationPermission,
 } from "@/hooks";
 import { Icon, UIGlass, UIPage, UISubTabs } from "@/ui";
 import { ApiRequestError } from "@/api";
@@ -78,6 +86,10 @@ export default function ProfileScreen() {
   const { pickPhotos: handleAddPhotosPress, isPending: isAddingPhotos } =
     usePickProfilePhotos(MAX_PROFILE_PHOTOS - photos.length);
   const { mutateAsync: deletePhoto } = useDeleteMyProfilePhoto();
+  const { isEnabled: areNotificationsEnabled, canAsk: canAskNotifications } =
+    useNotificationPermission();
+  const { mutateAsync: requestNotifications } =
+    useRequestNotificationPermission();
   const { clearSession } = useSession();
   const coinsEnabled = useFeatureFlag("coins") !== false;
   const programmesRef = useRef<BottomSheetModal>(null);
@@ -184,6 +196,29 @@ export default function ProfileScreen() {
     }
   };
 
+  // the app can only ask once; turning them off, or on after a refusal, happens in the system settings
+  const handleNotificationsPress = () => {
+    if (!canAskNotifications) return Linking.openSettings();
+    Alert.alert(
+      t("app.notificationsPromptTitle"),
+      t("app.notificationsPromptMessage"),
+      [
+        { text: t("app.notNow"), style: "cancel" },
+        {
+          text: t("app.notificationsEnable"),
+          onPress: handleEnableNotifications,
+        },
+      ],
+    );
+  };
+  const handleEnableNotifications = async () => {
+    try {
+      await requestNotifications();
+    } catch {
+      toast.error(t("apiState.error"));
+    }
+  };
+
   const handleLogoutPress = async () => {
     try {
       await clearSession();
@@ -234,6 +269,8 @@ export default function ProfileScreen() {
       if (useHapticsStore.getState().enabled) void Haptics.selectionAsync();
       return;
     }
+    if (nativeEvent.event === "notifications")
+      return handleNotificationsPress();
     if (nativeEvent.event === "details") return detailsRef.current?.present();
     if (nativeEvent.event === "privacy") return privacyRef.current?.present();
     if (nativeEvent.event === "programmes")
@@ -249,6 +286,11 @@ export default function ProfileScreen() {
     { id: "details", title: t("app.personalDetails") },
     { id: "programmes", title: t("app.studyProgrammes") },
     { id: "privacy", title: t("app.profileVisibility") },
+    {
+      id: "notifications",
+      title: t("topbar.notifications"),
+      state: areNotificationsEnabled ? "on" : "off",
+    },
     {
       id: "haptics",
       title: t("app.haptics"),

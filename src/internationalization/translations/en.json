@@ -451,7 +451,11 @@
     "students": "Students",
     "changeBanner": "Change banner",
     "openImage": "Open image",
-    "processingPhotos": "Processing photos…"
+    "processingPhotos": "Processing photos…",
+    "notificationsPromptTitle": "Turn on notifications?",
+    "notificationsPromptMessage": "Get notified about new messages, replies to your posts and new connections. You can turn them off anytime in settings.",
+    "notificationsEnable": "Turn on",
+    "notNow": "Not now"
   },
   "postComposer": {
     "audience": "Who can see it",

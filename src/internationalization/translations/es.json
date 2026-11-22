@@ -442,7 +442,11 @@
     "visibilityDescription": "Permite que otros estudiantes te encuentren por tu nombre y titulación.",
     "visibleToStudents": "Visible para estudiantes",
     "openImage": "Abrir imagen",
-    "processingPhotos": "Procesando fotos…"
+    "processingPhotos": "Procesando fotos…",
+    "notificationsPromptTitle": "¿Activar notificaciones?",
+    "notificationsPromptMessage": "Entérate de nuevos mensajes, respuestas a tus publicaciones y nuevas conexiones. Puedes desactivarlas cuando quieras en ajustes.",
+    "notificationsEnable": "Activar",
+    "notNow": "Ahora no"
   },
   "postComposer": {
     "duplicatePhoto": "Esta foto ya ha sido agregada.",

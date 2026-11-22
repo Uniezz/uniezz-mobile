@@ -449,7 +449,11 @@
     "visibilityDescription": "Дазвольце іншым студэнтам знаходзіць вас па імені і напрамку навучання.",
     "visibleToStudents": "Бачны студэнтам",
     "openImage": "Адкрыць фота",
-    "processingPhotos": "Апрацоўваем фота…"
+    "processingPhotos": "Апрацоўваем фота…",
+    "notificationsPromptTitle": "Уключыць апавяшчэнні?",
+    "notificationsPromptMessage": "Даведвайся пра новыя паведамленні, адказы на твае пасты і новыя знаёмствы. Іх можна выключыць у любы час у наладах.",
+    "notificationsEnable": "Уключыць",
+    "notNow": "Не зараз"
   },
   "postComposer": {
     "duplicatePhoto": "Гэта фота ўжо дададзена.",

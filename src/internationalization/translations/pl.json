@@ -457,7 +457,11 @@
     "students": "Studenci",
     "changeBanner": "Zmień baner",
     "openImage": "Otwórz zdjęcie",
-    "processingPhotos": "Przetwarzanie zdjęć…"
+    "processingPhotos": "Przetwarzanie zdjęć…",
+    "notificationsPromptTitle": "Włączyć powiadomienia?",
+    "notificationsPromptMessage": "Dowiesz się o nowych wiadomościach, odpowiedziach na Twoje posty i nowych znajomościach. Możesz je wyłączyć w każdej chwili w ustawieniach.",
+    "notificationsEnable": "Włącz",
+    "notNow": "Nie teraz"
   },
   "postComposer": {
     "audience": "Kto może to zobaczyć",
