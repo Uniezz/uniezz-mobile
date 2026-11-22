@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "301667436499",
+    "project_id": "uniezz",
+    "storage_bucket": "uniezz.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:301667436499:android:4a50f0aaab05ef32641126",
+        "android_client_info": {
+          "package_name": "com.uniezz"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4ww6jYfs2lLzcRd3GWipBcqoALZHsgtM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -25,6 +25,7 @@
       },
       "predictiveBackGestureEnabled": false,
       "package": "com.uniezz",
+      "googleServicesFile": "./google-services-uniezz.json",
       "intentFilters": [
         {
           "action": "VIEW",
@@ -56,6 +57,7 @@
         }
       ],
       "expo-localization",
+      "expo-notifications",
       [
         "expo-font",
         {

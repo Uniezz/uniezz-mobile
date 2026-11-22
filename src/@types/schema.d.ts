@@ -13,7 +13,10 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** Exchange a one-time login code for a session */
+    /**
+     * Exchange a one-time login code for a session
+     * @description A banned student gets 403 banned.
+     */
     post: operations["exchangeLoginCode"];
     delete?: never;
     options?: never;
@@ -92,7 +95,7 @@ export interface paths {
     put?: never;
     /**
      * Log in with an emailed code
-     * @description Returns a session. A referralCode is applied only when this login creates a new account. A code allows 5 attempts; after that, or after it expires, request a new one.
+     * @description Returns a session. A referralCode is applied only when this login creates a new account. A code allows 5 attempts; after that, or after it expires, request a new one. A banned student gets 403 banned.
      */
     post: operations["verifyOtpCode"];
     delete?: never;
@@ -340,7 +343,7 @@ export interface paths {
     };
     /**
      * List FAQ proposals waiting for a moderator
-     * @description Every student's proposals that are not published yet, newest first. Only an FAQ publisher may call this; everyone else gets 403.
+     * @description Every student's proposals that are not published yet, newest first. Moderators and admins only; everyone else gets 403.
      */
     get: operations["listPendingFaqProposals"];
     put?: never;
@@ -361,7 +364,7 @@ export interface paths {
     get?: never;
     /**
      * Approve an FAQ proposal and publish it
-     * @description Only an FAQ publisher may call this. Approving pays the author 5 Uniezz coins once, unless the publisher approves their own proposal; approving an entry that is already published changes nothing. A rejected or unknown entry is 404.
+     * @description Moderators and admins only. Approving pays the author 5 Uniezz coins once, unless the moderator approves their own proposal; approving an entry that is already published changes nothing. A rejected or unknown entry is 404.
      */
     put: operations["approveFaqProposal"];
     post?: never;
@@ -654,6 +657,222 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/moderation/actions": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List what moderators and admins did
+     * @description Newest first; actions older than a year are deleted. A repeated request that changed nothing is listed again. Admins only.
+     */
+    get: operations["listModerationActions"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/moderation/comments/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * Remove any student's comment
+     * @description Deletes the comment, or leaves an anonymous placeholder when it still has replies, and marks its pending reports reviewed. Removing a comment that is already gone succeeds. Moderators and admins only.
+     */
+    delete: operations["removeComment"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/moderation/courses/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * Remove any course
+     * @description Deletes the course with every student's files and comments on it, and marks its pending reports reviewed. Removing a course that is already gone succeeds. Admins only.
+     */
+    delete: operations["removeCourse"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/moderation/files/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * Remove any student's exam file
+     * @description Deletes the file and marks its pending reports reviewed. Removing a file that is already gone succeeds. Moderators and admins only.
+     */
+    delete: operations["removeCourseFile"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/moderation/moderators": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List the students who are moderators
+     * @description Newest moderator first. Admins only.
+     */
+    get: operations["listModerators"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/moderation/moderators/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /**
+     * Make a student a moderator
+     * @description Takes effect on the student's next request, with no new sign-in. Granting it again changes nothing. Admins only.
+     */
+    put: operations["grantModerator"];
+    post?: never;
+    /**
+     * Stop a student being a moderator
+     * @description Takes effect on the student's next request. Revoking from a student who is not a moderator succeeds. Admins only.
+     */
+    delete: operations["revokeModerator"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/moderation/posts/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * Remove any student's post
+     * @description Deletes the post with its comments, likes and media, and marks its pending reports reviewed. Removing a post that is already gone succeeds. Moderators and admins only.
+     */
+    delete: operations["removePost"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/moderation/reports": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List pending reports for moderators
+     * @description Pending reports about posts, comments, students, exam files and courses, newest first. Moderators and admins only; everyone else gets 403.
+     */
+    get: operations["listPendingReports"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/moderation/reports/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get a report about a post, comment, student, exam file or course
+     * @description Any status, with the copy of the reported content. Moderators and admins only.
+     */
+    get: operations["getReport"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /**
+     * Resolve a report about a post, comment, student, exam file or course
+     * @description Sets the status of this report and of every other pending report on the same target, so one decision clears them all. Sending the current status again changes nothing. Moderators and admins only.
+     */
+    patch: operations["updateReport"];
+    trace?: never;
+  };
+  "/moderation/users/{id}/ban": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get whether a student is banned
+     * @description Moderators and admins only.
+     */
+    get: operations["getBan"];
+    /**
+     * Ban a student
+     * @description Ends every session of the student at once, refuses new sign-ins with 403 banned, and marks pending reports about the student reviewed. Banning again changes nothing. Moderators and admins cannot be banned: an admin revokes the role first.
+     */
+    put: operations["banUser"];
+    post?: never;
+    /**
+     * Lift a student's ban
+     * @description The student can sign in again, and sessions from before the ban work again until they expire. Unbanning a student who is not banned succeeds.
+     */
+    delete: operations["unbanUser"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/profile/avatar": {
     parameters: {
       query?: never;
@@ -717,9 +936,57 @@ export interface paths {
     head?: never;
     /**
      * Update the logged-in student's profile
-     * @description Changes only the fields that are present. Returns the updated profile. The update that first fills first name, last name, gender, avatar, banner, bio, song link and interests pays 50 Uniezz coins once.
+     * @description Changes only the fields that are present. Returns the updated profile. Setting birthDate for the first time pays 10 Uniezz coins once. The update that first fills first name, last name, gender, avatar, banner, bio, song link and interests pays 50 Uniezz coins once.
      */
     patch: operations["updateMyProfile"];
+    trace?: never;
+  };
+  "/profile/photos": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List the logged-in student's profile photos
+     * @description Returns the avatar first, then additional photos by position.
+     */
+    get: operations["listMyProfilePhotos"];
+    /**
+     * Reorder the logged-in student's profile photos
+     * @description Replaces the order of all additional profile photos. Include each current photo ID exactly once; the avatar is not included.
+     */
+    put: operations["reorderMyProfilePhotos"];
+    /**
+     * Add a photo to the logged-in student's profile
+     * @description Adds a completed upload to the profile. Repeating the same mediaId succeeds without adding another photo; the avatar counts toward the six-photo limit.
+     */
+    post: operations["addMyProfilePhoto"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/profile/photos/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * Remove a photo from the logged-in student's profile
+     * @description Removes an additional photo. Succeeds if it is already absent; remove the avatar through DELETE /profile/avatar.
+     */
+    delete: operations["deleteMyProfilePhoto"];
+    options?: never;
+    head?: never;
+    patch?: never;
     trace?: never;
   };
   "/profile/programmes": {
@@ -818,6 +1085,78 @@ export interface paths {
      * @description One report per target and reporter; at most 5 reports per clock hour (UTC).
      */
     post: operations["createReport"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/rewards/challenges": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List every challenge, archived ones included
+     * @description Newest first. Admins only.
+     */
+    get: operations["listChallenges"];
+    put?: never;
+    /**
+     * Create a challenge
+     * @description Students see it while it runs. Action, target and period cannot change later; archive the challenge and create a new one instead. Admins only.
+     */
+    post: operations["createChallenge"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/rewards/challenges/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get a challenge
+     * @description Archived challenges too. Admins only.
+     */
+    get: operations["getChallenge"];
+    put?: never;
+    post?: never;
+    /**
+     * Archive a challenge
+     * @description Students stop seeing it and their actions stop counting; coins already paid stay. Archiving again succeeds. Admins only.
+     */
+    delete: operations["archiveChallenge"];
+    options?: never;
+    head?: never;
+    /**
+     * Update a challenge's texts, reward or dates
+     * @description Changes only the fields that are present and returns the challenge. A new reward applies to periods completed after the change. Admins only.
+     */
+    patch: operations["updateChallenge"];
+    trace?: never;
+  };
+  "/rewards/me/challenges": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List the challenges running now with the logged-in student's progress
+     * @description Newest first. Progress counts only actions done while the challenge runs, and undoing an action does not take it back.
+     */
+    get: operations["listMyChallenges"];
+    put?: never;
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -1118,6 +1457,21 @@ export interface components {
       /** @enum {string} */
       mode: "friends" | "studyBuddy" | "dating";
     };
+    Action: {
+      /**
+       * Format: uuid
+       * @description The moderator or admin who acted; null once their account is deleted
+       */
+      actorId: string | null;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      targetId: string;
+      /** @description Reports are the target of review_report and dismiss_report, students of grant_moderator, revoke_moderator, ban and unban, and the named content of the remove actions */
+      type: string;
+    };
     ActionResult: {
       /** @description Present when this like created the match */
       connection?: components["schemas"]["Connection"];
@@ -1144,6 +1498,10 @@ export interface components {
       /** @enum {string} */
       type: "exam" | "colloquium" | "lab" | "notes";
     };
+    AddProfilePhotoInputBody: {
+      /** Format: uuid */
+      mediaId: string;
+    };
     Author: {
       avatarUrl: string | null;
       /** @example Jan */
@@ -1154,6 +1512,15 @@ export interface components {
       lastName: string | null;
       /** @example umcs */
       universityId: string;
+    };
+    Ban: {
+      /**
+       * Format: date-time
+       * @description Null when the student is not banned
+       */
+      bannedAt: string | null;
+      /** Format: uuid */
+      userId: string;
     };
     Card: {
       /**
@@ -1187,6 +1554,61 @@ export interface components {
       /** @example umcs */
       universityId: string;
     };
+    Challenge: {
+      /** @description What counts. More values may be added. */
+      action: string;
+      /**
+       * Format: date-time
+       * @description Null while the challenge is not archived
+       */
+      archivedAt: string | null;
+      /** Format: date-time */
+      createdAt: string;
+      /**
+       * Format: date-time
+       * @description Null when the challenge runs until it is archived
+       */
+      endsAt: string | null;
+      /** Format: uuid */
+      id: string;
+      /**
+       * @description day and week start over at midnight and on Monday, Europe/Warsaw; once never starts over
+       * @enum {string}
+       */
+      period: "day" | "week" | "once";
+      /**
+       * Format: int64
+       * @description Coins paid when the target is reached in a period
+       * @example 20
+       */
+      reward: number;
+      /**
+       * Format: date-time
+       * @description Null when the challenge has no start date
+       */
+      startsAt: string | null;
+      /**
+       * Format: int64
+       * @example 5
+       */
+      target: number;
+      /** @description By two-letter language code; pl is always there */
+      texts: {
+        [key: string]: components["schemas"]["ChallengeText"];
+      };
+    };
+    ChallengeText: {
+      /**
+       * @description Up to 300 characters after HTML is stripped; left out when empty
+       * @example Show other students some love this week.
+       */
+      description?: string;
+      /**
+       * @description Up to 80 characters after HTML is stripped
+       * @example Like 5 posts
+       */
+      title: string;
+    };
     CoinGrant: {
       /**
        * Format: int64
@@ -1195,7 +1617,7 @@ export interface components {
       amount: number;
       /** Format: date-time */
       createdAt: string;
-      /** @description What earned the coins. welcome: the new account. like_given: liking another student's post. like_received: another student liked your post. comment: the first comment or reply on another student's post. profile_complete: filling every profile field. birth_date: the first birth date saved in connections. referral: inviting another student who signs up. referral_joined: signing up with an invitation code. daily_quests: finishing every daily quest. faq_approved: a moderator approved your FAQ proposal. More values may be added; show a generic label for unknown ones. */
+      /** @description What earned the coins. welcome: the new account. like_given: liking another student's post. like_received: another student liked your post. comment: the first comment or reply on another student's post. profile_complete: filling every profile field. birth_date: the first birth date saved in connections. referral: inviting another student who signs up. referral_joined: signing up with an invitation code. daily_quests: finishing every daily quest. faq_approved: a moderator approved your FAQ proposal. challenge: finishing a challenge. More values may be added; show a generic label for unknown ones. */
       reason: string;
     };
     Comment: {
@@ -1302,6 +1724,52 @@ export interface components {
       type: "exam" | "colloquium" | "lab" | "notes";
       /** @description Short-lived link to the PDF or image */
       url: string;
+    };
+    CreateChallengeInputBody: {
+      /**
+       * @description What counts. Set once.
+       * @enum {string}
+       */
+      action:
+        | "like_given"
+        | "like_received"
+        | "comment_posted"
+        | "reply_posted"
+        | "post_created"
+        | "file_uploaded"
+        | "course_rated"
+        | "professor_rated"
+        | "connection_made"
+        | "profile_completed"
+        | "friend_invited"
+        | "faq_approved";
+      /**
+       * Format: date-time
+       * @description Must be after startsAt
+       */
+      endsAt?: string;
+      /**
+       * @description Set once
+       * @enum {string}
+       */
+      period: "day" | "week" | "once";
+      /**
+       * Format: int64
+       * @example 20
+       */
+      reward: number;
+      /** Format: date-time */
+      startsAt?: string;
+      /**
+       * Format: int64
+       * @description Set once
+       * @example 5
+       */
+      target: number;
+      /** @description By two-letter language code, at most 10; pl is required */
+      texts: {
+        [key: string]: components["schemas"]["ChallengeText"];
+      };
     };
     CreateCommentInputBody: {
       /** @description 1–1000 characters after HTML is stripped */
@@ -1571,6 +2039,16 @@ export interface components {
       /** Format: int64 */
       likesCount: number;
     };
+    ListActionsOutputBody: {
+      items: components["schemas"]["Action"][] | null;
+      /** @description Pass as cursor to get the next page; null on the last page */
+      nextCursor: string | null;
+    };
+    ListChallengesOutputBody: {
+      items: components["schemas"]["Challenge"][] | null;
+      /** @description Pass as cursor to get the next page; null on the last page */
+      nextCursor: string | null;
+    };
     ListCommentsOutputBody: {
       items: components["schemas"]["Comment"][] | null;
       /** @description Pass as cursor to get the next page; null on the last page */
@@ -1601,6 +2079,16 @@ export interface components {
       /** @description Pass as cursor to get the next page; null on the last page */
       nextCursor: string | null;
     };
+    ListModeratorsOutputBody: {
+      items: components["schemas"]["Moderator"][] | null;
+      /** @description Pass as cursor to get the next page; null on the last page */
+      nextCursor: string | null;
+    };
+    ListMyChallengesOutputBody: {
+      items: components["schemas"]["MyChallenge"][] | null;
+      /** @description Pass as cursor to get the next page; null on the last page */
+      nextCursor: string | null;
+    };
     ListMyCoinGrantsOutputBody: {
       items: components["schemas"]["CoinGrant"][] | null;
       /** @description Pass as cursor to get the next page; null on the last page */
@@ -1623,6 +2111,9 @@ export interface components {
       /** @description Null on the last page */
       nextCursor: string | null;
     };
+    ListProfilePhotosOutputBody: {
+      photos: components["schemas"]["ProfilePhoto"][] | null;
+    };
     ListProfilesOutputBody: {
       items: components["schemas"]["ProfileSummary"][] | null;
       /** @description Pass as cursor to get the next page; null on the last page */
@@ -1630,6 +2121,66 @@ export interface components {
     };
     ListProgrammesOutputBody: {
       programmes: components["schemas"]["Programme"][] | null;
+    };
+    ListQueueOutputBody: {
+      items: components["schemas"]["QueuedReport"][] | null;
+      /** @description Pass as cursor to get the next page; null on the last page */
+      nextCursor: string | null;
+    };
+    Moderator: {
+      /**
+       * @description Null until the student sets a name
+       * @example Jan
+       */
+      firstName: string | null;
+      /** Format: date-time */
+      grantedAt: string;
+      /**
+       * @description Null until the student sets a name
+       * @example Kowalski
+       */
+      lastName: string | null;
+      /** Format: uuid */
+      userId: string;
+    };
+    MyChallenge: {
+      /** @description What counts. More values may be added. */
+      action: string;
+      /** @description True once the target is reached in this period and the reward was paid */
+      completed: boolean;
+      /**
+       * Format: date-time
+       * @description Null when the challenge has no end date
+       */
+      endsAt: string | null;
+      /** Format: uuid */
+      id: string;
+      /** @enum {string} */
+      period: "day" | "week" | "once";
+      /**
+       * Format: int64
+       * @example 2
+       */
+      progress: number;
+      /**
+       * Format: date-time
+       * @description When progress starts over; null for a once challenge
+       */
+      resetsAt: string | null;
+      /**
+       * Format: int64
+       * @example 20
+       */
+      reward: number;
+      /**
+       * Format: int64
+       * @example 5
+       */
+      target: number;
+      /** @description By two-letter language code; show the student's language, or pl when it is missing */
+      texts: {
+        [key: string]: components["schemas"]["ChallengeText"];
+      };
     };
     OtpRequestInputBody: {
       /**
@@ -1710,7 +2261,7 @@ export interface components {
        */
       birthDate: string | null;
       /**
-       * @description Shown on the student's discovery card. Null when unset.
+       * @description Shown on the student's discovery card. Up to 150 characters; null when unset.
        * @example Looking for a climbing partner
        */
       intent: string | null;
@@ -1758,6 +2309,11 @@ export interface components {
        */
       bio: string | null;
       /**
+       * Format: date
+       * @description Set once; age must be 16 to 100
+       */
+      birthDate: string | null;
+      /**
        * Format: int64
        * @description Uniezz coins the student has earned. Only the student sees them, and nothing spends them yet.
        * @example 100
@@ -1782,6 +2338,8 @@ export interface components {
        * @description User ID
        */
       id: string;
+      /** @description Short discovery-card line */
+      intent: string | null;
       /**
        * @description Up to 10 tags
        * @example [
@@ -1797,6 +2355,8 @@ export interface components {
       language: "en" | "pl" | "uk" | "ru" | "be" | "de" | "es";
       /** @example Kowalski */
       lastName: string | null;
+      /** @description Empty until the student selects modes */
+      openTo: ("friends" | "studyBuddy" | "dating")[] | null;
       /** @description Which profile fields other students see. A missing setting keeps its current value. */
       privacy: {
         /**
@@ -1817,6 +2377,8 @@ export interface components {
       };
       /** @description Study programmes, primary first; empty when the student has none */
       programmes: components["schemas"]["Programme"][] | null;
+      /** @description Staff roles of the student; empty for students without one */
+      roles: string[] | null;
       /**
        * @description Link to the song the student associates with themselves. Null when unset.
        * @example https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT
@@ -1824,6 +2386,17 @@ export interface components {
       songUrl: string | null;
       /** @example umcs */
       universityId: string;
+    };
+    ProfilePhoto: {
+      /**
+       * Format: uuid
+       * @description Media ID used to delete or reorder the photo
+       */
+      id: string;
+      isAvatar: boolean;
+      /** Format: int64 */
+      position: number;
+      url: string;
     };
     ProfileSummary: {
       avatarUrl: string | null;
@@ -1896,6 +2469,11 @@ export interface components {
       question: string;
     };
     PublicProfile: {
+      /**
+       * Format: int64
+       * @description Age in years; null until birth date is set
+       */
+      age: number | null;
       avatarUrl: string | null;
       /** @description URL of the banner image, null when the student has none */
       bannerUrl: string | null;
@@ -1914,6 +2492,8 @@ export interface components {
       interests: string[] | null;
       /** @example Kowalski */
       lastName: string | null;
+      /** @description Avatar first, followed by additional photos; hidden from unconnected students */
+      photos: string[] | null;
       /** @description Primary first */
       programmes: components["schemas"]["PublicProgramme"][] | null;
       /** @description Link to the song the student associates with themselves. Null when unset. Always visible, with no privacy toggle. */
@@ -1960,6 +2540,29 @@ export interface components {
        */
       target: number;
     };
+    QueuedReport: {
+      /** Format: date-time */
+      createdAt: string;
+      details: string | null;
+      /** Format: uuid */
+      id: string;
+      /** @enum {string} */
+      reason: "spam" | "harassment" | "inappropriate" | "hate_speech" | "other";
+      /** @description Copy of the reported content at the time of the report */
+      snapshot: {
+        [key: string]: unknown;
+      };
+      /** @enum {string} */
+      status: "pending" | "reviewed" | "dismissed";
+      /**
+       * Format: uuid
+       * @description Null when the content has no author, or once the author's data has been anonymised
+       */
+      targetAuthorId: string | null;
+      /** Format: uuid */
+      targetId: string;
+      targetType: string;
+    };
     RateCourseInputBody: {
       /**
        * Format: int64
@@ -1989,6 +2592,10 @@ export interface components {
        */
       coinsEarned: number;
     };
+    ReorderProfilePhotosInputBody: {
+      /** @description All profile photo IDs in the desired order */
+      mediaIds: string[] | null;
+    };
     Report: {
       /** Format: date-time */
       createdAt: string;
@@ -2010,7 +2617,7 @@ export interface components {
        * @example 2003-05-17
        */
       birthDate?: string;
-      /** @description Up to 200 characters after HTML is stripped. An empty string clears it. */
+      /** @description Up to 150 characters after HTML is stripped. An empty string clears it. */
       intent?: string;
       /** @description dating needs an age of at least 18, else returns 400 dating_requires_adult */
       openTo?: ("friends" | "studyBuddy" | "dating")[] | null;
@@ -2029,7 +2636,7 @@ export interface components {
        */
       coinsEarned: number;
       /**
-       * @description Shown on the student's discovery card. Null when unset.
+       * @description Shown on the student's discovery card. Up to 150 characters; null when unset.
        * @example Looking for a climbing partner
        */
       intent: string | null;
@@ -2070,6 +2677,21 @@ export interface components {
        */
       name: string;
     };
+    UpdateChallengeInputBody: {
+      /**
+       * Format: date-time
+       * @description Must be after startsAt
+       */
+      endsAt?: string;
+      /** Format: int64 */
+      reward?: number;
+      /** Format: date-time */
+      startsAt?: string;
+      /** @description Replaces every text; pl is required */
+      texts?: {
+        [key: string]: components["schemas"]["ChallengeText"];
+      };
+    };
     UpdateCommentInputBody: {
       content: string;
     };
@@ -2087,7 +2709,7 @@ export interface components {
        */
       name?: string;
     };
-    UpdateMeInputBody: {
+    UpdateMeBody: {
       /**
        * Format: uuid
        * @description mediaId of an avatar uploaded through createMediaUpload; the previous avatar is deleted
@@ -2100,17 +2722,25 @@ export interface components {
       bannerMediaId?: string;
       /** @description Plain text; HTML is stripped and the result may be up to 500 characters. An empty string clears it. */
       bio?: string;
+      /**
+       * Format: date
+       * @description Set once; age must be 16 to 100
+       */
+      birthDate?: string;
       firstName?: string;
       /**
        * @description Can be set only once: when a gender is already saved, returns 400 gender_immutable
        * @enum {string}
        */
       gender?: "male" | "female";
+      /** @description Up to 150 characters after HTML is stripped. An empty string clears it. */
+      intent?: string;
       /** @description Replaces all interests: up to 10 tags of up to 30 characters, duplicates ignored */
       interests?: string[];
       /** @enum {string} */
       language?: "en" | "pl" | "uk" | "ru" | "be" | "de" | "es";
       lastName?: string;
+      openTo?: ("friends" | "studyBuddy" | "dating")[];
       /** @description Which profile fields other students see. A missing setting keeps its current value. */
       privacy?: {
         /**
@@ -2143,6 +2773,11 @@ export interface components {
        */
       bio: string | null;
       /**
+       * Format: date
+       * @description Set once; age must be 16 to 100
+       */
+      birthDate: string | null;
+      /**
        * Format: int64
        * @description Uniezz coins the student has earned. Only the student sees them, and nothing spends them yet.
        * @example 100
@@ -2173,6 +2808,8 @@ export interface components {
        * @description User ID
        */
       id: string;
+      /** @description Short discovery-card line */
+      intent: string | null;
       /**
        * @description Up to 10 tags
        * @example [
@@ -2188,6 +2825,8 @@ export interface components {
       language: "en" | "pl" | "uk" | "ru" | "be" | "de" | "es";
       /** @example Kowalski */
       lastName: string | null;
+      /** @description Empty until the student selects modes */
+      openTo: ("friends" | "studyBuddy" | "dating")[] | null;
       /** @description Which profile fields other students see. A missing setting keeps its current value. */
       privacy: {
         /**
@@ -2208,6 +2847,8 @@ export interface components {
       };
       /** @description Study programmes, primary first; empty when the student has none */
       programmes: components["schemas"]["Programme"][] | null;
+      /** @description Staff roles of the student; empty for students without one */
+      roles: string[] | null;
       /**
        * @description Link to the song the student associates with themselves. Null when unset.
        * @example https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT
@@ -2225,6 +2866,10 @@ export interface components {
       eventDate?: string;
       tags?: string[];
       title?: string;
+    };
+    UpdateReportInputBody: {
+      /** @enum {string} */
+      status: "reviewed" | "dismissed";
     };
     Upload: {
       /**
@@ -2286,6 +2931,15 @@ export interface operations {
       };
       /** @description Unauthorized */
       401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
         headers: {
           [name: string]: unknown;
         };
@@ -2529,6 +3183,15 @@ export interface operations {
       };
       /** @description Unauthorized */
       401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
         headers: {
           [name: string]: unknown;
         };
@@ -4932,6 +5595,905 @@ export interface operations {
       };
     };
   };
+  listModerationActions: {
+    parameters: {
+      query?: {
+        /** @description nextCursor from the previous page; omit for the first page */
+        cursor?: string;
+        /** @description Maximum number of items in the page */
+        limit?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ListActionsOutputBody"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  removeComment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  removeCourse: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  removeCourseFile: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  listModerators: {
+    parameters: {
+      query?: {
+        /** @description nextCursor from the previous page; omit for the first page */
+        cursor?: string;
+        /** @description Maximum number of items in the page */
+        limit?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ListModeratorsOutputBody"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  grantModerator: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  revokeModerator: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  removePost: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  listPendingReports: {
+    parameters: {
+      query?: {
+        /** @description nextCursor from the previous page; omit for the first page */
+        cursor?: string;
+        /** @description Maximum number of items in the page */
+        limit?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ListQueueOutputBody"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  getReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["QueuedReport"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  updateReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UpdateReportInputBody"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Report"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  getBan: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Ban"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  banUser: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  unbanUser: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
   deleteMyAvatar: {
     parameters: {
       query?: never;
@@ -5096,7 +6658,7 @@ export interface operations {
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["UpdateMeInputBody"];
+        "application/json": components["schemas"]["UpdateMeBody"];
       };
     };
     responses: {
@@ -5120,6 +6682,234 @@ export interface operations {
       };
       /** @description Unauthorized */
       401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  listMyProfilePhotos: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ListProfilePhotosOutputBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  reorderMyProfilePhotos: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ReorderProfilePhotosInputBody"];
+      };
+    };
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  addMyProfilePhoto: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AddProfilePhotoInputBody"];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  deleteMyProfilePhoto: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
         headers: {
           [name: string]: unknown;
         };
@@ -5564,6 +7354,418 @@ export interface operations {
       };
       /** @description Too Many Requests */
       429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  listChallenges: {
+    parameters: {
+      query?: {
+        /** @description nextCursor from the previous page; omit for the first page */
+        cursor?: string;
+        /** @description Maximum number of items in the page */
+        limit?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ListChallengesOutputBody"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  createChallenge: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CreateChallengeInputBody"];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Challenge"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  getChallenge: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Challenge"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  archiveChallenge: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  updateChallenge: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UpdateChallengeInputBody"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Challenge"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  listMyChallenges: {
+    parameters: {
+      query?: {
+        /** @description nextCursor from the previous page; omit for the first page */
+        cursor?: string;
+        /** @description Maximum number of items in the page */
+        limit?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ListMyChallengesOutputBody"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
         headers: {
           [name: string]: unknown;
         };
