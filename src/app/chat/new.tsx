@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FlashList } from "@shopify/flash-list";
+import { BlurView } from "expo-blur";
 import { router } from "expo-router";
 import { usePostHog } from "posthog-react-native";
 import { useState } from "react";
@@ -239,6 +240,8 @@ export default function NewGroupScreen() {
         offset={{ opened: bottomInset }}
         style={styles.footer}
       >
+        {/* over the list once the keyboard lifts it; blurred like the headers, so a disabled (see-through) button stays readable */}
+        <BlurView intensity={50} tint="dark" style={styles.footerBlur} />
         <UIButton
           radius="sm"
           size="rg"
@@ -312,6 +315,11 @@ const styles = StyleSheet.create((theme, rt) => ({
     paddingHorizontal: theme.s(16),
     paddingTop: theme.vs(8),
     paddingBottom: theme.vs(12),
+  },
+  // shortcut: Android shows only the ink tint, as in the headers
+  footerBlur: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: theme.colors.ink40,
   },
   create: {
     flexDirection: "row",
