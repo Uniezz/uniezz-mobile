@@ -9,3 +9,6 @@ export type RedeemInviteInput = components["schemas"]["RedeemInviteInputBody"];
 export type RedeemInviteResult =
   components["schemas"]["RedeemInviteOutputBody"];
 export type RedeemInviteFormValues = { code: string };
+export type MyChallenge = components["schemas"]["MyChallenge"];
+export type MyChallengesPage =
+  components["schemas"]["ListMyChallengesOutputBody"];

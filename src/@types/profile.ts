@@ -23,3 +23,8 @@ export type ProfileSummary = components["schemas"]["ProfileSummary"];
 export type PublicProfile = components["schemas"]["PublicProfile"];
 export type PublicProgramme = components["schemas"]["PublicProgramme"];
 export type ProfileListItem = "overview" | "tabs" | ApiFeedPost;
+export type ProfilePhoto = components["schemas"]["ProfilePhoto"];
+export type ProfilePhotosList =
+  components["schemas"]["ListProfilePhotosOutputBody"];
+/** a photo in the profile strip; one with an id can be removed */
+export type ProfileGalleryPhoto = { url: string; id?: string };

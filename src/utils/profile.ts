@@ -31,6 +31,9 @@ export const STUDY_STATUSES = [
   ["cancelled", "app.studyStatusCancelled"],
 ] as const;
 
+// the backend's limit, the avatar included
+export const MAX_PROFILE_PHOTOS = 6;
+
 export const GENDERS = ["male", "female"] as const;
 
 export const GENDER_LABELS = {

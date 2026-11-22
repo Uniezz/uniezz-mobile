@@ -76,6 +76,7 @@ const apiMiddleware: Middleware = {
               "/profile/avatar",
               "/profile/me",
               "/profile/programmes/{id}",
+              "/profile/photos/{id}",
               "/connections/{id}",
               "/connections/blocks/{id}",
               "/study/comments/{id}",
@@ -84,7 +85,11 @@ const apiMiddleware: Middleware = {
         if (!allowsNoContent) {
           throw apiError(`${request.method} ${schemaPath}`, response);
         }
-      } else if (request.method !== "HEAD") {
+      } else if (
+        request.method !== "HEAD" &&
+        // adding a profile photo answers 201 with no body; the photo list is fetched again
+        !(request.method === "POST" && schemaPath === "/profile/photos")
+      ) {
         const body = (await response.clone().text()).trim();
         if (!body || body === "null") {
           throw apiError(`${request.method} ${schemaPath}`, response);

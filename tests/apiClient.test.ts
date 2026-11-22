@@ -124,6 +124,16 @@ test("accepts a 204 for endpoints that allow no content", async () => {
   assert.equal(result.response.status, 204);
 });
 
+test("accepts the empty 201 from adding a profile photo", async () => {
+  handleFetch = async () => new Response(null, { status: 201 });
+
+  const result = await api.POST("/profile/photos", {
+    body: { mediaId: "media-1" },
+  });
+
+  assert.equal(result.response.status, 201);
+});
+
 test("rejects a 204 where a response body is required", async () => {
   handleFetch = async () => new Response(null, { status: 204 });
 

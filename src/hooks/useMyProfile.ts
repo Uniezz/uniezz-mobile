@@ -6,16 +6,19 @@ import { toast } from "sonner-native";
 import { apiErrorKey, captureAction, patchFeedAuthor } from "@/utils";
 import { useUploadImages } from "./useMedia";
 import {
+  addMyProfilePhoto,
   addMyProgramme,
   deleteMyAvatar,
   deleteMyBanner,
   deleteMyProfile,
+  deleteMyProfilePhoto,
   deleteMyProgramme,
   getMyProfile,
+  getMyProfilePhotos,
   replaceMyProgramme,
   updateMyProfile,
 } from "@/api";
-import type { Profile, ProgrammeInput } from "@/@types";
+import type { Profile, ProfilePhotosList, ProgrammeInput } from "@/@types";
 
 export function useMyProfile() {
   return useQuery({
@@ -54,7 +57,13 @@ export function useUpdateMyProfile() {
       if (Object.keys(authorPatch).length > 0) {
         patchFeedAuthor(queryClient, profile.id, authorPatch);
       }
-      return queryClient.invalidateQueries({ queryKey: ["rewards"] });
+      return Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["rewards"] }),
+        // the avatar leads the photo strip
+        change.avatarMediaId !== undefined
+          ? queryClient.invalidateQueries({ queryKey: ["profile", "photos"] })
+          : undefined,
+      ]);
     },
   });
 }
@@ -104,8 +113,85 @@ export function useDeleteMyAvatar() {
       if (profile) {
         patchFeedAuthor(queryClient, profile.id, { avatarUrl: null });
       }
+      return queryClient.invalidateQueries({ queryKey: ["profile", "photos"] });
     },
   });
+}
+
+export function useMyProfilePhotos() {
+  return useQuery({
+    staleTime: 5 * 60_000,
+    gcTime: 30 * 60_000,
+    queryKey: ["profile", "photos"],
+    queryFn: getMyProfilePhotos,
+  });
+}
+
+export function useDeleteMyProfilePhoto() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    meta: { analyticsAction: "profile_photo_delete" },
+    mutationFn: deleteMyProfilePhoto,
+    onSuccess: (_, id) =>
+      queryClient.setQueryData<ProfilePhotosList>(
+        ["profile", "photos"],
+        (current) =>
+          current && {
+            photos: (current.photos ?? []).filter((photo) => photo.id !== id),
+          },
+      ),
+  });
+}
+
+// picks photos into the free slots, uploads them and adds them in the picked order, toasting the outcome
+export function usePickProfilePhotos(freeSlots: number) {
+  const { t } = useTranslation();
+  const posthog = usePostHog();
+  const queryClient = useQueryClient();
+  const { mutateAsync: uploadImages, isPending: isUploading } =
+    useUploadImages("avatar");
+  const { mutateAsync: addPhotos, isPending: isSaving } = useMutation({
+    meta: { analyticsAction: "profile_photo_add" },
+    mutationFn: async (mediaIds: string[]) => {
+      for (const mediaId of mediaIds) await addMyProfilePhoto(mediaId);
+    },
+    onSettled: () =>
+      queryClient.invalidateQueries({ queryKey: ["profile", "photos"] }),
+  });
+
+  const pickPhotos = async () => {
+    captureAction(posthog, "profile_photos_pick", "attempted");
+    const result = await launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsMultipleSelection: true,
+      selectionLimit: freeSlots,
+      quality: 0.8,
+    }).catch((error: unknown) => {
+      captureAction(posthog, "profile_photos_pick", "failed");
+      throw error;
+    });
+    if (result.canceled) {
+      captureAction(posthog, "profile_photos_pick", "cancelled");
+      return;
+    }
+    captureAction(posthog, "profile_photos_pick", "succeeded");
+    const picked = result.assets
+      .slice(0, freeSlots)
+      .map(({ uri, mimeType, fileSize }) => ({ uri, mimeType, fileSize }));
+    if (picked.length === 0) return;
+    // one toast: it shows the work, then turns into the outcome
+    const toastId = toast.loading(t("app.processingPhotos"));
+    try {
+      await addPhotos(await uploadImages(picked));
+      toast.success(t("app.saved"), { id: toastId });
+    } catch (error) {
+      toast.error(t(apiErrorKey(error, "apiState.profileSaveError")), {
+        id: toastId,
+      });
+    }
+  };
+
+  return { pickPhotos, isPending: isUploading || isSaving };
 }
 
 export function useDeleteMyBanner() {
@@ -153,6 +239,8 @@ export function usePickProfileImage(kind: keyof typeof PROFILE_IMAGE_ASPECTS) {
     captureAction(posthog, `${kind}_pick`, "succeeded");
     if (!result.assets[0]) return;
     const { uri, mimeType, fileSize } = result.assets[0];
+    // one toast: it shows the work, then turns into the outcome
+    const toastId = toast.loading(t("app.processingPhotos"));
     try {
       const [mediaId] = await uploadImages([{ uri, mimeType, fileSize }]);
       await updateProfile(
@@ -160,9 +248,11 @@ export function usePickProfileImage(kind: keyof typeof PROFILE_IMAGE_ASPECTS) {
           ? { avatarMediaId: mediaId }
           : { bannerMediaId: mediaId },
       );
-      toast.success(t("app.saved"));
+      toast.success(t("app.saved"), { id: toastId });
     } catch (error) {
-      toast.error(t(apiErrorKey(error, "apiState.profileSaveError")));
+      toast.error(t(apiErrorKey(error, "apiState.profileSaveError")), {
+        id: toastId,
+      });
     }
   };
 

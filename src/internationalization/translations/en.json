@@ -454,7 +454,8 @@
     "moreOptions": "More options",
     "students": "Students",
     "changeBanner": "Change banner",
-    "openImage": "Open image"
+    "openImage": "Open image",
+    "processingPhotos": "Processing photos…"
   },
   "postComposer": {
     "audience": "Who can see it",
@@ -585,7 +586,8 @@
     "block": "Block",
     "blockTitle": "Block this student?",
     "blockDescription": "You won't see each other anywhere in uniezz.",
-    "blocked": "Student blocked."
+    "blocked": "Student blocked.",
+    "photos": "Photos"
   },
   "study": {
     "filters": "Filters",
@@ -679,7 +681,11 @@
     "redeemApplied": "Invite code applied.",
     "redeemInvalid": "There’s no invite code like that. Check it and try again.",
     "redeemAlreadySet": "You’ve already used a different invite code.",
-    "redeemWindowClosed": "Invite codes only work in your first 7 days."
+    "redeemWindowClosed": "Invite codes only work in your first 7 days.",
+    "challengesTitle": "Challenges",
+    "challengeDaily": "Daily",
+    "challengeWeekly": "Weekly",
+    "challengeEnds": "Until {{date}}"
   },
   "onboarding": {
     "details": {

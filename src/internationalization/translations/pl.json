@@ -460,7 +460,8 @@
     "moreOptions": "Więcej opcji",
     "students": "Studenci",
     "changeBanner": "Zmień baner",
-    "openImage": "Otwórz zdjęcie"
+    "openImage": "Otwórz zdjęcie",
+    "processingPhotos": "Przetwarzanie zdjęć…"
   },
   "postComposer": {
     "audience": "Kto może to zobaczyć",
@@ -591,7 +592,8 @@
     "block": "Zablokuj",
     "blockTitle": "Zablokować tego studenta?",
     "blockDescription": "Nie będziecie się widzieć nigdzie w uniezz.",
-    "blocked": "Student zablokowany."
+    "blocked": "Student zablokowany.",
+    "photos": "Zdjęcia"
   },
   "study": {
     "filters": "Filtry",
@@ -685,7 +687,11 @@
     "redeemApplied": "Kod zaproszenia został użyty.",
     "redeemInvalid": "Nie ma takiego kodu. Sprawdź go i spróbuj ponownie.",
     "redeemAlreadySet": "Użyłeś już innego kodu zaproszenia.",
-    "redeemWindowClosed": "Kod zaproszenia działa tylko przez pierwsze 7 dni."
+    "redeemWindowClosed": "Kod zaproszenia działa tylko przez pierwsze 7 dni.",
+    "challengesTitle": "Wyzwania",
+    "challengeDaily": "Codziennie",
+    "challengeWeekly": "Co tydzień",
+    "challengeEnds": "Do {{date}}"
   },
   "onboarding": {
     "details": {

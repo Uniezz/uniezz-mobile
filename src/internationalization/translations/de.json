@@ -445,7 +445,8 @@
     "uploadedBy": "Hochgeladen von",
     "visibilityDescription": "Andere Studierende können dich anhand deines Namens und Studiengangs finden.",
     "visibleToStudents": "Für Studierende sichtbar",
-    "openImage": "Bild öffnen"
+    "openImage": "Bild öffnen",
+    "processingPhotos": "Fotos werden verarbeitet…"
   },
   "postComposer": {
     "duplicatePhoto": "Dieses Foto wurde bereits hinzugefügt.",
@@ -576,7 +577,8 @@
     "noPosts": "Noch keine Beiträge",
     "noSavedPosts": "Noch keine gespeicherten Beiträge",
     "profile": "Studierendenprofil",
-    "songUrlError": "Gib einen HTTP- oder HTTPS-Link mit höchstens 500 Zeichen ein."
+    "songUrlError": "Gib einen HTTP- oder HTTPS-Link mit höchstens 500 Zeichen ein.",
+    "photos": "Fotos"
   },
   "study": {
     "filters": "Filter",
@@ -674,7 +676,11 @@
     "redeemApplied": "Einladungscode eingelöst.",
     "redeemInvalid": "Diesen Code gibt es nicht. Prüf ihn und versuch es noch mal.",
     "redeemAlreadySet": "Du hast schon einen anderen Einladungscode eingelöst.",
-    "redeemWindowClosed": "Einladungscodes gelten nur in den ersten 7 Tagen."
+    "redeemWindowClosed": "Einladungscodes gelten nur in den ersten 7 Tagen.",
+    "challengesTitle": "Challenges",
+    "challengeDaily": "Täglich",
+    "challengeWeekly": "Wöchentlich",
+    "challengeEnds": "Bis {{date}}"
   },
   "guide": {
     "action": "Ort vorschlagen",

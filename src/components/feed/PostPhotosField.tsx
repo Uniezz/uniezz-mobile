@@ -1,11 +1,5 @@
 import { usePostHog } from "posthog-react-native";
-import {
-  captureAction,
-  isImageType,
-  MAX_IMAGE_MB,
-  MAX_POST_PHOTOS,
-  previewImages,
-} from "@/utils";
+import { captureAction, MAX_POST_PHOTOS, previewImages } from "@/utils";
 import { Image } from "expo-image";
 import { launchImageLibraryAsync } from "expo-image-picker";
 import { useTranslation } from "react-i18next";
@@ -45,15 +39,13 @@ export const PostPhotosField = ({ value, onChange }: PostPhotosFieldProps) => {
       mimeType,
       fileSize,
     }));
+    // any format and size goes: the upload converts and shrinks it to fit
     const valid = picked.filter(
-      (photo) =>
-        isImageType(photo.mimeType) &&
-        (photo.fileSize ?? 0) <= MAX_IMAGE_MB.feed * 1024 * 1024 &&
-        !value.some((existing) => existing.uri === photo.uri),
+      (photo) => !value.some((existing) => existing.uri === photo.uri),
     );
     if (valid.length < picked.length) {
       captureAction(posthog, "post_photos", "validation_failed");
-      toast.error(t("postComposer.photosError"));
+      toast.error(t("postComposer.duplicatePhoto"));
     }
     onChange([...value, ...valid].slice(0, MAX_POST_PHOTOS));
   };

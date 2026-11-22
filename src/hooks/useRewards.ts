@@ -6,6 +6,7 @@ import {
   type QueryClient,
 } from "@tanstack/react-query";
 import {
+  getMyChallenges,
   getMyCoinGrants,
   getMyDailyQuests,
   getMyInviteCode,
@@ -27,6 +28,16 @@ export function useMyDailyQuests() {
     gcTime: 10 * 60_000,
     queryKey: ["rewards", "quests"],
     queryFn: getMyDailyQuests,
+  });
+}
+
+// shortcut: only the first page; switch to useInfiniteQuery once there are more running challenges than a page holds
+export function useMyChallenges() {
+  return useQuery({
+    staleTime: 30_000,
+    gcTime: 10 * 60_000,
+    queryKey: ["rewards", "challenges"],
+    queryFn: getMyChallenges,
   });
 }
 

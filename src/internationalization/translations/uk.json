@@ -460,7 +460,8 @@
     "moreOptions": "Інші дії",
     "students": "Студенти",
     "changeBanner": "Змінити банер",
-    "openImage": "Відкрити фото"
+    "openImage": "Відкрити фото",
+    "processingPhotos": "Обробляємо фото…"
   },
   "postComposer": {
     "audience": "Хто може бачити",
@@ -591,7 +592,8 @@
     "block": "Заблокувати",
     "blockTitle": "Заблокувати цього студента?",
     "blockDescription": "Ви більше не побачите одне одного в uniezz.",
-    "blocked": "Студента заблоковано."
+    "blocked": "Студента заблоковано.",
+    "photos": "Фото"
   },
   "study": {
     "filters": "Фільтри",
@@ -685,7 +687,11 @@
     "redeemApplied": "Код запрошення застосовано.",
     "redeemInvalid": "Такого коду немає. Перевір і спробуй ще раз.",
     "redeemAlreadySet": "Ти вже використав інший код запрошення.",
-    "redeemWindowClosed": "Код запрошення працює лише перші 7 днів."
+    "redeemWindowClosed": "Код запрошення працює лише перші 7 днів.",
+    "challengesTitle": "Челенджі",
+    "challengeDaily": "Щодня",
+    "challengeWeekly": "Щотижня",
+    "challengeEnds": "До {{date}}"
   },
   "onboarding": {
     "details": {

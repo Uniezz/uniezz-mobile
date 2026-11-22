@@ -4,7 +4,12 @@ import {
   MenuView,
   NativeActionEvent,
 } from "@react-native-menu/menu";
-import { authorName, HEADER_COMPACT_OFFSET, apiErrorKey } from "@/utils";
+import {
+  authorName,
+  HEADER_COMPACT_OFFSET,
+  apiErrorKey,
+  MAX_PROFILE_PHOTOS,
+} from "@/utils";
 import type { FlashListRef } from "@shopify/flash-list";
 import { BlurView } from "expo-blur";
 import { router } from "expo-router";
@@ -41,8 +46,11 @@ import {
   useDeleteMyAvatar,
   useDeleteMyBanner,
   useDeleteMyProfile,
+  useDeleteMyProfilePhoto,
   useMyProfile,
+  useMyProfilePhotos,
   usePickProfileImage,
+  usePickProfilePhotos,
 } from "@/hooks";
 import { Icon, UIGlass, UIPage, UISubTabs } from "@/ui";
 import { ApiRequestError } from "@/api";
@@ -60,6 +68,16 @@ export default function ProfileScreen() {
     usePickProfileImage("avatar");
   const { pickImage: handleChangeBannerPress, isPending: isUploadingBanner } =
     usePickProfileImage("banner");
+  const { data: photoList } = useMyProfilePhotos();
+  const photos = photoList?.photos ?? [];
+  const galleryPhotos = photos.map(({ url, id, isAvatar }) => ({
+    url,
+    // the avatar is removed from the menu, through its own endpoint
+    id: isAvatar ? undefined : id,
+  }));
+  const { pickPhotos: handleAddPhotosPress, isPending: isAddingPhotos } =
+    usePickProfilePhotos(MAX_PROFILE_PHOTOS - photos.length);
+  const { mutateAsync: deletePhoto } = useDeleteMyProfilePhoto();
   const { clearSession } = useSession();
   const coinsEnabled = useFeatureFlag("coins") !== false;
   const programmesRef = useRef<BottomSheetModal>(null);
@@ -142,6 +160,15 @@ export default function ProfileScreen() {
   const handleRemovePhotoPress = async () => {
     try {
       await deleteAvatar();
+      toast.success(t("app.saved"));
+    } catch {
+      toast.error(t("apiState.profileSaveError"));
+    }
+  };
+
+  const handleRemoveGalleryPhotoPress = async (id: string) => {
+    try {
+      await deletePhoto(id);
       toast.success(t("app.saved"));
     } catch {
       toast.error(t("apiState.profileSaveError"));
@@ -293,6 +320,10 @@ export default function ProfileScreen() {
         onRetry={refetch}
         onChangePhoto={handleChangePhotoPress}
         isUploadingPhoto={isUploadingPhoto}
+        photos={galleryPhotos}
+        onAddPhotos={handleAddPhotosPress}
+        isAddingPhotos={isAddingPhotos}
+        onRemovePhoto={handleRemoveGalleryPhotoPress}
       />
     </View>
   );

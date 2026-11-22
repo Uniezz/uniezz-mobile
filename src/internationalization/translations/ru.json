@@ -460,7 +460,8 @@
     "moreOptions": "Другие действия",
     "students": "Студенты",
     "changeBanner": "Изменить баннер",
-    "openImage": "Открыть фото"
+    "openImage": "Открыть фото",
+    "processingPhotos": "Обрабатываем фото…"
   },
   "postComposer": {
     "audience": "Кто может видеть",
@@ -591,7 +592,8 @@
     "block": "Заблокировать",
     "blockTitle": "Заблокировать этого студента?",
     "blockDescription": "Вы больше не увидите друг друга в uniezz.",
-    "blocked": "Студент заблокирован."
+    "blocked": "Студент заблокирован.",
+    "photos": "Фото"
   },
   "study": {
     "filters": "Фильтры",
@@ -685,7 +687,11 @@
     "redeemApplied": "Код приглашения применён.",
     "redeemInvalid": "Такого кода нет. Проверь и попробуй ещё раз.",
     "redeemAlreadySet": "Ты уже использовал другой код приглашения.",
-    "redeemWindowClosed": "Код приглашения работает только первые 7 дней."
+    "redeemWindowClosed": "Код приглашения работает только первые 7 дней.",
+    "challengesTitle": "Челленджи",
+    "challengeDaily": "Ежедневно",
+    "challengeWeekly": "Еженедельно",
+    "challengeEnds": "До {{date}}"
   },
   "onboarding": {
     "details": {

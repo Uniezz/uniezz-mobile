@@ -61,3 +61,18 @@ export async function deleteMyAvatar() {
 export async function deleteMyBanner() {
   await api.DELETE("/profile/banner");
 }
+
+export async function getMyProfilePhotos() {
+  const { data } = await api.GET("/profile/photos");
+  return data!;
+}
+
+export async function addMyProfilePhoto(mediaId: string) {
+  await api.POST("/profile/photos", { body: { mediaId } });
+}
+
+export async function deleteMyProfilePhoto(id: string) {
+  await api.DELETE("/profile/photos/{id}", {
+    params: { path: { id } },
+  });
+}

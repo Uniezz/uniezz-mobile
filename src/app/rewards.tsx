@@ -12,12 +12,14 @@ import {
 } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import {
+  ChallengesCard,
   GrantRow,
   QuestCard,
   RedeemInviteCard,
   ShopPreview,
 } from "@/components/rewards";
 import {
+  useMyChallenges,
   useMyCoinGrants,
   useMyDailyQuests,
   useMyInviteCode,
@@ -65,6 +67,12 @@ export default function RewardsScreen() {
     refetch: refetchQuests,
   } = useMyDailyQuests();
   const {
+    data: challengePage,
+    isError: isChallengesError,
+    refetch: refetchChallenges,
+  } = useMyChallenges();
+  const challenges = challengePage?.items ?? [];
+  const {
     data,
     isPending,
     isError,
@@ -86,9 +94,11 @@ export default function RewardsScreen() {
   };
   const handleRefresh = () => {
     setRefreshing(true);
-    return Promise.all([refetch(), refetchQuests()]).finally(() =>
-      setRefreshing(false),
-    );
+    return Promise.all([
+      refetch(),
+      refetchQuests(),
+      refetchChallenges(),
+    ]).finally(() => setRefreshing(false));
   };
   const handleInvitePress = () => {
     if (!invite) return;
@@ -194,6 +204,14 @@ export default function RewardsScreen() {
                 ) : (
                   <QuestCard quests={quests} />
                 )}
+                {isChallengesError ? (
+                  <UIQueryError
+                    message={t("apiState.error")}
+                    onRetry={refetchChallenges}
+                  />
+                ) : challenges.length ? (
+                  <ChallengesCard challenges={challenges} />
+                ) : null}
                 <UIText weight="semibold">{t("rewards.historyTitle")}</UIText>
               </>
             ) : null}

@@ -22,6 +22,7 @@ import {
   InterestChips,
   ProfileHeader,
   ProfileHero,
+  ProfilePhotos,
   ProgrammeCard,
 } from "@/components/profile";
 import { FeedPostCard } from "@/components/feed";
@@ -161,6 +162,12 @@ export default function PublicProfileScreen() {
                     <InterestChips interests={profile.interests} />
                   ) : null}
                 </ProfileHero>
+                {/* null for students you are not connected with; the avatar alone adds nothing to the hero */}
+                {profile.photos && profile.photos.length > 1 ? (
+                  <ProfilePhotos
+                    photos={profile.photos.map((url) => ({ url }))}
+                  />
+                ) : null}
                 {profile.programmes?.length ? (
                   <View style={styles.section}>
                     <UIText size="md" weight="semibold">

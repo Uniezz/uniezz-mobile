@@ -78,10 +78,18 @@ export default function NewPostScreen() {
   const onSubmit = handleSubmit(
     async (values) => {
       if (!profile) return;
+      // one toast while photos upload, which then turns into the outcome
+      const toastId = values.photos.length
+        ? toast.loading(t("app.processingPhotos"))
+        : undefined;
       try {
         const mediaIds = await uploadImages(values.photos);
         // the photo can be removed while this upload is in flight
-        if (!samePhotos(values.photos, getValues("photos"))) return;
+        if (!samePhotos(values.photos, getValues("photos"))) {
+          // with no id sonner would dismiss every toast
+          if (toastId !== undefined) toast.dismiss(toastId);
+          return;
+        }
         await createPost({
           type: values.type,
           title: values.title,
@@ -94,11 +102,15 @@ export default function NewPostScreen() {
           tags: values.tags.length ? values.tags : undefined,
           mediaIds: mediaIds.length ? mediaIds : undefined,
         });
-        toast.success(t("postComposer.published"));
+        toast.success(t("postComposer.published"), { id: toastId });
         router.back();
       } catch (error) {
-        if (!samePhotos(values.photos, getValues("photos"))) return;
-        toast.error(t(apiErrorKey(error)));
+        if (!samePhotos(values.photos, getValues("photos"))) {
+          // with no id sonner would dismiss every toast
+          if (toastId !== undefined) toast.dismiss(toastId);
+          return;
+        }
+        toast.error(t(apiErrorKey(error)), { id: toastId });
       }
     },
     () => captureAction(posthog, "post_create_form", "validation_failed"),

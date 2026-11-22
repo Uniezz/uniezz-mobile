@@ -1,11 +1,12 @@
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import type { Profile } from "@/@types";
+import type { Profile, ProfileGalleryPhoto } from "@/@types";
 import { UIQueryError, UISkeleton, UIText } from "@/ui";
 import { authorName } from "@/utils";
 import { InterestChips } from "./InterestChips";
 import { ProfileHero } from "./ProfileHero";
+import { ProfilePhotos } from "./ProfilePhotos";
 import { ProgrammeCard } from "./ProgrammeCard";
 
 type ProfileOverviewProps = {
@@ -15,6 +16,10 @@ type ProfileOverviewProps = {
   onRetry: () => void;
   onChangePhoto: () => void;
   isUploadingPhoto: boolean;
+  photos: ProfileGalleryPhoto[];
+  onAddPhotos: () => void;
+  isAddingPhotos: boolean;
+  onRemovePhoto: (id: string) => void;
 };
 
 // the profile list header: identity, programmes, and the posts section title
@@ -25,6 +30,10 @@ export const ProfileOverview = ({
   onRetry,
   onChangePhoto,
   isUploadingPhoto,
+  photos,
+  onAddPhotos,
+  isAddingPhotos,
+  onRemovePhoto,
 }: ProfileOverviewProps) => {
   const { t } = useTranslation();
 
@@ -64,6 +73,12 @@ export const ProfileOverview = ({
           <InterestChips interests={profile.interests} />
         ) : null}
       </ProfileHero>
+      <ProfilePhotos
+        photos={photos}
+        onAddPress={onAddPhotos}
+        isAdding={isAddingPhotos}
+        onRemovePress={onRemovePhoto}
+      />
       {profile.programmes?.length ? (
         <View style={styles.section}>
           <UIText size="md" weight="semibold">

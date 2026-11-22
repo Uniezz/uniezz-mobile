@@ -13,3 +13,9 @@ export async function getMyDailyQuests() {
 
   return data!;
 }
+
+export async function getMyChallenges() {
+  const { data } = await api.GET("/rewards/me/challenges");
+
+  return data!;
+}

@@ -2,7 +2,7 @@ import * as Haptics from "expo-haptics";
 import { useHapticsStore } from "@/store/hapticsStore";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
-import type { CoinGrant } from "@/@types";
+import type { CoinGrant, MyChallenge } from "@/@types";
 import i18n from "@/internationalization";
 // the file, not the @/ui barrel: ui imports @/utils back, so the barrel cycles
 import { UICoin } from "@/ui/UICoin";
@@ -31,6 +31,21 @@ export const QUEST_LABELS: Record<string, string> = {
   reply: "rewards.questReply",
   post: "rewards.questPost",
 };
+
+// a challenge's text in the student's language, else Polish as the API asks, else any
+export const challengeText = (
+  texts: MyChallenge["texts"],
+  language: string | undefined,
+) =>
+  (language ? texts[language] : undefined) ??
+  texts.pl ??
+  Object.values(texts)[0];
+
+export const CHALLENGE_PERIOD_LABELS = {
+  day: "rewards.challengeDaily",
+  week: "rewards.challengeWeekly",
+  once: null,
+} as const satisfies Record<MyChallenge["period"], string | null>;
 
 // likes, replies, posts, preferences and profile updates answer with the coins they paid
 export const toastCoinsEarned = (data: unknown) => {

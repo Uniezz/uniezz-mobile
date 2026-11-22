@@ -452,7 +452,8 @@
     "uploadedBy": "Загрузіў",
     "visibilityDescription": "Дазвольце іншым студэнтам знаходзіць вас па імені і напрамку навучання.",
     "visibleToStudents": "Бачны студэнтам",
-    "openImage": "Адкрыць фота"
+    "openImage": "Адкрыць фота",
+    "processingPhotos": "Апрацоўваем фота…"
   },
   "postComposer": {
     "duplicatePhoto": "Гэта фота ўжо дададзена.",
@@ -583,7 +584,8 @@
     "noPosts": "Пакуль няма допісаў",
     "noSavedPosts": "Пакуль няма захаваных допісаў",
     "profile": "Профіль студэнта",
-    "songUrlError": "Увядзіце спасылку http або https даўжынёй не больш за 500 сімвалаў."
+    "songUrlError": "Увядзіце спасылку http або https даўжынёй не больш за 500 сімвалаў.",
+    "photos": "Фота"
   },
   "study": {
     "filters": "Фільтры",
@@ -681,7 +683,11 @@
     "redeemApplied": "Код запрашэння ўжыты.",
     "redeemInvalid": "Такога кода няма. Правер і паспрабуй яшчэ раз.",
     "redeemAlreadySet": "Ты ўжо выкарыстаў іншы код запрашэння.",
-    "redeemWindowClosed": "Код запрашэння працуе толькі першыя 7 дзён."
+    "redeemWindowClosed": "Код запрашэння працуе толькі першыя 7 дзён.",
+    "challengesTitle": "Чэленджы",
+    "challengeDaily": "Штодня",
+    "challengeWeekly": "Штотыдзень",
+    "challengeEnds": "Да {{date}}"
   },
   "guide": {
     "action": "Прапанаваць месца",

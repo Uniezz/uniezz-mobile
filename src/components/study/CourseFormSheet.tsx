@@ -41,11 +41,11 @@ import {
   toCourseValues,
   captureAction,
   apiErrorKey,
-  IMAGE_TYPES,
 } from "@/utils";
 import { RatingInput } from "./RatingInput";
 
-const MATERIAL_TYPES = [...IMAGE_TYPES, "application/pdf"];
+// any photo format: the upload converts it to JPEG
+const MATERIAL_TYPES = ["image/*", "application/pdf"];
 const MAX_MATERIALS = 10;
 
 type CourseFormSheetProps = {

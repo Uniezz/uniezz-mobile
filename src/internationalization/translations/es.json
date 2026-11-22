@@ -445,7 +445,8 @@
     "uploadedBy": "Subido por",
     "visibilityDescription": "Permite que otros estudiantes te encuentren por tu nombre y titulación.",
     "visibleToStudents": "Visible para estudiantes",
-    "openImage": "Abrir imagen"
+    "openImage": "Abrir imagen",
+    "processingPhotos": "Procesando fotos…"
   },
   "postComposer": {
     "duplicatePhoto": "Esta foto ya ha sido agregada.",
@@ -576,7 +577,8 @@
     "noPosts": "Aún no hay publicaciones",
     "noSavedPosts": "Aún no hay publicaciones guardadas",
     "profile": "Perfil del estudiante",
-    "songUrlError": "Introduce un enlace http o https de hasta 500 caracteres."
+    "songUrlError": "Introduce un enlace http o https de hasta 500 caracteres.",
+    "photos": "Fotos"
   },
   "study": {
     "filters": "Filtros",
@@ -674,7 +676,11 @@
     "redeemApplied": "Código de invitación aplicado.",
     "redeemInvalid": "Ese código no existe. Revísalo y vuelve a intentarlo.",
     "redeemAlreadySet": "Ya usaste otro código de invitación.",
-    "redeemWindowClosed": "Los códigos de invitación solo funcionan en tus primeros 7 días."
+    "redeemWindowClosed": "Los códigos de invitación solo funcionan en tus primeros 7 días.",
+    "challengesTitle": "Retos",
+    "challengeDaily": "Diario",
+    "challengeWeekly": "Semanal",
+    "challengeEnds": "Hasta el {{date}}"
   },
   "guide": {
     "action": "Sugerir un lugar",
