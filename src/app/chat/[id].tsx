@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router, useLocalSearchParams } from "expo-router";
 import { usePostHog } from "posthog-react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { LayoutChangeEvent, View } from "react-native";
@@ -26,6 +26,22 @@ export default function ConversationScreen() {
   );
   const messages = useChatStore((state) => state.messages[id] ?? emptyMessages);
   const sendMessage = useChatStore((state) => state.sendMessage);
+  const loadMessages = useChatStore((state) => state.loadMessages);
+  const markRead = useChatStore((state) => state.markRead);
+  const setActiveConversation = useChatStore(
+    (state) => state.setActiveConversation,
+  );
+  useEffect(() => {
+    setActiveConversation(id);
+    return () => setActiveConversation(null);
+  }, [id, setActiveConversation]);
+
+  useEffect(() => {
+    loadMessages(id).catch(() => undefined);
+    if (conversation?.lastSeq) {
+      markRead(id, conversation.lastSeq).catch(() => undefined);
+    }
+  }, [conversation?.lastSeq, id, loadMessages, markRead]);
   const {
     control,
     handleSubmit,
@@ -42,10 +58,10 @@ export default function ConversationScreen() {
     setComposerHeight(event.nativeEvent.layout.height);
   };
 
-  const handleSendPress = handleSubmit(({ text }) => {
+  const handleSendPress = handleSubmit(async ({ text }) => {
     captureAction(posthog, "message_send", "attempted", { storage: "local" });
     try {
-      sendMessage(id, text);
+      await sendMessage(id, text);
       reset();
       captureAction(posthog, "message_send", "succeeded", { storage: "local" });
     } catch (error) {

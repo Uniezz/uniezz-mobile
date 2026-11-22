@@ -17,3 +17,4 @@ export * from "./useReports";
 export * from "./useScreenTracking";
 export * from "./useStudyFiles";
 export * from "./useRewards";
+export * from "./useChatLive";

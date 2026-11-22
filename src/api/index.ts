@@ -6,6 +6,7 @@ export * from "./profile";
 export * from "./feed";
 export * from "./reports";
 export * from "./media";
+export * from "./chat";
 export * from "./faq";
 export * from "./connections";
 export * from "./study";

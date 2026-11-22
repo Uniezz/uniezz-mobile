@@ -10,6 +10,7 @@ import { api, setApiAccessToken } from "@/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { usePostHog } from "posthog-react-native";
 import { captureAction } from "@/utils";
+import { useChatLive } from "@/hooks/useChatLive";
 import {
   deleteStoredSession,
   loadStoredSession,
@@ -89,6 +90,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       }
     }
   }, [queryClient, posthog]);
+  useChatLive(session?.token ?? null, clearSession);
 
   useEffect(() => {
     if (!session?.token) return;
