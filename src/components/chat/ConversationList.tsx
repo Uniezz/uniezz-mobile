@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ProfileButton } from "@/components/profile";
 import { useTranslation } from "react-i18next";
 import { FlashList } from "@shopify/flash-list";
-import { View } from "react-native";
+import { Keyboard, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import type { Conversation } from "@/@types";
 import { chatTime } from "@/utils";
@@ -13,7 +13,7 @@ import {
   UIAvatar,
   UIEmpty,
   UIIconButton,
-  UISearch,
+  UISearchOverlay,
   UISubTabs,
   UIText,
 } from "@/ui";
@@ -36,6 +36,10 @@ export function ConversationList({
   const { t, i18n } = useTranslation();
   const locale = i18n.resolvedLanguage ?? "en";
   const [search, setSearch] = useState("");
+  // the search field only exists while the keyboard is up; blurring it closes it, the filter stays
+  const [isSearching, setIsSearching] = useState(false);
+  const handleSearchPress = () => setIsSearching(true);
+  const handleSearchClose = () => setIsSearching(false);
   const [filter, setFilter] = useState<(typeof FILTERS)[number][0]>("all");
   const handleFilterPress = (index: number) =>
     setFilter(FILTERS[index]?.[0] ?? "all");
@@ -53,6 +57,13 @@ export function ConversationList({
           </UIText>
           <UIIconButton
             accessibilityRole="button"
+            accessibilityLabel={t("topbar.search")}
+            onPress={handleSearchPress}
+          >
+            <Icon name="search" size={18} />
+          </UIIconButton>
+          <UIIconButton
+            accessibilityRole="button"
             accessibilityLabel={t("app.createGroup")}
             onPress={onCreate}
           >
@@ -60,11 +71,6 @@ export function ConversationList({
           </UIIconButton>
           <ProfileButton />
         </View>
-        <UISearch
-          placeholder={t("app.searchConversations")}
-          value={search}
-          onChangeText={setSearch}
-        />
         <View style={styles.filters}>
           <UISubTabs
             items={FILTERS.map(([, label]) => t(label))}
@@ -130,6 +136,15 @@ export function ConversationList({
           message={t(filter === "requests" ? "chat.noRequests" : "app.empty")}
         />
       ) : null}
+      <UISearchOverlay
+        isOpen={isSearching}
+        value={search}
+        onChangeText={setSearch}
+        onSubmit={Keyboard.dismiss}
+        onClose={handleSearchClose}
+        placeholder={t("app.searchConversations")}
+        submitLabel={t("topbar.search")}
+      />
     </>
   );
 }
@@ -166,7 +181,7 @@ const styles = StyleSheet.create((theme) => ({
     flexDirection: "row",
     alignItems: "center",
     gap: theme.s(12),
-    // lines up with the search and filters; the page already pads the sides
+    // lines up with the filters; the page already pads the sides
     paddingVertical: theme.vs(10),
   },
   rowText: {
