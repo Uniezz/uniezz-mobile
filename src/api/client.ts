@@ -77,6 +77,9 @@ const apiMiddleware: Middleware = {
               "/profile/me",
               "/profile/programmes/{id}",
               "/profile/photos/{id}",
+              "/chat/conversations/{id}/members/me",
+              "/chat/conversations/{id}/members/{userId}",
+              "/chat/messages/{id}",
               "/connections/{id}",
               "/connections/blocks/{id}",
               "/study/comments/{id}",
@@ -139,7 +142,11 @@ const apiMiddleware: Middleware = {
   },
 };
 
-export const api = createFetchClient<paths>({ baseUrl: API_BASE_URL });
+// fetch is read per request, not when the client is created, so a later polyfill or test stub applies
+export const api = createFetchClient<paths>({
+  baseUrl: API_BASE_URL,
+  fetch: (request) => globalThis.fetch(request),
+});
 api.use(apiMiddleware);
 
 export const $api = createQueryClient(api);

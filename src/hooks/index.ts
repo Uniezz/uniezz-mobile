@@ -1,6 +1,7 @@
 export * from "./useOtpScreen";
 export * from "./auth";
 export * from "./useBirthDateGate";
+export * from "./useChat";
 export * from "./useUniversities";
 export * from "./useConnections";
 export * from "./useCourseComments";

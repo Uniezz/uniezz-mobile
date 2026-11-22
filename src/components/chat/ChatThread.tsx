@@ -18,11 +18,9 @@ const ThreadScrollView = (props: ScrollViewProps) => {
 type ChatThreadProps = {
   /** oldest first */
   messages: ChatMessage[];
-  /** the composer floats over the list's end, so the list reserves its height */
-  composerHeight: number;
 };
 
-export function ChatThread({ messages, composerHeight }: ChatThreadProps) {
+export function ChatThread({ messages }: ChatThreadProps) {
   const { t, i18n } = useTranslation();
   const locale = i18n.resolvedLanguage ?? "en";
 
@@ -39,7 +37,6 @@ export function ChatThread({ messages, composerHeight }: ChatThreadProps) {
       keyboardDismissMode="interactive"
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={styles.list(composerHeight)}
       renderItem={({ item, index }) => {
         const previous = messages[index - 1];
         const isNewDay =
@@ -67,9 +64,6 @@ export function ChatThread({ messages, composerHeight }: ChatThreadProps) {
 }
 
 const styles = StyleSheet.create((theme) => ({
-  list: (composerHeight: number) => ({
-    paddingBottom: composerHeight,
-  }),
   item: {
     paddingBottom: theme.vs(6),
   },
