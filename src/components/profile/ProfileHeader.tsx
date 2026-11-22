@@ -4,9 +4,12 @@ import { useTranslation } from "react-i18next";
 import { LayoutChangeEvent, View } from "react-native";
 import { EaseView } from "react-native-ease";
 import { StyleSheet } from "react-native-unistyles";
-import { useUniversities } from "@/hooks";
 import { Icon, UIAvatar, UIIconButton, UIText, UIUniversityLogo } from "@/ui";
-import { HEADER_TRANSITION, PROFILE_HEADER_TITLE_SHIFT } from "@/utils";
+import {
+  HEADER_TRANSITION,
+  PROFILE_HEADER_TITLE_SHIFT,
+  UNIVERSITY_SHORT_NAMES,
+} from "@/utils";
 
 type ProfileHeaderProps = {
   title: string;
@@ -35,10 +38,6 @@ export const ProfileHeader = ({
   onBackPress,
 }: ProfileHeaderProps) => {
   const { t } = useTranslation();
-  const { data: universities = [] } = useUniversities();
-  const universityName = universities.find(
-    ({ id }) => id === universityId,
-  )?.name;
 
   return (
     <View style={styles.header} onLayout={onLayout}>
@@ -93,7 +92,8 @@ export const ProfileHeader = ({
                     numberOfLines={1}
                     style={styles.universityName}
                   >
-                    {universityName ?? universityId.toUpperCase()}
+                    {UNIVERSITY_SHORT_NAMES[universityId] ??
+                      universityId.toUpperCase()}
                   </UIText>
                 </View>
               ) : null}
