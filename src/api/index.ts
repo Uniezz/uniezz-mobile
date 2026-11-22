@@ -10,4 +10,3 @@ export * from "./faq";
 export * from "./connections";
 export * from "./study";
 export * from "./rewards";
-export * from "./chat";

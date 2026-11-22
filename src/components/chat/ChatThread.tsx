@@ -1,12 +1,9 @@
 import { FlashList } from "@shopify/flash-list";
-import { useTranslation } from "react-i18next";
-import { ScrollViewProps, View } from "react-native";
+import { ScrollViewProps } from "react-native";
 import { KeyboardChatScrollView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { StyleSheet } from "react-native-unistyles";
-import type { ChatMessage } from "@/@types";
-import { UIText } from "@/ui";
-import { chatDay, isSameDay } from "@/utils";
+import type { ApiChatMessage } from "@/@types";
+import { Message } from "./Message";
 
 // lifts the latest messages with the keyboard, like the post comments;
 // the list ends above the home indicator (UIPage pads it), which the keyboard already covers
@@ -17,13 +14,21 @@ const ThreadScrollView = (props: ScrollViewProps) => {
 
 type ChatThreadProps = {
   /** oldest first */
-  messages: ChatMessage[];
+  messages: ApiChatMessage[];
+  /** the signed-in student, whose messages sit on the right */
+  myId?: string;
+  /** scrolled up to the oldest loaded message, e.g. to load older pages */
+  onStartReached: () => void;
+  /** a long press on one of the student's own messages, e.g. to delete it */
+  onOwnMessageLongPress: (message: ApiChatMessage) => void;
 };
 
-export function ChatThread({ messages }: ChatThreadProps) {
-  const { t, i18n } = useTranslation();
-  const locale = i18n.resolvedLanguage ?? "en";
-
+export function ChatThread({
+  messages,
+  myId,
+  onStartReached,
+  onOwnMessageLongPress,
+}: ChatThreadProps) {
   return (
     <FlashList
       renderScrollComponent={ThreadScrollView}
@@ -34,51 +39,18 @@ export function ChatThread({ messages }: ChatThreadProps) {
         startRenderingFromBottom: true,
         autoscrollToBottomThreshold: 0.2,
       }}
+      onStartReached={onStartReached}
       keyboardDismissMode="interactive"
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
-      renderItem={({ item, index }) => {
-        const previous = messages[index - 1];
-        const isNewDay =
-          !previous || !isSameDay(previous.createdAt, item.createdAt);
-        return (
-          <View style={styles.item}>
-            {isNewDay ? (
-              <UIText
-                size="xs"
-                weight="medium"
-                color="secondary"
-                style={styles.day}
-              >
-                {chatDay(item.createdAt, locale, t("feed.today"))}
-              </UIText>
-            ) : null}
-            <View style={styles.bubble(item.mine)}>
-              <UIText>{item.text}</UIText>
-            </View>
-          </View>
-        );
-      }}
+      renderItem={({ item, index }) => (
+        <Message
+          message={item}
+          previous={messages[index - 1]}
+          isMine={item.sender.id === myId}
+          onOwnLongPress={onOwnMessageLongPress}
+        />
+      )}
     />
   );
 }
-
-const styles = StyleSheet.create((theme) => ({
-  item: {
-    paddingBottom: theme.vs(6),
-  },
-  day: {
-    alignSelf: "center",
-    paddingBottom: theme.vs(8),
-  },
-  bubble: (mine: boolean) => ({
-    alignSelf: mine ? "flex-end" : "flex-start",
-    maxWidth: theme.s(260),
-    paddingVertical: theme.vs(10),
-    paddingHorizontal: theme.s(14),
-    borderRadius: theme.vs(16),
-    borderWidth: mine ? 0 : 1,
-    borderColor: theme.colors.white10,
-    backgroundColor: mine ? theme.colors.blue : theme.colors.surface60,
-  }),
-}));

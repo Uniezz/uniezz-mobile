@@ -10,12 +10,7 @@ import { api, setApiAccessToken } from "@/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { usePostHog } from "posthog-react-native";
 import { captureAction } from "@/utils";
-import {
-  deleteStoredSession,
-  loadStoredSession,
-  storeSession,
-  useChatStore,
-} from "@/store";
+import { deleteStoredSession, loadStoredSession, storeSession } from "@/store";
 
 type SessionContextValue = {
   session: IssuedSession | null;
@@ -57,7 +52,6 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       captureAction(posthog, "session_save", "attempted");
       try {
         await storeSession(nextSession);
-        useChatStore.getState().reset();
         setSession(nextSession);
         setApiAccessToken(nextSession.token);
         captureAction(posthog, "session_save", "succeeded");
@@ -71,7 +65,6 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
 
   const clearSession = useCallback(async () => {
     captureAction(posthog, "session_clear", "attempted");
-    useChatStore.getState().reset();
     setApiAccessToken(null);
     setSession(null);
     queryClient.clear();

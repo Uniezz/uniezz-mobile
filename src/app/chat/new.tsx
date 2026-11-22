@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FlashList } from "@shopify/flash-list";
 import { BlurView } from "expo-blur";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { usePostHog } from "posthog-react-native";
 import { useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
@@ -16,11 +16,17 @@ import {
 import { KeyboardStickyView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
+import { toast } from "sonner-native";
 import type { CreateGroupFormValues } from "@/@types";
 import { RowPickerItem } from "@/components";
-import { useProfileSearch, useUniversities } from "@/hooks";
-import { createGroupSchema } from "@/schemas";
-import { useChatStore } from "@/store/chat";
+import {
+  useAddChatMembers,
+  useChatMembers,
+  useConnections,
+  useCreateChatGroup,
+  useUniversities,
+} from "@/hooks";
+import { addGroupMembersSchema, createGroupSchema } from "@/schemas";
 import {
   Icon,
   UIAvatar,
@@ -36,12 +42,26 @@ import {
   UIText,
   UIUniversityLogo,
 } from "@/ui";
-import { authorName, HEADER_COMPACT_OFFSET, captureAction } from "@/utils";
+import {
+  apiErrorKey,
+  authorName,
+  captureAction,
+  HEADER_COMPACT_OFFSET,
+} from "@/utils";
 
+// creates a group, or with a groupId adds people to that group
 export default function NewGroupScreen() {
+  const { groupId } = useLocalSearchParams<{ groupId?: string }>();
+  const isAdding = Boolean(groupId);
   const { t } = useTranslation();
   const posthog = usePostHog();
-  const createGroup = useChatStore((state) => state.createGroup);
+  const { createGroup, isPending: isCreating } = useCreateChatGroup();
+  const { mutateAsync: addMembers, isPending: isAddingMembers } =
+    useAddChatMembers(groupId ?? "");
+  const { data: memberPage } = useChatMembers(groupId ?? "", isAdding);
+  const memberIds = new Set(
+    (memberPage?.items ?? []).map(({ student }) => student.id),
+  );
   const { data: universities = [] } = useUniversities();
   const [search, setSearch] = useState("");
   const [query, setQuery] = useState("");
@@ -56,14 +76,24 @@ export default function NewGroupScreen() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useProfileSearch(query);
-  const students = data?.pages.flatMap((page) => page.items ?? []) ?? [];
+  } = useConnections();
+  // the API takes only the student's own connections into a group.
+  // shortcut: search filters the loaded connections; the API has no connection search yet
+  const needle = query.trim().toLowerCase();
+  const students = (data?.pages.flatMap((page) => page.items ?? []) ?? [])
+    .map(({ profile }) => profile)
+    // people already in the group are not offered again
+    .filter(
+      (student) =>
+        !memberIds.has(student.id) &&
+        authorName(student).toLowerCase().includes(needle),
+    );
   const {
     control,
     handleSubmit,
     formState: { isValid },
   } = useForm<CreateGroupFormValues>({
-    resolver: zodResolver(createGroupSchema),
+    resolver: zodResolver(isAdding ? addGroupMembersSchema : createGroupSchema),
     defaultValues: { groupName: "", members: [] },
     mode: "onChange",
   });
@@ -92,18 +122,24 @@ export default function NewGroupScreen() {
     if (hasNextPage && !isFetchingNextPage) return fetchNextPage();
   };
   const handleCreatePress = handleSubmit(
-    ({ groupName, members: memberIds }) => {
-      captureAction(posthog, "group_create", "attempted", { storage: "local" });
+    async ({ groupName, members: picked }) => {
       try {
-        const id = createGroup(groupName, memberIds);
-        captureAction(posthog, "group_create", "succeeded", {
-          storage: "local",
+        if (groupId) {
+          await addMembers({
+            params: { path: { id: groupId } },
+            body: { userIds: picked },
+          });
+          router.back();
+          return;
+        }
+        const { id } = await createGroup({
+          name: groupName,
+          memberIds: picked,
         });
         // replaces this form, so back from the new group returns to the chat list
         router.replace({ pathname: "/chat/[id]", params: { id } });
       } catch (error) {
-        captureAction(posthog, "group_create", "failed", { storage: "local" });
-        throw error;
+        toast.error(t(apiErrorKey(error)));
       }
     },
     () => captureAction(posthog, "group_form", "validation_failed"),
@@ -111,22 +147,28 @@ export default function NewGroupScreen() {
 
   const listHeader = (
     <View style={styles.header}>
-      <UIText color="soft">{t("app.groupDescription")}</UIText>
-      <Controller
-        control={control}
-        name="groupName"
-        render={({ field, fieldState }) => (
-          <UIInput
-            captionText={t("app.groupName")}
-            placeholder={t("app.groupPlaceholder")}
-            value={field.value}
-            onChangeText={field.onChange}
-            onBlur={field.onBlur}
-            errorText={fieldState.error?.message && t(fieldState.error.message)}
-            maxLength={80}
+      {isAdding ? null : (
+        <>
+          <UIText color="soft">{t("app.groupDescription")}</UIText>
+          <Controller
+            control={control}
+            name="groupName"
+            render={({ field, fieldState }) => (
+              <UIInput
+                captionText={t("app.groupName")}
+                placeholder={t("app.groupPlaceholder")}
+                value={field.value}
+                onChangeText={field.onChange}
+                onBlur={field.onBlur}
+                errorText={
+                  fieldState.error?.message && t(fieldState.error.message)
+                }
+                maxLength={80}
+              />
+            )}
           />
-        )}
-      />
+        </>
+      )}
       <View style={styles.peopleHeading}>
         <UIText size="md" weight="semibold" style={styles.grow}>
           {t("app.addPeople")}
@@ -153,7 +195,7 @@ export default function NewGroupScreen() {
   return (
     <UIPage>
       <UICollapsingHeader
-        title={t("chat.action")}
+        title={t(isAdding ? "app.addPeople" : "chat.action")}
         isCompact={isHeaderCompact}
         onBackPress={handleBackPress}
         backLabel={t("app.back")}
@@ -186,7 +228,7 @@ export default function NewGroupScreen() {
             ListFooterComponent={
               isFetchingNextPage ? (
                 <UISkeleton height={64} />
-              ) : (
+              ) : isAdding ? null : (
                 <UIText size="sm" color="secondary" style={styles.hint}>
                   {t("app.minimumMembers")}
                 </UIText>
@@ -246,7 +288,7 @@ export default function NewGroupScreen() {
           radius="sm"
           size="rg"
           accessibilityRole="button"
-          disabled={!isValid}
+          disabled={!isValid || isCreating || isAddingMembers}
           onPress={handleCreatePress}
           style={styles.create}
         >
@@ -256,7 +298,7 @@ export default function NewGroupScreen() {
             uniProps={(theme) => ({ color: theme.colors.ink })}
           />
           <UIText size="rg" weight="semibold" color="black">
-            {t("app.createGroup")}
+            {t(isAdding ? "chat.addToGroup" : "app.createGroup")}
           </UIText>
         </UIButton>
       </KeyboardStickyView>

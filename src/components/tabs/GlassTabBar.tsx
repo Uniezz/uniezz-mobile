@@ -2,7 +2,7 @@ import type { Tabs } from "expo-router";
 import type { ComponentProps } from "react";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { UIPressable, Icon, UIGlass, UIText } from "@/ui";
+import { UIPressable, Icon, UIBadge, UIGlass, UIText } from "@/ui";
 
 type IconName = ComponentProps<typeof Icon>["name"];
 
@@ -24,12 +24,15 @@ type GlassTabItemProps = {
   route: TabBarProps["state"]["routes"][number];
   isFocused: boolean;
   label: string | undefined;
+  /** a count over the icon, e.g. unread chat messages */
+  badge: number | string | undefined;
 } & Pick<TabBarProps, "navigation">;
 
 const GlassTabItem = ({
   route,
   isFocused,
   label,
+  badge,
   navigation,
 }: GlassTabItemProps) => {
   const handlePress = () => {
@@ -56,13 +59,20 @@ const GlassTabItem = ({
       onLongPress={handleLongPress}
       style={[styles.item, isFocused && styles.selected]}
     >
-      <Icon
-        name={TAB_ICONS[route.name] ?? "newspaper"}
-        size={20}
-        uniProps={(theme) => ({
-          color: isFocused ? theme.colors.white : theme.colors.white60,
-        })}
-      />
+      <View>
+        <Icon
+          name={TAB_ICONS[route.name] ?? "newspaper"}
+          size={20}
+          uniProps={(theme) => ({
+            color: isFocused ? theme.colors.white : theme.colors.white60,
+          })}
+        />
+        {typeof badge === "number" ? (
+          <View style={styles.badge}>
+            <UIBadge count={badge} />
+          </View>
+        ) : null}
+      </View>
       <UIText
         size="xxs"
         weight={isFocused ? "semibold" : "medium"}
@@ -88,6 +98,7 @@ export const GlassTabBar = ({
           route={route}
           isFocused={state.index === index}
           label={descriptors[route.key]?.options.title}
+          badge={descriptors[route.key]?.options.tabBarBadge}
           navigation={navigation}
         />
       ))}
@@ -119,5 +130,11 @@ const styles = StyleSheet.create((theme, rt) => ({
   },
   selected: {
     backgroundColor: theme.colors.white10,
+  },
+  // over the icon's top right corner, as the system tab bar draws it
+  badge: {
+    position: "absolute",
+    top: -theme.vs(6),
+    left: theme.s(12),
   },
 }));

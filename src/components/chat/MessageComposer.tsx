@@ -15,6 +15,9 @@ type MessageComposerProps = {
   control: Control<MessageFormValues>;
   isSendDisabled: boolean;
   onSendPress: () => void;
+  /** picks photos to send */
+  onAttachPress: () => void;
+  isAttachDisabled: boolean;
 };
 
 // the message field under a conversation
@@ -22,18 +25,20 @@ export const MessageComposer = ({
   control,
   isSendDisabled,
   onSendPress,
+  onAttachPress,
+  isAttachDisabled,
 }: MessageComposerProps) => {
   const { t } = useTranslation();
 
   return (
     <>
-      {/* shortcut: placeholder from the design, attachments aren't supported yet; wire it up once chat has a backend */}
       <UIIconButton
         size="lg"
-        disabled
+        disabled={isAttachDisabled}
         accessibilityRole="button"
         accessibilityLabel={t("app.attach")}
-        accessibilityState={{ disabled: true }}
+        accessibilityState={{ disabled: isAttachDisabled }}
+        onPress={onAttachPress}
       >
         <Icon
           name="plus"

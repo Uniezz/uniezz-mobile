@@ -27,7 +27,12 @@ import {
 } from "@/components/profile";
 import { FeedPostCard } from "@/components/feed";
 import { ReportSheet } from "@/components/report";
-import { useBlockStudent, useFeedPosts, usePublicProfile } from "@/hooks";
+import {
+  useBlockStudent,
+  useFeedPosts,
+  useOpenDirectChat,
+  usePublicProfile,
+} from "@/hooks";
 import { Icon, UIGlass, UIPage, UIQueryError, UISkeleton, UIText } from "@/ui";
 import { authorName, HEADER_COMPACT_OFFSET, GENDER_LABELS } from "@/utils";
 
@@ -38,6 +43,7 @@ export default function PublicProfileScreen() {
   const { data: profile, isPending, isError, refetch } = usePublicProfile(id);
   const reportRef = useRef<BottomSheetModal>(null);
   const { mutateAsync: block } = useBlockStudent();
+  const { openChat } = useOpenDirectChat();
   const postFilters = { authorId: id };
   const {
     data: postPages,
@@ -99,7 +105,7 @@ export default function PublicProfileScreen() {
       attributes: { destructive: true },
     },
   ];
-  const handleMessagePress = () => router.push("/(tabs)/chat");
+  const handleMessagePress = () => openChat(id);
 
   // the same native menu as the own profile's ellipsis
   const reportAction = profile ? (
