@@ -9,9 +9,14 @@ type MessageProps = {
   message: ApiChatMessage;
   /** the message above, so a new day gets its date line */
   previous?: ApiChatMessage;
-  /** sent by the signed-in student: on the right, and a long press reaches `onOwnLongPress` */
+  /** sent by the signed-in student, on the right */
   isMine: boolean;
-  onOwnLongPress: (message: ApiChatMessage) => void;
+  /** the other student has read this one, shown under it as "Read" */
+  isReadByPeer?: boolean;
+  /** a long press on a message that is not deleted, e.g. to delete your own or report another's */
+  onLongPress: (message: ApiChatMessage) => void;
+  /** one of its photos failed to load, e.g. because its link expired */
+  onPhotoError: (message: ApiChatMessage) => void;
 };
 
 // one message in a thread: a bubble with its photos and text, or a centred system line
@@ -19,14 +24,17 @@ export const Message = ({
   message,
   previous,
   isMine,
-  onOwnLongPress,
+  isReadByPeer = false,
+  onLongPress,
+  onPhotoError,
 }: MessageProps) => {
   const { t, i18n } = useTranslation();
   const createdAt = Date.parse(message.createdAt);
   const isNewDay =
     !previous || !isSameDay(Date.parse(previous.createdAt), createdAt);
   const urls = (message.attachments ?? []).map(({ url }) => url);
-  const handleLongPress = () => onOwnLongPress(message);
+  const handleLongPress = () => onLongPress(message);
+  const handlePhotoError = () => onPhotoError(message);
 
   return (
     <View style={styles.item}>
@@ -42,7 +50,7 @@ export const Message = ({
       ) : (
         <UIPressable
           accessibilityRole="text"
-          disabled={!isMine || Boolean(message.deletedAt)}
+          disabled={Boolean(message.deletedAt)}
           onLongPress={handleLongPress}
           style={styles.bubble(isMine)}
         >
@@ -58,6 +66,7 @@ export const Message = ({
                 source={{ uri: url }}
                 fallback={undefined}
                 contentFit="cover"
+                onError={handlePhotoError}
                 style={StyleSheet.absoluteFill}
               />
             </UIPressable>
@@ -69,6 +78,11 @@ export const Message = ({
           ) : null}
         </UIPressable>
       )}
+      {isReadByPeer ? (
+        <UIText size="xs" color="secondary" style={styles.read}>
+          {t("chat.read")}
+        </UIText>
+      ) : null}
     </View>
   );
 };
@@ -97,6 +111,10 @@ const styles = StyleSheet.create((theme) => ({
     borderColor: theme.colors.white10,
     backgroundColor: mine ? theme.colors.blue : theme.colors.surface60,
   }),
+  read: {
+    alignSelf: "flex-end",
+    paddingTop: theme.vs(2),
+  },
   photo: {
     width: theme.s(220),
     height: theme.s(220),

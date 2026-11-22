@@ -162,7 +162,8 @@
     "leaveGroupDescription": "Przestaniesz dostawać jej wiadomości. Jeśli jesteś właścicielem, przejmie ją najdłużej obecna osoba.",
     "owner": "Właściciel",
     "saveName": "Zapisz nazwę",
-    "addToGroup": "Dodaj do grupy"
+    "addToGroup": "Dodaj do grupy",
+    "read": "Przeczytane"
   },
   "connections": {
     "subtitle": "Poznawaj studentów ze wszystkich pięciu uczelni",
@@ -549,7 +550,8 @@
     "rateLimit": "Osiągnięto limit zgłoszeń. Spróbuj ponownie później.",
     "candidate": "Zgłoś kartę",
     "course": "Zgłoś przedmiot",
-    "action": "Zgłoś"
+    "action": "Zgłoś",
+    "message": "Zgłoś wiadomość"
   },
   "apiState": {
     "editComment": "Edytuj komentarz",

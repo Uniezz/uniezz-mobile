@@ -19,16 +19,33 @@ type ChatThreadProps = {
   myId?: string;
   /** scrolled up to the oldest loaded message, e.g. to load older pages */
   onStartReached: () => void;
-  /** a long press on one of the student's own messages, e.g. to delete it */
-  onOwnMessageLongPress: (message: ApiChatMessage) => void;
+  /** the other student's read position in a direct chat; the latest own message it covers shows "Read" */
+  peerReadSeq?: number;
+  /** a long press on a message that is not deleted */
+  onMessageLongPress: (message: ApiChatMessage) => void;
+  /** a photo in a message failed to load */
+  onPhotoError: (message: ApiChatMessage) => void;
 };
 
 export function ChatThread({
   messages,
   myId,
   onStartReached,
-  onOwnMessageLongPress,
+  peerReadSeq = 0,
+  onMessageLongPress,
+  onPhotoError,
 }: ChatThreadProps) {
+  // only the newest of the student's own messages carries the "Read" mark
+  const lastOwnIndex = messages.reduce(
+    (last, message, index) =>
+      message.sender.id === myId &&
+      message.kind !== "system" &&
+      !message.deletedAt
+        ? index
+        : last,
+    -1,
+  );
+
   return (
     <FlashList
       renderScrollComponent={ThreadScrollView}
@@ -48,7 +65,9 @@ export function ChatThread({
           message={item}
           previous={messages[index - 1]}
           isMine={item.sender.id === myId}
-          onOwnLongPress={onOwnMessageLongPress}
+          isReadByPeer={index === lastOwnIndex && item.seq <= peerReadSeq}
+          onLongPress={onMessageLongPress}
+          onPhotoError={onPhotoError}
         />
       )}
     />

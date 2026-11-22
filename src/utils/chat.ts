@@ -1,6 +1,9 @@
-import type { QueryClient } from "@tanstack/react-query";
+import type { InfiniteData, QueryClient } from "@tanstack/react-query";
 import type { TFunction } from "i18next";
 import type { ApiChatMessage, ApiConversation } from "@/@types";
+// the files, not the @/api barrel, which imports @/utils back
+import { getChatMessageChanges } from "@/api/chat";
+import { $api } from "@/api/client";
 import { authorName } from "./feed";
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -96,20 +99,109 @@ export const chatKeys = {
     { params: { path: { id } } },
   ],
   unread: ["get", "/chat/unread"],
+  // the other student's read position in a direct chat; the API has no field for it, so it lives
+  // only in this cache, filled by read.updated events while the app runs
+  peerRead: (id: string) => ["chat-peer-read", id],
 };
 
-// something in a conversation changed: everything cached about it, the list and the badge go stale,
-// and only what is on screen refetches
+type MessagePages = InfiniteData<{
+  items: ApiChatMessage[] | null;
+  nextCursor: string | null;
+}>;
+
+// writes fetched messages into a loaded thread (newest first): a known one is replaced, a newer one
+// joins the first page, and an older one the loaded pages lack stays out
+export const mergeChatMessages = (
+  queryClient: QueryClient,
+  id: string,
+  fetched: ApiChatMessage[],
+) =>
+  queryClient.setQueriesData<MessagePages>(
+    { queryKey: chatKeys.messages(id) },
+    (data) => {
+      if (!data || fetched.length === 0) return data;
+      const byId = new Map(fetched.map((message) => [message.id, message]));
+      const loaded = new Set(
+        data.pages.flatMap((page) => (page.items ?? []).map(({ id }) => id)),
+      );
+      const newestSeq = data.pages[0]?.items?.[0]?.seq ?? 0;
+      const added = fetched.filter(
+        (message) => !loaded.has(message.id) && message.seq > newestSeq,
+      );
+      return {
+        ...data,
+        pages: data.pages.map((page, index) => {
+          const items = (page.items ?? []).map(
+            (message) => byId.get(message.id) ?? message,
+          );
+          return {
+            ...page,
+            items:
+              index === 0
+                ? [...added, ...items].sort((a, b) => b.seq - a.seq)
+                : items,
+          };
+        }),
+      };
+    },
+  );
+
+// a thread on screen asks only for what changed since its newest change (changedAfter) instead of
+// reloading its pages; one off screen just goes stale, and a failed catch-up falls back to a reload
+export const catchUpChatThread = async (
+  queryClient: QueryClient,
+  id: string,
+) => {
+  const queryKey = chatKeys.messages(id);
+  const queries = queryClient.getQueryCache().findAll({ queryKey });
+  if (!queries.some((query) => query.isActive())) {
+    return queryClient.invalidateQueries({ queryKey, refetchType: "none" });
+  }
+  const changeSeqs = queryClient
+    .getQueriesData<MessagePages>({ queryKey })
+    .flatMap(([, data]) =>
+      (data?.pages ?? []).flatMap((page) =>
+        (page.items ?? []).map(({ changeSeq }) => changeSeq),
+      ),
+    );
+  try {
+    const changes = await getChatMessageChanges(id, Math.max(0, ...changeSeqs));
+    mergeChatMessages(queryClient, id, changes);
+  } catch {
+    return queryClient.invalidateQueries({ queryKey });
+  }
+};
+
+// a photo failed to load: when its link has expired, the message is fetched again with fresh links.
+// fetchQuery runs one request for several photos of the same message failing at once
+export const refreshChatPhotos = async (
+  queryClient: QueryClient,
+  message: ApiChatMessage,
+) => {
+  const isExpired = (message.attachments ?? []).some(
+    ({ expiresAt }) => Date.parse(expiresAt) <= Date.now(),
+  );
+  if (!isExpired) return;
+  const fresh = await queryClient.fetchQuery(
+    $api.queryOptions("get", "/chat/messages/{id}", {
+      params: { path: { id: message.id } },
+    }),
+  );
+  mergeChatMessages(queryClient, message.conversationId, [fresh]);
+};
+
+// something in a conversation changed: its thread catches up on the changes, everything else cached
+// about it, the list and the badge go stale, and only what is on screen refetches
 export const refetchChatConversation = (queryClient: QueryClient, id: string) =>
-  Promise.all(
-    [
-      chatKeys.messages(id),
+  Promise.all([
+    catchUpChatThread(queryClient, id),
+    ...[
       chatKeys.conversation(id),
       chatKeys.members(id),
       chatKeys.conversations,
       chatKeys.unread,
     ].map((queryKey) => queryClient.invalidateQueries({ queryKey })),
-  );
+  ]);
 
 // a left or removed conversation: its cache goes, the list and the badge refetch
 export const forgetChatConversation = (

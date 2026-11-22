@@ -1,4 +1,4 @@
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner-native";
@@ -6,6 +6,7 @@ import type { CreateChatGroupInput, SendChatMessageInput } from "@/@types";
 import { $api } from "@/api";
 import {
   apiErrorKey,
+  chatKeys,
   forgetChatConversation,
   idempotencyKey,
   refetchChatConversation,
@@ -67,6 +68,17 @@ export const useChatMembers = (id: string, isEnabled = true) =>
     { params: { path: { id }, query: { limit: 50 } } },
     { enabled: isEnabled, staleTime: 60_000, gcTime: 10 * 60_000 },
   );
+
+// the other student's read position in a direct chat. The API has no field for it, so it is only what
+// read.updated events reported while the app ran; the query never fetches
+export const useChatPeerRead = (id: string) =>
+  useQuery({
+    queryKey: chatKeys.peerRead(id),
+    queryFn: () => 0,
+    enabled: false,
+    staleTime: Infinity,
+    gcTime: Infinity,
+  });
 
 // opens the direct conversation with a student, starting it when there is none, toasting a failure
 export function useOpenDirectChat() {

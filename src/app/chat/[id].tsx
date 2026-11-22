@@ -1,7 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { launchImageLibraryAsync } from "expo-image-picker";
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect } from "react";
+import type { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Alert, View } from "react-native";
@@ -14,9 +16,11 @@ import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import type { ApiChatMessage, MessageFormValues } from "@/@types";
 import { ChatThread, MessageComposer } from "@/components/chat";
+import { ReportSheet } from "@/components/report";
 import {
   useChatConversation,
   useChatMessages,
+  useChatPeerRead,
   useDeleteChatMessage,
   useMarkChatRead,
   useMyProfile,
@@ -29,6 +33,7 @@ import {
   conversationTitle,
   MAX_CHAT_PHOTOS,
   profileHref,
+  refreshChatPhotos,
 } from "@/utils";
 import {
   Icon,
@@ -61,6 +66,10 @@ export default function ConversationScreen() {
   const { mutateAsync: uploadImages, isPending: isUploading } =
     useUploadImages("chat");
   const { mutate: markRead } = useMarkChatRead(id);
+  const { data: peerReadSeq } = useChatPeerRead(id);
+  const queryClient = useQueryClient();
+  const reportRef = useRef<BottomSheetModal>(null);
+  const [reportedMessageId, setReportedMessageId] = useState("");
   const {
     control,
     handleSubmit,
@@ -113,8 +122,13 @@ export default function ConversationScreen() {
     }
   };
 
-  // removed for everyone; it stays as a "Message deleted" line so positions keep
-  const handleOwnMessageLongPress = (message: ApiChatMessage) => {
+  // a long press deletes your own message for everyone (it stays as a "Message deleted" line)
+  // and reports someone else's
+  const handleMessageLongPress = (message: ApiChatMessage) => {
+    if (message.sender.id !== profile?.id) {
+      setReportedMessageId(message.id);
+      return reportRef.current?.present();
+    }
     const confirmDelete = async () => {
       try {
         await deleteMessage({ params: { path: { id: message.id } } });
@@ -131,6 +145,10 @@ export default function ConversationScreen() {
       ],
     );
   };
+
+  // a photo whose link expired loads again with a fresh one; a failed refresh leaves the placeholder
+  const handlePhotoError = (message: ApiChatMessage) =>
+    refreshChatPhotos(queryClient, message).catch(() => undefined);
 
   const handleStartReached = () => {
     if (hasNextPage && !isFetchingNextPage) return fetchNextPage();
@@ -197,7 +215,9 @@ export default function ConversationScreen() {
             messages={messages}
             myId={profile?.id}
             onStartReached={handleStartReached}
-            onOwnMessageLongPress={handleOwnMessageLongPress}
+            peerReadSeq={peerReadSeq}
+            onMessageLongPress={handleMessageLongPress}
+            onPhotoError={handlePhotoError}
           />
         )}
         {conversation ? (
@@ -231,6 +251,11 @@ export default function ConversationScreen() {
           </View>
         </KeyboardAvoidingView>
       ) : null}
+      <ReportSheet
+        ref={reportRef}
+        targetId={reportedMessageId}
+        targetType="message"
+      />
     </UIPage>
   );
 }

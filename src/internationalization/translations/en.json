@@ -156,7 +156,8 @@
     "leaveGroupDescription": "You'll stop getting its messages. If you're the owner, the longest-standing member takes over.",
     "owner": "Owner",
     "saveName": "Save name",
-    "addToGroup": "Add to group"
+    "addToGroup": "Add to group",
+    "read": "Read"
   },
   "connections": {
     "subtitle": "Meet students across all five universities",
@@ -541,7 +542,8 @@
     "rateLimit": "You have reached the reporting limit. Try again later.",
     "candidate": "Report card",
     "course": "Report course",
-    "action": "Report"
+    "action": "Report",
+    "message": "Report message"
   },
   "apiState": {
     "editComment": "Edit comment",

@@ -152,7 +152,8 @@
     "leaveGroupDescription": "Du bekommst keine Nachrichten mehr von ihr. Bist du Besitzer, übernimmt das am längsten dabei befindliche Mitglied.",
     "owner": "Besitzer",
     "saveName": "Namen speichern",
-    "addToGroup": "Zur Gruppe hinzufügen"
+    "addToGroup": "Zur Gruppe hinzufügen",
+    "read": "Gelesen"
   },
   "connections": {
     "subtitle": "Lerne Studierende aller fünf Hochschulen kennen",
@@ -532,7 +533,8 @@
     "rateLimit": "Du hast das Meldelimit erreicht. Versuch es später erneut.",
     "candidate": "Profil melden",
     "course": "Kurs melden",
-    "action": "Melden"
+    "action": "Melden",
+    "message": "Nachricht melden"
   },
   "apiState": {
     "editComment": "Kommentar bearbeiten",

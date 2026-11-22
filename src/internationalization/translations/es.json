@@ -152,7 +152,8 @@
     "leaveGroupDescription": "Dejarás de recibir sus mensajes. Si eres el propietario, lo será el miembro más antiguo.",
     "owner": "Propietario",
     "saveName": "Guardar nombre",
-    "addToGroup": "Añadir al grupo"
+    "addToGroup": "Añadir al grupo",
+    "read": "Leído"
   },
   "connections": {
     "subtitle": "Conoce a estudiantes de las cinco universidades",
@@ -532,7 +533,8 @@
     "rateLimit": "Ha alcanzado el límite de informes. Vuelve a intentarlo más tarde.",
     "candidate": "Reportar perfil",
     "course": "Informe del curso",
-    "action": "Reportar"
+    "action": "Reportar",
+    "message": "Denunciar mensaje"
   },
   "apiState": {
     "editComment": "Editar comentario",

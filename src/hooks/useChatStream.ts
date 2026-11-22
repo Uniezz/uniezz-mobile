@@ -2,16 +2,24 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { AppState } from "react-native";
 import EventSource from "react-native-sse";
-import type { ChatStreamEvent } from "@/@types";
+import type { ChatStreamEvent, Profile } from "@/@types";
 import { API_BASE_URL } from "@/api";
 import { useSession } from "@/contexts";
 import {
+  catchUpChatThread,
   chatKeys,
   forgetChatConversation,
   refetchChatConversation,
 } from "@/utils";
 
 type ChatEventName = ChatStreamEvent["event"];
+
+// the conversation id inside a messages query key: [method, path, { params: { path: { id } } }]
+const chatThreadId = (queryKey: readonly unknown[]) =>
+  String(
+    (queryKey[2] as { params?: { path?: { id?: string } } } | undefined)?.params
+      ?.path?.id,
+  );
 
 const CHAT_EVENTS: ChatEventName[] = [
   "ready",
@@ -42,21 +50,45 @@ export function useChatStream(isEnabled: boolean) {
 
     const handleEvent = (event: ChatStreamEvent) => {
       switch (event.event) {
-        // the stream is no delivery guarantee: every (re)connect catches up on every chat query
-        case "ready":
-          return queryClient.invalidateQueries({
+        // the stream is no delivery guarantee: every (re)connect catches up. Loaded threads ask only
+        // for what changed (changedAfter); the other chat queries go stale and what is on screen refetches
+        case "ready": {
+          const messagesPath = chatKeys.messages("")[1];
+          queryClient.invalidateQueries({
             predicate: ({ queryKey }) =>
-              String(queryKey[1]).startsWith("/chat/"),
+              String(queryKey[1]).startsWith("/chat/") &&
+              queryKey[1] !== messagesPath,
           });
-        // anything in one conversation: it goes stale, and what is on screen refetches
+          const threadIds = queryClient
+            .getQueryCache()
+            .findAll({ queryKey: ["get", messagesPath] })
+            .map(({ queryKey }) => chatThreadId(queryKey));
+          return Promise.all(
+            [...new Set(threadIds)].map((id) =>
+              catchUpChatThread(queryClient, id),
+            ),
+          );
+        }
+        // anything in one conversation: its thread catches up, the rest of it refetches where shown
         case "message.created":
         case "message.updated":
-        case "read.updated":
         case "conversation.updated":
           return refetchChatConversation(
             queryClient,
             event.data.conversationId,
           );
+        // the other student read the chat: kept for the "Read" mark, it changes nothing else
+        case "read.updated": {
+          const { conversationId, userId, lastReadSeq } = event.data;
+          const myId = queryClient.getQueryData<Profile>(["profile", "me"])?.id;
+          if (userId === myId) {
+            return refetchChatConversation(queryClient, conversationId);
+          }
+          return queryClient.setQueryData<number>(
+            chatKeys.peerRead(conversationId),
+            (current) => Math.max(current ?? 0, lastReadSeq),
+          );
+        }
         case "conversation.removed":
           return forgetChatConversation(queryClient, event.data.conversationId);
         // the server is restarting and says when to come back
