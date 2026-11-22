@@ -11,13 +11,7 @@ import {
 } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { FaqItem, FaqProposalSheet } from "@/components/faq";
-import { toast } from "sonner-native";
-import {
-  useApproveFaqProposal,
-  useFaqEntries,
-  useMyFaqProposals,
-  usePendingFaqProposals,
-} from "@/hooks";
+import { useFaqEntries, useMyFaqProposals } from "@/hooks";
 import { ProfileButton } from "@/components/profile";
 import {
   Icon,
@@ -30,22 +24,16 @@ import {
   UISkeleton,
   UISubTabs,
 } from "@/ui";
-import { apiErrorKey, HEADER_COMPACT_OFFSET } from "@/utils";
+import { HEADER_COMPACT_OFFSET } from "@/utils";
 
 export default function FaqScreen() {
   const { t } = useTranslation();
-  // 0: published questions, 1: the student's own proposals, as on the web; 2: moderation, for FAQ publishers only
+  // 0: published questions, 1: the student's own proposals; moderation lives on the web only
   const [tab, setTab] = useState(0);
   const isMine = tab === 1;
-  const isModeration = tab === 2;
   const all = useFaqEntries();
   // loaded with the screen, so switching tabs neither waits for it nor refetches it
   const mine = useMyFaqProposals();
-  // a 403 here means the student isn't a publisher, so the moderation tab stays hidden
-  const pending = usePendingFaqProposals();
-  const isPublisher = pending.data !== undefined;
-  const { mutateAsync: approve, isPending: isApproving } =
-    useApproveFaqProposal();
   const {
     data,
     isPending,
@@ -54,7 +42,7 @@ export default function FaqScreen() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = isModeration ? pending : isMine ? mine : all;
+  } = isMine ? mine : all;
   const proposalRef = useRef<BottomSheetModal>(null);
   const [search, setSearch] = useState("");
   const [isSearching, setIsSearching] = useState(false);
@@ -84,14 +72,6 @@ export default function FaqScreen() {
   const handleSearchPress = () => setIsSearching(true);
   const handleSearchClose = () => setIsSearching(false);
   const handleAskPress = () => proposalRef.current?.present();
-  const handleApprove = async (id: string) => {
-    try {
-      await approve(id);
-      toast.success(t("faq.approved"));
-    } catch (error) {
-      toast.error(t(apiErrorKey(error)));
-    }
-  };
   const handleEndReached = () => {
     if (hasNextPage && !isFetchingNextPage) return fetchNextPage();
   };
@@ -129,11 +109,7 @@ export default function FaqScreen() {
         onLayout={handleHeaderLayout}
       >
         <UISubTabs
-          items={[
-            t("faq.allQuestions"),
-            t("faq.myProposals"),
-            ...(isPublisher ? [t("faq.pending")] : []),
-          ]}
+          items={[t("faq.allQuestions"), t("faq.myProposals")]}
           selectedItemIndex={tab}
           onPress={setTab}
         />
@@ -159,31 +135,17 @@ export default function FaqScreen() {
         ListFooterComponent={
           isFetchingNextPage ? <UISkeleton height={56} /> : null
         }
-        renderItem={({ item }) => {
-          const handleApprovePress = () => handleApprove(item.id);
-          return (
-            <View style={styles.cell}>
-              <FaqItem
-                entry={item}
-                hasStatus={isMine}
-                onApprovePress={isModeration ? handleApprovePress : undefined}
-                isApproveDisabled={isApproving}
-              />
-            </View>
-          );
-        }}
+        renderItem={({ item }) => (
+          <View style={styles.cell}>
+            <FaqItem entry={item} hasStatus={isMine} />
+          </View>
+        )}
       />
       {/* beside the list, not inside it, so the cat centres on the screen like every other empty state */}
       {!isPending && !isError && visible.length === 0 ? (
         <UIEmpty
           isScreenCentred
-          message={t(
-            isModeration
-              ? "faq.noPending"
-              : isMine
-                ? "faq.noProposals"
-                : "faq.empty",
-          )}
+          message={t(isMine ? "faq.noProposals" : "faq.empty")}
         />
       ) : null}
       <UISearchOverlay

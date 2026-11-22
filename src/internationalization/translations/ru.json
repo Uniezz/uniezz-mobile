@@ -212,11 +212,7 @@
     "noProposals": "Вы ещё не предложили ни одного вопроса.",
     "statusProposed": "На проверке",
     "statusPublished": "Опубликовано",
-    "statusRejected": "Отклонено",
-    "pending": "Модерация",
-    "approve": "Опубликовать",
-    "approved": "Опубликовано",
-    "noPending": "Нет вопросов на модерации."
+    "statusRejected": "Отклонено"
   },
   "landing": {
     "navigation": "Разделы страницы",

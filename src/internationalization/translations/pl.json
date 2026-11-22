@@ -212,11 +212,7 @@
     "noProposals": "Nie zaproponowano jeszcze żadnych pytań.",
     "statusProposed": "Oczekuje",
     "statusPublished": "Opublikowano",
-    "statusRejected": "Odrzucono",
-    "pending": "Moderacja",
-    "approve": "Opublikuj",
-    "approved": "Opublikowano",
-    "noPending": "Brak pytań do moderacji."
+    "statusRejected": "Odrzucono"
   },
   "landing": {
     "navigation": "Sekcje strony",

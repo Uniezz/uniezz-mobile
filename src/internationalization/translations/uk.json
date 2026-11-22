@@ -212,11 +212,7 @@
     "noProposals": "Ви ще не запропонували жодного запитання.",
     "statusProposed": "Очікує",
     "statusPublished": "Опубліковано",
-    "statusRejected": "Відхилено",
-    "pending": "Модерація",
-    "approve": "Опублікувати",
-    "approved": "Опубліковано",
-    "noPending": "Немає питань на модерації."
+    "statusRejected": "Відхилено"
   },
   "landing": {
     "navigation": "Розділи сторінки",

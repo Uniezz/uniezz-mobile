@@ -206,11 +206,7 @@
     "noProposals": "You haven't suggested any questions yet.",
     "statusProposed": "Pending",
     "statusPublished": "Published",
-    "statusRejected": "Rejected",
-    "pending": "Moderation",
-    "approve": "Publish",
-    "approved": "Published",
-    "noPending": "Nothing waiting for moderation."
+    "statusRejected": "Rejected"
   },
   "landing": {
     "navigation": "Page sections",
