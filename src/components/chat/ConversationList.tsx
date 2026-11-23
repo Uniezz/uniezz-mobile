@@ -49,6 +49,12 @@ export function ConversationList({
 }: ConversationListProps) {
   const { t } = useTranslation();
   const [search, setSearch] = useState("");
+  // the list filters by `query`, applied only on submit as in the feed; `search` is the text being typed
+  const [query, setQuery] = useState("");
+  const handleSearchSubmit = () => {
+    setQuery(search);
+    Keyboard.dismiss();
+  };
   // the search field only exists while the keyboard is up; blurring it closes it, the filter stays
   const [isSearching, setIsSearching] = useState(false);
   const handleSearchPress = () => setIsSearching(true);
@@ -59,7 +65,7 @@ export function ConversationList({
   // shortcut: search filters only the loaded pages; the API has no conversation search yet
   const visible = conversations.filter(
     (item) =>
-      conversationTitle(item, t).toLowerCase().includes(search.toLowerCase()) &&
+      conversationTitle(item, t).toLowerCase().includes(query.toLowerCase()) &&
       (filter !== "groups" || item.kind === "group"),
   );
   return (
@@ -95,6 +101,7 @@ export function ConversationList({
         {/* the people you matched with, a chat with each a tap away; a long press removes one */}
         <ConnectionAvatarList />
         <FlashList
+          maintainVisibleContentPosition={{ disabled: true }}
           style={styles.list}
           contentContainerStyle={styles.listContent}
           data={visible}
@@ -123,7 +130,7 @@ export function ConversationList({
         isOpen={isSearching}
         value={search}
         onChangeText={setSearch}
-        onSubmit={Keyboard.dismiss}
+        onSubmit={handleSearchSubmit}
         onClose={handleSearchClose}
         placeholder={t("app.searchConversations")}
         submitLabel={t("topbar.search")}
