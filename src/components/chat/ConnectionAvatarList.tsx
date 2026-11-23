@@ -9,7 +9,6 @@ import {
   useDeleteConnection,
   useOpenDirectChat,
 } from "@/hooks";
-import { UIText } from "@/ui";
 import { ConnectionAvatar } from "./ConnectionAvatar";
 
 // a tap opens the direct conversation with the match
@@ -47,9 +46,6 @@ export function ConnectionAvatarList() {
 
   return (
     <View style={styles.section}>
-      <UIText size="sm" weight="semibold" color="secondary">
-        {t("connections.matches")}
-      </UIText>
       <FlashList
         horizontal
         data={connections}

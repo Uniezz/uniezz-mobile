@@ -128,8 +128,6 @@
   "chat": {
     "action": "Nuevo grupo",
     "title": "Charlar",
-    "noRequests": "No tienes solicitudes de mensajes",
-    "requests": "Solicitudes",
     "selected_one": "{{count}} seleccionado",
     "selected_other": "{{count}} seleccionados",
     "subtitle": "Mensajes directos y chats de grupo",
@@ -177,7 +175,6 @@
     "men": "Hombres",
     "datingRequiresAdult": "Las citas solo están disponibles para estudiantes mayores de 18 años.",
     "interests": "Intereses",
-    "viewProfile": "Ver perfil",
     "preferences": "Preferencias",
     "birthDate": "Fecha de nacimiento",
     "birthDateHint": "La fecha de nacimiento se usa para comprobar la edad: puedes conocer gente a partir de los 16 años; las citas requieren tener 18 años.",
@@ -192,7 +189,6 @@
     "cardExpired": "Esta tarjeta ha caducado. Aquí tienes la siguiente.",
     "inCommon": "En común",
     "likeLimit": "Has alcanzado el límite de {{limit}} conexiones de hoy. Inténtalo mañana.",
-    "matches": "Coincidencias",
     "removeDescription": "Ambos perderéis el acceso a los perfiles completos del otro.",
     "removeHint": "Mantén pulsada la tarjeta para eliminar la conexión",
     "removeTitle": "¿Eliminar esta conexión?"

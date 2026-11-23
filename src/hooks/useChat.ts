@@ -7,6 +7,7 @@ import { $api, sendChatMessage, uploadImage } from "@/api";
 import {
   apiErrorKey,
   chatKeys,
+  findCachedConversation,
   forgetChatConversation,
   idempotencyKey,
   mergeChatMessages,
@@ -33,13 +34,21 @@ export const useChatConversations = () =>
     },
   );
 
-export const useChatConversation = (id: string) =>
-  $api.useQuery(
+// the header shows at once from the loaded chat list while the conversation itself loads
+export function useChatConversation(id: string) {
+  const queryClient = useQueryClient();
+  return $api.useQuery(
     "get",
     "/chat/conversations/{id}",
     { params: { path: { id } } },
-    { staleTime: 15_000, gcTime: 10 * 60_000 },
+    {
+      staleTime: 15_000,
+      gcTime: 10 * 60_000,
+      placeholderData: () =>
+        findCachedConversation(queryClient, (row) => row.id === id),
+    },
   );
+}
 
 // newest first, as the API pages them
 export const useChatMessages = (id: string) =>
@@ -83,22 +92,29 @@ export const useChatPeerRead = (id: string) =>
     gcTime: Infinity,
   });
 
-// opens the direct conversation with a student, starting it when there is none, toasting a failure
+// opens the direct conversation with a student, starting it when there is none, toasting a failure.
+// One the loaded list already holds opens at once; a new one opens as soon as the API answers, and
+// the list catches up after the screen has moved on
 export function useOpenDirectChat() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { mutateAsync, isPending } = $api.useMutation(
     "post",
     "/chat/conversations/direct",
-    {
-      meta: { analyticsAction: "chat_direct_open" },
-      onSuccess: ({ id }) => refetchChatConversation(queryClient, id),
-    },
+    { meta: { analyticsAction: "chat_direct_open" } },
   );
   const openChat = async (userId: string) => {
+    const cached = findCachedConversation(
+      queryClient,
+      (row) => row.kind === "direct" && row.peer?.id === userId,
+    );
+    if (cached) {
+      return router.push({ pathname: "/chat/[id]", params: { id: cached.id } });
+    }
     try {
       const { id } = await mutateAsync({ body: { userId } });
       router.push({ pathname: "/chat/[id]", params: { id } });
+      return refetchChatConversation(queryClient, id);
     } catch (error) {
       toast.error(t(apiErrorKey(error)));
     }

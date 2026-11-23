@@ -10,8 +10,8 @@ import { useTranslation } from "react-i18next";
 import { Platform, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
+import * as Haptics from "expo-haptics";
 import type {
-  Connection,
   ConnectionFilterValues,
   ConnectionMode,
   ConnectionPreferencesFormValues,
@@ -30,6 +30,7 @@ import {
 } from "@/hooks";
 import { ProfileButton } from "@/components/profile";
 import {
+  UIAvatar,
   UIPressable,
   Icon,
   UIEmpty,
@@ -53,13 +54,13 @@ import {
   toDiscoverFilters,
   toPreferencesValues,
   apiErrorKey,
+  authorName,
 } from "@/utils";
+import { useHapticsStore } from "@/store/hapticsStore";
 
 export default function MeetScreen() {
   const { t } = useTranslation();
   const [mode, setMode] = useState<ConnectionMode>("friends");
-  // the match the last Connect made; its profile is revealed
-  const [match, setMatch] = useState<Connection | null>(null);
   const reportRef = useRef<BottomSheetModal>(null);
   const filtersRef = useRef<BottomSheetModal>(null);
   // the sheet edits the form; the deck uses `filterValues`, copied across when the sheet closes
@@ -106,7 +107,6 @@ export default function MeetScreen() {
   const handleFiltersOpen = () => reset(filterValues);
   const handleFiltersClose = handleSubmit((values) => {
     setFilterValues(values);
-    setMatch(null);
   });
   // as on the web: saving the preferences opens the student to this mode, then the sheet closes and applies the filters
   const handleSavePress = handlePreferencesSubmit(async ({ intent }) => {
@@ -125,17 +125,32 @@ export default function MeetScreen() {
 
   const handleModePress = (value: ConnectionMode) => {
     setMode(value);
-    setMatch(null);
   };
   const handleModeTabPress = (index: number) => {
     handleModePress(CONNECTION_MODES[index]?.[0] ?? "friends");
   };
   const handleAction = async (action: "like" | "pass") => {
     if (!card) return;
-    setMatch(null);
     try {
-      const result = await act({ id: card.candidateId, mode, action });
-      if (result.connection) setMatch(result.connection);
+      const { connection } = await act({ id: card.candidateId, mode, action });
+      if (!connection) return;
+      const { profile } = connection;
+      // the toast opens the chat tab, where the new match leads its row; a direct chat with someone
+      // new has no id yet, and asking the API for one would hold the screen
+      const handleOpenChats = () => router.navigate("/(tabs)/chat");
+      toast.success(t("app.connected"), {
+        description: authorName(profile) || t("apiState.student"),
+        icon: <UIAvatar size="sm" imageSrc={profile.avatarUrl} />,
+        action: { label: t("tabs.chat"), onClick: handleOpenChats },
+        onPress: handleOpenChats,
+        duration: 8000,
+        styles: matchToastStyles,
+      });
+      if (useHapticsStore.getState().enabled) {
+        await Haptics.notificationAsync(
+          Haptics.NotificationFeedbackType.Success,
+        );
+      }
     } catch (error) {
       showError(error);
     }
@@ -143,9 +158,6 @@ export default function MeetScreen() {
   const handlePassPress = () => handleAction("pass");
   const handleConnectPress = () => handleAction("like");
   const handleReportPress = () => reportRef.current?.present();
-  const handleMatchPress = () => {
-    if (match) router.push(`/student/${match.profile.id}`);
-  };
 
   const emptyState = (
     <UIEmpty
@@ -244,18 +256,6 @@ export default function MeetScreen() {
             </View>
           </>
         ) : null}
-        {match ? (
-          <UIPressable
-            accessibilityRole="button"
-            onPress={handleMatchPress}
-            style={styles.notice}
-          >
-            <UIText color="success">{t("app.connected")}</UIText>
-            <UIText weight="semibold" color="link">
-              {t("connections.viewProfile")}
-            </UIText>
-          </UIPressable>
-        ) : null}
       </View>
       {/* a direct child of UIPage, so the cat centres like every other empty state */}
       {!isPending && !isError && !card ? emptyState : null}
@@ -313,9 +313,15 @@ const styles = StyleSheet.create((theme, rt) => ({
   connect: {
     backgroundColor: theme.colors.white,
   },
-  notice: {
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: theme.s(8),
+}));
+
+// green like the success text it replaces, so a match reads apart from the plain white toasts
+const matchToastStyles = StyleSheet.create((theme) => ({
+  toast: {
+    backgroundColor: theme.colors.surface,
+    borderColor: theme.colors.green30,
+    borderWidth: 1,
+    borderRadius: theme.vs(16),
   },
+  title: { color: theme.colors.green },
 }));

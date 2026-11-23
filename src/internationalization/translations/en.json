@@ -132,8 +132,6 @@
   "chat": {
     "selected_one": "{{count}} selected",
     "selected_other": "{{count}} selected",
-    "requests": "Requests",
-    "noRequests": "No message requests",
     "action": "New group",
     "subtitle": "Direct messages and group chats",
     "title": "Chat",
@@ -185,8 +183,6 @@
     "inCommon": "In common",
     "interests": "Interests",
     "closedToMode": "You're not open to this mode yet. Save your preferences in Filters to see students.",
-    "viewProfile": "View profile",
-    "matches": "Matches",
     "removeTitle": "Remove this match?",
     "removeDescription": "You'll both lose access to each other's full profile.",
     "removeHint": "Long press to remove the match",

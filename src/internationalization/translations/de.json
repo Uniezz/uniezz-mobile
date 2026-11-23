@@ -128,8 +128,6 @@
   "chat": {
     "action": "Neue Gruppe",
     "title": "Chatten",
-    "noRequests": "Keine Nachrichtenanfragen",
-    "requests": "Anfragen",
     "selected_one": "{{count}} ausgewählt",
     "selected_other": "{{count}} ausgewählt",
     "subtitle": "Direktnachrichten und Gruppenchats",
@@ -177,7 +175,6 @@
     "men": "Männer",
     "datingRequiresAdult": "Dating ist nur für Studierende ab 18 Jahren verfügbar.",
     "interests": "Interessen",
-    "viewProfile": "Profil ansehen",
     "preferences": "Präferenzen",
     "birthDate": "Geburtsdatum",
     "birthDateHint": "Das Geburtsdatum prüft die Altersberechtigung: Kontakte sind ab 16 Jahren möglich, Dating ab 18.",
@@ -192,7 +189,6 @@
     "cardExpired": "Diese Karte ist abgelaufen. Hier kommt die nächste.",
     "inCommon": "Gemeinsamkeiten",
     "likeLimit": "Du hast dein heutiges Limit von {{limit}} Likes erreicht. Versuch es morgen erneut.",
-    "matches": "Matches",
     "removeDescription": "Ihr verliert beide den Zugriff auf die vollständigen Profile der jeweils anderen Person.",
     "removeHint": "Halte die Karte gedrückt, um das Match zu entfernen",
     "removeTitle": "Dieses Match entfernen?"

@@ -256,6 +256,20 @@ export const mergeChatMessages = (
     },
   );
 
+// a conversation the loaded chat list already holds, e.g. to open it without waiting for the API
+export const findCachedConversation = (
+  queryClient: QueryClient,
+  isMatch: (conversation: ApiConversation) => boolean,
+) =>
+  queryClient
+    .getQueriesData<InfiniteData<{ items: ApiConversation[] | null }>>({
+      queryKey: chatKeys.conversations,
+    })
+    .flatMap(
+      ([, data]) => data?.pages.flatMap((page) => page.items ?? []) ?? [],
+    )
+    .find(isMatch);
+
 // a pending message that failed to send leaves the thread
 export const removeChatMessage = (
   queryClient: QueryClient,

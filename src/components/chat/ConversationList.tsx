@@ -22,7 +22,6 @@ import {
 const FILTERS = [
   ["all", "app.all"],
   ["groups", "app.groups"],
-  ["requests", "chat.requests"],
 ] as const;
 
 type ConversationListProps = {
@@ -93,18 +92,19 @@ export function ConversationList({
             onPress={handleFilterPress}
           />
         </View>
+        {/* the people you matched with, a chat with each a tap away; a long press removes one */}
         <ConnectionAvatarList />
         <FlashList
           style={styles.list}
           contentContainerStyle={styles.listContent}
-          data={filter === "requests" ? [] : visible}
+          data={visible}
           keyExtractor={(item) => item.id}
           showsVerticalScrollIndicator={false}
           refreshing={refreshing}
           onRefresh={onRefresh}
           onEndReached={onEndReached}
           ListEmptyComponent={
-            filter === "requests" ? null : isPending ? (
+            isPending ? (
               <UISkeleton height={64} />
             ) : isError ? (
               <UIQueryError message={t("apiState.error")} onRetry={onRetry} />
@@ -116,12 +116,8 @@ export function ConversationList({
         />
       </View>
       {/* beside the list, not inside it, so the cat centres on the screen like every other empty state */}
-      {filter === "requests" ||
-      (!isPending && !isError && visible.length === 0) ? (
-        <UIEmpty
-          isScreenCentred
-          message={t(filter === "requests" ? "chat.noRequests" : "app.empty")}
-        />
+      {!isPending && !isError && visible.length === 0 ? (
+        <UIEmpty isScreenCentred message={t("app.empty")} />
       ) : null}
       <UISearchOverlay
         isOpen={isSearching}
