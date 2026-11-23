@@ -22,10 +22,15 @@ type ChatThreadProps = {
   composerHeight: number;
   /** scrolled up to the oldest loaded message, e.g. to load older pages */
   onEndReached: () => void;
+  /** a group chat names who wrote each run of messages from someone else */
+  isGroup: boolean;
+  /** names for the ids system messages carry, e.g. the group's members */
+  names?: ReadonlyMap<string, string>;
   /** the other student's read position in a direct chat; the latest own message it covers shows "Read" */
   peerReadSeq?: number;
-  /** a long press on a message that is not deleted */
-  onMessageLongPress: (message: ApiChatMessage) => void;
+  /** the message menu's Delete and Report */
+  onDeleteMessage: (message: ApiChatMessage) => void;
+  onReportMessage: (message: ApiChatMessage) => void;
   /** a photo in a message failed to load */
   onPhotoError: (message: ApiChatMessage) => void;
 };
@@ -37,8 +42,11 @@ export function ChatThread({
   myId,
   composerHeight,
   onEndReached,
+  isGroup,
+  names,
   peerReadSeq = 0,
-  onMessageLongPress,
+  onDeleteMessage,
+  onReportMessage,
   onPhotoError,
 }: ChatThreadProps) {
   // only the newest of the student's own messages carries the "Read" mark
@@ -71,8 +79,11 @@ export function ChatThread({
           // the message shown above this one is the older one, next in the array
           previous={messages[index + 1]}
           isMine={item.sender.id === myId}
+          isGroup={isGroup}
+          names={names}
           isReadByPeer={index === lastOwnIndex && item.seq <= peerReadSeq}
-          onLongPress={onMessageLongPress}
+          onDelete={onDeleteMessage}
+          onReport={onReportMessage}
           onPhotoError={onPhotoError}
         />
       )}

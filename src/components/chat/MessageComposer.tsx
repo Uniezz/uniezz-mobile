@@ -95,7 +95,7 @@ export const MessageComposer = ({
                       placeholder={t("app.message")}
                       maxLength={2000}
                       multiline
-                      style={styles.input}
+                      style={styles.input(textField.value === "")}
                     />
                   )}
                 />
@@ -141,7 +141,11 @@ const styles = StyleSheet.create((theme) => ({
     justifyContent: "center",
     paddingHorizontal: theme.s(16),
   },
-  input: {
+  // grows with its text up to a few lines. A multiline TextInput cleared from code (after a send
+  // resets the form) keeps its old height on iOS, so an empty one is held to one line: 22pt plus its
+  // 10pt paddings. A fixed height with text would stop it growing, as Fabric reports the held size
+  input: (isEmpty: boolean) => ({
+    height: isEmpty ? theme.vs(42) : undefined,
     maxHeight: theme.vs(118),
     lineHeight: theme.vs(22),
     paddingTop: theme.vs(10),
@@ -149,7 +153,7 @@ const styles = StyleSheet.create((theme) => ({
     color: theme.colors.white,
     fontFamily: theme.fonts.Geist,
     fontSize: theme.vs(16),
-  },
+  }),
   send: (isDisabled: boolean) => ({
     width: theme.vs(44),
     height: theme.vs(44),

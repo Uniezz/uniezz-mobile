@@ -1,6 +1,11 @@
 import type { InfiniteData, QueryClient } from "@tanstack/react-query";
 import type { TFunction } from "i18next";
-import type { ApiChatMessage, ApiConversation, PickedImage } from "@/@types";
+import type {
+  ApiChatMessage,
+  ApiChatStudent,
+  ApiConversation,
+  PickedImage,
+} from "@/@types";
 // the files, not the @/api barrel, which imports @/utils back
 import { getChatMessageChanges } from "@/api/chat";
 import { $api } from "@/api/client";
@@ -48,35 +53,85 @@ export const chatDay = (
 export const unreadBadge = (count: number) =>
   count > 99 ? "99+" : String(count);
 
+// how many photos each row holds, by count, as Telegram lays out an album; the API gives no
+// image sizes, so the rows are fixed rather than fitted to each photo's shape
+export const CHAT_ALBUM_ROWS: Record<number, number[]> = {
+  1: [1],
+  2: [2],
+  3: [1, 2],
+  4: [2, 2],
+  5: [2, 3],
+};
+
 // the API's limit of images per message
 export const MAX_CHAT_PHOTOS = 5;
+
+// a student as chat shows them: their name, or "Deleted account" once they deleted it
+export const chatStudentName = (
+  student: ApiChatStudent | null | undefined,
+  t: TFunction,
+) =>
+  student?.deleted
+    ? t("chat.deletedAccount")
+    : authorName(student ?? undefined) || t("apiState.student");
 
 // a direct conversation has no name of its own; it shows the other student's
 export const conversationTitle = (
   conversation: Pick<ApiConversation, "name" | "peer">,
-) => conversation.name ?? authorName(conversation.peer ?? undefined);
+  t: TFunction,
+) => conversation.name ?? chatStudentName(conversation.peer, t);
 
-// keys are the backend's system events (chat/system_message.go); an unknown one falls back to chat.systemOther
-export const CHAT_SYSTEM_LABELS: Record<string, string> = {
-  group_created: "chat.systemGroupCreated",
-  renamed: "chat.systemRenamed",
-  member_added: "chat.systemMemberAdded",
-  member_removed: "chat.systemMemberRemoved",
-  member_left: "chat.systemMemberLeft",
-  owner_changed: "chat.systemOwnerChanged",
-};
+// a message's time of day, as the bubble shows it
+export const chatMessageTime = (createdAt: string, locale: string) =>
+  new Intl.DateTimeFormat(locale, {
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(Date.parse(createdAt));
 
-// a message as one line of text: its body, or what stands in for it
-export const chatMessageText = (message: ApiChatMessage, t: TFunction) => {
+// a message as one line of text: its body, or what stands in for it. A system message names who did
+// what from its payload (backend chat/system_message.go); `names` resolves the ids it carries, e.g.
+// from the group's members, and an id it lacks reads as "someone"
+export const chatMessageText = (
+  message: ApiChatMessage,
+  t: TFunction,
+  names?: ReadonlyMap<string, string>,
+) => {
   if (message.deletedAt) return t("chat.deletedMessage");
-  if (message.kind === "system") {
-    const event =
-      typeof message.payload.event === "string" ? message.payload.event : "";
-    return t(CHAT_SYSTEM_LABELS[event] ?? "chat.systemOther", {
-      name: authorName(message.sender),
-    });
+  if (message.kind !== "system") {
+    return message.body || (message.attachments?.length ? t("chat.photo") : "");
   }
-  return message.body || (message.attachments?.length ? t("chat.photo") : "");
+  const { event, params } = message.payload as {
+    event?: unknown;
+    params?: Record<string, unknown>;
+  };
+  const name = chatStudentName(message.sender, t);
+  const nameOf = (id: unknown) =>
+    (typeof id === "string" && names?.get(id)) || t("chat.someone");
+  const title = typeof params?.name === "string" ? params.name : "";
+  switch (event) {
+    case "group_created":
+      return t("chat.systemGroupCreated", { name, title });
+    case "renamed":
+      return t("chat.systemRenamed", { name, title });
+    case "member_added": {
+      const ids = Array.isArray(params?.userIds) ? params.userIds : [];
+      return t("chat.systemMemberAdded", {
+        name,
+        names: ids.map(nameOf).join(", "),
+      });
+    }
+    case "member_removed":
+      return t("chat.systemMemberRemoved", {
+        name,
+        target: nameOf(params?.userId),
+      });
+    case "member_left":
+      return t("chat.systemMemberLeft", { name });
+    case "owner_changed":
+      return t("chat.systemOwnerChanged", { target: nameOf(params?.userId) });
+    default:
+      return t("chat.systemOther");
+  }
 };
 
 // chat goes through openapi-react-query, whose query keys are [method, path, init];

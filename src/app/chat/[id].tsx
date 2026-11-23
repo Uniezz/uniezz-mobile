@@ -18,6 +18,7 @@ import { ChatThread, MessageComposer } from "@/components/chat";
 import { ReportSheet } from "@/components/report";
 import {
   useChatConversation,
+  useChatMembers,
   useChatMessages,
   useChatPeerRead,
   useDeleteChatMessage,
@@ -28,6 +29,7 @@ import {
 import { messageSchema } from "@/schemas";
 import {
   apiErrorKey,
+  chatStudentName,
   conversationTitle,
   profileHref,
   refreshChatPhotos,
@@ -62,6 +64,14 @@ export default function ConversationScreen() {
   const { mutateAsync: deleteMessage } = useDeleteChatMessage(id);
   const { mutate: markRead } = useMarkChatRead(id);
   const { data: peerReadSeq } = useChatPeerRead(id);
+  // a group's system messages name its members by id
+  const isGroup = conversation?.kind === "group";
+  const { data: memberPage } = useChatMembers(id, isGroup);
+  const memberNames = new Map(
+    (memberPage?.items ?? []).flatMap(({ student }) =>
+      student.id ? [[student.id, chatStudentName(student, t)] as const] : [],
+    ),
+  );
   const queryClient = useQueryClient();
   const reportRef = useRef<BottomSheetModal>(null);
   const [reportedMessageId, setReportedMessageId] = useState("");
@@ -102,13 +112,13 @@ export default function ConversationScreen() {
   };
   const handleSendPress = handleSubmit(send);
 
-  // a long press deletes your own message for everyone (it stays as a "Message deleted" line)
-  // and reports someone else's
-  const handleMessageLongPress = (message: ApiChatMessage) => {
-    if (message.sender.id !== profile?.id) {
-      setReportedMessageId(message.id);
-      return reportRef.current?.present();
-    }
+  // the message menu: Report opens the report sheet; Delete removes your own message for everyone,
+  // and it stays as a "Message deleted" line
+  const handleReportMessage = (message: ApiChatMessage) => {
+    setReportedMessageId(message.id);
+    reportRef.current?.present();
+  };
+  const handleDeleteMessage = (message: ApiChatMessage) => {
     const confirmDelete = async () => {
       try {
         await deleteMessage({ params: { path: { id: message.id } } });
@@ -172,16 +182,14 @@ export default function ConversationScreen() {
           {conversation ? (
             <UIPressable
               accessibilityRole="button"
-              accessibilityLabel={
-                conversationTitle(conversation) || t("apiState.student")
-              }
+              accessibilityLabel={conversationTitle(conversation, t)}
               onPress={handleHeaderPress}
               style={styles.identity}
             >
               <UIAvatar size="sm" imageSrc={conversation.peer?.avatarUrl} />
               <View style={styles.who}>
                 <UIText size="rg" weight="semibold" numberOfLines={1}>
-                  {conversationTitle(conversation) || t("apiState.student")}
+                  {conversationTitle(conversation, t)}
                 </UIText>
                 {conversation.kind === "group" ? (
                   <UIText size="xs" color="secondary">
@@ -203,7 +211,10 @@ export default function ConversationScreen() {
             composerHeight={composerHeight}
             onEndReached={handleEndReached}
             peerReadSeq={peerReadSeq}
-            onMessageLongPress={handleMessageLongPress}
+            isGroup={isGroup}
+            names={memberNames}
+            onDeleteMessage={handleDeleteMessage}
+            onReportMessage={handleReportMessage}
             onPhotoError={handlePhotoError}
           />
         )}

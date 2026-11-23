@@ -17,7 +17,7 @@ export const ConversationRow = ({
 }: ConversationRowProps) => {
   const { t, i18n } = useTranslation();
   const { lastMessage, unreadCount } = conversation;
-  const title = conversationTitle(conversation) || t("apiState.student");
+  const title = conversationTitle(conversation, t);
   const handlePress = () => onOpen(conversation.id);
 
   return (

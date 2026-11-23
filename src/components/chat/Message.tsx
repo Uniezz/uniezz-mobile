@@ -1,90 +1,179 @@
+import {
+  type MenuAction,
+  MenuView,
+  type NativeActionEvent,
+} from "@react-native-menu/menu";
+import * as Clipboard from "expo-clipboard";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
+import { toast } from "sonner-native";
 import type { ApiChatMessage } from "@/@types";
-import { UIImage, UIPressable, UIText } from "@/ui";
+import { UIText } from "@/ui";
 import {
   chatDay,
   chatMessageText,
+  chatMessageTime,
+  chatStudentName,
   isPendingChatMessage,
   isSameDay,
-  previewImages,
 } from "@/utils";
+import { MessagePhotos } from "./MessagePhotos";
 
 type MessageProps = {
   message: ApiChatMessage;
-  /** the message above, so a new day gets its date line */
+  /** the message above, so a new day gets its date line and a new sender their name */
   previous?: ApiChatMessage;
   /** sent by the signed-in student, on the right */
   isMine: boolean;
+  /** a group chat names who wrote each run of messages from someone else */
+  isGroup: boolean;
   /** the other student has read this one, shown under it as "Read" */
   isReadByPeer?: boolean;
-  /** a long press on a message that is not deleted, e.g. to delete your own or report another's */
-  onLongPress: (message: ApiChatMessage) => void;
+  /** names for the ids system messages carry, e.g. the group's members */
+  names?: ReadonlyMap<string, string>;
+  /** the context menu's Delete, on the student's own message */
+  onDelete: (message: ApiChatMessage) => void;
+  /** the context menu's Report, on someone else's message */
+  onReport: (message: ApiChatMessage) => void;
   /** one of its photos failed to load, e.g. because its link expired */
   onPhotoError: (message: ApiChatMessage) => void;
 };
 
-// one message in a thread: a bubble with its photos and text, or a centred system line
+// one message in a thread: a bubble with its album, text and time, or a centred system line.
+// A long press opens the native menu, as the profile's ⋯ menu does
 export const Message = ({
   message,
   previous,
   isMine,
+  isGroup,
   isReadByPeer = false,
-  onLongPress,
+  names,
+  onDelete,
+  onReport,
   onPhotoError,
 }: MessageProps) => {
   const { t, i18n } = useTranslation();
+  const locale = i18n.resolvedLanguage ?? "en";
   const createdAt = Date.parse(message.createdAt);
   const isNewDay =
     !previous || !isSameDay(Date.parse(previous.createdAt), createdAt);
   const urls = (message.attachments ?? []).map(({ url }) => url);
-  // shown before the API stored it: dimmed, and nothing to delete or report yet
+  const hasPhotos = urls.length > 0;
+  const text = chatMessageText(message, t, names);
+  const hasText = Boolean(message.deletedAt || message.body);
+  const time = chatMessageTime(message.createdAt, locale);
+  // shown before the API stored it: dimmed, and no menu yet
   const isPending = isPendingChatMessage(message);
-  const handleLongPress = () => onLongPress(message);
+  const isSenderShown =
+    isGroup &&
+    !isMine &&
+    (isNewDay ||
+      previous?.kind === "system" ||
+      previous?.sender.id !== message.sender.id);
+
+  const handleCopy = () =>
+    Clipboard.setStringAsync(message.body ?? "").then(() =>
+      toast.success(t("chat.copied")),
+    );
+  // Copy for text; Delete on your own message, Report on someone else's
+  const menuActions: MenuAction[] = [
+    ...(message.body ? [{ id: "copy", title: t("chat.copy") }] : []),
+    isMine
+      ? {
+          id: "delete",
+          title: t("chat.delete"),
+          attributes: { destructive: true },
+        }
+      : {
+          id: "report",
+          title: t("chat.report"),
+          attributes: { destructive: true },
+        },
+  ];
+  const handleMenuAction = ({ nativeEvent }: NativeActionEvent) => {
+    if (nativeEvent.event === "copy") return handleCopy();
+    if (nativeEvent.event === "delete") return onDelete(message);
+    if (nativeEvent.event === "report") return onReport(message);
+  };
   const handlePhotoError = () => onPhotoError(message);
+  // pending and deleted messages have nothing to act on
+  const hasMenu = !isPending && !message.deletedAt;
+  // the native menu sits on the text only: over a tall photo iOS 26 draws a glass lens instead of
+  // lifting the bubble, and the menu's button would take the photo's tap. A long press on a photo
+  // deletes your own message (after a confirm) or reports someone else's, as before the menu
+  const handlePhotoLongPress = () =>
+    isMine ? onDelete(message) : onReport(message);
+
+  const textContent = (
+    <>
+      <UIText color={message.deletedAt ? "secondary" : "white"}>{text}</UIText>
+      <UIText size="xs" style={styles.time(isMine)}>
+        {time}
+      </UIText>
+    </>
+  );
+
+  const bubble = (
+    <View style={styles.bubble(isMine, hasPhotos, isPending)}>
+      {hasPhotos ? (
+        <View>
+          <MessagePhotos
+            urls={urls}
+            onError={handlePhotoError}
+            onLongPress={hasMenu ? handlePhotoLongPress : undefined}
+          />
+          {/* a photo without text carries its time over the album, as in Telegram */}
+          {hasText ? null : (
+            <View style={styles.timeOverPhoto}>
+              <UIText size="xs" color="white">
+                {time}
+              </UIText>
+            </View>
+          )}
+        </View>
+      ) : null}
+      {hasText && hasMenu ? (
+        <MenuView
+          shouldOpenOnLongPress
+          actions={menuActions}
+          onPressAction={handleMenuAction}
+          style={styles.text(hasPhotos)}
+        >
+          {textContent}
+        </MenuView>
+      ) : null}
+      {hasText && !hasMenu ? (
+        <View style={styles.text(hasPhotos)}>{textContent}</View>
+      ) : null}
+    </View>
+  );
 
   return (
     <View style={styles.item}>
       {isNewDay ? (
         <UIText size="xs" weight="medium" color="secondary" style={styles.day}>
-          {chatDay(createdAt, i18n.resolvedLanguage ?? "en", t("feed.today"))}
+          {chatDay(createdAt, locale, t("feed.today"))}
         </UIText>
       ) : null}
       {message.kind === "system" ? (
         <UIText size="xs" color="secondary" style={styles.system}>
-          {chatMessageText(message, t)}
+          {text}
         </UIText>
       ) : (
-        <UIPressable
-          accessibilityRole="text"
-          disabled={isPending || Boolean(message.deletedAt)}
-          onLongPress={handleLongPress}
-          style={styles.bubble(isMine, isPending)}
-        >
-          {urls.map((url, index) => (
-            <UIPressable
-              key={url}
-              accessibilityRole="imagebutton"
-              accessibilityLabel={t("app.openImage")}
-              onPress={() => previewImages(urls, index)}
-              style={styles.photo}
+        <>
+          {isSenderShown ? (
+            <UIText
+              size="xs"
+              weight="semibold"
+              color="secondary"
+              style={styles.sender}
             >
-              <UIImage
-                source={{ uri: url }}
-                fallback={undefined}
-                contentFit="cover"
-                onError={handlePhotoError}
-                style={StyleSheet.absoluteFill}
-              />
-            </UIPressable>
-          ))}
-          {message.deletedAt || message.body ? (
-            <UIText color={message.deletedAt ? "secondary" : "white"}>
-              {chatMessageText(message, t)}
+              {chatStudentName(message.sender, t)}
             </UIText>
           ) : null}
-        </UIPressable>
+          {bubble}
+        </>
       )}
       {isReadByPeer ? (
         <UIText size="xs" color="secondary" style={styles.read}>
@@ -108,27 +197,44 @@ const styles = StyleSheet.create((theme) => ({
     textAlign: "center",
     paddingHorizontal: theme.s(24),
   },
-  bubble: (mine: boolean, isPending: boolean) => ({
-    opacity: isPending ? 0.6 : 1,
+  sender: {
+    paddingLeft: theme.s(14),
+    paddingBottom: theme.vs(2),
+  },
+  // a bubble with photos only frames them thinly; its text, if any, keeps its own padding
+  bubble: (mine: boolean, hasPhotos: boolean, isPending: boolean) => ({
     alignSelf: mine ? "flex-end" : "flex-start",
-    maxWidth: theme.s(260),
-    gap: theme.vs(6),
-    paddingVertical: theme.vs(10),
-    paddingHorizontal: theme.s(14),
+    maxWidth: hasPhotos ? undefined : theme.s(260),
+    padding: hasPhotos ? theme.s(3) : 0,
     borderRadius: theme.vs(16),
     borderWidth: mine ? 0 : 1,
     borderColor: theme.colors.white10,
     backgroundColor: mine ? theme.colors.blue : theme.colors.surface60,
+    opacity: isPending ? 0.6 : 1,
   }),
+  // under an album the text is as wide as the album and wraps there
+  text: (underPhotos: boolean) => ({
+    maxWidth: underPhotos ? theme.s(252) : undefined,
+    paddingTop: theme.vs(underPhotos ? 6 : 10),
+    paddingBottom: theme.vs(8),
+    paddingHorizontal: theme.s(underPhotos ? 11 : 14),
+    gap: theme.vs(2),
+  }),
+  time: (mine: boolean) => ({
+    alignSelf: "flex-end",
+    color: mine ? theme.colors.white60 : theme.colors.white40,
+  }),
+  timeOverPhoto: {
+    position: "absolute",
+    right: theme.s(8),
+    bottom: theme.vs(8),
+    paddingHorizontal: theme.s(6),
+    paddingVertical: theme.vs(2),
+    borderRadius: theme.vs(10),
+    backgroundColor: theme.colors.ink40,
+  },
   read: {
     alignSelf: "flex-end",
     paddingTop: theme.vs(2),
-  },
-  photo: {
-    width: theme.s(220),
-    height: theme.s(220),
-    borderRadius: theme.vs(10),
-    overflow: "hidden",
-    backgroundColor: theme.colors.surface60,
   },
 }));

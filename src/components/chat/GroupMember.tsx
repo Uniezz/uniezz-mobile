@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { StyleSheet } from "react-native-unistyles";
 import type { ApiChatMember } from "@/@types";
 import { Icon, UIAvatar, UIGlass, UIIconButton, UIText } from "@/ui";
-import { authorName } from "@/utils";
+import { chatStudentName } from "@/utils";
 
 type GroupMemberProps = {
   member: ApiChatMember;
@@ -19,7 +19,7 @@ export const GroupMember = ({
 }: GroupMemberProps) => {
   const { t } = useTranslation();
   const { student } = member;
-  const name = authorName(student) || t("apiState.student");
+  const name = chatStudentName(student, t);
   // a deleted account has no id, and nothing to remove
   const userId = student.id;
   const handleRemovePress = () => userId && onRemove(userId, name);

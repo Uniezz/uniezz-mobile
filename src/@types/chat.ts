@@ -9,6 +9,7 @@ export type RenameGroupFormValues = { groupName: string };
 export type ApiConversation = components["schemas"]["Conversation"];
 export type ApiChatMessage = components["schemas"]["Message"];
 export type ApiChatMember = components["schemas"]["Member"];
+export type ApiChatStudent = components["schemas"]["Student"];
 export type CreateChatGroupInput = components["schemas"]["GroupRequest"];
 export type SendChatMessageInput =
   components["schemas"]["SendChatMessageInputBody"];

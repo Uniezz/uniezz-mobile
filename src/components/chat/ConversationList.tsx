@@ -60,7 +60,7 @@ export function ConversationList({
   // shortcut: search filters only the loaded pages; the API has no conversation search yet
   const visible = conversations.filter(
     (item) =>
-      conversationTitle(item).toLowerCase().includes(search.toLowerCase()) &&
+      conversationTitle(item, t).toLowerCase().includes(search.toLowerCase()) &&
       (filter !== "groups" || item.kind === "group"),
   );
   return (
