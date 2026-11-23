@@ -15,6 +15,21 @@ export const addGroupMembersSchema = z.object({
 
 export const renameGroupSchema = z.object({ groupName });
 
-export const messageSchema = z.object({
-  text: z.string().trim().min(1).max(2000),
-});
+// a message needs text or at least one photo; the API takes up to 5 images
+export const messageSchema = z
+  .object({
+    text: z.string().trim().max(2000),
+    photos: z
+      .array(
+        z.object({
+          uri: z.string(),
+          mimeType: z.string().nullish(),
+          fileSize: z.number().nullish(),
+        }),
+      )
+      .max(5),
+  })
+  .refine(({ text, photos }) => text.length > 0 || photos.length > 0, {
+    path: ["text"],
+    message: "app.required",
+  });

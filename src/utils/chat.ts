@@ -1,6 +1,6 @@
 import type { InfiniteData, QueryClient } from "@tanstack/react-query";
 import type { TFunction } from "i18next";
-import type { ApiChatMessage, ApiConversation } from "@/@types";
+import type { ApiChatMessage, ApiConversation, PickedImage } from "@/@types";
 // the files, not the @/api barrel, which imports @/utils back
 import { getChatMessageChanges } from "@/api/chat";
 import { $api } from "@/api/client";
@@ -109,8 +109,47 @@ type MessagePages = InfiniteData<{
   nextCursor: string | null;
 }>;
 
-// writes fetched messages into a loaded thread (newest first): a known one is replaced, a newer one
-// joins the first page, and an older one the loaded pages lack stays out
+// a message shown before the API stored it (optimistic send): its id is made from the
+// Idempotency-Key, which the stored message carries back as clientId
+const PENDING_PREFIX = "pending:";
+export const isPendingChatMessage = (message: ApiChatMessage) =>
+  message.id.startsWith(PENDING_PREFIX);
+
+// pending messages sort below every stored one: seq far past any real one, later sends further
+export const pendingChatMessage = ({
+  conversationId,
+  key,
+  text,
+  photos,
+  sender,
+}: {
+  conversationId: string;
+  key: string;
+  text: string;
+  photos: PickedImage[];
+  sender: ApiChatMessage["sender"];
+}): ApiChatMessage => ({
+  id: `${PENDING_PREFIX}${key}`,
+  clientId: key,
+  conversationId,
+  seq: 1e15 + Date.now(),
+  changeSeq: 0,
+  kind: "text",
+  body: text || null,
+  // the picked photos show from the device until the stored message brings their links
+  attachments: photos.map(({ uri }) => ({
+    mediaId: uri,
+    url: uri,
+    expiresAt: new Date(8.64e15).toISOString(),
+  })),
+  createdAt: new Date().toISOString(),
+  deletedAt: null,
+  payload: {},
+  sender,
+});
+
+// writes fetched messages into a loaded thread (newest first): a known one is replaced (a pending one
+// by its clientId), a newer one joins the first page, and an older one the loaded pages lack stays out
 export const mergeChatMessages = (
   queryClient: QueryClient,
   id: string,
@@ -121,19 +160,35 @@ export const mergeChatMessages = (
     (data) => {
       if (!data || fetched.length === 0) return data;
       const byId = new Map(fetched.map((message) => [message.id, message]));
-      const loaded = new Set(
-        data.pages.flatMap((page) => (page.items ?? []).map(({ id }) => id)),
+      const byClientId = new Map(
+        fetched.flatMap((message) =>
+          message.clientId ? [[message.clientId, message] as const] : [],
+        ),
       );
-      const newestSeq = data.pages[0]?.items?.[0]?.seq ?? 0;
+      const loaded = data.pages.flatMap((page) => page.items ?? []);
+      const loadedIds = new Set(loaded.map(({ id }) => id));
+      const pendingKeys = new Set(
+        loaded.filter(isPendingChatMessage).map(({ clientId }) => clientId),
+      );
+      // pending messages sit above everything, so the newest stored one sets the bar
+      const newestSeq =
+        loaded.find((message) => !isPendingChatMessage(message))?.seq ?? 0;
       const added = fetched.filter(
-        (message) => !loaded.has(message.id) && message.seq > newestSeq,
+        (message) =>
+          !loadedIds.has(message.id) &&
+          !pendingKeys.has(message.clientId) &&
+          (isPendingChatMessage(message) || message.seq > newestSeq),
       );
+      const replace = (message: ApiChatMessage) =>
+        byId.get(message.id) ??
+        (isPendingChatMessage(message) && message.clientId
+          ? byClientId.get(message.clientId)
+          : undefined) ??
+        message;
       return {
         ...data,
         pages: data.pages.map((page, index) => {
-          const items = (page.items ?? []).map(
-            (message) => byId.get(message.id) ?? message,
-          );
+          const items = (page.items ?? []).map(replace);
           return {
             ...page,
             items:
@@ -144,6 +199,26 @@ export const mergeChatMessages = (
         }),
       };
     },
+  );
+
+// a pending message that failed to send leaves the thread
+export const removeChatMessage = (
+  queryClient: QueryClient,
+  id: string,
+  messageId: string,
+) =>
+  queryClient.setQueriesData<MessagePages>(
+    { queryKey: chatKeys.messages(id) },
+    (data) =>
+      data && {
+        ...data,
+        pages: data.pages.map((page) => ({
+          ...page,
+          items:
+            page.items?.filter((message) => message.id !== messageId) ??
+            page.items,
+        })),
+      },
   );
 
 // a thread on screen asks only for what changed since its newest change (changedAfter) instead of

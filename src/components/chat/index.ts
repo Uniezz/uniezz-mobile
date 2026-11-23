@@ -6,3 +6,4 @@ export { Message } from "./Message";
 export { GroupMember } from "./GroupMember";
 export { ConversationRow } from "./ConversationRow";
 export { ConnectionAvatar } from "./ConnectionAvatar";
+export { DraftPhotos } from "./DraftPhotos";

@@ -1,12 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { launchImageLibraryAsync } from "expo-image-picker";
 import { router, useLocalSearchParams } from "expo-router";
 import type { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { Alert, View } from "react-native";
+import { Alert, LayoutChangeEvent, View } from "react-native";
 import {
   KeyboardAvoidingView,
   KeyboardStickyView,
@@ -25,13 +24,11 @@ import {
   useMarkChatRead,
   useMyProfile,
   useSendChatMessage,
-  useUploadImages,
 } from "@/hooks";
 import { messageSchema } from "@/schemas";
 import {
   apiErrorKey,
   conversationTitle,
-  MAX_CHAT_PHOTOS,
   profileHref,
   refreshChatPhotos,
 } from "@/utils";
@@ -58,13 +55,11 @@ export default function ConversationScreen() {
     hasNextPage,
     isFetchingNextPage,
   } = useChatMessages(id);
-  // the API pages newest first; the thread reads oldest first
+  // newest first, as the API pages them and the inverted thread reads them
   const messages =
-    messagePages?.pages.flatMap((page) => page.items ?? []).reverse() ?? [];
-  const { sendMessage, isPending: isSending } = useSendChatMessage(id);
+    messagePages?.pages.flatMap((page) => page.items ?? []) ?? [];
+  const { sendMessage } = useSendChatMessage(id);
   const { mutateAsync: deleteMessage } = useDeleteChatMessage(id);
-  const { mutateAsync: uploadImages, isPending: isUploading } =
-    useUploadImages("chat");
   const { mutate: markRead } = useMarkChatRead(id);
   const { data: peerReadSeq } = useChatPeerRead(id);
   const queryClient = useQueryClient();
@@ -77,7 +72,7 @@ export default function ConversationScreen() {
     formState: { isValid },
   } = useForm<MessageFormValues>({
     resolver: zodResolver(messageSchema),
-    defaultValues: { text: "" },
+    defaultValues: { text: "", photos: [] },
     mode: "onChange",
   });
   const { bottom: bottomInset } = useSafeAreaInsets();
@@ -91,36 +86,21 @@ export default function ConversationScreen() {
       markRead({ params: { path: { id } }, body: { seq: lastSeq } });
   }, [id, lastSeq, isBehind, markRead]);
 
-  const handleSendPress = handleSubmit(async ({ text }) => {
-    try {
-      await sendMessage({ body: text });
-      reset();
-    } catch (error) {
-      toast.error(t(apiErrorKey(error)));
-    }
-  });
-
-  // picked photos go out at once as their own message; the typed text stays in the field
-  const handleAttachPress = async () => {
-    const result = await launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsMultipleSelection: true,
-      selectionLimit: MAX_CHAT_PHOTOS,
-      quality: 0.8,
-    });
-    if (result.canceled || result.assets.length === 0) return;
-    const picked = result.assets
-      .slice(0, MAX_CHAT_PHOTOS)
-      .map(({ uri, mimeType, fileSize }) => ({ uri, mimeType, fileSize }));
-    const toastId = toast.loading(t("app.processingPhotos"));
-    try {
-      const attachmentIds = await uploadImages(picked);
-      await sendMessage({ attachmentIds });
-      toast.dismiss(toastId);
-    } catch (error) {
-      toast.error(t(apiErrorKey(error)), { id: toastId });
-    }
+  // the photos picked in the composer go out with the text in one message (the text may be empty then).
+  // Optimistic: the field clears and the message shows at once; a failed send puts both back
+  const send = ({ text, photos }: MessageFormValues) => {
+    reset();
+    sendMessage(
+      { text, photos },
+      {
+        onError: (error) => {
+          reset({ text, photos });
+          toast.error(t(apiErrorKey(error)));
+        },
+      },
+    );
   };
+  const handleSendPress = handleSubmit(send);
 
   // a long press deletes your own message for everyone (it stays as a "Message deleted" line)
   // and reports someone else's
@@ -150,8 +130,14 @@ export default function ConversationScreen() {
   const handlePhotoError = (message: ApiChatMessage) =>
     refreshChatPhotos(queryClient, message).catch(() => undefined);
 
-  const handleStartReached = () => {
+  // the inverted thread's end is its top, where older pages load
+  const handleEndReached = () => {
     if (hasNextPage && !isFetchingNextPage) return fetchNextPage();
+  };
+  // the thread leaves room under its newest message for the composer floating over it
+  const [composerHeight, setComposerHeight] = useState(0);
+  const handleComposerLayout = (event: LayoutChangeEvent) => {
+    setComposerHeight(event.nativeEvent.layout.height);
   };
 
   // a group opens its members and settings; a direct chat opens the other student's profile
@@ -214,26 +200,25 @@ export default function ConversationScreen() {
           <ChatThread
             messages={messages}
             myId={profile?.id}
-            onStartReached={handleStartReached}
+            composerHeight={composerHeight}
+            onEndReached={handleEndReached}
             peerReadSeq={peerReadSeq}
             onMessageLongPress={handleMessageLongPress}
             onPhotoError={handlePhotoError}
           />
         )}
         {conversation ? (
-          // under the list, not over it: FlashList's startRenderingFromBottom ignores a bottom padding, so
-          // the latest message would end behind an overlaid composer. UIPage already lifts it off the home
-          // indicator; above the keyboard that gap is dropped
+          // over the list's bottom, so messages scroll on under it; the inverted thread keeps its newest
+          // message above it. UIPage already lifts it off the home indicator; above the keyboard that gap is dropped
           <KeyboardStickyView
             offset={{ opened: bottomInset }}
             style={styles.composer}
+            onLayout={handleComposerLayout}
           >
             <MessageComposer
               control={control}
-              isSendDisabled={!isValid || isSending}
+              isSendDisabled={!isValid}
               onSendPress={handleSendPress}
-              onAttachPress={handleAttachPress}
-              isAttachDisabled={isUploading || isSending}
             />
           </KeyboardStickyView>
         ) : null}
@@ -285,10 +270,13 @@ const styles = StyleSheet.create((theme) => ({
   },
   empty: StyleSheet.absoluteFillObject,
   emptyArea: { flex: 1 },
+  // floats over the thread, so it pads itself as the page would
   composer: {
-    flexDirection: "row",
-    alignItems: "flex-end",
-    gap: theme.s(8),
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    paddingHorizontal: theme.s(16),
     paddingBottom: theme.vs(12),
   },
 }));

@@ -1,15 +1,18 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner-native";
-import type { CreateChatGroupInput, SendChatMessageInput } from "@/@types";
-import { $api } from "@/api";
+import type { CreateChatGroupInput, PickedImage, Profile } from "@/@types";
+import { $api, sendChatMessage, uploadImage } from "@/api";
 import {
   apiErrorKey,
   chatKeys,
   forgetChatConversation,
   idempotencyKey,
+  mergeChatMessages,
+  pendingChatMessage,
   refetchChatConversation,
+  removeChatMessage,
 } from "@/utils";
 
 // mutations and useChatStream mark what changed stale, and what is on screen refetches; the stale
@@ -192,33 +195,70 @@ export function useDeleteChatMessage(conversationId: string) {
   });
 }
 
+type SendChatVariables = { text: string; photos: PickedImage[]; key: string };
+
+// optimistic: the message shows at once, dimmed, with the picked photos from the device; the stored
+// one takes its place (matched by clientId), and a failed one leaves the thread
 export function useSendChatMessage(id: string) {
   const queryClient = useQueryClient();
-  const { mutateAsync, isPending, isError, variables } = $api.useMutation(
-    "post",
-    "/chat/conversations/{id}/messages",
-    {
-      meta: { analyticsAction: "chat_message_send" },
-      onSuccess: () => refetchChatConversation(queryClient, id),
-    },
-  );
-  return {
-    isPending,
-    // resending the same failed message reuses its key, so it is not sent twice
-    sendMessage: (body: SendChatMessageInput) =>
-      mutateAsync({
-        body,
-        params: {
-          path: { id },
-          header: {
-            "Idempotency-Key":
-              isError &&
-              variables?.params.path.id === id &&
-              JSON.stringify(variables.body) === JSON.stringify(body)
-                ? variables.params.header["Idempotency-Key"]
-                : idempotencyKey(),
-          },
+  const { mutate, isError, variables } = useMutation({
+    meta: { analyticsAction: "chat_message_send" },
+    // photos upload one at a time: each is decoded into a bitmap of tens of MB while it is compressed
+    mutationFn: async ({ text, photos, key }: SendChatVariables) => {
+      const attachmentIds: string[] = [];
+      for (const photo of photos) {
+        attachmentIds.push(await uploadImage(photo, "chat"));
+      }
+      return sendChatMessage(
+        id,
+        {
+          body: text || undefined,
+          attachmentIds: attachmentIds.length ? attachmentIds : undefined,
         },
-      }),
+        key,
+      );
+    },
+    onMutate: async ({ text, photos, key }) => {
+      await queryClient.cancelQueries({ queryKey: chatKeys.messages(id) });
+      const me = queryClient.getQueryData<Profile>(["profile", "me"]);
+      mergeChatMessages(queryClient, id, [
+        pendingChatMessage({
+          conversationId: id,
+          key,
+          text,
+          photos,
+          sender: {
+            id: me?.id ?? null,
+            firstName: me?.firstName ?? null,
+            lastName: me?.lastName ?? null,
+            avatarUrl: me?.avatarUrl ?? null,
+            universityId: me?.universityId ?? null,
+            deleted: false,
+          },
+        }),
+      ]);
+    },
+    onError: (_, { key }) =>
+      removeChatMessage(queryClient, id, `pending:${key}`),
+    onSuccess: (message) => {
+      mergeChatMessages(queryClient, id, [message]);
+      return refetchChatConversation(queryClient, id);
+    },
+  });
+  // a text-only resend of a failed message reuses its key, so it is not sent twice; with photos the
+  // uploads are new, and the API refuses an old key with another body
+  const keyFor = (text: string, photos: PickedImage[]) =>
+    isError &&
+    variables &&
+    photos.length === 0 &&
+    variables.photos.length === 0 &&
+    variables.text === text
+      ? variables.key
+      : idempotencyKey();
+  return {
+    sendMessage: (
+      { text, photos }: { text: string; photos: PickedImage[] },
+      options?: { onError?: (error: Error) => void },
+    ) => mutate({ text, photos, key: keyFor(text, photos) }, options),
   };
 }

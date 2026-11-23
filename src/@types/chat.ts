@@ -1,6 +1,7 @@
+import type { PickedImage } from "./media";
 import type { components } from "./schema";
 
-export type MessageFormValues = { text: string };
+export type MessageFormValues = { text: string; photos: PickedImage[] };
 export type CreateGroupFormValues = { groupName: string; members: string[] };
 export type RenameGroupFormValues = { groupName: string };
 

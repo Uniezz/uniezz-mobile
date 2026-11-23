@@ -89,3 +89,38 @@ test("an older message the pages never loaded stays out", () => {
     ["3:m3", "2:m2"],
   ]);
 });
+
+const { pendingChatMessage, removeChatMessage } =
+  await import("../src/utils/chat");
+
+const pending = (key: string, text: string) =>
+  pendingChatMessage({
+    conversationId: "c",
+    key,
+    text,
+    photos: [],
+    sender: message(0).sender,
+  });
+
+test("a pending message shows on top and the stored one takes its place by clientId", () => {
+  const { queryClient, seqs } = setup();
+
+  mergeChatMessages(queryClient, "c", [pending("k1", "hi")]);
+  // someone else's message arrives while it is pending: it still joins, below the pending one
+  mergeChatMessages(queryClient, "c", [message(6)]);
+  // the stream may deliver the stored message before the mutation answers; it replaces, once
+  const stored = { ...message(7, "hi"), clientId: "k1" };
+  mergeChatMessages(queryClient, "c", [stored]);
+  mergeChatMessages(queryClient, "c", [stored]);
+
+  assert.deepEqual(seqs()[0], ["7:hi", "6:m6", "5:m5", "4:m4"]);
+});
+
+test("a failed pending message leaves the thread", () => {
+  const { queryClient, seqs } = setup();
+
+  mergeChatMessages(queryClient, "c", [pending("k2", "lost")]);
+  removeChatMessage(queryClient, "c", "pending:k2");
+
+  assert.deepEqual(seqs()[0], ["5:m5", "4:m4"]);
+});

@@ -1,8 +1,8 @@
-import type { ApiChatMessage } from "@/@types";
+import type { ApiChatMessage, SendChatMessageInput } from "@/@types";
 import { api } from "./client";
 
-// the rest of chat goes through openapi-react-query hooks (src/hooks/useChat.ts); this one runs
-// outside React, from the stream, and pages through every change at once
+// the rest of chat goes through openapi-react-query hooks (src/hooks/useChat.ts); these run inside
+// larger steps: a catch-up through every page, and a send after its photos upload
 
 // catch-up mode: everything created or changed after a changeSeq, deleted messages included,
 // oldest change first, read through every page
@@ -20,4 +20,18 @@ export async function getChatMessageChanges(id: string, changedAfter: number) {
     cursor = data!.nextCursor ?? undefined;
   } while (cursor);
   return changes;
+}
+
+// a retry with the same key and body returns the stored message instead of sending twice
+export async function sendChatMessage(
+  id: string,
+  body: SendChatMessageInput,
+  key: string,
+) {
+  const { data } = await api.POST("/chat/conversations/{id}/messages", {
+    params: { path: { id }, header: { "Idempotency-Key": key } },
+    body,
+  });
+
+  return data!;
 }

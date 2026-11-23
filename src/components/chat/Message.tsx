@@ -3,7 +3,13 @@ import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import type { ApiChatMessage } from "@/@types";
 import { UIImage, UIPressable, UIText } from "@/ui";
-import { chatDay, chatMessageText, isSameDay, previewImages } from "@/utils";
+import {
+  chatDay,
+  chatMessageText,
+  isPendingChatMessage,
+  isSameDay,
+  previewImages,
+} from "@/utils";
 
 type MessageProps = {
   message: ApiChatMessage;
@@ -33,6 +39,8 @@ export const Message = ({
   const isNewDay =
     !previous || !isSameDay(Date.parse(previous.createdAt), createdAt);
   const urls = (message.attachments ?? []).map(({ url }) => url);
+  // shown before the API stored it: dimmed, and nothing to delete or report yet
+  const isPending = isPendingChatMessage(message);
   const handleLongPress = () => onLongPress(message);
   const handlePhotoError = () => onPhotoError(message);
 
@@ -50,9 +58,9 @@ export const Message = ({
       ) : (
         <UIPressable
           accessibilityRole="text"
-          disabled={Boolean(message.deletedAt)}
+          disabled={isPending || Boolean(message.deletedAt)}
           onLongPress={handleLongPress}
-          style={styles.bubble(isMine)}
+          style={styles.bubble(isMine, isPending)}
         >
           {urls.map((url, index) => (
             <UIPressable
@@ -100,7 +108,8 @@ const styles = StyleSheet.create((theme) => ({
     textAlign: "center",
     paddingHorizontal: theme.s(24),
   },
-  bubble: (mine: boolean) => ({
+  bubble: (mine: boolean, isPending: boolean) => ({
+    opacity: isPending ? 0.6 : 1,
     alignSelf: mine ? "flex-end" : "flex-start",
     maxWidth: theme.s(260),
     gap: theme.vs(6),

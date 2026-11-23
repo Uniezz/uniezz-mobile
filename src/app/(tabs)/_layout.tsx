@@ -61,8 +61,10 @@ export default function TabLayout() {
             md={{ default: "chat_bubble_outline", selected: "chat_bubble" }}
           />
           <NativeTabs.Trigger.Label>{t("tabs.chat")}</NativeTabs.Trigger.Label>
+          {/* expo-router shows any text even when hidden, and a red dot for no text unless hidden:
+              at 0 the badge needs both no text and hidden */}
           <NativeTabs.Trigger.Badge hidden={!unread?.totalUnread}>
-            {unreadBadge(unread?.totalUnread ?? 0)}
+            {unread?.totalUnread ? unreadBadge(unread.totalUnread) : undefined}
           </NativeTabs.Trigger.Badge>
         </NativeTabs.Trigger>
         <NativeTabs.Trigger
