@@ -8,16 +8,10 @@ type MessagePhotosProps = {
   urls: string[];
   /** a photo failed to load, e.g. because its link expired */
   onError: () => void;
-  /** a long press on any photo, e.g. to delete or report the message */
-  onLongPress?: () => void;
 };
 
 // a message's photos as one album; a tap opens them full screen from that photo
-export const MessagePhotos = ({
-  urls,
-  onError,
-  onLongPress,
-}: MessagePhotosProps) => {
+export const MessagePhotos = ({ urls, onError }: MessagePhotosProps) => {
   const { t } = useTranslation();
   const rows = CHAT_ALBUM_ROWS[urls.length] ?? [urls.length];
   // where each row's photos start in `urls`
@@ -37,7 +31,6 @@ export const MessagePhotos = ({
                 accessibilityRole="imagebutton"
                 accessibilityLabel={t("app.openImage")}
                 onPress={() => previewImages(urls, start + offset)}
-                onLongPress={onLongPress}
                 style={styles.photo}
               >
                 <UIImage

@@ -41,7 +41,8 @@ type MessageProps = {
 };
 
 // one message in a thread: a bubble with its album, text and time, or a centred system line.
-// A long press opens the native menu, as the profile's ⋯ menu does
+// A long press opens the native menu, as the profile's ⋯ menu does; from 2.3 the library lifts the
+// whole bubble as the menu's preview, where iOS 26 drew a glass lens over tall ones
 export const Message = ({
   message,
   previous,
@@ -99,11 +100,6 @@ export const Message = ({
   const handlePhotoError = () => onPhotoError(message);
   // pending and deleted messages have nothing to act on
   const hasMenu = !isPending && !message.deletedAt;
-  // the native menu sits on the text only: over a tall photo iOS 26 draws a glass lens instead of
-  // lifting the bubble, and the menu's button would take the photo's tap. A long press on a photo
-  // deletes your own message (after a confirm) or reports someone else's, as before the menu
-  const handlePhotoLongPress = () =>
-    isMine ? onDelete(message) : onReport(message);
 
   const textContent = (
     <>
@@ -118,11 +114,7 @@ export const Message = ({
     <View style={styles.bubble(isMine, hasPhotos, isPending)}>
       {hasPhotos ? (
         <View>
-          <MessagePhotos
-            urls={urls}
-            onError={handlePhotoError}
-            onLongPress={hasMenu ? handlePhotoLongPress : undefined}
-          />
+          <MessagePhotos urls={urls} onError={handlePhotoError} />
           {/* a photo without text carries its time over the album, as in Telegram */}
           {hasText ? null : (
             <View style={styles.timeOverPhoto}>
@@ -133,17 +125,7 @@ export const Message = ({
           )}
         </View>
       ) : null}
-      {hasText && hasMenu ? (
-        <MenuView
-          shouldOpenOnLongPress
-          actions={menuActions}
-          onPressAction={handleMenuAction}
-          style={styles.text(hasPhotos)}
-        >
-          {textContent}
-        </MenuView>
-      ) : null}
-      {hasText && !hasMenu ? (
+      {hasText ? (
         <View style={styles.text(hasPhotos)}>{textContent}</View>
       ) : null}
     </View>
@@ -172,7 +154,20 @@ export const Message = ({
               {chatStudentName(message.sender, t)}
             </UIText>
           ) : null}
-          {bubble}
+          {hasMenu ? (
+            <MenuView
+              shouldOpenOnLongPress
+              // Copy stays first even when the menu opens upward near the composer
+              preferredMenuElementOrder="fixed"
+              actions={menuActions}
+              onPressAction={handleMenuAction}
+              style={styles.menu(isMine)}
+            >
+              {bubble}
+            </MenuView>
+          ) : (
+            bubble
+          )}
         </>
       )}
       {isReadByPeer ? (
@@ -201,6 +196,10 @@ const styles = StyleSheet.create((theme) => ({
     paddingLeft: theme.s(14),
     paddingBottom: theme.vs(2),
   },
+  // the menu wraps the bubble, so it takes the bubble's side
+  menu: (mine: boolean) => ({
+    alignSelf: mine ? "flex-end" : "flex-start",
+  }),
   // a bubble with photos only frames them thinly; its text, if any, keeps its own padding
   bubble: (mine: boolean, hasPhotos: boolean, isPending: boolean) => ({
     alignSelf: mine ? "flex-end" : "flex-start",
