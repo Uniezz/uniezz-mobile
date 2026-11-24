@@ -223,7 +223,12 @@ export default function MeetScreen() {
           <UIQueryError message={t("apiState.error")} onRetry={refetch} />
         ) : card ? (
           <>
-            <DiscoverCard card={card} onReportPress={handleReportPress} />
+            <DiscoverCard
+              // a new card starts at its first photo
+              key={card.candidateId}
+              card={card}
+              onReportPress={handleReportPress}
+            />
             <View style={styles.actions}>
               <UIPressable
                 accessibilityRole="button"

@@ -198,7 +198,7 @@ export interface paths {
     };
     /**
      * List the logged-in student's conversations
-     * @description Newest activity first, paginated by cursor. Direct conversations without a Connection, or with a block either way, are left out.
+     * @description Newest activity first, paginated by cursor. Message requests the caller has not accepted yet, and direct conversations with a block either way, are left out.
      */
     get: operations["listChatConversations"];
     put?: never;
@@ -219,8 +219,8 @@ export interface paths {
     get?: never;
     put?: never;
     /**
-     * Open the direct conversation with a connected student
-     * @description Returns 201 when the conversation was created and 200 when it already existed. Students without a Connection, blocked either way, banned or unknown answer 404.
+     * Open the direct conversation with a student
+     * @description Returns 201 when the conversation was created and 200 when it already existed. Without a Connection it is a message request: the caller may send one text message without links until the other student accepts or replies, at most 20 new requests a day. Students who do not accept messages from the caller, blocked either way, banned or unknown answer 404.
      */
     post: operations["openDirectConversation"];
     delete?: never;
@@ -397,6 +397,87 @@ export interface paths {
     options?: never;
     head?: never;
     patch?: never;
+    trace?: never;
+  };
+  "/chat/requests": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List the message requests sent to the logged-in student
+     * @description Pending requests that hold a message, newest first, paginated by cursor. Declined requests and requests from students blocked either way are left out.
+     */
+    get: operations["listChatRequests"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/chat/requests/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * Decline a message request sent to the logged-in student
+     * @description The request disappears for the caller; its sender is not told and still sees it as pending. Declining it again succeeds.
+     */
+    delete: operations["declineChatRequest"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/chat/requests/{id}/acceptance": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /**
+     * Accept a message request sent to the logged-in student
+     * @description Turns the request into a normal conversation; replying to it does the same. Accepting it again changes nothing.
+     */
+    put: operations["acceptChatRequest"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/chat/settings/me": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get the logged-in student's chat settings */
+    get: operations["getMyChatSettings"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /**
+     * Update the logged-in student's chat settings
+     * @description Fields left out keep their value.
+     */
+    patch: operations["updateMyChatSettings"];
     trace?: never;
   };
   "/chat/stream": {
@@ -663,7 +744,10 @@ export interface paths {
     delete: operations["deleteFeedComment"];
     options?: never;
     head?: never;
-    /** Edit your comment */
+    /**
+     * Edit your comment
+     * @description Only the author can edit; another student's comment is not found. Sets editedAt.
+     */
     patch: operations["updateFeedComment"];
     trace?: never;
   };
@@ -724,7 +808,10 @@ export interface paths {
      */
     get: operations["listFeedPosts"];
     put?: never;
-    /** Create a feed post */
+    /**
+     * Create a feed post
+     * @description At most 1 post every 2 minutes and 5 per hour; a retry with the same Idempotency-Key returns the first post and does not count again.
+     */
     post: operations["createFeedPost"];
     delete?: never;
     options?: never;
@@ -799,7 +886,10 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** Get a feed post */
+    /**
+     * Get a feed post
+     * @description A post by a banned student or by a student blocked in either direction is not found.
+     */
     get: operations["getFeedPost"];
     put?: never;
     post?: never;
@@ -832,7 +922,7 @@ export interface paths {
     put?: never;
     /**
      * Comment on a post or reply to a comment
-     * @description The first comment or reply on another student's post pays 1 Uniezz coin.
+     * @description The first comment or reply on another student's post pays 1 Uniezz coin. At most 5 comments a minute and 100 per hour.
      */
     post: operations["createFeedComment"];
     delete?: never;
@@ -904,6 +994,66 @@ export interface paths {
      * @description Idempotent: removing a save that is not there changes nothing. A missing post returns 404.
      */
     delete: operations["unsaveFeedPost"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/media/images": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List the avatars, banners and feed images no moderator has checked yet
+     * @description Oldest first, paginated by cursor. An image leaves the list once it is marked checked or removed. Private chat images are left out. Moderators and admins only.
+     */
+    get: operations["listUnreviewedImages"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/media/images/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * Remove any student's avatar, banner or feed image
+     * @description The image disappears everywhere it was shown and its file is deleted. Removing it again succeeds. Moderators and admins only.
+     */
+    delete: operations["removeImage"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/media/images/{id}/review": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /**
+     * Mark an avatar, banner or feed image as checked
+     * @description Marking it again changes nothing. Moderators and admins only.
+     */
+    put: operations["markImageReviewed"];
+    post?: never;
+    delete?: never;
     options?: never;
     head?: never;
     patch?: never;
@@ -1398,6 +1548,51 @@ export interface paths {
     put?: never;
     post?: never;
     delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/push/settings/me": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get the logged-in student's push notification settings */
+    get: operations["getMyPushSettings"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /**
+     * Update the logged-in student's push notification settings
+     * @description Fields left out keep their value.
+     */
+    patch: operations["updateMyPushSettings"];
+    trace?: never;
+  };
+  "/push/tokens/me": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /**
+     * Set the push token of the logged-in student's current device
+     * @description One token per session: a new token replaces the old one, and a token that another session held moves to this one. Call it after every sign-in and whenever Expo hands out a new token.
+     */
+    put: operations["registerMyPushToken"];
+    post?: never;
+    /**
+     * Remove the push token of the logged-in student's current device
+     * @description Call it before signing out. Removing a token that is already gone succeeds.
+     */
+    delete: operations["deleteMyPushToken"];
     options?: never;
     head?: never;
     patch?: never;
@@ -1941,8 +2136,11 @@ export interface components {
         | "third_cycle"
         | "phd_school"
         | null;
+      /** @description Avatar first, followed by additional photos */
+      photos: string[] | null;
       /** @description The interests the viewer also has */
       sharedInterests: string[] | null;
+      student: components["schemas"]["ProfileSummary"];
       /** @example umcs */
       universityId: string;
     };
@@ -2056,6 +2254,8 @@ export interface components {
       createdAt: string;
       /** Format: uuid */
       id: string;
+      /** @description true when the other student started the direct conversation. Null for groups */
+      incoming: boolean | null;
       /** @enum {string} */
       kind: "direct" | "group";
       /** @description Newest message the viewer may see; omitted when there is none */
@@ -2079,8 +2279,18 @@ export interface components {
       myRole: "owner" | "member" | null;
       /** @description Null for direct conversations */
       name: string | null;
+      /**
+       * @description How the direct conversation began; request stays even after the students match. Null for groups
+       * @enum {string|null}
+       */
+      origin: "match" | "request" | null;
       /** @description The other student of a direct conversation; omitted for groups */
       peer?: components["schemas"]["Student"];
+      /**
+       * @description pending until the recipient accepts or replies; a declined request still shows pending to its sender. Null for groups
+       * @enum {string|null}
+       */
+      status: "pending" | "approved" | null;
       /** Format: int64 */
       unreadCount: number;
     };
@@ -2529,6 +2739,17 @@ export interface components {
        */
       name: string;
     };
+    Image: {
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: uuid */
+      id: string;
+      /** @enum {string} */
+      kind: "avatar" | "banner" | "feed";
+      /** Format: uuid */
+      ownerId: string;
+      url: string;
+    };
     InviteCodeOutputBody: {
       /**
        * @description Your seven-character invitation code
@@ -2583,6 +2804,11 @@ export interface components {
     };
     ListChatMessagesOutputBody: {
       items: components["schemas"]["Message"][] | null;
+      /** @description Pass as cursor to get the next page; null on the last page */
+      nextCursor: string | null;
+    };
+    ListChatRequestsOutputBody: {
+      items: components["schemas"]["Conversation"][] | null;
       /** @description Pass as cursor to get the next page; null on the last page */
       nextCursor: string | null;
     };
@@ -2666,6 +2892,11 @@ export interface components {
     };
     ListQueueOutputBody: {
       items: components["schemas"]["QueuedReport"][] | null;
+      /** @description Pass as cursor to get the next page; null on the last page */
+      nextCursor: string | null;
+    };
+    ListUnreviewedImagesOutputBody: {
+      items: components["schemas"]["Image"][] | null;
       /** @description Pass as cursor to get the next page; null on the last page */
       nextCursor: string | null;
     };
@@ -2782,10 +3013,14 @@ export interface components {
         [key: string]: components["schemas"]["ChallengeText"];
       };
     };
+    NotificationSettings: {
+      /** @description false stops every push notification to the student's devices */
+      enabled: boolean;
+    };
     OpenDirectConversationInputBody: {
       /**
        * Format: uuid
-       * @description A student the caller has a Connection with
+       * @description Any student; without a Connection the conversation starts as a message request
        */
       userId: string;
     };
@@ -3118,7 +3353,7 @@ export interface components {
       interests: string[] | null;
       /** @example Kowalski */
       lastName: string | null;
-      /** @description Avatar first, followed by additional photos; hidden from unconnected students */
+      /** @description Avatar first, followed by additional photos */
       photos: string[] | null;
       /** @description Primary first */
       programmes: components["schemas"]["PublicProgramme"][] | null;
@@ -3218,6 +3453,13 @@ export interface components {
        */
       coinsEarned: number;
     };
+    RegisterMyPushTokenInputBody: {
+      /**
+       * @description The Expo push token of this device
+       * @example ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]
+       */
+      token: string;
+    };
     ReorderProfilePhotosInputBody: {
       /** @description All profile photo IDs in the desired order */
       mediaIds: string[] | null;
@@ -3289,6 +3531,13 @@ export interface components {
       attachmentIds?: string[] | null;
       /** @description Up to 4000 characters after HTML is stripped; may be empty only with attachments */
       body?: string;
+    };
+    Settings: {
+      /**
+       * @description Who may send the student a message request: everyone, students of the same university, or only Connections
+       * @enum {string}
+       */
+      whoCanMessage: "everyone" | "university" | "matches";
     };
     Student: {
       avatarUrl: string | null;
@@ -3567,6 +3816,17 @@ export interface components {
       songUrl: string | null;
       /** @example umcs */
       universityId: string;
+    };
+    UpdateMyChatSettingsInputBody: {
+      /**
+       * @description Changes only new message requests; existing conversations stay
+       * @enum {string}
+       */
+      whoCanMessage?: "everyone" | "university" | "matches";
+    };
+    UpdateMyPushSettingsInputBody: {
+      /** @description false stops every push notification to the student's devices */
+      enabled?: boolean;
     };
     UpdatePostInputBody: {
       content?: string;
@@ -4391,6 +4651,15 @@ export interface operations {
       };
       /** @description Unprocessable Entity */
       422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Too Many Requests */
+      429: {
         headers: {
           [name: string]: unknown;
         };
@@ -5246,6 +5515,279 @@ export interface operations {
       };
       /** @description Not Found */
       404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  listChatRequests: {
+    parameters: {
+      query?: {
+        /** @description nextCursor from the previous page; omit for the first page */
+        cursor?: string;
+        /** @description Maximum number of items in the page */
+        limit?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ListChatRequestsOutputBody"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  declineChatRequest: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  acceptChatRequest: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Conversation"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  getMyChatSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Settings"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  updateMyChatSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UpdateMyChatSettingsInputBody"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Settings"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
         headers: {
           [name: string]: unknown;
         };
@@ -6276,15 +6818,6 @@ export interface operations {
           "application/json": components["schemas"]["ErrorBody"];
         };
       };
-      /** @description Forbidden */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ErrorBody"];
-        };
-      };
       /** @description Not Found */
       404: {
         headers: {
@@ -6349,15 +6882,6 @@ export interface operations {
       };
       /** @description Unauthorized */
       401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ErrorBody"];
-        };
-      };
-      /** @description Forbidden */
-      403: {
         headers: {
           [name: string]: unknown;
         };
@@ -6718,6 +7242,15 @@ export interface operations {
           "application/json": components["schemas"]["ErrorBody"];
         };
       };
+      /** @description Too Many Requests */
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
       /** @description Internal Server Error */
       500: {
         headers: {
@@ -6974,15 +7507,6 @@ export interface operations {
           "application/json": components["schemas"]["ErrorBody"];
         };
       };
-      /** @description Forbidden */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ErrorBody"];
-        };
-      };
       /** @description Not Found */
       404: {
         headers: {
@@ -7047,15 +7571,6 @@ export interface operations {
       };
       /** @description Unauthorized */
       401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ErrorBody"];
-        };
-      };
-      /** @description Forbidden */
-      403: {
         headers: {
           [name: string]: unknown;
         };
@@ -7230,6 +7745,15 @@ export interface operations {
       };
       /** @description Unprocessable Entity */
       422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Too Many Requests */
+      429: {
         headers: {
           [name: string]: unknown;
         };
@@ -7523,6 +8047,206 @@ export interface operations {
       };
       /** @description Unauthorized */
       401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  listUnreviewedImages: {
+    parameters: {
+      query?: {
+        /** @description nextCursor from the previous page; omit for the first page */
+        cursor?: string;
+        /** @description Maximum number of items in the page */
+        limit?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ListUnreviewedImagesOutputBody"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  removeImage: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  markImageReviewed: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
         headers: {
           [name: string]: unknown;
         };
@@ -9439,6 +10163,189 @@ export interface operations {
       };
       /** @description Unprocessable Entity */
       422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  getMyPushSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["NotificationSettings"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  updateMyPushSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UpdateMyPushSettingsInputBody"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["NotificationSettings"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  registerMyPushToken: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["RegisterMyPushTokenInputBody"];
+      };
+    };
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  deleteMyPushToken: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
         headers: {
           [name: string]: unknown;
         };
