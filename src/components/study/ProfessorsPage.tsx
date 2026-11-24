@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import type { NativeScrollEvent, NativeSyntheticEvent } from "react-native";
 import type { Professor } from "@/@types";
 import { useProfessors } from "@/hooks";
@@ -27,13 +28,18 @@ export function ProfessorsPage({
     refetch,
   } = useProfessors(universityId, query);
   const professors = data?.pages.flatMap((page) => page.items ?? []) ?? [];
+  // a tapped professor opens their page with the reviews
+  const handleProfessorPress = (professor: Professor) =>
+    router.push(`/professor/${professor.id}`);
 
   const handleEndReached = () => {
     if (hasNextPage && !isFetchingNextPage) return fetchNextPage();
   };
   const handleRefresh = () => refetch();
   const renderProfessor = (professor: Professor) => {
-    return <ProfessorRow professor={professor} />;
+    return (
+      <ProfessorRow professor={professor} onPress={handleProfessorPress} />
+    );
   };
 
   return (

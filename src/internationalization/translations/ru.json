@@ -553,7 +553,9 @@
     "candidate": "Пожаловаться на карточку",
     "course": "Пожаловаться на предмет",
     "action": "Пожаловаться",
-    "message": "Пожаловаться на сообщение"
+    "message": "Пожаловаться на сообщение",
+    "course_comment": "Пожаловаться на комментарий",
+    "professor_review": "Пожаловаться на отзыв"
   },
   "apiState": {
     "editComment": "Редактировать комментарий",
@@ -672,7 +674,17 @@
     "deleteFile": "Удалить файл",
     "deleteCourseTitle": "Удалить этот курс?",
     "deleteCourseDescription": "Его файлы, комментарии и оценки тоже удалятся. Это нельзя отменить.",
-    "courseDeleted": "Курс удалён"
+    "courseDeleted": "Курс удалён",
+    "reviews": "Отзывы",
+    "noReviews": "Отзывов пока нет.",
+    "deleteReviewTitle": "Удалить отзыв",
+    "yourReview": "Ваш отзыв",
+    "publishingReview": "Публикуем отзыв…",
+    "reviewHint": "Показывается без вашего имени.",
+    "reviewSaved": "Отзыв сохранён.",
+    "reviewDeleted": "Отзыв удалён.",
+    "deleteReviewDescription": "Ваш отзыв будет удалён навсегда.",
+    "saveReview": "Сохранить"
   },
   "rewards": {
     "title": "Награды",

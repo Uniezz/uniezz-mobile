@@ -86,6 +86,7 @@ const apiMiddleware: Middleware = {
               "/connections/blocks/{id}",
               "/study/comments/{id}",
               "/study/files/{id}",
+              "/study/professors/{id}/review",
             ].includes(schemaPath));
         if (!allowsNoContent) {
           throw apiError(`${request.method} ${schemaPath}`, response);

@@ -8,3 +8,5 @@ export { RatingInput } from "./RatingInput";
 export { StudyList } from "./StudyList";
 export { StudyRow } from "./StudyRow";
 export { StudyFilters } from "./StudyFilters";
+export { ProfessorReviewItem } from "./ProfessorReviewItem";
+export { ProfessorReviewForm } from "./ProfessorReviewForm";

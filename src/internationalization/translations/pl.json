@@ -553,7 +553,9 @@
     "candidate": "Zgłoś kartę",
     "course": "Zgłoś przedmiot",
     "action": "Zgłoś",
-    "message": "Zgłoś wiadomość"
+    "message": "Zgłoś wiadomość",
+    "course_comment": "Zgłoś komentarz",
+    "professor_review": "Zgłoś opinię"
   },
   "apiState": {
     "editComment": "Edytuj komentarz",
@@ -672,7 +674,17 @@
     "deleteFile": "Usuń plik",
     "deleteCourseTitle": "Usunąć ten kurs?",
     "deleteCourseDescription": "Jego pliki, komentarze i oceny też zostaną usunięte. Tego nie można cofnąć.",
-    "courseDeleted": "Kurs usunięty"
+    "courseDeleted": "Kurs usunięty",
+    "reviews": "Opinie",
+    "noReviews": "Brak opinii.",
+    "deleteReviewTitle": "Usuń opinię",
+    "yourReview": "Twoja opinia",
+    "publishingReview": "Publikowanie opinii…",
+    "reviewHint": "Wyświetlana bez Twojego imienia.",
+    "reviewSaved": "Opinia zapisana.",
+    "reviewDeleted": "Opinia usunięta.",
+    "deleteReviewDescription": "Twoja opinia zostanie trwale usunięta.",
+    "saveReview": "Zapisz"
   },
   "rewards": {
     "title": "Nagrody",

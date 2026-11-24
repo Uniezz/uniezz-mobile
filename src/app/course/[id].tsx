@@ -117,6 +117,13 @@ export default function CourseScreen() {
   const showError = (error: unknown) => toast.error(t(apiErrorKey(error)));
   const handleBackPress = () => router.back();
   const handleReportPress = () => reportRef.current?.present();
+  // someone else's comment: the second report sheet takes its id
+  const commentReportRef = useRef<BottomSheetModal>(null);
+  const [reportedCommentId, setReportedCommentId] = useState("");
+  const handleCommentReportPress = (comment: CourseComment) => {
+    setReportedCommentId(comment.id);
+    commentReportRef.current?.present();
+  };
   const handleEditPress = () => editRef.current?.present();
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     setIsHeaderCompact(
@@ -319,7 +326,11 @@ export default function CourseScreen() {
           isFetchingNextPage ? <UISkeleton height={56} /> : null
         }
         renderItem={({ item }) => (
-          <CourseCommentItem comment={item} onDeletePress={handleDeletePress} />
+          <CourseCommentItem
+            comment={item}
+            onDeletePress={handleDeletePress}
+            onReportPress={handleCommentReportPress}
+          />
         )}
       />
       {course ? (
@@ -336,6 +347,11 @@ export default function CourseScreen() {
         </KeyboardStickyView>
       ) : null}
       <ReportSheet ref={reportRef} targetId={id} targetType="course" />
+      <ReportSheet
+        ref={commentReportRef}
+        targetId={reportedCommentId}
+        targetType="course_comment"
+      />
       {course?.isMine ? (
         <CourseFormSheet ref={editRef} course={course} />
       ) : null}

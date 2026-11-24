@@ -1,5 +1,5 @@
 import { AuthPage, RowPicker } from "@/components";
-import { useUniversities } from "@/hooks";
+import { useUniversities, useUsosSignIn } from "@/hooks";
 import {
   Icon,
   UIButton,
@@ -20,6 +20,7 @@ export default function WelcomeScreen() {
   const { t } = useTranslation();
   const { referralCode } = useLocalSearchParams<{ referralCode?: string }>();
   const [selected, setSelected] = useState<number>(0);
+  const signInWithUsos = useUsosSignIn();
   const {
     data: universities = [],
     isPending,
@@ -41,8 +42,14 @@ export default function WelcomeScreen() {
       return;
     }
 
+    if (selectedUniversity.authMethod === "USOS") {
+      return signInWithUsos({
+        university: selectedUniversity.id,
+        referralCode,
+      });
+    }
     router.push({
-      pathname: selectedUniversity.authMethod === "USOS" ? "/usos" : "/otp",
+      pathname: "/otp",
       params: { university: selectedUniversity.id, referralCode },
     });
   };

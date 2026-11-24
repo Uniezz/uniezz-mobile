@@ -1,5 +1,5 @@
 import { usePostHog } from "posthog-react-native";
-import { captureAction } from "@/utils";
+import { captureAction, getUsosStartUrl } from "@/utils";
 import { $api, requestOtpCode, verifyOtpCode } from "@/api";
 import { useMutation } from "@tanstack/react-query";
 import type { IssuedSession } from "@/@types";
@@ -7,8 +7,9 @@ import { useSession } from "@/contexts";
 import { router } from "expo-router";
 import { toast } from "sonner-native";
 import * as Linking from "expo-linking";
-import { useCallback, useEffect, useRef } from "react";
-import type { WebViewNavigation } from "react-native-webview";
+import { useEffect, useRef } from "react";
+import { openAuthSessionAsync } from "expo-web-browser";
+import { Platform } from "react-native";
 import i18n from "@/internationalization";
 
 const USOS_REDIRECT_URL = new URL(Linking.createURL("auth/callback"));
@@ -90,37 +91,32 @@ export function useFinishLogin(code?: string, error?: string): void {
   }, [code, error, exchangeLoginCode, posthog]);
 }
 
-export function useUsosLogin(): (navigation: WebViewNavigation) => boolean {
-  const hasHandledRedirect = useRef(false);
-
-  return useCallback((navigation: WebViewNavigation): boolean => {
-    let callbackUrl: URL;
+// USOS sign-in in the system browser: ASWebAuthenticationSession on iOS, a Chrome Custom Tab on
+// Android, where saved passwords work and the university's own page shows. iOS keeps the session
+// ephemeral, so each sign-in starts clean; on Android it shares Chrome's cookies, which is fine as a
+// USOS account belongs to one student. The backend sends the browser back to uniezz://auth/callback
+export function useUsosSignIn() {
+  return async (params: { university: string; referralCode?: string }) => {
     try {
-      callbackUrl = new URL(navigation.url);
+      const result = await openAuthSessionAsync(
+        getUsosStartUrl(params),
+        USOS_REDIRECT_URL.href,
+        { preferEphemeralSession: true },
+      );
+      // Android has no native auth session: the redirect reaches the app as a deep link, which
+      // +native-intent already routes to /finish, so routing here too would spend the one-time code
+      // twice. iOS hands the redirect only to this promise
+      if (Platform.OS !== "ios" || result.type !== "success") return;
+      const callback = new URL(result.url);
+      router.push({
+        pathname: "/finish",
+        params: {
+          code: callback.searchParams.get("code") ?? "",
+          error: callback.searchParams.get("error") ?? "",
+        },
+      });
     } catch {
-      return true;
+      showLoginError("common.tryAgain");
     }
-
-    if (
-      callbackUrl.protocol !== USOS_REDIRECT_URL.protocol ||
-      callbackUrl.host !== USOS_REDIRECT_URL.host ||
-      callbackUrl.pathname !== USOS_REDIRECT_URL.pathname
-    ) {
-      return true;
-    }
-
-    if (hasHandledRedirect.current) {
-      return false;
-    }
-    hasHandledRedirect.current = true;
-
-    router.replace({
-      pathname: "/finish",
-      params: {
-        code: callbackUrl.searchParams.get("code") ?? "",
-        error: callbackUrl.searchParams.get("error") ?? "",
-      },
-    });
-    return false;
-  }, []);
+  };
 }

@@ -536,7 +536,9 @@
     "candidate": "Reportar perfil",
     "course": "Informe del curso",
     "action": "Reportar",
-    "message": "Denunciar mensaje"
+    "message": "Denunciar mensaje",
+    "course_comment": "Denunciar comentario",
+    "professor_review": "Denunciar reseña"
   },
   "apiState": {
     "editComment": "Editar comentario",
@@ -655,7 +657,17 @@
     "rateLimit": "Has añadido demasiados elementos en la última hora. Inténtalo más tarde.",
     "rateValue": "{{rating}} de 5",
     "ratingSummary": "{{rating}} ({{votes}})",
-    "typeLab": "Informe de laboratorio"
+    "typeLab": "Informe de laboratorio",
+    "reviews": "Reseñas",
+    "noReviews": "Aún no hay reseñas.",
+    "deleteReviewTitle": "Eliminar reseña",
+    "yourReview": "Tu reseña",
+    "publishingReview": "Publicando reseña…",
+    "reviewHint": "Se muestra sin tu nombre.",
+    "reviewSaved": "Reseña guardada.",
+    "reviewDeleted": "Reseña eliminada.",
+    "deleteReviewDescription": "Tu reseña se eliminará de forma permanente.",
+    "saveReview": "Guardar"
   },
   "language": {
     "select": "Seleccionar idioma de la aplicación",

@@ -6,6 +6,12 @@ export type CourseComment = components["schemas"]["CourseComment"];
 export type CourseFile = components["schemas"]["CourseFile"];
 export type CourseFileType = CourseFile["type"];
 export type Professor = components["schemas"]["Professor"];
+export type ProfessorReview = components["schemas"]["ProfessorReview"];
+// what a course comment and a professor review share: both anonymous, shown the same way
+export type AnonymousComment = Pick<
+  CourseComment,
+  "id" | "content" | "createdAt" | "isMine"
+>;
 export type CreateCourseInput = components["schemas"]["CreateCourseInputBody"];
 export type CourseFilters = Omit<
   NonNullable<operations["listCourses"]["parameters"]["query"]>,

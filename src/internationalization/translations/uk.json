@@ -553,7 +553,9 @@
     "candidate": "Поскаржитися на картку",
     "course": "Поскаржитися на предмет",
     "action": "Поскаржитися",
-    "message": "Поскаржитися на повідомлення"
+    "message": "Поскаржитися на повідомлення",
+    "course_comment": "Поскаржитися на коментар",
+    "professor_review": "Поскаржитися на відгук"
   },
   "apiState": {
     "editComment": "Редагувати коментар",
@@ -672,7 +674,17 @@
     "deleteFile": "Видалити файл",
     "deleteCourseTitle": "Видалити цей курс?",
     "deleteCourseDescription": "Його файли, коментарі й оцінки теж буде видалено. Це не можна скасувати.",
-    "courseDeleted": "Курс видалено"
+    "courseDeleted": "Курс видалено",
+    "reviews": "Відгуки",
+    "noReviews": "Відгуків ще немає.",
+    "deleteReviewTitle": "Видалити відгук",
+    "yourReview": "Ваш відгук",
+    "publishingReview": "Публікуємо відгук…",
+    "reviewHint": "Показується без вашого імені.",
+    "reviewSaved": "Відгук збережено.",
+    "reviewDeleted": "Відгук видалено.",
+    "deleteReviewDescription": "Ваш відгук буде видалено назавжди.",
+    "saveReview": "Зберегти"
   },
   "rewards": {
     "title": "Нагороди",

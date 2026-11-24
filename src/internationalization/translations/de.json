@@ -536,7 +536,9 @@
     "candidate": "Profil melden",
     "course": "Kurs melden",
     "action": "Melden",
-    "message": "Nachricht melden"
+    "message": "Nachricht melden",
+    "course_comment": "Kommentar melden",
+    "professor_review": "Bewertung melden"
   },
   "apiState": {
     "editComment": "Kommentar bearbeiten",
@@ -655,7 +657,17 @@
     "rateLimit": "Du hast in der letzten Stunde zu viel hinzugefügt. Versuche es später erneut.",
     "rateValue": "{{rating}} von 5",
     "ratingSummary": "{{rating}} ({{votes}})",
-    "typeLab": "Laborbericht"
+    "typeLab": "Laborbericht",
+    "reviews": "Bewertungen",
+    "noReviews": "Noch keine Bewertungen.",
+    "deleteReviewTitle": "Bewertung löschen",
+    "yourReview": "Deine Bewertung",
+    "publishingReview": "Bewertung wird veröffentlicht…",
+    "reviewHint": "Wird ohne deinen Namen angezeigt.",
+    "reviewSaved": "Bewertung gespeichert.",
+    "reviewDeleted": "Bewertung gelöscht.",
+    "deleteReviewDescription": "Deine Bewertung wird endgültig gelöscht.",
+    "saveReview": "Speichern"
   },
   "language": {
     "select": "App-Sprache auswählen",

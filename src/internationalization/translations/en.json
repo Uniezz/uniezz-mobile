@@ -545,7 +545,9 @@
     "candidate": "Report card",
     "course": "Report course",
     "action": "Report",
-    "message": "Report message"
+    "message": "Report message",
+    "course_comment": "Report comment",
+    "professor_review": "Report review"
   },
   "apiState": {
     "editComment": "Edit comment",
@@ -664,7 +666,17 @@
     "deleteFile": "Delete file",
     "deleteCourseTitle": "Delete this course?",
     "deleteCourseDescription": "Its files, comments and ratings will be deleted too. This can't be undone.",
-    "courseDeleted": "Course deleted"
+    "courseDeleted": "Course deleted",
+    "reviews": "Reviews",
+    "noReviews": "No reviews yet.",
+    "deleteReviewTitle": "Delete review",
+    "yourReview": "Your review",
+    "publishingReview": "Publishing review…",
+    "reviewHint": "Shown without your name.",
+    "reviewSaved": "Review saved.",
+    "reviewDeleted": "Review deleted.",
+    "deleteReviewDescription": "Your review will be permanently deleted.",
+    "saveReview": "Save"
   },
   "rewards": {
     "title": "Rewards",
