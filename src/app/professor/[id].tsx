@@ -52,6 +52,7 @@ const ReviewsScrollView = (props: ScrollViewProps) => {
 export default function ProfessorScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { t } = useTranslation();
+  const { bottom: bottomInset } = useSafeAreaInsets();
   const { data: professor, isPending, isError, refetch } = useProfessor(id);
   const {
     data: reviewPages,
@@ -158,8 +159,13 @@ export default function ProfessorScreen() {
         )}
       />
       {professor ? (
-        // UIPage already lifts the form off the home indicator; above the keyboard that gap is dropped
-        <KeyboardStickyView style={styles.form} onLayout={handleFormLayout}>
+        // absolute, so UIPage's bottom padding doesn't reach it: lifted off the home indicator or
+        // Android's navigation buttons while closed, and right on the keyboard while open
+        <KeyboardStickyView
+          offset={{ closed: -bottomInset }}
+          style={styles.form}
+          onLayout={handleFormLayout}
+        >
           <ProfessorReviewForm
             // a new form when your saved review changes, so the field starts from it
             key={myReview?.content ?? ""}

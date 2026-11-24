@@ -74,6 +74,7 @@ const CommentsScrollView = (props: ScrollViewProps) => {
 export default function CourseScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { t } = useTranslation();
+  const { bottom: bottomInset } = useSafeAreaInsets();
   const posthog = usePostHog();
   const { data: course, isPending, isError, refetch } = useCourse(id);
   const { data: filePages } = useCourseFiles(id);
@@ -334,8 +335,10 @@ export default function CourseScreen() {
         )}
       />
       {course ? (
-        // UIPage already lifts the composer off the home indicator; above the keyboard that gap is dropped
+        // absolute, so UIPage's bottom padding doesn't reach it: lifted off the home indicator or
+        // Android's navigation buttons while closed, and right on the keyboard while open
         <KeyboardStickyView
+          offset={{ closed: -bottomInset }}
           style={styles.composer}
           onLayout={handleComposerLayout}
         >
