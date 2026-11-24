@@ -32,8 +32,8 @@ import {
   UIInput,
   UIPage,
   UIQueryError,
-  UISkeleton,
   UIText,
+  UISkeletonRow,
 } from "@/ui";
 import { apiErrorKey, HEADER_COMPACT_OFFSET } from "@/utils";
 
@@ -192,7 +192,7 @@ export default function GroupScreen() {
         ListHeaderComponent={listHeader}
         ListEmptyComponent={
           isPending ? (
-            <UISkeleton height={64} />
+            <UISkeletonRow isGlass count={4} />
           ) : isError ? (
             <UIQueryError message={t("apiState.error")} onRetry={refetch} />
           ) : null

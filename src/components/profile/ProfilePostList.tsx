@@ -8,9 +8,9 @@ import { useTranslation } from "react-i18next";
 import { NativeScrollEvent, NativeSyntheticEvent, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import type { FeedFilters, ProfileListItem } from "@/@types";
-import { FeedPostCard } from "@/components/feed";
+import { FeedPostCard, PostCardSkeleton } from "@/components/feed";
 import { useFeedPosts } from "@/hooks";
-import { UIEmpty, UIQueryError, UISkeleton } from "@/ui";
+import { UIEmpty, UIQueryError } from "@/ui";
 
 type PostsQuery = ReturnType<typeof useFeedPosts>;
 
@@ -94,7 +94,7 @@ export function ProfilePostList({
           )}
         >
           {isPending || isFetchingNextPage ? (
-            <UISkeleton height={120} />
+            <PostCardSkeleton count={2} />
           ) : isError ? (
             <UIQueryError message={t("apiState.error")} onRetry={handleRetry} />
           ) : posts.length === 0 ? (

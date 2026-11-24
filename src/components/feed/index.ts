@@ -21,3 +21,4 @@ export { PostSummary } from "./PostSummary";
 export { CommentComposer } from "./CommentComposer";
 export { SaveButton } from "./SaveButton";
 export { AudienceOption } from "./AudienceOption";
+export { PostCardSkeleton } from "./PostCardSkeleton";

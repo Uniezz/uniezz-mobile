@@ -24,8 +24,9 @@ import {
   ProfileHero,
   ProfilePhotos,
   ProgrammeCard,
+  ProfileHeroSkeleton,
 } from "@/components/profile";
-import { FeedPostCard } from "@/components/feed";
+import { FeedPostCard, PostCardSkeleton } from "@/components/feed";
 import { ReportSheet } from "@/components/report";
 import {
   useBlockStudent,
@@ -33,7 +34,7 @@ import {
   useOpenDirectChat,
   usePublicProfile,
 } from "@/hooks";
-import { Icon, UIGlass, UIPage, UIQueryError, UISkeleton, UIText } from "@/ui";
+import { Icon, UIGlass, UIPage, UIQueryError, UIText } from "@/ui";
 import { authorName, HEADER_COMPACT_OFFSET, GENDER_LABELS } from "@/utils";
 
 export default function PublicProfileScreen() {
@@ -141,7 +142,7 @@ export default function PublicProfileScreen() {
         ListHeaderComponent={
           <View style={styles.page}>
             {isPending ? (
-              <UISkeleton height={220} />
+              <ProfileHeroSkeleton />
             ) : isError || !profile ? (
               <UIQueryError message={t("apiState.error")} onRetry={refetch} />
             ) : (
@@ -200,7 +201,7 @@ export default function PublicProfileScreen() {
         onEndReached={handleEndReached}
         ListEmptyComponent={
           !profile ? null : arePostsPending ? (
-            <UISkeleton height={120} />
+            <PostCardSkeleton count={2} />
           ) : arePostsError ? (
             <UIQueryError
               message={t("apiState.error")}
@@ -210,9 +211,7 @@ export default function PublicProfileScreen() {
             <UIText color="secondary">{t("students.noPosts")}</UIText>
           )
         }
-        ListFooterComponent={
-          isFetchingNextPage ? <UISkeleton height={110} /> : null
-        }
+        ListFooterComponent={isFetchingNextPage ? <PostCardSkeleton /> : null}
         renderItem={({ item }) => (
           <View style={styles.cell}>
             <FeedPostCard post={item} filters={postFilters} />

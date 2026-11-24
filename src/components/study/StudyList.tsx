@@ -4,7 +4,8 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { NativeScrollEvent, NativeSyntheticEvent } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { UIEmpty, UIQueryError, UISkeleton } from "@/ui";
+import { UIEmpty, UIQueryError } from "@/ui";
+import { StudyRowSkeleton } from "./StudyRowSkeleton";
 
 type StudyListProps<T extends { id: string }> = {
   items: T[];
@@ -56,7 +57,7 @@ export function StudyList<T extends { id: string }>({
         onEndReached={onEndReached}
         ListEmptyComponent={
           isPending ? (
-            <UISkeleton height={64} />
+            <StudyRowSkeleton count={6} />
           ) : isError ? (
             <UIQueryError
               message={t("apiState.error")}
@@ -64,9 +65,7 @@ export function StudyList<T extends { id: string }>({
             />
           ) : null
         }
-        ListFooterComponent={
-          isFetchingNextPage ? <UISkeleton height={64} /> : null
-        }
+        ListFooterComponent={isFetchingNextPage ? <StudyRowSkeleton /> : null}
       />
       {/* beside the list, not inside it: centred on the screen like the other tabs' cat, not under the chips */}
       {!isPending && !isError && items.length === 0 ? (

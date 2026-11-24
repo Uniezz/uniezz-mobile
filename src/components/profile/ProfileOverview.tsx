@@ -2,12 +2,13 @@ import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import type { Profile, ProfileGalleryPhoto } from "@/@types";
-import { UIQueryError, UISkeleton, UIText } from "@/ui";
+import { UIQueryError, UIText } from "@/ui";
 import { authorName } from "@/utils";
 import { InterestChips } from "./InterestChips";
 import { ProfileHero } from "./ProfileHero";
 import { ProfilePhotos } from "./ProfilePhotos";
 import { ProgrammeCard } from "./ProgrammeCard";
+import { ProfileHeroSkeleton } from "./ProfileHeroSkeleton";
 
 type ProfileOverviewProps = {
   profile: Profile | undefined;
@@ -40,7 +41,7 @@ export const ProfileOverview = ({
   if (isPending) {
     return (
       <View style={styles.page}>
-        <UISkeleton height={220} />
+        <ProfileHeroSkeleton />
       </View>
     );
   }

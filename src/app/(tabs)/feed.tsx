@@ -14,7 +14,12 @@ import {
 } from "react-native";
 import { EaseView } from "react-native-ease";
 import { StyleSheet } from "react-native-unistyles";
-import { FeaturedPosts, FeedFilters, FeedPostCard } from "@/components/feed";
+import {
+  FeaturedPosts,
+  FeedFilters,
+  FeedPostCard,
+  PostCardSkeleton,
+} from "@/components/feed";
 import type { FeedFilterValues } from "@/@types";
 import { useFeedPosts } from "@/hooks";
 import { ProfileButton } from "@/components/profile";
@@ -28,7 +33,6 @@ import {
   UIPage,
   UIQueryError,
   UISearchOverlay,
-  UISkeleton,
 } from "@/ui";
 import {
   DATE_PRESETS,
@@ -191,14 +195,12 @@ export default function FeedScreen() {
         }
         ListEmptyComponent={
           isPending ? (
-            <UISkeleton height={180} />
+            <PostCardSkeleton count={3} />
           ) : isError ? (
             <UIQueryError message={t("apiState.error")} onRetry={refetch} />
           ) : null
         }
-        ListFooterComponent={
-          isFetchingNextPage ? <UISkeleton height={110} /> : null
-        }
+        ListFooterComponent={isFetchingNextPage ? <PostCardSkeleton /> : null}
         renderItem={({ item }) => (
           <View style={styles.cell}>
             <FeedPostCard post={item} filters={feedFilters} />

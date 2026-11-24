@@ -25,6 +25,7 @@ import {
   ProfessorReviewForm,
   ProfessorReviewItem,
   ProfessorRow,
+  StudyRowSkeleton,
 } from "@/components/study";
 import {
   useDeleteMyProfessorReview,
@@ -35,8 +36,8 @@ import {
   UICollapsingHeader,
   UIPage,
   UIQueryError,
-  UISkeleton,
   UIText,
+  UISkeletonText,
 } from "@/ui";
 import { HEADER_COMPACT_OFFSET } from "@/utils";
 
@@ -133,7 +134,7 @@ export default function ProfessorScreen() {
         onEndReached={handleEndReached}
         ListHeaderComponent={
           isPending ? (
-            <UISkeleton height={120} />
+            <StudyRowSkeleton />
           ) : isError ? (
             <UIQueryError message={t("apiState.error")} onRetry={refetch} />
           ) : (
@@ -146,9 +147,7 @@ export default function ProfessorScreen() {
             </View>
           )
         }
-        ListFooterComponent={
-          isFetchingNextPage ? <UISkeleton height={56} /> : null
-        }
+        ListFooterComponent={isFetchingNextPage ? <UISkeletonText /> : null}
         renderItem={({ item }) => (
           <View style={styles.item}>
             <ProfessorReviewItem

@@ -32,6 +32,7 @@ import {
   CourseFormSheet,
   RatingInput,
   StudyRow,
+  StudyRowSkeleton,
 } from "@/components/study";
 import {
   useAddCourseComment,
@@ -49,8 +50,8 @@ import {
   UIIconButton,
   UIPage,
   UIQueryError,
-  UISkeleton,
   UIText,
+  UISkeletonText,
 } from "@/ui";
 import {
   FILE_TYPES,
@@ -210,7 +211,7 @@ export default function CourseScreen() {
         onEndReached={handleEndReached}
         ListHeaderComponent={
           isPending ? (
-            <UISkeleton height={220} />
+            <StudyRowSkeleton />
           ) : isError ? (
             <UIQueryError message={t("apiState.error")} onRetry={refetch} />
           ) : (
@@ -316,16 +317,14 @@ export default function CourseScreen() {
               <UIText size="md" weight="semibold">
                 {t("study.comments")}
               </UIText>
-              {areCommentsPending ? <UISkeleton height={56} /> : null}
+              {areCommentsPending ? <UISkeletonText count={3} /> : null}
               {!areCommentsPending && comments.length === 0 ? (
                 <UIText color="secondary">{t("study.noComments")}</UIText>
               ) : null}
             </View>
           )
         }
-        ListFooterComponent={
-          isFetchingNextPage ? <UISkeleton height={56} /> : null
-        }
+        ListFooterComponent={isFetchingNextPage ? <UISkeletonText /> : null}
         renderItem={({ item }) => (
           <CourseCommentItem
             comment={item}

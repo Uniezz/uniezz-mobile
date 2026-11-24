@@ -38,10 +38,10 @@ import {
   UIPage,
   UIQueryError,
   UISearchOverlay,
-  UISkeleton,
   UIText,
   UIUniversityLogo,
   UIBlur,
+  UISkeletonRow,
 } from "@/ui";
 import {
   apiErrorKey,
@@ -221,14 +221,14 @@ export default function NewGroupScreen() {
             ListHeaderComponent={listHeader}
             ListEmptyComponent={
               isPending ? (
-                <UISkeleton height={64} />
+                <UISkeletonRow isGlass count={8} />
               ) : isError ? (
                 <UIQueryError message={t("apiState.error")} onRetry={refetch} />
               ) : null
             }
             ListFooterComponent={
               isFetchingNextPage ? (
-                <UISkeleton height={64} />
+                <UISkeletonRow isGlass />
               ) : isAdding ? null : (
                 <UIText size="sm" color="secondary" style={styles.hint}>
                   {t("app.minimumMembers")}

@@ -10,3 +10,4 @@ export { StudyRow } from "./StudyRow";
 export { StudyFilters } from "./StudyFilters";
 export { ProfessorReviewItem } from "./ProfessorReviewItem";
 export { ProfessorReviewForm } from "./ProfessorReviewForm";
+export { StudyRowSkeleton } from "./StudyRowSkeleton";

@@ -10,3 +10,4 @@ export { ProfileOverview } from "./ProfileOverview";
 export { ProfilePostList } from "./ProfilePostList";
 export { ProfileButton } from "./ProfileButton";
 export { ProfilePhotos } from "./ProfilePhotos";
+export { ProfileHeroSkeleton } from "./ProfileHeroSkeleton";

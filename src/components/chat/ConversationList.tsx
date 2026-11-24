@@ -14,9 +14,9 @@ import {
   UIIconButton,
   UIQueryError,
   UISearchOverlay,
-  UISkeleton,
   UISubTabs,
   UIText,
+  UISkeletonRow,
 } from "@/ui";
 
 const FILTERS = [
@@ -112,7 +112,7 @@ export function ConversationList({
           onEndReached={onEndReached}
           ListEmptyComponent={
             isPending ? (
-              <UISkeleton height={64} />
+              <UISkeletonRow avatarSize="lg" count={8} />
             ) : isError ? (
               <UIQueryError message={t("apiState.error")} onRetry={onRetry} />
             ) : null
