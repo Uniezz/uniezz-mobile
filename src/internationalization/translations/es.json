@@ -191,7 +191,8 @@
     "likeLimit": "Has alcanzado el límite de {{limit}} conexiones de hoy. Inténtalo mañana.",
     "removeDescription": "Ambos perderéis el acceso a los perfiles completos del otro.",
     "removeHint": "Mantén pulsada la tarjeta para eliminar la conexión",
-    "removeTitle": "¿Eliminar esta conexión?"
+    "removeTitle": "¿Eliminar esta conexión?",
+    "pickBirthDate": "Elige una fecha"
   },
   "exams": {
     "action": "Subir material",

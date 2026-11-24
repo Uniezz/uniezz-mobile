@@ -191,7 +191,8 @@
     "likeLimit": "Du hast dein heutiges Limit von {{limit}} Likes erreicht. Versuch es morgen erneut.",
     "removeDescription": "Ihr verliert beide den Zugriff auf die vollständigen Profile der jeweils anderen Person.",
     "removeHint": "Halte die Karte gedrückt, um das Match zu entfernen",
-    "removeTitle": "Dieses Match entfernen?"
+    "removeTitle": "Dieses Match entfernen?",
+    "pickBirthDate": "Datum wählen"
   },
   "exams": {
     "action": "Material hochladen",

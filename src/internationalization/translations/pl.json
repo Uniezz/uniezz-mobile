@@ -201,7 +201,8 @@
     "ageSubmitted": "Wiek zapisany",
     "birthDateInvalid": "Podaj poprawną datę urodzenia. Musisz mieć co najmniej 16 lat.",
     "birthDateOnce": "Podaj prawdziwą datę urodzenia — można ją ustawić tylko raz.",
-    "birthDateImmutable": "Data urodzenia jest już ustawiona i nie można jej zmienić."
+    "birthDateImmutable": "Data urodzenia jest już ustawiona i nie można jej zmienić.",
+    "pickBirthDate": "Wybierz datę"
   },
   "exams": {
     "nextExam": "Twój najbliższy egzamin",

@@ -195,7 +195,8 @@
     "ageSubmitted": "Age submitted",
     "birthDateInvalid": "Enter a valid birth date. You must be at least 16.",
     "birthDateOnce": "Enter your real birth date — it can be set only once.",
-    "birthDateImmutable": "Your birth date is already set and can't be changed."
+    "birthDateImmutable": "Your birth date is already set and can't be changed.",
+    "pickBirthDate": "Choose a date"
   },
   "exams": {
     "nextExam": "Your next exam",
