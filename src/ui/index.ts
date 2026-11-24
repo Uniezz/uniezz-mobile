@@ -33,3 +33,4 @@ export * from "./UICollapsingHeader";
 export * from "./UISearchOverlay";
 export * from "./UIEmpty";
 export * from "./UICoin";
+export * from "./UIBlur";

@@ -1,6 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FlashList } from "@shopify/flash-list";
-import { BlurView } from "expo-blur";
 import { router, useLocalSearchParams } from "expo-router";
 import { usePostHog } from "posthog-react-native";
 import { useState } from "react";
@@ -12,6 +11,7 @@ import {
   NativeScrollEvent,
   NativeSyntheticEvent,
   View,
+  Platform,
 } from "react-native";
 import { KeyboardStickyView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -41,6 +41,7 @@ import {
   UISkeleton,
   UIText,
   UIUniversityLogo,
+  UIBlur,
 } from "@/ui";
 import {
   apiErrorKey,
@@ -283,7 +284,7 @@ export default function NewGroupScreen() {
         style={styles.footer}
       >
         {/* over the list once the keyboard lifts it; blurred like the headers, so a disabled (see-through) button stays readable */}
-        <BlurView intensity={50} tint="dark" style={styles.footerBlur} />
+        <UIBlur intensity={50} tint="dark" style={styles.footerBlur} />
         <UIButton
           radius="sm"
           size="rg"
@@ -358,10 +359,11 @@ const styles = StyleSheet.create((theme, rt) => ({
     paddingTop: theme.vs(8),
     paddingBottom: theme.vs(12),
   },
-  // shortcut: Android shows only the ink tint, as in the headers
   footerBlur: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: theme.colors.ink40,
+    // Android has no real blur: an opaque fill, so nothing scrolls through
+    backgroundColor:
+      Platform.OS === "android" ? theme.colors.ink : theme.colors.ink40,
   },
   create: {
     flexDirection: "row",

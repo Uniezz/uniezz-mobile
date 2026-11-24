@@ -7,10 +7,10 @@ import {
   type BottomSheetHandleProps,
   type BottomSheetModalProps,
 } from "@gorhom/bottom-sheet";
-import { BlurView } from "expo-blur";
 import type { ReactNode, Ref } from "react";
 import { Platform, useWindowDimensions, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { UIBlur } from "./UIBlur";
 import { StyleSheet } from "react-native-unistyles";
 import { Icon } from "./icons";
 import { SHEET_MAX_HEIGHT_RATIO } from "@/utils";
@@ -28,9 +28,8 @@ export type UIBottomSheetProps = {
   children: ReactNode;
 } & Omit<BottomSheetModalProps, "children">;
 
-// shortcut: Android shows only the translucent fill (no BlurTargetView behind the sheet), add one if Android needs real blur
 const renderBackground = ({ style }: BottomSheetBackgroundProps) => (
-  <BlurView intensity={80} tint="dark" style={[style, styles.background]} />
+  <UIBlur intensity={80} tint="dark" style={[style, styles.background]} />
 );
 
 export const UIBottomSheet = ({

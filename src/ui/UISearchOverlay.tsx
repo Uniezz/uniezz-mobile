@@ -1,7 +1,7 @@
-import { BlurView } from "expo-blur";
-import { Keyboard } from "react-native";
+import { Keyboard, Platform } from "react-native";
 import { KeyboardStickyView } from "react-native-keyboard-controller";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+import { UIBlur } from "./UIBlur";
 import { StyleSheet } from "react-native-unistyles";
 import { UISearch } from "./UISearch";
 
@@ -36,7 +36,7 @@ export const UISearchOverlay = ({
         style={styles.backdrop}
         onTouchStart={Keyboard.dismiss}
       >
-        <BlurView intensity={40} tint="dark" style={styles.blur} />
+        <UIBlur intensity={40} tint="dark" style={styles.blur} />
       </Animated.View>
       <KeyboardStickyView style={styles.bar}>
         <UISearch
@@ -59,10 +59,11 @@ const styles = StyleSheet.create((theme) => ({
     ...StyleSheet.absoluteFillObject,
     zIndex: 2,
   },
-  // shortcut: Android shows only the ink tint (no BlurTargetView around the screen), add one if Android needs real blur
   blur: {
     flex: 1,
-    backgroundColor: theme.colors.ink40,
+    // Android has no real blur: a dense dim instead, so the page behind barely shows
+    backgroundColor:
+      Platform.OS === "android" ? theme.colors.ink90 : theme.colors.ink40,
   },
   // pinned to the bottom, so the keyboard lifts it to sit just above the keys
   bar: {

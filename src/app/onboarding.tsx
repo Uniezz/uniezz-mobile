@@ -1,12 +1,11 @@
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { BlurView } from "expo-blur";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Redirect } from "expo-router";
 import { usePostHog } from "posthog-react-native";
 import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { ActivityIndicator, Keyboard, View } from "react-native";
+import { ActivityIndicator, Keyboard, View, Platform } from "react-native";
 import {
   KeyboardAwareScrollView,
   KeyboardStickyView,
@@ -35,6 +34,7 @@ import {
   UIInput,
   UIPage,
   UIText,
+  UIBlur,
 } from "@/ui";
 import {
   captureAction,
@@ -290,7 +290,7 @@ export default function OnboardingScreen() {
         offset={{ opened: bottomInset }}
         style={styles.footer}
       >
-        <BlurView intensity={50} tint="dark" style={styles.footerBlur} />
+        <UIBlur intensity={50} tint="dark" style={styles.footerBlur} />
         <View style={styles.actions}>
           {step > 0 ? (
             <UIIconButton
@@ -413,7 +413,9 @@ const styles = StyleSheet.create((theme, rt) => ({
   },
   footerBlur: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: theme.colors.ink40,
+    // Android has no real blur: an opaque fill, so nothing scrolls through
+    backgroundColor:
+      Platform.OS === "android" ? theme.colors.ink : theme.colors.ink40,
   },
   actions: {
     flexDirection: "row",

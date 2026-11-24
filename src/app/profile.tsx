@@ -11,7 +11,6 @@ import {
   MAX_PROFILE_PHOTOS,
 } from "@/utils";
 import type { FlashListRef } from "@shopify/flash-list";
-import { BlurView } from "expo-blur";
 import { router } from "expo-router";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -60,7 +59,7 @@ import {
   usePickProfilePhotos,
   useRequestNotificationPermission,
 } from "@/hooks";
-import { Icon, UIGlass, UIPage, UISubTabs } from "@/ui";
+import { Icon, UIGlass, UIPage, UISubTabs, UIBlur } from "@/ui";
 import { ApiRequestError } from "@/api";
 
 export default function ProfileScreen() {
@@ -372,7 +371,7 @@ export default function ProfileScreen() {
   const renderTabBar = (isPinned: boolean) => (
     <View style={styles.tabBar} onLayout={handleTabBarLayout}>
       {isPinned ? (
-        <BlurView intensity={50} tint="dark" style={styles.tabBarBlur} />
+        <UIBlur intensity={50} tint="dark" style={styles.tabBarBlur} />
       ) : null}
       <UISubTabs
         items={[t("students.posts"), t("students.liked"), t("students.saved")]}
@@ -455,7 +454,9 @@ const styles = StyleSheet.create((theme) => ({
   },
   tabBarBlur: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: theme.colors.ink40,
+    // Android has no real blur: an opaque fill, so nothing scrolls through
+    backgroundColor:
+      Platform.OS === "android" ? theme.colors.ink : theme.colors.ink40,
   },
   headerActions: {
     flexDirection: "row",
