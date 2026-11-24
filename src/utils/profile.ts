@@ -65,11 +65,6 @@ export const toDetailsValues = (
   songUrl: profile.songUrl ?? "",
 });
 
-// shortcut: the API has no "new account" flag, so a profile created in the last 10 minutes
-// counts as a first sign-in, as on web; switch when the sign-in response returns one
-export const isNewProfile = (createdAt: string, now = Date.now()) =>
-  now - Date.parse(createdAt) < 10 * 60_000;
-
 // first sign-in onboarding, in web's order
 export const ONBOARDING_STEPS = ["photo", "details", "programmes"] as const;
 

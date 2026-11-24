@@ -68,7 +68,9 @@ const apiMiddleware: Middleware = {
         const allowsNoContent =
           (request.method === "POST" && schemaPath === "/auth/otp/request") ||
           (request.method === "PUT" &&
-            schemaPath === "/connections/blocks/{id}") ||
+            ["/connections/blocks/{id}", "/profile/onboarding"].includes(
+              schemaPath,
+            )) ||
           (request.method === "DELETE" &&
             [
               "/feed/comments/{id}",

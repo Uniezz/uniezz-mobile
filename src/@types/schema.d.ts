@@ -113,10 +113,35 @@ export interface paths {
     };
     /**
      * Get the list of supported universities
-     * @description Lists every university the app supports, in display order, with how its students log in.
+     * @description Lists every university the app supports, in display order, with how its students log in. The list is short by design and not paginated.
      */
     get: operations["getUniversities"];
     put?: never;
+    /**
+     * Add a supported university
+     * @description Students can log in to it right away. A domain belongs to one university only. Admins only.
+     */
+    post: operations["createUniversity"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/auth/universities/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get a supported university */
+    get: operations["getUniversity"];
+    /**
+     * Replace a supported university's name, login method, domains and faculties
+     * @description Every field is replaced, so send the full lists of domains and faculties. Students who already signed up keep their accounts. Admins only.
+     */
+    put: operations["replaceUniversity"];
     post?: never;
     delete?: never;
     options?: never;
@@ -944,6 +969,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/moderation/course-comments/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * Remove any student's comment on a course
+     * @description Deletes the comment and marks its pending reports reviewed. Removing a comment that is already gone succeeds. Moderators and admins only.
+     */
+    delete: operations["removeCourseComment"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/moderation/courses/{id}": {
     parameters: {
       query?: never;
@@ -1043,6 +1088,26 @@ export interface paths {
      * @description Deletes the post with its comments, likes and media, and marks its pending reports reviewed. Removing a post that is already gone succeeds. Moderators and admins only.
      */
     delete: operations["removePost"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/moderation/professor-reviews/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * Remove any student's review of a professor
+     * @description Deletes the review and marks its pending reports reviewed. Removing a review that is already gone succeeds. Moderators and admins only.
+     */
+    delete: operations["removeProfessorReview"];
     options?: never;
     head?: never;
     patch?: never;
@@ -1188,6 +1253,26 @@ export interface paths {
     patch: operations["updateMyProfile"];
     trace?: never;
   };
+  "/profile/onboarding": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /**
+     * Mark the logged-in student's onboarding as finished
+     * @description Call it when the student finishes or skips onboarding; onboardedAt on the profile is set once and calling again changes nothing. Until then the student is left out of the student list.
+     */
+    put: operations["completeMyOnboarding"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/profile/photos": {
     parameters: {
       query?: never;
@@ -1287,7 +1372,7 @@ export interface paths {
     };
     /**
      * List students
-     * @description Newest accounts first, paginated by cursor. Gender is included (null until set) and has no privacy toggle.
+     * @description Newest accounts first, paginated by cursor. Students who have not finished onboarding or have not set both a first and a last name are left out. Gender is included (null until set) and has no privacy toggle.
      */
     get: operations["listProfiles"];
     put?: never;
@@ -1687,6 +1772,50 @@ export interface paths {
      * @description One rating per student; rating again replaces the previous one. A professor who left the POL-on list cannot be rated.
      */
     put: operations["rateProfessor"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/study/professors/{id}/review": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /**
+     * Review a professor
+     * @description One review per student; reviewing again replaces the text. Reviews are shown without their author. Counts toward the limit of 30 creates an hour.
+     */
+    put: operations["reviewProfessor"];
+    post?: never;
+    /**
+     * Delete the student's own review of a professor
+     * @description A review that is already gone is left as it is and the call still succeeds.
+     */
+    delete: operations["deleteMyProfessorReview"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/study/professors/{id}/reviews": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List the reviews of a professor
+     * @description Newest first. Reviews of blocked students are left out.
+     */
+    get: operations["listProfessorReviews"];
+    put?: never;
     post?: never;
     delete?: never;
     options?: never;
@@ -2208,7 +2337,47 @@ export interface components {
         | "candidate"
         | "file"
         | "course"
-        | "message";
+        | "message"
+        | "course_comment"
+        | "professor_review";
+    };
+    CreateUniversityInputBody: {
+      /**
+       * @description How students log in
+       * @example OTP
+       * @enum {string}
+       */
+      authMethod: "USOS" | "OTP";
+      /**
+       * @description Student email domains accepted for OTP login, at least one for OTP universities
+       * @example [
+       *       "student.kul.pl"
+       *     ]
+       */
+      domains: string[] | null;
+      /** @description Faculties in display order */
+      faculties: components["schemas"]["FacultyRequest"][] | null;
+      /**
+       * @description Lowercase slug that identifies the university; it cannot change
+       * @example kul
+       */
+      id: string;
+      /**
+       * @description 3 to 200 characters after cleaning
+       * @example Katolicki Uniwersytet Lubelski Jana Pawła II
+       */
+      name: string;
+      /**
+       * Format: int64
+       * @description Display order, lowest first
+       * @example 3
+       */
+      position: number;
+      /**
+       * Format: uuid
+       * @description POL-on institution whose professors are imported; omit to import none
+       */
+      radonInstitutionId?: string;
     };
     CreateUploadInputBody: {
       /**
@@ -2274,16 +2443,40 @@ export interface components {
       /** @description One-time login code from the auth redirect */
       code: string;
     };
-    FacultyDTO: {
+    Faculty: {
       /**
        * @description Street address of the faculty building
        * @example pl. Marii Curie-Skłodowskiej 2
        */
       address: string;
       /** @description Geographic location of the faculty building */
-      location: components["schemas"]["GeoPointDTO"];
+      location: components["schemas"]["GeoPoint"];
       /**
        * @description Display name of the faculty
+       * @example Wydział Chemii
+       */
+      name: string;
+    };
+    FacultyRequest: {
+      /**
+       * @description Up to 200 characters after cleaning
+       * @example pl. Marii Curie-Skłodowskiej 2
+       */
+      address: string;
+      /**
+       * Format: double
+       * @description Latitude in decimal degrees (WGS 84)
+       * @example 51.24513
+       */
+      latitude: number;
+      /**
+       * Format: double
+       * @description Longitude in decimal degrees (WGS 84)
+       * @example 22.54247
+       */
+      longitude: number;
+      /**
+       * @description 3 to 200 characters after cleaning
        * @example Wydział Chemii
        */
       name: string;
@@ -2301,7 +2494,7 @@ export interface components {
     FeaturedPostsOutputBody: {
       items: components["schemas"]["FeaturedPost"][] | null;
     };
-    GeoPointDTO: {
+    GeoPoint: {
       /**
        * Format: double
        * @description Latitude in decimal degrees (WGS 84)
@@ -2449,6 +2642,11 @@ export interface components {
       nextCursor: string | null;
       /** @description Pass as beforeCursor to get the previous page; null on the first page */
       previousCursor: string | null;
+    };
+    ListProfessorReviewsOutputBody: {
+      items: components["schemas"]["ProfessorReview"][] | null;
+      /** @description Null on the last page */
+      nextCursor: string | null;
     };
     ListProfessorsOutputBody: {
       items: components["schemas"]["Professor"][] | null;
@@ -2707,6 +2905,20 @@ export interface components {
       /** @example umcs */
       universityId: string;
     };
+    ProfessorReview: {
+      /** @example Oral exam, three questions from the published list. */
+      content: string;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: uuid */
+      id: string;
+      /** @description True when the signed-in student wrote the review and may change or delete it */
+      isMine: boolean;
+      /** Format: uuid */
+      professorId: string;
+      /** Format: date-time */
+      updatedAt: string;
+    };
     Profile: {
       /** @description URL of the avatar image, null when the student has none */
       avatarUrl: string | null;
@@ -2764,6 +2976,11 @@ export interface components {
       language: "en" | "pl" | "uk" | "ru" | "be" | "de" | "es";
       /** @example Kowalski */
       lastName: string | null;
+      /**
+       * Format: date-time
+       * @description When the student finished or skipped onboarding; null until then
+       */
+      onboardedAt: string | null;
       /** @description Empty until the student selects modes */
       openTo: ("friends" | "studyBuddy" | "dating")[] | null;
       /** @description Which profile fields other students see. A missing setting keeps its current value. */
@@ -3019,6 +3236,13 @@ export interface components {
       targetId: string;
       targetType: string;
     };
+    ReviewProfessorInputBody: {
+      /**
+       * @description Up to 1000 characters after HTML is stripped
+       * @example Oral exam, three questions from the published list.
+       */
+      content: string;
+    };
     SavePreferencesInputBody: {
       /**
        * Format: date
@@ -3082,21 +3306,21 @@ export interface components {
       /** @example umcs */
       universityId: string | null;
     };
-    UniversityDTO: {
+    University: {
       /**
        * @description Authentication method used by the university
        * @example USOS
        */
       authMethod: string;
       /**
-       * @description Allowed student email domains for OTP authentication
+       * @description Allowed student email domains for OTP authentication; empty for USOS universities
        * @example [
        *       "student.kul.pl"
        *     ]
        */
-      domains?: string[] | null;
+      domains: string[] | null;
       /** @description Faculties of the university with their locations */
-      faculties: components["schemas"]["FacultyDTO"][] | null;
+      faculties: components["schemas"]["Faculty"][] | null;
       /**
        * @description Unique identifier of the university
        * @example umcs
@@ -3107,6 +3331,50 @@ export interface components {
        * @example Uniwersytet Marii Curie-Skłodowskiej
        */
       name: string;
+      /**
+       * Format: int64
+       * @description Display order, lowest first
+       * @example 1
+       */
+      position: number;
+      /**
+       * Format: uuid
+       * @description POL-on institution whose professors are imported; null when none are imported
+       */
+      radonInstitutionId: string | null;
+    };
+    UniversityRequest: {
+      /**
+       * @description How students log in
+       * @example OTP
+       * @enum {string}
+       */
+      authMethod: "USOS" | "OTP";
+      /**
+       * @description Student email domains accepted for OTP login, at least one for OTP universities
+       * @example [
+       *       "student.kul.pl"
+       *     ]
+       */
+      domains: string[] | null;
+      /** @description Faculties in display order */
+      faculties: components["schemas"]["FacultyRequest"][] | null;
+      /**
+       * @description 3 to 200 characters after cleaning
+       * @example Uniwersytet Marii Curie-Skłodowskiej
+       */
+      name: string;
+      /**
+       * Format: int64
+       * @description Display order, lowest first
+       * @example 1
+       */
+      position: number;
+      /**
+       * Format: uuid
+       * @description POL-on institution whose professors are imported; omit to import none
+       */
+      radonInstitutionId?: string;
     };
     UpdateChallengeInputBody: {
       /**
@@ -3263,6 +3531,11 @@ export interface components {
       language: "en" | "pl" | "uk" | "ru" | "be" | "de" | "es";
       /** @example Kowalski */
       lastName: string | null;
+      /**
+       * Format: date-time
+       * @description When the student finished or skipped onboarding; null until then
+       */
+      onboardedAt: string | null;
       /** @description Empty until the student selects modes */
       openTo: ("friends" | "studyBuddy" | "dating")[] | null;
       /** @description Which profile fields other students see. A missing setting keeps its current value. */
@@ -3672,11 +3945,227 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["UniversityDTO"][] | null;
+          "application/json": components["schemas"]["University"][] | null;
         };
       };
       /** @description Error */
       default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  createUniversity: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CreateUniversityInputBody"];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["University"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  getUniversity: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["University"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  replaceUniversity: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UniversityRequest"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["University"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
         headers: {
           [name: string]: unknown;
         };
@@ -7256,6 +7745,62 @@ export interface operations {
       };
     };
   };
+  removeCourseComment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
   removeCourse: {
     parameters: {
       query?: never;
@@ -7560,6 +8105,62 @@ export interface operations {
     };
   };
   removePost: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Forbidden */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  removeProfessorReview: {
     parameters: {
       query?: never;
       header?: never;
@@ -8226,6 +8827,42 @@ export interface operations {
       };
       /** @description Unprocessable Entity */
       422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  completeMyOnboarding: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
         headers: {
           [name: string]: unknown;
         };
@@ -10476,6 +11113,205 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["Professor"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  reviewProfessor: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ReviewProfessorInputBody"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ProfessorReview"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Too Many Requests */
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  deleteMyProfessorReview: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  listProfessorReviews: {
+    parameters: {
+      query?: {
+        /** @description nextCursor from the previous page; omit for the first page */
+        cursor?: string;
+        /** @description Maximum number of items in the page */
+        limit?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ListProfessorReviewsOutputBody"];
         };
       };
       /** @description Bad Request */

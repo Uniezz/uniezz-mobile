@@ -1,7 +1,7 @@
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { BlurView } from "expo-blur";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Redirect, router } from "expo-router";
+import { Redirect } from "expo-router";
 import { usePostHog } from "posthog-react-native";
 import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -17,9 +17,13 @@ import { toast } from "sonner-native";
 import type { PersonalDetailsFormValues } from "@/@types";
 import { AuthPage } from "@/components/auth";
 import { ProgrammeCard, ProgrammesSheet } from "@/components/profile";
-import { useMyProfile, usePickProfileImage, useUpdateMyProfile } from "@/hooks";
+import {
+  useCompleteOnboarding,
+  useMyProfile,
+  usePickProfileImage,
+  useUpdateMyProfile,
+} from "@/hooks";
 import { personalDetailsSchema } from "@/schemas";
-import { isOnboardingDone, markOnboardingDone } from "@/store";
 import { vs } from "@/theme/scale";
 import {
   UIPressable,
@@ -34,13 +38,13 @@ import {
 } from "@/ui";
 import {
   captureAction,
-  isNewProfile,
   ONBOARDING_STEPS,
   splitInterests,
   toDetailsValues,
 } from "@/utils";
 
-// first sign-in onboarding, as on web: photo, details, programmes; skipping or finishing closes it for good
+// first sign-in onboarding, as on web: photo, details, programmes. It shows until the profile's
+// onboardedAt is set; skipping or finishing sets it for good, on every device
 export default function OnboardingScreen() {
   const { t } = useTranslation();
   const posthog = usePostHog();
@@ -49,11 +53,11 @@ export default function OnboardingScreen() {
     useUpdateMyProfile();
   const { pickImage: handlePhotoPress, isPending: isUploadingPhoto } =
     usePickProfileImage("avatar");
+  const { mutateAsync: completeOnboarding, isPending: isCompleting } =
+    useCompleteOnboarding();
   const programmesRef = useRef<BottomSheetModal>(null);
   const { bottom: bottomInset } = useSafeAreaInsets();
   const [step, setStep] = useState(0);
-  // decided once, so the 10-minute window can't close onboarding midway
-  const [isShown, setIsShown] = useState<boolean>();
   const {
     control,
     handleSubmit,
@@ -64,30 +68,30 @@ export default function OnboardingScreen() {
     resetOptions: { keepDirtyValues: true },
   });
 
-  if (profile && isShown === undefined)
-    setIsShown(
-      isNewProfile(profile.createdAt) && !isOnboardingDone(profile.id),
-    );
-
-  if (isPending || (profile && isShown === undefined)) {
+  if (isPending) {
     return (
       <UIPage style={styles.loading}>
         <ActivityIndicator color="white" />
       </UIPage>
     );
   }
-  if (isError || !isShown) return <Redirect href="/feed" />;
+  // finished or skipped (here or on another device): straight to the feed
+  if (isError || profile.onboardedAt) return <Redirect href="/feed" />;
 
   const key = ONBOARDING_STEPS[step]!;
   const isLast = step === ONBOARDING_STEPS.length - 1;
   const programmes = profile.programmes ?? [];
-  const isBusy = isSaving || isUploadingPhoto;
+  const isBusy = isSaving || isUploadingPhoto || isCompleting;
   // skip doesn't save the form, so it waits for a saved name
   const canSkip = Boolean(profile.firstName && profile.lastName);
 
-  const goToFeed = () => {
-    markOnboardingDone(profile.id);
-    router.replace("/feed");
+  // once the API stored it, onboardedAt is in the profile and the Redirect above takes over
+  const goToFeed = async () => {
+    try {
+      await completeOnboarding();
+    } catch {
+      toast.error(t("apiState.error"));
+    }
   };
   const saveDetails = handleSubmit(
     async ({ interests, songUrl, gender: _gender, ...values }) => {

@@ -8,6 +8,7 @@ import { useUploadImages } from "./useMedia";
 import {
   addMyProfilePhoto,
   addMyProgramme,
+  completeMyOnboarding,
   deleteMyAvatar,
   deleteMyBanner,
   deleteMyProfile,
@@ -26,6 +27,30 @@ export function useMyProfile() {
     gcTime: 30 * 60_000,
     queryKey: ["profile", "me"],
     queryFn: getMyProfile,
+  });
+}
+
+// as on the web: onboardedAt is set in the cache at once, so the onboarding screen leaves without
+// waiting for a refetch; onboarded students now appear in the student list
+export function useCompleteOnboarding() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    meta: { analyticsAction: "onboarding_complete" },
+    mutationFn: completeMyOnboarding,
+    onSuccess: () => {
+      queryClient.setQueryData<Profile>(
+        ["profile", "me"],
+        (profile) =>
+          profile && {
+            ...profile,
+            onboardedAt: profile.onboardedAt ?? new Date().toISOString(),
+          },
+      );
+      return Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["profile", "me"] }),
+        queryClient.invalidateQueries({ queryKey: ["profiles"] }),
+      ]);
+    },
   });
 }
 

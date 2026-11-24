@@ -6,6 +6,11 @@ export async function getMyProfile(): Promise<Profile> {
   return data!;
 }
 
+// finished or skipped: sets onboardedAt once, and the student joins the student list
+export async function completeMyOnboarding() {
+  await api.PUT("/profile/onboarding");
+}
+
 export async function deleteMyProfile() {
   await api.DELETE("/profile/me");
 }
