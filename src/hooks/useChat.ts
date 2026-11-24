@@ -3,8 +3,9 @@ import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner-native";
 import type { CreateChatGroupInput, PickedImage, Profile } from "@/@types";
-import { $api, sendChatMessage, uploadImage } from "@/api";
+import { $api, ApiRequestError, sendChatMessage, uploadImage } from "@/api";
 import {
+  DRAFT_CHAT_ID,
   apiErrorKey,
   chatKeys,
   findCachedConversation,
@@ -34,14 +35,80 @@ export const useChatConversations = () =>
     },
   );
 
+// message requests sent to you, newest first; they stay out of the chat list until you accept or reply
+export const useChatRequests = () =>
+  $api.useInfiniteQuery(
+    "get",
+    "/chat/requests",
+    { params: { query: { limit: 20 } } },
+    {
+      staleTime: 15_000,
+      gcTime: 10 * 60_000,
+      initialPageParam: null,
+      getNextPageParam: (page) => page.nextCursor,
+    },
+  );
+
+// a message request is created together with its first message; a retry of the same failed text
+// reuses its key, so it is not sent twice
+export function useCreateChatRequest() {
+  const queryClient = useQueryClient();
+  const { mutateAsync, isPending, isError, variables } = $api.useMutation(
+    "post",
+    "/chat/requests",
+    {
+      meta: { analyticsAction: "chat_request_create" },
+      onSuccess: ({ id }) => refetchChatConversation(queryClient, id),
+    },
+  );
+  const previousKey = variables?.params?.header?.["Idempotency-Key"];
+  return {
+    isPending,
+    createRequest: (userId: string, body: string) =>
+      mutateAsync({
+        body: { userId, body },
+        params: {
+          header: {
+            "Idempotency-Key":
+              isError &&
+              previousKey &&
+              variables?.body.userId === userId &&
+              variables.body.body === body
+                ? previousKey
+                : idempotencyKey(),
+          },
+        },
+      }),
+  };
+}
+
+// the request becomes a normal chat and moves into the list
+export function useAcceptChatRequest(id: string) {
+  const queryClient = useQueryClient();
+  return $api.useMutation("put", "/chat/requests/{id}/acceptance", {
+    meta: { analyticsAction: "chat_request_accept" },
+    onSuccess: () => refetchChatConversation(queryClient, id),
+  });
+}
+
+// silent: the sender still sees it pending; it leaves your requests with its cache
+export function useDeclineChatRequest(id: string) {
+  const queryClient = useQueryClient();
+  return $api.useMutation("delete", "/chat/requests/{id}", {
+    meta: { analyticsAction: "chat_request_decline" },
+    onSuccess: () => forgetChatConversation(queryClient, id),
+  });
+}
+
 // the header shows at once from the loaded chat list while the conversation itself loads
-export function useChatConversation(id: string) {
+export function useChatConversation(id: string, isEnabled = true) {
   const queryClient = useQueryClient();
   return $api.useQuery(
     "get",
     "/chat/conversations/{id}",
     { params: { path: { id } } },
     {
+      enabled: isEnabled,
       staleTime: 15_000,
       gcTime: 10 * 60_000,
       placeholderData: () =>
@@ -51,12 +118,13 @@ export function useChatConversation(id: string) {
 }
 
 // newest first, as the API pages them
-export const useChatMessages = (id: string) =>
+export const useChatMessages = (id: string, isEnabled = true) =>
   $api.useInfiniteQuery(
     "get",
     "/chat/conversations/{id}/messages",
     { params: { path: { id }, query: { limit: 30 } } },
     {
+      enabled: isEnabled,
       staleTime: 5_000,
       gcTime: 10 * 60_000,
       initialPageParam: null,
@@ -116,6 +184,14 @@ export function useOpenDirectChat() {
       router.push({ pathname: "/chat/[id]", params: { id } });
       return refetchChatConversation(queryClient, id);
     } catch (error) {
+      // not a Connection and no chat yet: nothing exists until the first message goes out as a request
+      if (error instanceof ApiRequestError && error.status === 409) {
+        return router.push({
+          pathname: "/chat/[id]",
+          // no conversation id exists yet; the screen opens as a draft for this student
+          params: { id: DRAFT_CHAT_ID, userId },
+        });
+      }
       toast.error(t(apiErrorKey(error)));
     }
   };

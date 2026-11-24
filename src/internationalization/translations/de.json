@@ -157,7 +157,19 @@
     "delete": "Löschen",
     "report": "Melden",
     "deletedAccount": "Gelöschtes Konto",
-    "someone": "jemand"
+    "someone": "jemand",
+    "requestsTab": "Anfragen",
+    "requestFirstMessage": "Schreib deine erste Nachricht an {{name}}. Bis die Anfrage angenommen ist, kannst du eine senden, nur Text, ohne Links.",
+    "noRequests": "Keine Nachrichtenanfragen",
+    "requestFrom": "{{name}} möchte dir schreiben",
+    "requestHint": "Nimm an, um zu antworten. Ablehnen ist still: die Person erfährt es nicht.",
+    "accept": "Annehmen",
+    "decline": "Ablehnen",
+    "requestDeclined": "Anfrage abgelehnt",
+    "requestWaiting": "Anfrage gesendet. Du kannst mehr schreiben, sobald {{name}} sie annimmt oder antwortet.",
+    "requestPending": "Bis deine Anfrage angenommen ist, kannst du eine Textnachricht ohne Links und Fotos senden.",
+    "rateLimit": "Zu viele Nachrichten auf einmal. Versuch es gleich noch einmal.",
+    "cannotMessage": "Diese Person nimmt keine Nachrichten von dir an."
   },
   "connections": {
     "subtitle": "Lerne Studierende aller fünf Hochschulen kennen",

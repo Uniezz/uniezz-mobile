@@ -220,7 +220,7 @@ export interface paths {
     put?: never;
     /**
      * Open the direct conversation with a student
-     * @description Returns 201 when the conversation was created and 200 when it already existed. Without a Connection it is a message request: the caller may send one text message without links until the other student accepts or replies, at most 20 new requests a day. Students who do not accept messages from the caller, blocked either way, banned or unknown answer 404.
+     * @description Returns 201 when the conversation was created and 200 when it already existed. A student who is not a Connection and has no conversation with the caller answers 409 request_required: send the first message with POST /chat/requests. Students who do not accept messages from the caller, blocked either way, banned or unknown answer 404.
      */
     post: operations["openDirectConversation"];
     delete?: never;
@@ -412,7 +412,11 @@ export interface paths {
      */
     get: operations["listChatRequests"];
     put?: never;
-    post?: never;
+    /**
+     * Send a message request to a student
+     * @description Creates the conversation together with its first message, so nothing is created before the caller writes. At most 20 requests a day. Students who do not accept messages from the caller, blocked either way, banned or unknown answer 404; a Connection or an existing conversation answers 409 conversation_exists.
+     */
+    post: operations["createChatRequest"];
     delete?: never;
     options?: never;
     head?: never;
@@ -2410,6 +2414,18 @@ export interface components {
       texts: {
         [key: string]: components["schemas"]["ChallengeText"];
       };
+    };
+    CreateChatRequestInputBody: {
+      /**
+       * @description The first message: 1–4000 characters after HTML is stripped, without links
+       * @example Hej, chodzimy razem na analizę?
+       */
+      body: string;
+      /**
+       * Format: uuid
+       * @description A student who is not one of your Connections and has no conversation with you yet
+       */
+      userId: string;
     };
     CreateCommentInputBody: {
       /** @description 1–1000 characters after HTML is stripped */
@@ -4649,8 +4665,8 @@ export interface operations {
           "application/json": components["schemas"]["ErrorBody"];
         };
       };
-      /** @description Unprocessable Entity */
-      422: {
+      /** @description Conflict */
+      409: {
         headers: {
           [name: string]: unknown;
         };
@@ -4658,8 +4674,8 @@ export interface operations {
           "application/json": components["schemas"]["ErrorBody"];
         };
       };
-      /** @description Too Many Requests */
-      429: {
+      /** @description Unprocessable Entity */
+      422: {
         headers: {
           [name: string]: unknown;
         };
@@ -5585,6 +5601,106 @@ export interface operations {
       };
       /** @description Unprocessable Entity */
       422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  createChatRequest: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description A UUID. Repeating the request with the same key and body returns the conversation the first one created */
+        "Idempotency-Key"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CreateChatRequestInputBody"];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          "Idempotent-Replayed"?: string;
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Conversation"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Gone */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unprocessable Entity */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Too Many Requests */
+      429: {
         headers: {
           [name: string]: unknown;
         };

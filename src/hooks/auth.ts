@@ -1,7 +1,7 @@
 import { usePostHog } from "posthog-react-native";
 import { captureAction, getUsosStartUrl } from "@/utils";
 import { $api, requestOtpCode, verifyOtpCode } from "@/api";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { IssuedSession } from "@/@types";
 import { useSession } from "@/contexts";
 import { router } from "expo-router";
@@ -11,6 +11,7 @@ import { useEffect, useRef } from "react";
 import { openAuthSessionAsync } from "expo-web-browser";
 import { Platform } from "react-native";
 import i18n from "@/internationalization";
+import { myProfileQuery } from "./useMyProfile";
 
 const USOS_REDIRECT_URL = new URL(Linking.createURL("auth/callback"));
 
@@ -20,8 +21,10 @@ function showLoginError(messageKey: string): void {
   });
 }
 
-function useStartSession() {
+function useStartSession(authMethod: "usos" | "otp") {
   const { saveSession } = useSession();
+  const queryClient = useQueryClient();
+  const posthog = usePostHog();
 
   return async (session: IssuedSession) => {
     try {
@@ -33,6 +36,17 @@ function useStartSession() {
       router.replace("/(auth)");
       return;
     }
+    // joins the anonymous events before sign-in to the student; only the internal id and the
+    // university, never an email or a name. Onboarding reads the same cached profile
+    try {
+      const { id, universityId } = await queryClient.fetchQuery(myProfileQuery);
+      posthog.identify(id, {
+        university: universityId,
+        auth_method: authMethod,
+      });
+    } catch {
+      // analytics must not block signing in
+    }
 
     // onboarding sends a complete profile straight on to the feed
     router.replace("/onboarding");
@@ -40,7 +54,7 @@ function useStartSession() {
 }
 
 export function useExchangeLoginCode() {
-  const startSession = useStartSession();
+  const startSession = useStartSession("usos");
 
   return $api.useMutation("post", "/auth/exchange", {
     meta: { analyticsAction: "login_exchange" },
@@ -60,7 +74,7 @@ export function useRequestOtpCode() {
 }
 
 export function useVerifyOtpCode() {
-  const startSession = useStartSession();
+  const startSession = useStartSession("otp");
 
   return useMutation({
     meta: { analyticsAction: "otp_verify" },

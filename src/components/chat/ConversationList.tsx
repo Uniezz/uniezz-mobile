@@ -5,6 +5,7 @@ import { FlashList } from "@shopify/flash-list";
 import { Keyboard, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import type { ApiConversation } from "@/@types";
+import { useChatRequests } from "@/hooks";
 import { conversationTitle } from "@/utils";
 import { ConnectionAvatarList } from "./ConnectionAvatarList";
 import { ConversationRow } from "./ConversationRow";
@@ -22,6 +23,7 @@ import {
 const FILTERS = [
   ["all", "app.all"],
   ["groups", "app.groups"],
+  ["requests", "chat.requestsTab"],
 ] as const;
 
 type ConversationListProps = {
@@ -62,8 +64,35 @@ export function ConversationList({
   const [filter, setFilter] = useState<(typeof FILTERS)[number][0]>("all");
   const handleFilterPress = (index: number) =>
     setFilter(FILTERS[index]?.[0] ?? "all");
+  // message requests stay out of the chat list; their tab reads them from their own endpoint
+  const {
+    data: requestPages,
+    isPending: areRequestsPending,
+    isError: isRequestsError,
+    refetch: refetchRequests,
+    fetchNextPage: fetchNextRequests,
+    hasNextPage: hasMoreRequests,
+    isFetchingNextPage: isFetchingRequests,
+  } = useChatRequests();
+  const requests =
+    requestPages?.pages.flatMap((page) => page.items ?? []) ?? [];
+  const isRequests = filter === "requests";
+  const [areRequestsRefreshing, setAreRequestsRefreshing] = useState(false);
+  const handleRequestsRefresh = () => {
+    setAreRequestsRefreshing(true);
+    return refetchRequests().finally(() => setAreRequestsRefreshing(false));
+  };
+  const handleRequestsEndReached = () => {
+    if (hasMoreRequests && !isFetchingRequests) return fetchNextRequests();
+  };
+  // counts the loaded pages only; the API has no request total
+  const requestsLabel = requests.length
+    ? `${t("chat.requestsTab")} (${requests.length}${hasMoreRequests ? "+" : ""})`
+    : t("chat.requestsTab");
+  const listPending = isRequests ? areRequestsPending : isPending;
+  const listError = isRequests ? isRequestsError : isError;
   // shortcut: search filters only the loaded pages; the API has no conversation search yet
-  const visible = conversations.filter(
+  const visible = (isRequests ? requests : conversations).filter(
     (item) =>
       conversationTitle(item, t).toLowerCase().includes(query.toLowerCase()) &&
       (filter !== "groups" || item.kind === "group"),
@@ -93,7 +122,9 @@ export function ConversationList({
         </View>
         <View style={styles.filters}>
           <UISubTabs
-            items={FILTERS.map(([, label]) => t(label))}
+            items={FILTERS.map(([value, label]) =>
+              value === "requests" ? requestsLabel : t(label),
+            )}
             selectedItemIndex={FILTERS.findIndex(([value]) => value === filter)}
             onPress={handleFilterPress}
           />
@@ -107,14 +138,17 @@ export function ConversationList({
           data={visible}
           keyExtractor={(item) => item.id}
           showsVerticalScrollIndicator={false}
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          onEndReached={onEndReached}
+          refreshing={isRequests ? areRequestsRefreshing : refreshing}
+          onRefresh={isRequests ? handleRequestsRefresh : onRefresh}
+          onEndReached={isRequests ? handleRequestsEndReached : onEndReached}
           ListEmptyComponent={
-            isPending ? (
+            listPending ? (
               <UISkeletonRow avatarSize="lg" count={8} />
-            ) : isError ? (
-              <UIQueryError message={t("apiState.error")} onRetry={onRetry} />
+            ) : listError ? (
+              <UIQueryError
+                message={t("apiState.error")}
+                onRetry={isRequests ? refetchRequests : onRetry}
+              />
             ) : null
           }
           renderItem={({ item }) => (
@@ -123,8 +157,11 @@ export function ConversationList({
         />
       </View>
       {/* beside the list, not inside it, so the cat centres on the screen like every other empty state */}
-      {!isPending && !isError && visible.length === 0 ? (
-        <UIEmpty isScreenCentred message={t("app.empty")} />
+      {!listPending && !listError && visible.length === 0 ? (
+        <UIEmpty
+          isScreenCentred
+          message={t(isRequests ? "chat.noRequests" : "app.empty")}
+        />
       ) : null}
       <UISearchOverlay
         isOpen={isSearching}

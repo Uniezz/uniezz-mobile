@@ -161,7 +161,19 @@
     "delete": "Delete",
     "report": "Report",
     "deletedAccount": "Deleted account",
-    "someone": "someone"
+    "someone": "someone",
+    "requestsTab": "Requests",
+    "requestFirstMessage": "Write your first message to {{name}}. Until they accept, you can send one, text only, without links.",
+    "noRequests": "No message requests",
+    "requestFrom": "{{name}} wants to message you",
+    "requestHint": "Accept to reply. Declining is silent: they won't be told.",
+    "accept": "Accept",
+    "decline": "Decline",
+    "requestDeclined": "Request declined",
+    "requestWaiting": "Request sent. You can write more once {{name}} accepts or replies.",
+    "requestPending": "Until your request is accepted, you can send one text message without links or photos.",
+    "rateLimit": "Too many messages at once. Try again in a moment.",
+    "cannotMessage": "This student doesn't take messages from you."
   },
   "connections": {
     "subtitle": "Meet students across all five universities",

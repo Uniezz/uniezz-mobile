@@ -15,6 +15,7 @@ export * from "./sheet";
 export * from "./header";
 export * from "./id";
 export * from "./chat";
+export * from "./chatErrors";
 export * from "./study";
 export * from "./faq";
 export * from "./connections";

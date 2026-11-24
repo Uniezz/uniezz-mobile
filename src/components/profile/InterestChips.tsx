@@ -20,7 +20,9 @@ const styles = StyleSheet.create((theme) => ({
     flexWrap: "wrap",
     gap: theme.s(8),
   },
+  // a row stretches every chip to its tallest one (an emoji label is taller); the text stays centred
   chip: {
+    justifyContent: "center",
     paddingVertical: theme.vs(5),
     paddingHorizontal: theme.s(11),
     borderRadius: theme.vs(999),

@@ -7,3 +7,4 @@ export { ConversationRow } from "./ConversationRow";
 export { DraftPhotos } from "./DraftPhotos";
 export { ConnectionAvatarList } from "./ConnectionAvatarList";
 export { ConnectionAvatar } from "./ConnectionAvatar";
+export { ChatRequestBar } from "./ChatRequestBar";

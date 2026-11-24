@@ -167,7 +167,19 @@
     "delete": "Usuń",
     "report": "Zgłoś",
     "deletedAccount": "Usunięte konto",
-    "someone": "ktoś"
+    "someone": "ktoś",
+    "requestsTab": "Prośby",
+    "requestFirstMessage": "Napisz pierwszą wiadomość do {{name}}. Do czasu akceptacji możesz wysłać jedną, tylko tekst, bez linków.",
+    "noRequests": "Brak próśb o wiadomość",
+    "requestFrom": "{{name}} chce do Ciebie napisać",
+    "requestHint": "Zaakceptuj, aby odpowiedzieć. Odrzucenie jest ciche: ta osoba się o nim nie dowie.",
+    "accept": "Akceptuj",
+    "decline": "Odrzuć",
+    "requestDeclined": "Prośba odrzucona",
+    "requestWaiting": "Prośba wysłana. Napiszesz więcej, gdy {{name}} ją zaakceptuje lub odpowie.",
+    "requestPending": "Dopóki prośba nie zostanie przyjęta, możesz wysłać jedną wiadomość tekstową bez linków i zdjęć.",
+    "rateLimit": "Za dużo wiadomości naraz. Spróbuj za chwilę.",
+    "cannotMessage": "Ta osoba nie przyjmuje od Ciebie wiadomości."
   },
   "connections": {
     "subtitle": "Poznawaj studentów ze wszystkich pięciu uczelni",

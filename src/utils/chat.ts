@@ -66,6 +66,9 @@ export const CHAT_ALBUM_ROWS: Record<number, number[]> = {
 // the API's limit of images per message
 export const MAX_CHAT_PHOTOS = 5;
 
+// the id /chat/[id] opens with, alongside a userId, before a message request creates the conversation
+export const DRAFT_CHAT_ID = "draft";
+
 // a student as chat shows them: their name, or "Deleted account" once they deleted it
 export const chatStudentName = (
   student: ApiChatStudent | null | undefined,
@@ -154,6 +157,7 @@ export const chatKeys = {
     { params: { path: { id } } },
   ],
   unread: ["get", "/chat/unread"],
+  requests: ["get", "/chat/requests"],
   // the other student's read position in a direct chat; the API has no field for it, so it lives
   // only in this cache, filled by read.updated events while the app runs
   peerRead: (id: string) => ["chat-peer-read", id],
@@ -344,6 +348,7 @@ export const refetchChatConversation = (queryClient: QueryClient, id: string) =>
       chatKeys.members(id),
       chatKeys.conversations,
       chatKeys.unread,
+      chatKeys.requests,
     ].map((queryKey) => queryClient.invalidateQueries({ queryKey })),
   ]);
 
@@ -360,8 +365,8 @@ export const forgetChatConversation = (
     queryClient.removeQueries({ queryKey });
   }
   return Promise.all(
-    [chatKeys.conversations, chatKeys.unread].map((queryKey) =>
-      queryClient.invalidateQueries({ queryKey }),
+    [chatKeys.conversations, chatKeys.unread, chatKeys.requests].map(
+      (queryKey) => queryClient.invalidateQueries({ queryKey }),
     ),
   );
 };

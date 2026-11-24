@@ -18,6 +18,8 @@ type MessageComposerProps = {
   control: Control<MessageFormValues>;
   isSendDisabled: boolean;
   onSendPress: () => void;
+  /** a message request's first message is text only */
+  isAttachHidden?: boolean;
 };
 
 // the message field under a conversation; picked photos wait in a row above it, full width
@@ -25,6 +27,7 @@ export const MessageComposer = ({
   control,
   isSendDisabled,
   onSendPress,
+  isAttachHidden,
 }: MessageComposerProps) => {
   const { t } = useTranslation();
 
@@ -64,20 +67,22 @@ export const MessageComposer = ({
               </View>
             ) : null}
             <View style={styles.row}>
-              <UIIconButton
-                size="lg"
-                disabled={isAttachDisabled}
-                accessibilityRole="button"
-                accessibilityLabel={t("app.attach")}
-                accessibilityState={{ disabled: isAttachDisabled }}
-                onPress={handleAttachPress}
-              >
-                <Icon
-                  name="plus"
-                  size={20}
-                  uniProps={(theme) => ({ color: theme.colors.white80 })}
-                />
-              </UIIconButton>
+              {isAttachHidden ? null : (
+                <UIIconButton
+                  size="lg"
+                  disabled={isAttachDisabled}
+                  accessibilityRole="button"
+                  accessibilityLabel={t("app.attach")}
+                  accessibilityState={{ disabled: isAttachDisabled }}
+                  onPress={handleAttachPress}
+                >
+                  <Icon
+                    name="plus"
+                    size={20}
+                    uniProps={(theme) => ({ color: theme.colors.white80 })}
+                  />
+                </UIIconButton>
+              )}
               <UIGlass
                 // half the 44pt height: a pill on one line, a rounded box (not an oval) once it grows
                 radius={22}

@@ -14,8 +14,9 @@ export function useProfileSearch(search: string) {
   });
 }
 
-export function usePublicProfile(id: string) {
+export function usePublicProfile(id: string, isEnabled = true) {
   return useQuery({
+    enabled: isEnabled,
     staleTime: 5 * 60_000,
     gcTime: 30 * 60_000,
     queryKey: ["profiles", id],

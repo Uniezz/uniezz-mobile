@@ -14,21 +14,24 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import type { ApiChatMessage, MessageFormValues } from "@/@types";
-import { ChatThread, MessageComposer } from "@/components/chat";
+import { ChatRequestBar, ChatThread, MessageComposer } from "@/components/chat";
 import { ReportSheet } from "@/components/report";
 import {
   useChatConversation,
   useChatMembers,
   useChatMessages,
   useChatPeerRead,
+  useCreateChatRequest,
   useDeleteChatMessage,
   useMarkChatRead,
   useMyProfile,
+  usePublicProfile,
   useSendChatMessage,
 } from "@/hooks";
 import { messageSchema } from "@/schemas";
 import {
   apiErrorKey,
+  authorName,
   chatStudentName,
   conversationTitle,
   profileHref,
@@ -46,17 +49,29 @@ import {
 } from "@/ui";
 
 export default function ConversationScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  // with a userId, a draft: no conversation exists until the first message goes out as a request
+  const { id, userId } = useLocalSearchParams<{
+    id: string;
+    userId?: string;
+  }>();
+  const isDraft = Boolean(userId);
   const { t } = useTranslation();
   const { data: profile } = useMyProfile();
-  const { data: conversation, isError, refetch } = useChatConversation(id);
+  const {
+    data: conversation,
+    isError,
+    refetch,
+  } = useChatConversation(id, !isDraft);
+  const { data: student } = usePublicProfile(userId ?? "", isDraft);
+  const { createRequest, isPending: isCreatingRequest } =
+    useCreateChatRequest();
   const {
     data: messagePages,
     isPending: areMessagesPending,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useChatMessages(id);
+  } = useChatMessages(id, !isDraft);
   // newest first, as the API pages them and the inverted thread reads them
   const messages =
     messagePages?.pages.flatMap((page) => page.items ?? []) ?? [];
@@ -86,6 +101,10 @@ export default function ConversationScreen() {
     mode: "onChange",
   });
   const { bottom: bottomInset } = useSafeAreaInsets();
+  // a message request: the recipient answers it first; the sender has one text message, then waits
+  const isRequestBlocking =
+    conversation?.status === "pending" &&
+    (conversation.incoming === true || (conversation.lastSeq ?? 0) > 0);
 
   // an open thread is read up to its newest message: on entering, and again as each new one arrives;
   // a failed mark waits for the next message rather than retrying
@@ -98,7 +117,18 @@ export default function ConversationScreen() {
 
   // the photos picked in the composer go out with the text in one message (the text may be empty then).
   // Optimistic: the field clears and the message shows at once; a failed send puts both back
-  const send = ({ text, photos }: MessageFormValues) => {
+  const send = async ({ text, photos }: MessageFormValues) => {
+    if (userId) {
+      try {
+        const { id: createdId } = await createRequest(userId, text);
+        // the same screen turns into the conversation, without a transition
+        router.setParams({ id: createdId, userId: undefined });
+        reset();
+      } catch (error) {
+        toast.error(t(apiErrorKey(error)));
+      }
+      return;
+    }
     reset();
     sendMessage(
       { text, photos },
@@ -150,12 +180,16 @@ export default function ConversationScreen() {
     setComposerHeight(event.nativeEvent.layout.height);
   };
 
+  const title = conversation
+    ? conversationTitle(conversation, t)
+    : authorName(student) || t("apiState.student");
+
   // a group opens its members and settings; a direct chat opens the other student's profile
   const handleHeaderPress = () => {
     if (conversation?.kind === "group") {
       return router.push({ pathname: "/chat/group/[id]", params: { id } });
     }
-    const peerId = conversation?.peer?.id;
+    const peerId = conversation?.peer?.id ?? userId;
     if (peerId) router.push(profileHref(peerId, profile?.id));
   };
 
@@ -179,19 +213,22 @@ export default function ConversationScreen() {
           >
             <Icon name="arrow-left" size={18} />
           </UIIconButton>
-          {conversation ? (
+          {conversation || isDraft ? (
             <UIPressable
               accessibilityRole="button"
-              accessibilityLabel={conversationTitle(conversation, t)}
+              accessibilityLabel={title}
               onPress={handleHeaderPress}
               style={styles.identity}
             >
-              <UIAvatar size="sm" imageSrc={conversation.peer?.avatarUrl} />
+              <UIAvatar
+                size="sm"
+                imageSrc={conversation?.peer?.avatarUrl ?? student?.avatarUrl}
+              />
               <View style={styles.who}>
                 <UIText size="rg" weight="semibold" numberOfLines={1}>
-                  {conversationTitle(conversation, t)}
+                  {title}
                 </UIText>
-                {conversation.kind === "group" ? (
+                {conversation?.kind === "group" ? (
                   <UIText size="xs" color="secondary">
                     {t("chat.members", {
                       count: conversation.memberCount ?? 0,
@@ -218,7 +255,7 @@ export default function ConversationScreen() {
             onPhotoError={handlePhotoError}
           />
         )}
-        {conversation ? (
+        {conversation || isDraft ? (
           // over the list's bottom, so messages scroll on under it; the inverted thread keeps its newest
           // message above it. UIPage already lifts it off the home indicator; above the keyboard that gap is dropped
           <KeyboardStickyView
@@ -226,24 +263,38 @@ export default function ConversationScreen() {
             style={styles.composer}
             onLayout={handleComposerLayout}
           >
-            <MessageComposer
-              control={control}
-              isSendDisabled={!isValid}
-              onSendPress={handleSendPress}
-            />
+            {conversation && isRequestBlocking ? (
+              <ChatRequestBar conversation={conversation} />
+            ) : (
+              <MessageComposer
+                control={control}
+                // a request's first message is text only
+                isAttachHidden={isDraft}
+                isSendDisabled={!isValid || isCreatingRequest}
+                onSendPress={handleSendPress}
+              />
+            )}
           </KeyboardStickyView>
         ) : null}
       </View>
       {/* a direct child of UIPage, so the cat centres like every other empty state;
           the keyboard shrinks the area, so the composer riding up on it never covers the message */}
-      {!isError && !areMessagesPending && messages.length === 0 ? (
+      {/* a draft's messages never load, so it shows the request's rule instead */}
+      {!isError && (isDraft || !areMessagesPending) && messages.length === 0 ? (
         <KeyboardAvoidingView
           behavior="padding"
           pointerEvents="box-none"
           style={styles.empty}
         >
           <View pointerEvents="box-none" style={styles.emptyArea}>
-            <UIEmpty isScreenCentred message={t("app.empty")} />
+            <UIEmpty
+              isScreenCentred
+              message={
+                isDraft
+                  ? t("chat.requestFirstMessage", { name: title })
+                  : t("app.empty")
+              }
+            />
           </View>
         </KeyboardAvoidingView>
       ) : null}

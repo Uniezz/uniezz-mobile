@@ -10,6 +10,7 @@ import { api, setApiAccessToken } from "@/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { usePostHog } from "posthog-react-native";
 import { captureAction } from "@/utils";
+import { myProfileQuery } from "@/hooks/useMyProfile";
 import { deleteStoredSession, loadStoredSession, storeSession } from "@/store";
 
 type SessionContextValue = {
@@ -40,12 +41,20 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
         setSession(storedSession);
         setApiAccessToken(storedSession?.token ?? null);
         setIsLoading(false);
+        if (!storedSession) return;
+        // a student signed in before identify existed is joined up on the next start
+        queryClient
+          .fetchQuery(myProfileQuery)
+          .then(({ id, universityId }) =>
+            posthog.identify(id, { university: universityId }),
+          )
+          .catch(() => undefined);
       });
 
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [queryClient, posthog]);
 
   const saveSession = useCallback(
     async (nextSession: IssuedSession) => {
