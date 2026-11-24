@@ -34,7 +34,7 @@ import {
   useOpenDirectChat,
   usePublicProfile,
 } from "@/hooks";
-import { Icon, UIGlass, UIPage, UIQueryError, UIText } from "@/ui";
+import { Icon, UIGlass, UIPage, UIPressable, UIQueryError, UIText } from "@/ui";
 import { authorName, HEADER_COMPACT_OFFSET, GENDER_LABELS } from "@/utils";
 
 export default function PublicProfileScreen() {
@@ -93,12 +93,10 @@ export default function PublicProfileScreen() {
       },
     ]);
   const handleMenuAction = ({ nativeEvent }: NativeActionEvent) => {
-    if (nativeEvent.event === "message") return handleMessagePress();
     if (nativeEvent.event === "report") return handleReportPress();
     if (nativeEvent.event === "block") return handleBlockPress();
   };
   const menuActions: MenuAction[] = [
-    ...(chatEnabled ? [{ id: "message", title: t("app.message") }] : []),
     { id: "report", title: t("report.user") },
     {
       id: "block",
@@ -108,19 +106,32 @@ export default function PublicProfileScreen() {
   ];
   const handleMessagePress = () => openChat(id);
 
-  // the same native menu as the own profile's ellipsis
+  // writing is a button of its own; the rest sits in the same native menu as the own profile's ellipsis
   const reportAction = profile ? (
-    <MenuView actions={menuActions} onPressAction={handleMenuAction}>
-      <UIGlass
-        radius={12}
-        accessible
-        accessibilityRole="button"
-        accessibilityLabel={t("students.actions")}
-        style={styles.more}
-      >
-        <Icon name="ellipsis" size={18} />
-      </UIGlass>
-    </MenuView>
+    <View style={styles.actions}>
+      {chatEnabled ? (
+        <UIPressable
+          accessibilityRole="button"
+          accessibilityLabel={t("app.message")}
+          onPress={handleMessagePress}
+        >
+          <UIGlass radius={12} style={styles.more}>
+            <Icon name="send" size={18} />
+          </UIGlass>
+        </UIPressable>
+      ) : null}
+      <MenuView actions={menuActions} onPressAction={handleMenuAction}>
+        <UIGlass
+          radius={12}
+          accessible
+          accessibilityRole="button"
+          accessibilityLabel={t("students.actions")}
+          style={styles.more}
+        >
+          <Icon name="ellipsis" size={18} />
+        </UIGlass>
+      </MenuView>
+    </View>
   ) : null;
 
   return (
@@ -242,6 +253,10 @@ const styles = StyleSheet.create((theme, rt) => ({
   },
   section: {
     gap: theme.vs(12),
+  },
+  actions: {
+    flexDirection: "row",
+    gap: theme.s(8),
   },
   more: {
     width: theme.vs(44),

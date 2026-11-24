@@ -1,4 +1,5 @@
-import { useState } from "react";
+import type { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { useRef, useState } from "react";
 import { ProfileButton } from "@/components/profile";
 import { useTranslation } from "react-i18next";
 import { FlashList } from "@shopify/flash-list";
@@ -7,6 +8,7 @@ import { StyleSheet } from "react-native-unistyles";
 import type { ApiConversation } from "@/@types";
 import { useChatRequests } from "@/hooks";
 import { conversationTitle } from "@/utils";
+import { ChatSettingsSheet } from "./ChatSettingsSheet";
 import { ConnectionAvatarList } from "./ConnectionAvatarList";
 import { ConversationRow } from "./ConversationRow";
 import {
@@ -60,6 +62,8 @@ export function ConversationList({
   // the search field only exists while the keyboard is up; blurring it closes it, the filter stays
   const [isSearching, setIsSearching] = useState(false);
   const handleSearchPress = () => setIsSearching(true);
+  const settingsRef = useRef<BottomSheetModal>(null);
+  const handleSettingsPress = () => settingsRef.current?.present();
   const handleSearchClose = () => setIsSearching(false);
   const [filter, setFilter] = useState<(typeof FILTERS)[number][0]>("all");
   const handleFilterPress = (index: number) =>
@@ -113,6 +117,13 @@ export function ConversationList({
           </UIIconButton>
           <UIIconButton
             accessibilityRole="button"
+            accessibilityLabel={t("chat.whoCanMessage")}
+            onPress={handleSettingsPress}
+          >
+            <Icon name="settings" size={18} />
+          </UIIconButton>
+          <UIIconButton
+            accessibilityRole="button"
             accessibilityLabel={t("app.createGroup")}
             onPress={onCreate}
           >
@@ -163,6 +174,7 @@ export function ConversationList({
           message={t(isRequests ? "chat.noRequests" : "app.empty")}
         />
       ) : null}
+      <ChatSettingsSheet ref={settingsRef} />
       <UISearchOverlay
         isOpen={isSearching}
         value={search}

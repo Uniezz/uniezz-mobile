@@ -11,6 +11,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { usePostHog } from "posthog-react-native";
 import { captureAction } from "@/utils";
 import { myProfileQuery } from "@/hooks/useMyProfile";
+import { useRegisterPushToken } from "@/hooks/usePush";
 import { deleteStoredSession, loadStoredSession, storeSession } from "@/store";
 
 type SessionContextValue = {
@@ -25,6 +26,7 @@ export const SessionContext = createContext<SessionContextValue | null>(null);
 export function SessionProvider({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient();
   const posthog = usePostHog();
+  const { mutate: registerPushToken } = useRegisterPushToken();
   const [session, setSession] = useState<IssuedSession | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -42,6 +44,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
         setApiAccessToken(storedSession?.token ?? null);
         setIsLoading(false);
         if (!storedSession) return;
+        registerPushToken();
         // a student signed in before identify existed is joined up on the next start
         queryClient
           .fetchQuery(myProfileQuery)
@@ -54,7 +57,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     return () => {
       isMounted = false;
     };
-  }, [queryClient, posthog]);
+  }, [queryClient, posthog, registerPushToken]);
 
   const saveSession = useCallback(
     async (nextSession: IssuedSession) => {

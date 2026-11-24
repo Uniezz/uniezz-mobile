@@ -12,6 +12,7 @@ import { openAuthSessionAsync } from "expo-web-browser";
 import { Platform } from "react-native";
 import i18n from "@/internationalization";
 import { myProfileQuery } from "./useMyProfile";
+import { useRegisterPushToken } from "./usePush";
 
 const USOS_REDIRECT_URL = new URL(Linking.createURL("auth/callback"));
 
@@ -25,6 +26,7 @@ function useStartSession(authMethod: "usos" | "otp") {
   const { saveSession } = useSession();
   const queryClient = useQueryClient();
   const posthog = usePostHog();
+  const { mutate: registerPushToken } = useRegisterPushToken();
 
   return async (session: IssuedSession) => {
     try {
@@ -47,6 +49,7 @@ function useStartSession(authMethod: "usos" | "otp") {
     } catch {
       // analytics must not block signing in
     }
+    registerPushToken();
 
     // onboarding sends a complete profile straight on to the feed
     router.replace("/onboarding");

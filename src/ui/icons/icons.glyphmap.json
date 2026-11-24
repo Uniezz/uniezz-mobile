@@ -1,10 +1,10 @@
 {
   "m": {
-    "f": "icons-ca54e50d",
+    "f": "icons-e691ec9c",
     "u": 1024,
     "z": 1020,
     "s": 59648,
-    "h": "ca54e50d09ce0e39595ee3b34ec56cb96c342dd62320f027e67f451eaf2f0a87"
+    "h": "e691ec9c16a071b64b43474d78a412ba83ddfd530cb3810e2d4ba6512d44f1e8"
   },
   "i": {
     "arrow-left": [1024, [[59648, "currentColor"]]],
@@ -47,16 +47,17 @@
     "plus": [1024, [[59685, "currentColor"]]],
     "search": [1024, [[59686, "currentColor"]]],
     "send": [1024, [[59687, "currentColor"]]],
-    "shield-check": [1024, [[59688, "currentColor"]]],
-    "sliders-horizontal": [1024, [[59689, "currentColor"]]],
-    "sparkles": [1024, [[59690, "currentColor"]]],
-    "square-pen": [1024, [[59691, "currentColor"]]],
-    "star": [1024, [[59692, "currentColor"]]],
-    "thumbs-up": [1024, [[59693, "currentColor"]]],
-    "timer": [1024, [[59694, "currentColor"]]],
-    "trash": [1024, [[59695, "currentColor"]]],
-    "upload": [1024, [[59696, "currentColor"]]],
-    "users": [1024, [[59697, "currentColor"]]],
-    "x": [1024, [[59698, "currentColor"]]]
+    "settings": [1024, [[59688, "currentColor"]]],
+    "shield-check": [1024, [[59689, "currentColor"]]],
+    "sliders-horizontal": [1024, [[59690, "currentColor"]]],
+    "sparkles": [1024, [[59691, "currentColor"]]],
+    "square-pen": [1024, [[59692, "currentColor"]]],
+    "star": [1024, [[59693, "currentColor"]]],
+    "thumbs-up": [1024, [[59694, "currentColor"]]],
+    "timer": [1024, [[59695, "currentColor"]]],
+    "trash": [1024, [[59696, "currentColor"]]],
+    "upload": [1024, [[59697, "currentColor"]]],
+    "users": [1024, [[59698, "currentColor"]]],
+    "x": [1024, [[59699, "currentColor"]]]
   }
 }

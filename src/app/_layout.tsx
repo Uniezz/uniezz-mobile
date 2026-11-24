@@ -11,7 +11,7 @@ import { useEffect } from "react";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { StyleSheet } from "react-native-unistyles";
 import { PostHogProvider, useFeatureFlag } from "posthog-react-native";
-import { useScreenTracking } from "@/hooks";
+import { useNotificationTaps, useScreenTracking } from "@/hooks";
 import { darkTheme } from "@/theme";
 import { stackHostNativeProps, stackScreenOptions } from "@/utils";
 
@@ -28,6 +28,7 @@ function RootNavigator(): React.JSX.Element {
   const coinsEnabled = useFeatureFlag("coins") !== false;
   const segments = useSegments();
   useScreenTracking();
+  useNotificationTaps(session?.token);
 
   // a cold start on any other route (USOS callback, deep link) never mounts the splash route
   useEffect(() => {

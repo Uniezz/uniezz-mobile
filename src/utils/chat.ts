@@ -5,6 +5,7 @@ import type {
   ApiChatStudent,
   ApiConversation,
   PickedImage,
+  WhoCanMessage,
 } from "@/@types";
 // the files, not the @/api barrel, which imports @/utils back
 import { getChatMessageChanges } from "@/api/chat";
@@ -65,6 +66,13 @@ export const CHAT_ALBUM_ROWS: Record<number, number[]> = {
 
 // the API's limit of images per message
 export const MAX_CHAT_PHOTOS = 5;
+
+// "who can message me", narrowest last; it changes only new message requests
+export const WHO_CAN_MESSAGE = [
+  ["everyone", "chat.whoEveryone"],
+  ["university", "chat.whoUniversity"],
+  ["matches", "chat.whoMatches"],
+] as const satisfies readonly (readonly [WhoCanMessage, string])[];
 
 // the id /chat/[id] opens with, alongside a userId, before a message request creates the conversation
 export const DRAFT_CHAT_ID = "draft";

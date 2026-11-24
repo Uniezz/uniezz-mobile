@@ -11,6 +11,8 @@ export type ApiChatMessage = components["schemas"]["Message"];
 export type ApiChatMember = components["schemas"]["Member"];
 export type ApiChatStudent = components["schemas"]["Student"];
 export type CreateChatGroupInput = components["schemas"]["GroupRequest"];
+export type ChatSettings = components["schemas"]["Settings"];
+export type WhoCanMessage = ChatSettings["whoCanMessage"];
 export type SendChatMessageInput =
   components["schemas"]["SendChatMessageInputBody"];
 

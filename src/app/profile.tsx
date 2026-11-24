@@ -54,7 +54,11 @@ import {
   useDeleteMyProfilePhoto,
   useMyProfile,
   useMyProfilePhotos,
+  useDeleteMyPushToken,
+  useRegisterPushToken,
+  useMyPushSettings,
   useNotificationPermission,
+  useUpdateMyPushSettings,
   usePickProfileImage,
   usePickProfilePhotos,
   useRequestNotificationPermission,
@@ -89,6 +93,13 @@ export default function ProfileScreen() {
     useNotificationPermission();
   const { mutateAsync: requestNotifications } =
     useRequestNotificationPermission();
+  const { data: pushSettings } = useMyPushSettings();
+  const { mutateAsync: updatePushSettings } = useUpdateMyPushSettings();
+  const { mutateAsync: deletePushToken } = useDeleteMyPushToken();
+  const { mutate: registerPushToken } = useRegisterPushToken();
+  // on only when the system allows them and the account has not switched them off
+  const arePushesOn =
+    areNotificationsEnabled && pushSettings?.enabled !== false;
   const { clearSession } = useSession();
   const coinsEnabled = useFeatureFlag("coins") !== false;
   const programmesRef = useRef<BottomSheetModal>(null);
@@ -195,8 +206,10 @@ export default function ProfileScreen() {
     }
   };
 
-  // the app can only ask once; turning them off, or on after a refusal, happens in the system settings
+  // once the system allows them, the switch is the account's; before that the app can ask only once,
+  // and after a refusal only the system settings can turn them on
   const handleNotificationsPress = () => {
+    if (areNotificationsEnabled) return handleTogglePushes();
     if (!canAskNotifications) return Linking.openSettings();
     Alert.alert(
       t("app.notificationsPromptTitle"),
@@ -212,13 +225,27 @@ export default function ProfileScreen() {
   };
   const handleEnableNotifications = async () => {
     try {
-      await requestNotifications();
+      const { granted } = await requestNotifications();
+      if (!granted) return;
+      registerPushToken();
+      if (pushSettings?.enabled === false) {
+        await updatePushSettings({ body: { enabled: true } });
+      }
     } catch {
       toast.error(t("apiState.error"));
     }
   };
+  const handleTogglePushes = async () => {
+    try {
+      await updatePushSettings({ body: { enabled: !arePushesOn } });
+    } catch (error) {
+      toast.error(t(apiErrorKey(error)));
+    }
+  };
 
   const handleLogoutPress = async () => {
+    // the device stops getting this account's pushes; signing out goes on without it
+    await deletePushToken({}).catch(() => undefined);
     try {
       await clearSession();
     } catch {
@@ -288,7 +315,7 @@ export default function ProfileScreen() {
     {
       id: "notifications",
       title: t("topbar.notifications"),
-      state: areNotificationsEnabled ? "on" : "off",
+      state: arePushesOn ? "on" : "off",
     },
     {
       id: "haptics",

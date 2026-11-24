@@ -35,6 +35,25 @@ export const useChatConversations = () =>
     },
   );
 
+// who may send you a message request
+export const useMyChatSettings = () =>
+  $api.useQuery("get", "/chat/settings/me", undefined, {
+    staleTime: 5 * 60_000,
+    gcTime: 30 * 60_000,
+  });
+
+export function useUpdateMyChatSettings() {
+  const queryClient = useQueryClient();
+  return $api.useMutation("patch", "/chat/settings/me", {
+    meta: { analyticsAction: "chat_settings_update" },
+    onSuccess: (settings) =>
+      queryClient.setQueryData(
+        $api.queryOptions("get", "/chat/settings/me").queryKey,
+        settings,
+      ),
+  });
+}
+
 // message requests sent to you, newest first; they stay out of the chat list until you accept or reply
 export const useChatRequests = () =>
   $api.useInfiniteQuery(
