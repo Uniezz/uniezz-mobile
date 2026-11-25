@@ -1,4 +1,5 @@
 import "@/schemas";
+import { env } from "@/schemas/env";
 import "@/internationalization";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Toaster } from "sonner-native";
@@ -75,9 +76,10 @@ export default function RootLayout() {
         captureScreens: false,
         propsToCapture: ["testID", "ph-label"],
       }}
-      projectToken="phc_pSPCwUwaLeA8xTLn6Y5XWS6Kq3TXEbBa3W3DNnoLPHsJ"
+      projectToken={env.EXPO_PUBLIC_PROJECT_TOKEN}
       options={{
-        host: "https://us.i.posthog.com",
+        // the EU cloud keeps analytics in Frankfurt, as the privacy policy says
+        host: "https://eu.i.posthog.com",
       }}
     >
       <KeyboardProvider>
