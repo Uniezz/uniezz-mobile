@@ -1,9 +1,4 @@
-import {
-  queryOptions,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { launchImageLibraryAsync } from "expo-image-picker";
 import { usePostHog } from "posthog-react-native";
 import { useTranslation } from "react-i18next";
@@ -26,15 +21,14 @@ import {
 } from "@/api";
 import type { Profile, ProfilePhotosList, ProgrammeInput } from "@/@types";
 
-// shared with sign-in and app start, which read the student's id for analytics from the same cache
-export const myProfileQuery = queryOptions({
-  staleTime: 5 * 60_000,
-  gcTime: 30 * 60_000,
-  queryKey: ["profile", "me"],
-  queryFn: getMyProfile,
-});
-
-export const useMyProfile = () => useQuery(myProfileQuery);
+export function useMyProfile() {
+  return useQuery({
+    staleTime: 5 * 60_000,
+    gcTime: 30 * 60_000,
+    queryKey: ["profile", "me"],
+    queryFn: getMyProfile,
+  });
+}
 
 // as on the web: onboardedAt is set in the cache at once, so the onboarding screen leaves without
 // waiting for a refetch; onboarded students now appear in the student list
