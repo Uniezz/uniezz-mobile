@@ -147,11 +147,12 @@ const styles = StyleSheet.create((theme) => ({
     paddingHorizontal: theme.s(16),
   },
   // grows with its text up to a few lines. A multiline TextInput cleared from code (after a send
-  // resets the form) keeps its old height on iOS, so an empty one is held to one line: 22pt plus its
-  // 10pt paddings. A fixed height with text would stop it growing, as Fabric reports the held size
+  // resets the form) keeps its old height on iOS, so an empty one is capped at one line. A cap, not a
+  // fixed height: the auto height of one line is a point taller, and switching on the first letter
+  // moved the composer and the whole thread
   input: (isEmpty: boolean) => ({
-    height: isEmpty ? theme.vs(42) : undefined,
-    maxHeight: theme.vs(118),
+    // one line and its paddings, plus room for the font's own leading (the one-line auto height)
+    maxHeight: isEmpty ? theme.vs(22) + theme.vs(10) * 2 + 4 : theme.vs(118),
     lineHeight: theme.vs(22),
     paddingTop: theme.vs(10),
     paddingBottom: theme.vs(10),
