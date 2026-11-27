@@ -5,14 +5,7 @@ import { usePostHog } from "posthog-react-native";
 import { useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import {
-  Keyboard,
-  LayoutChangeEvent,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  View,
-  Platform,
-} from "react-native";
+import { Keyboard, LayoutChangeEvent, View } from "react-native";
 import { KeyboardStickyView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
@@ -24,7 +17,6 @@ import {
   useChatMembers,
   useConnections,
   useCreateChatGroup,
-  useUniversities,
 } from "@/hooks";
 import { addGroupMembersSchema, createGroupSchema } from "@/schemas";
 import {
@@ -40,15 +32,9 @@ import {
   UISearchOverlay,
   UIText,
   UIUniversityLogo,
-  UIBlur,
   UISkeletonRow,
 } from "@/ui";
-import {
-  apiErrorKey,
-  authorName,
-  captureAction,
-  HEADER_COMPACT_OFFSET,
-} from "@/utils";
+import { apiErrorKey, authorName, captureAction } from "@/utils";
 
 // creates a group, or with a groupId adds people to that group
 export default function NewGroupScreen() {
@@ -63,12 +49,10 @@ export default function NewGroupScreen() {
   const memberIds = new Set(
     (memberPage?.items ?? []).map(({ student }) => student.id),
   );
-  const { data: universities = [] } = useUniversities();
   const [search, setSearch] = useState("");
   const [query, setQuery] = useState("");
-  // the header floats over the list; the list starts below it and turns the header compact once scrolled
+  // the header floats over the page; the pinned name field and heading start below it, so it keeps its size
   const [headerHeight, setHeaderHeight] = useState(0);
-  const [isHeaderCompact, setIsHeaderCompact] = useState(false);
   const {
     data,
     isPending,
@@ -111,11 +95,6 @@ export default function NewGroupScreen() {
     setQuery(search);
     Keyboard.dismiss();
   };
-  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    setIsHeaderCompact(
-      event.nativeEvent.contentOffset.y > HEADER_COMPACT_OFFSET,
-    );
-  };
   const handleHeaderLayout = (event: LayoutChangeEvent) => {
     setHeaderHeight(event.nativeEvent.layout.height);
   };
@@ -146,11 +125,11 @@ export default function NewGroupScreen() {
     () => captureAction(posthog, "group_form", "validation_failed"),
   );
 
-  const listHeader = (
-    <View style={styles.header}>
+  // pinned above the list: only the people rows scroll
+  const top = (
+    <View style={styles.top(headerHeight)}>
       {isAdding ? null : (
         <>
-          <UIText color="soft">{t("app.groupDescription")}</UIText>
           <Controller
             control={control}
             name="groupName"
@@ -171,8 +150,9 @@ export default function NewGroupScreen() {
         </>
       )}
       <View style={styles.peopleHeading}>
+        {/* adding to a group, the screen title already says it */}
         <UIText size="md" weight="semibold" style={styles.grow}>
-          {t("app.addPeople")}
+          {isAdding ? "" : t("app.addPeople")}
         </UIText>
         {members.length > 0 ? (
           <UIText size="sm" weight="medium" color="link">
@@ -197,12 +177,13 @@ export default function NewGroupScreen() {
     <UIPage>
       <UICollapsingHeader
         title={t(isAdding ? "app.addPeople" : "chat.action")}
-        isCompact={isHeaderCompact}
+        isCompact={false}
         onBackPress={handleBackPress}
         backLabel={t("app.back")}
         actions={headerActions}
         onLayout={handleHeaderLayout}
       />
+      {top}
       <Controller
         control={control}
         name="members"
@@ -210,15 +191,15 @@ export default function NewGroupScreen() {
           <FlashList
             data={students}
             extraData={field.value}
+            // on by default, it keeps the picked row in place when a search is cleared and the rows above
+            // it return, so the list opens scrolled down to it
+            maintainVisibleContentPosition={{ disabled: true }}
             keyExtractor={(student) => student.id}
             keyboardShouldPersistTaps="handled"
             keyboardDismissMode="on-drag"
             showsVerticalScrollIndicator={false}
-            onScroll={handleScroll}
-            scrollEventThrottle={16}
-            contentContainerStyle={styles.list(headerHeight)}
+            contentContainerStyle={styles.list}
             onEndReached={handleEndReached}
-            ListHeaderComponent={listHeader}
             ListEmptyComponent={
               isPending ? (
                 <UISkeletonRow isGlass count={8} />
@@ -262,10 +243,8 @@ export default function NewGroupScreen() {
                           size="xxs"
                         />
                       ),
-                      bottomText:
-                        universities.find(
-                          ({ id }) => id === student.universityId,
-                        )?.name ?? student.universityId.toUpperCase(),
+                      // the short code, as on post cards
+                      bottomText: student.universityId.toUpperCase(),
                     }}
                   />
                 </View>
@@ -278,13 +257,13 @@ export default function NewGroupScreen() {
       {!isPending && !isError && students.length === 0 ? (
         <UIEmpty isScreenCentred message={t("students.noResults")} />
       ) : null}
-      {/* rides above the keyboard; UIPage's home-indicator gap is dropped while it's open */}
+      {/* rides above the keyboard; UIPage's home-indicator gap is dropped while it's open. The search
+          overlay's keyboard leaves it in place: it would rise under the search bar */}
       <KeyboardStickyView
+        enabled={!isSearching}
         offset={{ opened: bottomInset }}
         style={styles.footer}
       >
-        {/* over the list once the keyboard lifts it; blurred like the headers, so a disabled (see-through) button stays readable */}
-        <UIBlur intensity={50} tint="dark" style={styles.footerBlur} />
         <UIButton
           radius="sm"
           size="rg"
@@ -318,14 +297,15 @@ export default function NewGroupScreen() {
 
 const styles = StyleSheet.create((theme, rt) => ({
   // UIPage already pads the status bar; the rest of the header height is added here
-  list: (headerHeight: number) => ({
+  top: (headerHeight: number) => ({
     paddingTop: Math.max(headerHeight - rt.insets.top, 0) + theme.vs(8),
     paddingHorizontal: theme.s(16),
-    paddingBottom: theme.vs(16),
-  }),
-  header: {
     gap: theme.vs(24),
-    paddingBottom: theme.vs(12),
+  }),
+  list: {
+    paddingTop: theme.vs(12),
+    paddingHorizontal: theme.s(16),
+    paddingBottom: theme.vs(16),
   },
   peopleHeading: {
     flexDirection: "row",
@@ -358,12 +338,6 @@ const styles = StyleSheet.create((theme, rt) => ({
     paddingHorizontal: theme.s(16),
     paddingTop: theme.vs(8),
     paddingBottom: theme.vs(12),
-  },
-  footerBlur: {
-    ...StyleSheet.absoluteFillObject,
-    // Android has no real blur: an opaque fill, so nothing scrolls through
-    backgroundColor:
-      Platform.OS === "android" ? theme.colors.ink : theme.colors.ink40,
   },
   create: {
     flexDirection: "row",

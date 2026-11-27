@@ -4,13 +4,9 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import {
-  Alert,
-  LayoutChangeEvent,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  View,
-} from "react-native";
+import { Alert, LayoutChangeEvent, View } from "react-native";
+import { KeyboardStickyView } from "react-native-keyboard-controller";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import type { RenameGroupFormValues } from "@/@types";
@@ -35,7 +31,7 @@ import {
   UIText,
   UISkeletonRow,
 } from "@/ui";
-import { apiErrorKey, HEADER_COMPACT_OFFSET } from "@/utils";
+import { apiErrorKey } from "@/utils";
 
 // a group's details: its name, its members, and leaving it
 export default function GroupScreen() {
@@ -59,18 +55,14 @@ export default function GroupScreen() {
     values: { groupName: conversation?.name ?? "" },
     mode: "onChange",
   });
-  // the header floats over the list; the list starts below it and turns the header compact once scrolled
+  // the header floats over the page; the name field starts below it and stays put while the members
+  // scroll, so the header keeps its full size
   const [headerHeight, setHeaderHeight] = useState(0);
-  const [isHeaderCompact, setIsHeaderCompact] = useState(false);
 
+  const { bottom: bottomInset } = useSafeAreaInsets();
   const handleBackPress = () => router.back();
   const handleHeaderLayout = (event: LayoutChangeEvent) => {
     setHeaderHeight(event.nativeEvent.layout.height);
-  };
-  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    setIsHeaderCompact(
-      event.nativeEvent.contentOffset.y > HEADER_COMPACT_OFFSET,
-    );
   };
 
   const handleRenamePress = handleSubmit(async ({ groupName }) => {
@@ -123,10 +115,49 @@ export default function GroupScreen() {
     ]);
   };
 
-  const listHeader = (
-    <View style={styles.header}>
-      {isOwner ? (
-        <View style={styles.rename}>
+  const membersHeading = (
+    <View style={styles.membersHeading}>
+      <UIText size="md" weight="semibold" style={styles.grow}>
+        {t("chat.members", { count: members.length })}
+      </UIText>
+      <UIIconButton
+        accessibilityRole="button"
+        accessibilityLabel={t("app.addPeople")}
+        onPress={handleAddPress}
+      >
+        <Icon name="plus" size={18} />
+      </UIIconButton>
+    </View>
+  );
+
+  // leaving sits in the header, red, as the one destructive action
+  const headerActions = (
+    <UIIconButton
+      accessibilityRole="button"
+      accessibilityLabel={t("chat.leaveGroup")}
+      disabled={isLeaving}
+      onPress={handleLeavePress}
+    >
+      <Icon
+        name="log-out"
+        size={18}
+        uniProps={(theme) => ({ color: theme.colors.red })}
+      />
+    </UIIconButton>
+  );
+
+  return (
+    <UIPage>
+      <UICollapsingHeader
+        title={conversation?.name ?? ""}
+        isCompact={false}
+        onBackPress={handleBackPress}
+        backLabel={t("app.back")}
+        onLayout={handleHeaderLayout}
+        actions={headerActions}
+      />
+      <View style={styles.top(headerHeight)}>
+        {isOwner ? (
           <Controller
             control={control}
             name="groupName"
@@ -143,53 +174,16 @@ export default function GroupScreen() {
               />
             )}
           />
-          {isDirty ? (
-            <UIButton
-              radius="sm"
-              accessibilityRole="button"
-              disabled={!isValid || isRenaming}
-              onPress={handleRenamePress}
-            >
-              <UIText weight="semibold" color="black">
-                {t("chat.saveName")}
-              </UIText>
-            </UIButton>
-          ) : null}
-        </View>
-      ) : null}
-      <View style={styles.membersHeading}>
-        <UIText size="md" weight="semibold" style={styles.grow}>
-          {t("chat.members", { count: members.length })}
-        </UIText>
-        <UIIconButton
-          accessibilityRole="button"
-          accessibilityLabel={t("app.addPeople")}
-          onPress={handleAddPress}
-        >
-          <Icon name="plus" size={18} />
-        </UIIconButton>
+        ) : null}
+        {membersHeading}
       </View>
-    </View>
-  );
-
-  return (
-    <UIPage>
-      <UICollapsingHeader
-        title={conversation?.name ?? ""}
-        isCompact={isHeaderCompact}
-        onBackPress={handleBackPress}
-        backLabel={t("app.back")}
-        onLayout={handleHeaderLayout}
-      />
       <FlashList
         data={members}
         keyExtractor={(member) => member.student.id ?? member.joinedAt}
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
-        contentContainerStyle={styles.list(headerHeight)}
-        ListHeaderComponent={listHeader}
+        keyboardDismissMode="on-drag"
+        contentContainerStyle={styles.list}
         ListEmptyComponent={
           isPending ? (
             <UISkeletonRow isGlass count={4} />
@@ -197,49 +191,60 @@ export default function GroupScreen() {
             <UIQueryError message={t("apiState.error")} onRetry={refetch} />
           ) : null
         }
-        ListFooterComponent={
-          <UIButton
-            type="secondary"
-            radius="sm"
-            accessibilityRole="button"
-            disabled={isLeaving}
-            onPress={handleLeavePress}
-            style={styles.leave}
-          >
-            <UIText weight="semibold" color="error">
-              {t("chat.leaveGroup")}
-            </UIText>
-          </UIButton>
-        }
-        renderItem={({ item: member }) => (
+        renderItem={({ item: member, index }) => (
           <GroupMember
             member={member}
+            isFirst={index === 0}
+            isLast={index === members.length - 1}
             canRemove={isOwner && member.student.id !== profile?.id}
             onRemove={handleRemovePress}
           />
         )}
       />
+      {/* a changed name brings Save, riding above the keyboard; UIPage's home-indicator gap is dropped
+          while the keyboard is open */}
+      {isDirty ? (
+        <KeyboardStickyView
+          offset={{ opened: bottomInset }}
+          style={styles.footer}
+        >
+          <UIButton
+            radius="sm"
+            accessibilityRole="button"
+            disabled={!isValid || isRenaming}
+            onPress={handleRenamePress}
+          >
+            <UIText weight="semibold" color="black">
+              {t("chat.saveName")}
+            </UIText>
+          </UIButton>
+        </KeyboardStickyView>
+      ) : null}
     </UIPage>
   );
 }
 
 const styles = StyleSheet.create((theme, rt) => ({
   // UIPage already pads the status bar; the rest of the header height is added here
-  list: (headerHeight: number) => ({
+  top: (headerHeight: number) => ({
     paddingTop: Math.max(headerHeight - rt.insets.top, 0) + theme.vs(8),
     paddingHorizontal: theme.s(16),
-    paddingBottom: theme.vs(40),
-  }),
-  header: {
     gap: theme.vs(24),
-    paddingBottom: theme.vs(12),
+  }),
+  list: {
+    paddingTop: theme.vs(12),
+    paddingHorizontal: theme.s(16),
+    paddingBottom: theme.vs(16),
   },
-  rename: { gap: theme.vs(12) },
   membersHeading: {
     flexDirection: "row",
     alignItems: "center",
     gap: theme.s(12),
   },
   grow: { flex: 1 },
-  leave: { marginTop: theme.vs(16) },
+  footer: {
+    paddingHorizontal: theme.s(16),
+    paddingTop: theme.vs(8),
+    paddingBottom: theme.vs(12),
+  },
 }));
