@@ -44,6 +44,7 @@ import {
   ONBOARDING_STEPS,
   splitInterests,
   toDetailsValues,
+  apiErrorKey,
 } from "@/utils";
 
 // first sign-in onboarding, as on web: photo, details, programmes. It shows until the profile's
@@ -109,8 +110,8 @@ export default function OnboardingScreen() {
             ...(isGenderLocked || !gender ? {} : { gender }),
           });
         setStep(2);
-      } catch {
-        toast.error(t("apiState.profileSaveError"));
+      } catch (error) {
+        toast.error(t(apiErrorKey(error, "apiState.profileSaveError")));
       }
     },
     () => captureAction(posthog, "profile_form", "validation_failed"),

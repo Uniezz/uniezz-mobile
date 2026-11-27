@@ -5,6 +5,7 @@ import type { Profile, ProfileGalleryPhoto } from "@/@types";
 import { UIQueryError, UIText } from "@/ui";
 import { authorName } from "@/utils";
 import { InterestChips } from "./InterestChips";
+import { ProfileFollows } from "./ProfileFollows";
 import { ProfileHero } from "./ProfileHero";
 import { ProfilePhotos } from "./ProfilePhotos";
 import { ProgrammeCard } from "./ProgrammeCard";
@@ -65,6 +66,11 @@ export const ProfileOverview = ({
         avatarLabel={t("app.changePhoto")}
         isAvatarDisabled={isUploadingPhoto}
       >
+        <ProfileFollows
+          name={t("app.yourProfile")}
+          followersCount={profile.followersCount}
+          followingCount={profile.followingCount}
+        />
         {profile.bio ? (
           <UIText size="rg" color="soft" style={styles.bio}>
             {profile.bio}

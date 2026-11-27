@@ -19,12 +19,14 @@ import {
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import {
+  FollowButton,
   InterestChips,
   ProfileHeader,
   ProfileHero,
   ProfilePhotos,
   ProgrammeCard,
   ProfileHeroSkeleton,
+  ProfileFollows,
 } from "@/components/profile";
 import { FeedPostCard, PostCardSkeleton } from "@/components/feed";
 import { ReportSheet } from "@/components/report";
@@ -166,6 +168,15 @@ export default function PublicProfileScreen() {
                   universityId={profile.universityId}
                   songUrl={profile.songUrl}
                 >
+                  <View style={styles.follows}>
+                    <ProfileFollows
+                      profileId={profile.id}
+                      name={authorName(profile) || t("apiState.student")}
+                      followersCount={profile.followersCount}
+                      followingCount={profile.followingCount}
+                    />
+                    <FollowButton profile={profile} />
+                  </View>
                   {profile.gender ? (
                     <UIText size="sm" color="secondary">
                       {t(GENDER_LABELS[profile.gender])}
@@ -235,6 +246,12 @@ export default function PublicProfileScreen() {
 }
 
 const styles = StyleSheet.create((theme, rt) => ({
+  follows: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: theme.s(16),
+  },
   // UIPage already pads the status bar; the rest of the header height is added here
   list: (headerHeight: number) => ({
     paddingTop: Math.max(headerHeight - rt.insets.top, 0),

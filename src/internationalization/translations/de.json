@@ -590,7 +590,8 @@
     "postDeleted": "Beitrag gelöscht",
     "commentDeleted": "Kommentar gelöscht",
     "commentSent": "Kommentar hinzugefügt",
-    "loadedSearch": "Die Suche umfasst die geladenen Beiträge. Lade weitere, um ältere Beiträge zu durchsuchen."
+    "loadedSearch": "Die Suche umfasst die geladenen Beiträge. Lade weitere, um ältere Beiträge zu durchsuchen.",
+    "contentNotAllowed": "Dieser Text enthält unzulässige Wörter. Ändere ihn und versuch es noch einmal."
   },
   "students": {
     "allStudents": "Alle Studenten",
@@ -759,5 +760,14 @@
       "title": "Was studierst du?"
     },
     "skip": "Überspringen"
+  },
+  "follows": {
+    "follow": "Folgen",
+    "followers": "Follower",
+    "following": "Gefolgt",
+    "empty": "Hier ist noch niemand.",
+    "unfollow": "Entfolgen",
+    "followed": "Du folgst jetzt.",
+    "unfollowed": "Du folgst nicht mehr."
   }
 }

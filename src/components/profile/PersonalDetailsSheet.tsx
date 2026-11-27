@@ -17,6 +17,7 @@ import {
   splitInterests,
   toDetailsValues,
   captureAction,
+  apiErrorKey,
 } from "@/utils";
 
 type PersonalDetailsSheetProps = {
@@ -57,8 +58,8 @@ export function PersonalDetailsSheet({
         });
         toast.success(t("app.saved"));
         onSaved();
-      } catch {
-        toast.error(t("apiState.profileSaveError"));
+      } catch (error) {
+        toast.error(t(apiErrorKey(error, "apiState.profileSaveError")));
       }
     },
     () => captureAction(posthog, "profile_form", "validation_failed"),

@@ -599,7 +599,8 @@
     "imageError": "Choose a valid JPG, PNG or WebP image under 10 MB.",
     "postDeleted": "Post deleted",
     "commentDeleted": "Comment deleted",
-    "commentSent": "Comment added"
+    "commentSent": "Comment added",
+    "contentNotAllowed": "This text contains words that aren't allowed. Change it and try again."
   },
   "students": {
     "allStudents": "All students",
@@ -759,5 +760,14 @@
       "title": "What do you study?"
     },
     "skip": "Skip"
+  },
+  "follows": {
+    "follow": "Follow",
+    "followers": "Followers",
+    "following": "Following",
+    "empty": "Nobody here yet.",
+    "unfollow": "Unfollow",
+    "followed": "You're following them now.",
+    "unfollowed": "You unfollowed them."
   }
 }

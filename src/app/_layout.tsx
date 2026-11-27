@@ -58,6 +58,7 @@ function RootNavigator(): React.JSX.Element {
         <Stack.Screen name="post" />
         <Stack.Screen name="student/[id]" />
         <Stack.Screen name="students" />
+        <Stack.Screen name="follows" />
         <Stack.Protected guard={coinsEnabled}>
           <Stack.Screen name="rewards" />
         </Stack.Protected>

@@ -607,7 +607,8 @@
     "imageError": "Wybierz poprawny obraz JPG, PNG lub WebP o rozmiarze poniżej 10 MB.",
     "postDeleted": "Post usunięty",
     "commentDeleted": "Komentarz usunięty",
-    "commentSent": "Dodano komentarz"
+    "commentSent": "Dodano komentarz",
+    "contentNotAllowed": "Ten tekst zawiera niedozwolone słowa. Zmień go i spróbuj ponownie."
   },
   "students": {
     "allStudents": "Wszyscy studenci",
@@ -767,5 +768,14 @@
       "title": "Co studiujesz?"
     },
     "skip": "Pomiń"
+  },
+  "follows": {
+    "follow": "Obserwuj",
+    "followers": "Obserwujący",
+    "following": "Obserwowani",
+    "empty": "Nikogo tu jeszcze nie ma.",
+    "unfollow": "Przestań obserwować",
+    "followed": "Obserwujesz tę osobę.",
+    "unfollowed": "Nie obserwujesz już tej osoby."
   }
 }

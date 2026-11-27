@@ -37,6 +37,7 @@ import {
   toProgrammeBody,
   toProgrammeValues,
   captureAction,
+  apiErrorKey,
 } from "@/utils";
 
 type ProgrammesSheetProps = {
@@ -85,8 +86,8 @@ export const ProgrammesSheet = ({
             add(toProgrammeBody(values, programmes.length === 0)));
         toast.success(t("app.saved"));
         setSelection(null);
-      } catch {
-        toast.error(t("apiState.profileSaveError"));
+      } catch (error) {
+        toast.error(t(apiErrorKey(error, "apiState.profileSaveError")));
       }
     },
     () =>

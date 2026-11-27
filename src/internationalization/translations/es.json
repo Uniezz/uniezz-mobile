@@ -590,7 +590,8 @@
     "postDeleted": "Publicación eliminada",
     "commentDeleted": "Comentario eliminado",
     "commentSent": "Comentario añadido",
-    "loadedSearch": "La búsqueda abarca las publicaciones cargadas. Carga más para buscar publicaciones anteriores."
+    "loadedSearch": "La búsqueda abarca las publicaciones cargadas. Carga más para buscar publicaciones anteriores.",
+    "contentNotAllowed": "Este texto contiene palabras no permitidas. Cámbialo y vuelve a intentarlo."
   },
   "students": {
     "allStudents": "Todos los estudiantes",
@@ -759,5 +760,14 @@
       "title": "¿Qué estudias?"
     },
     "skip": "Omitir"
+  },
+  "follows": {
+    "follow": "Seguir",
+    "followers": "Seguidores",
+    "following": "Seguidos",
+    "empty": "Aún no hay nadie aquí.",
+    "unfollow": "Dejar de seguir",
+    "followed": "Ahora sigues a esta persona.",
+    "unfollowed": "Ya no sigues a esta persona."
   }
 }

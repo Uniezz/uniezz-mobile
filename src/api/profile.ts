@@ -59,6 +59,42 @@ export async function getPublicProfile(id: string) {
   return data!;
 }
 
+export async function followProfile(id: string) {
+  await api.PUT("/profiles/{id}/follow", { params: { path: { id } } });
+}
+
+export async function unfollowProfile(id: string) {
+  await api.DELETE("/profiles/{id}/follow", { params: { path: { id } } });
+}
+
+export async function getProfileFollowers(id: string, cursor?: string) {
+  const { data } = await api.GET("/profiles/{id}/followers", {
+    params: { path: { id }, query: { cursor } },
+  });
+  return data!;
+}
+
+export async function getProfileFollowing(id: string, cursor?: string) {
+  const { data } = await api.GET("/profiles/{id}/following", {
+    params: { path: { id }, query: { cursor } },
+  });
+  return data!;
+}
+
+export async function getMyFollowers(cursor?: string) {
+  const { data } = await api.GET("/profile/me/followers", {
+    params: { query: { cursor } },
+  });
+  return data!;
+}
+
+export async function getMyFollowing(cursor?: string) {
+  const { data } = await api.GET("/profile/me/following", {
+    params: { query: { cursor } },
+  });
+  return data!;
+}
+
 export async function deleteMyAvatar() {
   await api.DELETE("/profile/avatar");
 }

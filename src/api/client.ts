@@ -68,9 +68,11 @@ const apiMiddleware: Middleware = {
         const allowsNoContent =
           (request.method === "POST" && schemaPath === "/auth/otp/request") ||
           (request.method === "PUT" &&
-            ["/connections/blocks/{id}", "/profile/onboarding"].includes(
-              schemaPath,
-            )) ||
+            [
+              "/connections/blocks/{id}",
+              "/profile/onboarding",
+              "/profiles/{id}/follow",
+            ].includes(schemaPath)) ||
           (request.method === "DELETE" &&
             [
               "/feed/comments/{id}",
@@ -87,6 +89,7 @@ const apiMiddleware: Middleware = {
               "/study/comments/{id}",
               "/study/files/{id}",
               "/study/professors/{id}/review",
+              "/profiles/{id}/follow",
             ].includes(schemaPath));
         if (!allowsNoContent) {
           throw apiError(`${request.method} ${schemaPath}`, response);
@@ -124,6 +127,10 @@ const apiMiddleware: Middleware = {
         : undefined;
     const errors = ENDPOINT_ERRORS[schemaPath];
     const translationKey =
+      // every endpoint that takes student text refuses blocked words with this code
+      (code === "content_not_allowed"
+        ? "apiState.contentNotAllowed"
+        : undefined) ??
       (code ? errors?.codes?.[code] : undefined) ??
       errors?.statuses[response.status] ??
       errors?.fallback;
