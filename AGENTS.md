@@ -27,12 +27,14 @@
 - Keep comment query and mutation hooks in their own file under `src/hooks`, separate from post hooks.
 - Keep API calls in `src/api`, query and mutation logic in `src/hooks`, pages in `src/app`, and extracted feature UI in `src/components/<feature>`.
 - Put domain option lists and constants, such as feed filter types, in `src/utils/<domain>.ts` and export them from `src/utils/index.ts`; import them into routes and components instead of defining them there.
+- Never declare a top-level constant, array, or object in a route or component file, including skeleton shapes, placeholder data, sizes, delays, and lookup maps. Put it in `src/utils/<domain>.ts` with a comment saying what it is for, export it from `src/utils/index.ts`, and import it. Before finishing, check every changed route and component file for a top-level `const` other than the component, its `styles`, and wrapped third-party components.
 - Use the typed OpenAPI client and match the current generated schema. Do not hand-edit generated schema types, invent endpoints, or cast around incompatible contracts.
 - Make every API error identify the request method and schema path, HTTP status, and backend error code when available. Distinguish an empty successful response from a network failure and preserve the original cause. Do not throw generic messages such as `Missing profile response` or expose tokens, request bodies, or private response data in diagnostics. Keep localized user-facing error keys separate from diagnostic error messages.
 - Handle HTTP errors, network failures, missing required response bodies, and endpoint-specific error translation keys in the OpenAPI client middleware. Do not repeat error checks or catch-and-rethrow wrappers in request helpers. Preserve intentional endpoint exceptions, such as an idempotent delete returning 404.
 - Every change must match the established system design: component boundaries, naming, tokens, and data flow. Inspect the nearby implementation before adding a pattern.
 - Before editing, inspect the installed version, existing usage, and documented capabilities of relevant libraries. Prefer their built-in lifecycle, animation, keyboard, and state APIs over custom effects, timers, refs, or new dependencies.
 - On a bug, find the cause before changing code, and check whether that cause is a library. If it is, search that library's props for a fix before adding state, effects, or refs. If no prop fixes it, stop and ask the user, offering three ranked options.
+- After fixing a bug, search the codebase for the same pattern (the same library prop, component, or code shape) in other places. List every place where the bug can also happen and ask the user whether to fix them. Do not fix them silently, and do not skip the search.
 - Run the full `bunx expo lint` command and fix every warning and error before reporting a task done. Do not treat an exit code of zero with warnings as a clean lint result.
 - Keep authentication response handling in the existing API client and session provider lifecycle. When an API middleware needs to clear a session, register and eject it from the provider using the client's middleware API; do not add a module-level callback setter to bridge into React state.
 - Return or await query invalidation promises from mutation callbacks when subsequent work depends on them. Do not prefix `queryClient.invalidateQueries` with `void` to discard its promise.
@@ -40,3 +42,22 @@
 - Do not pass inline functions with logic to JSX props, such as `onPress={() => (router.canGoBack() ? router.back() : router.replace("/chat"))}`. Define a named handler in the component body, for example `const handleBackPress = () => { ... }`, and pass `onPress={handleBackPress}`. A direct callback reference such as `onRefresh={refetch}` stays as it is.
 - Preserve existing behavior unless the request calls for changing it.
 - Do not start a development server unless the user explicitly asks.
+
+## UI behavior
+
+- Make toggle actions such as follow and like optimistic, as Instagram does: update the cache in `onMutate`, keep the button enabled while the request runs, and give the mutation a `scope` so repeated taps run in order. Refetch only when the last queued mutation settles (`queryClient.isMutating({ mutationKey }) === 1`), so a refetch never flips the button back. Do not debounce with timers or refs.
+- Do not show a success toast when the screen already shows the result, such as a follow button changing state. Show toasts for errors.
+- On a screen with a form above a list, such as group settings, scroll only the list rows. Pin inputs, section headings such as "3 members", and actions outside the list.
+- Show a Save button only when the form is dirty, in a `KeyboardStickyView` above the keyboard. Do not keep a Save button under the field.
+- Put a secondary destructive action, such as leaving a group, in the header as a red icon button. Do not use a full-width button for it.
+- Disable a footer `KeyboardStickyView` (`enabled={false}`) while another overlay, such as `UISearchOverlay`, owns the keyboard. Do not put a blurred or filled background behind a pinned footer button unless asked.
+- Give scrollable lists on screens with inputs `keyboardDismissMode="on-drag"`.
+- Do not repeat the screen title as a section heading on the same screen.
+- Render lists of students as one inset panel with dividers, like `RowPickerItem` with `appearance="inset"`. Show the university as its logo plus the short code (`universityId.toUpperCase()`), not the full name.
+- Make a student's avatar and name open their profile wherever they appear, including under group chat messages.
+- Open an existing chat over the Chat tab (`router.dismissTo("/(tabs)/chat")`, then push it), so Back leads to the chat list, not the screen it was opened from.
+- Format every displayed count with `formatCompactCount`. Keep the exact number in the accessibility label.
+- Keep a control the same size in every state: use a constant border width and change only its color. Use an icon-only button with an `accessibilityLabel` when a label overflows in longer languages, such as Polish.
+- Do not list universities or their number in copy, such as "the five Lublin universities": there are more, and the list grows. Say "Lublin universities"; the university list comes from the API (`useUniversities`).
+- Show a count and its label on one line, such as "**2** Following", not stacked.
+- Keep chat sync cursors (`changeSeq`) moving only through the catch-up (`catchUpChatThread`). Do not merge a send or other mutation response into the message cache first: that moves the cursor past messages others sent a moment earlier, and they are never fetched.
