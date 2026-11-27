@@ -351,10 +351,9 @@ export function useSendChatMessage(id: string) {
     },
     onError: (_, { key }) =>
       removeChatMessage(queryClient, id, `pending:${key}`),
-    onSuccess: (message) => {
-      mergeChatMessages(queryClient, id, [message]);
-      return refetchChatConversation(queryClient, id);
-    },
+    // the sent message comes with the catch-up, not from this response: merging it first would move
+    // the changedAfter cursor past a message someone else sent a moment earlier, which is then skipped
+    onSuccess: () => refetchChatConversation(queryClient, id),
   });
   // a text-only resend of a failed message reuses its key, so it is not sent twice; with photos the
   // uploads are new, and the API refuses an old key with another body
