@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRecyclingState } from "@shopify/flash-list";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
@@ -14,7 +14,8 @@ type FaqItemProps = {
 
 export function FaqItem({ entry, hasStatus }: FaqItemProps) {
   const { t } = useTranslation();
-  const [isOpen, setIsOpen] = useState(false);
+  // FlashList reuses rows for other entries; this resets the open state when the entry changes
+  const [isOpen, setIsOpen] = useRecyclingState(false, [entry.id]);
 
   const handlePress = () => setIsOpen((open) => !open);
 
