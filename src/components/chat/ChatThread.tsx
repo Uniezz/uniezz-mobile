@@ -78,6 +78,8 @@ export function ChatThread({
           message={item}
           // the message shown above this one is the older one, next in the array
           previous={messages[index + 1]}
+          // and the one below it is the newer one, before it
+          next={messages[index - 1]}
           isMine={item.sender.id === myId}
           isGroup={isGroup}
           names={names}

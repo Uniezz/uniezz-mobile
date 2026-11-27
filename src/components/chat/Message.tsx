@@ -9,7 +9,7 @@ import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import type { ApiChatMessage } from "@/@types";
-import { UIText } from "@/ui";
+import { UIAvatar, UIText } from "@/ui";
 import {
   chatDay,
   chatMessageText,
@@ -22,8 +22,10 @@ import { MessagePhotos } from "./MessagePhotos";
 
 type MessageProps = {
   message: ApiChatMessage;
-  /** the message above, so a new day gets its date line and a new sender their name */
+  /** the message above, so a new day gets its date line */
   previous?: ApiChatMessage;
+  /** the message below, so a group names the sender once, under their last message in a row */
+  next?: ApiChatMessage;
   /** sent by the signed-in student, on the right */
   isMine: boolean;
   /** a group chat names who wrote each run of messages from someone else */
@@ -46,6 +48,7 @@ type MessageProps = {
 export const Message = ({
   message,
   previous,
+  next,
   isMine,
   isGroup,
   isReadByPeer = false,
@@ -66,12 +69,15 @@ export const Message = ({
   const time = chatMessageTime(message.createdAt, locale);
   // shown before the API stored it: dimmed, and no menu yet
   const isPending = isPendingChatMessage(message);
+  // in a group, the last of someone else's run (before another sender, a system line or a new day)
+  // carries the sender's avatar and name under it
   const isSenderShown =
     isGroup &&
     !isMine &&
-    (isNewDay ||
-      previous?.kind === "system" ||
-      previous?.sender.id !== message.sender.id);
+    (!next ||
+      next.kind === "system" ||
+      next.sender.id !== message.sender.id ||
+      !isSameDay(Date.parse(next.createdAt), createdAt));
 
   const handleCopy = () =>
     Clipboard.setStringAsync(message.body ?? "").then(() =>
@@ -144,16 +150,6 @@ export const Message = ({
         </UIText>
       ) : (
         <>
-          {isSenderShown ? (
-            <UIText
-              size="xs"
-              weight="semibold"
-              color="secondary"
-              style={styles.sender}
-            >
-              {chatStudentName(message.sender, t)}
-            </UIText>
-          ) : null}
           {hasMenu ? (
             <MenuView
               shouldOpenOnLongPress
@@ -168,6 +164,14 @@ export const Message = ({
           ) : (
             bubble
           )}
+          {isSenderShown ? (
+            <View style={styles.sender}>
+              <UIAvatar size="xs" imageSrc={message.sender.avatarUrl} />
+              <UIText size="xs" weight="semibold" color="secondary">
+                {chatStudentName(message.sender, t)}
+              </UIText>
+            </View>
+          ) : null}
         </>
       )}
       {isReadByPeer ? (
@@ -192,9 +196,12 @@ const styles = StyleSheet.create((theme) => ({
     textAlign: "center",
     paddingHorizontal: theme.s(24),
   },
+  // under the last message of a run: the avatar, then the name beside it
   sender: {
-    paddingLeft: theme.s(14),
-    paddingBottom: theme.vs(2),
+    flexDirection: "row",
+    alignItems: "center",
+    gap: theme.s(6),
+    marginTop: theme.vs(4),
   },
   // the menu wraps the bubble, so it takes the bubble's side
   menu: (mine: boolean) => ({
