@@ -14,7 +14,12 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import type { ApiChatMessage, MessageFormValues } from "@/@types";
-import { ChatRequestBar, ChatThread, MessageComposer } from "@/components/chat";
+import {
+  ChatRequestBar,
+  ChatThread,
+  ChatThreadSkeleton,
+  MessageComposer,
+} from "@/components/chat";
 import { ReportSheet } from "@/components/report";
 import {
   useChatConversation,
@@ -45,6 +50,7 @@ import {
   UIPage,
   UIPressable,
   UIQueryError,
+  UISkeleton,
   UIText,
 } from "@/ui";
 
@@ -237,10 +243,18 @@ export default function ConversationScreen() {
                 ) : null}
               </View>
             </UIPressable>
-          ) : null}
+          ) : (
+            // the avatar and the name, until the conversation loads
+            <View style={styles.identity}>
+              <UISkeleton width={32} height={32} borderRadius={16} />
+              <UISkeleton width={140} height={16} borderRadius={8} />
+            </View>
+          )}
         </View>
         {isError ? (
           <UIQueryError message={t("apiState.error")} onRetry={refetch} />
+        ) : !isDraft && areMessagesPending ? (
+          <ChatThreadSkeleton composerHeight={composerHeight} />
         ) : (
           <ChatThread
             messages={messages}
@@ -255,7 +269,7 @@ export default function ConversationScreen() {
             onPhotoError={handlePhotoError}
           />
         )}
-        {conversation || isDraft ? (
+        {isError ? null : (
           // over the list's bottom, so messages scroll on under it; the inverted thread keeps its newest
           // message above it. UIPage already lifts it off the home indicator; above the keyboard that gap is dropped
           <KeyboardStickyView
@@ -263,7 +277,10 @@ export default function ConversationScreen() {
             style={styles.composer}
             onLayout={handleComposerLayout}
           >
-            {conversation && isRequestBlocking ? (
+            {!conversation && !isDraft ? (
+              // the composer's 44pt field, until the conversation loads
+              <UISkeleton height={44} borderRadius={22} />
+            ) : conversation && isRequestBlocking ? (
               <ChatRequestBar conversation={conversation} />
             ) : (
               <MessageComposer
@@ -275,7 +292,7 @@ export default function ConversationScreen() {
               />
             )}
           </KeyboardStickyView>
-        ) : null}
+        )}
       </View>
       {/* a direct child of UIPage, so the cat centres like every other empty state;
           the keyboard shrinks the area, so the composer riding up on it never covers the message */}

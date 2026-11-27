@@ -4,12 +4,13 @@ import {
   type NativeActionEvent,
 } from "@react-native-menu/menu";
 import * as Clipboard from "expo-clipboard";
+import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import type { ApiChatMessage } from "@/@types";
-import { UIAvatar, UIText } from "@/ui";
+import { UIAvatar, UIPressable, UIText } from "@/ui";
 import {
   chatDay,
   chatMessageText,
@@ -62,8 +63,7 @@ export const Message = ({
   const createdAt = Date.parse(message.createdAt);
   const isNewDay =
     !previous || !isSameDay(Date.parse(previous.createdAt), createdAt);
-  const urls = (message.attachments ?? []).map(({ url }) => url);
-  const hasPhotos = urls.length > 0;
+  const hasPhotos = (message.attachments?.length ?? 0) > 0;
   const text = chatMessageText(message, t, names);
   const hasText = Boolean(message.deletedAt || message.body);
   const time = chatMessageTime(message.createdAt, locale);
@@ -79,6 +79,13 @@ export const Message = ({
       next.sender.id !== message.sender.id ||
       !isSameDay(Date.parse(next.createdAt), createdAt));
 
+  // a deleted account has no id, and no profile to open
+  const handleSenderPress = () =>
+    message.sender.id &&
+    router.push({
+      pathname: "/student/[id]",
+      params: { id: message.sender.id },
+    });
   const handleCopy = () =>
     Clipboard.setStringAsync(message.body ?? "").then(() =>
       toast.success(t("chat.copied")),
@@ -120,7 +127,10 @@ export const Message = ({
     <View style={styles.bubble(isMine, hasPhotos, isPending)}>
       {hasPhotos ? (
         <View>
-          <MessagePhotos urls={urls} onError={handlePhotoError} />
+          <MessagePhotos
+            attachments={message.attachments ?? []}
+            onError={handlePhotoError}
+          />
           {/* a photo without text carries its time over the album, as in Telegram */}
           {hasText ? null : (
             <View style={styles.timeOverPhoto}>
@@ -165,12 +175,18 @@ export const Message = ({
             bubble
           )}
           {isSenderShown ? (
-            <View style={styles.sender}>
+            <UIPressable
+              accessibilityRole="button"
+              accessibilityLabel={chatStudentName(message.sender, t)}
+              disabled={!message.sender.id}
+              onPress={handleSenderPress}
+              style={styles.sender}
+            >
               <UIAvatar size="xs" imageSrc={message.sender.avatarUrl} />
               <UIText size="xs" weight="semibold" color="secondary">
                 {chatStudentName(message.sender, t)}
               </UIText>
-            </View>
+            </UIPressable>
           ) : null}
         </>
       )}
@@ -197,7 +213,9 @@ const styles = StyleSheet.create((theme) => ({
     paddingHorizontal: theme.s(24),
   },
   // under the last message of a run: the avatar, then the name beside it
+  // only the avatar and the name are tappable, not the row's empty width
   sender: {
+    alignSelf: "flex-start",
     flexDirection: "row",
     alignItems: "center",
     gap: theme.s(6),

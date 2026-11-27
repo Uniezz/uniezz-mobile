@@ -190,17 +190,20 @@ export function useOpenDirectChat() {
     "/chat/conversations/direct",
     { meta: { analyticsAction: "chat_direct_open" } },
   );
+  // the chat opens over the Chat tab, not over the screen it was opened from, so Back leads to the list
+  const openConversation = (id: string) => {
+    router.dismissTo("/(tabs)/chat");
+    router.push({ pathname: "/chat/[id]", params: { id } });
+  };
   const openChat = async (userId: string) => {
     const cached = findCachedConversation(
       queryClient,
       (row) => row.kind === "direct" && row.peer?.id === userId,
     );
-    if (cached) {
-      return router.push({ pathname: "/chat/[id]", params: { id: cached.id } });
-    }
+    if (cached) return openConversation(cached.id);
     try {
       const { id } = await mutateAsync({ body: { userId } });
-      router.push({ pathname: "/chat/[id]", params: { id } });
+      openConversation(id);
       return refetchChatConversation(queryClient, id);
     } catch (error) {
       // not a Connection and no chat yet: nothing exists until the first message goes out as a request

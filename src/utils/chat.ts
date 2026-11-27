@@ -77,6 +77,17 @@ export const WHO_CAN_MESSAGE = [
 // the id /chat/[id] opens with, alongside a userId, before a message request creates the conversation
 export const DRAFT_CHAT_ID = "draft";
 
+// the thread's loading placeholder: one-line text bubbles, newest last, mine on the right. Message's
+// 10pt + 8pt paddings around a line of text and its time make a 56pt bubble with a 16pt radius
+export const CHAT_SKELETON_BUBBLES = [
+  { isMine: false, width: 180 },
+  { isMine: false, width: 120 },
+  { isMine: true, width: 200 },
+  { isMine: false, width: 150 },
+  { isMine: true, width: 110 },
+  { isMine: true, width: 170 },
+];
+
 // a student as chat shows them: their name, or "Deleted account" once they deleted it
 export const chatStudentName = (
   student: ApiChatStudent | null | undefined,

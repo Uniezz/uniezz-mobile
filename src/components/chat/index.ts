@@ -9,3 +9,4 @@ export { ConnectionAvatarList } from "./ConnectionAvatarList";
 export { ConnectionAvatar } from "./ConnectionAvatar";
 export { ChatRequestBar } from "./ChatRequestBar";
 export { ChatSettingsSheet } from "./ChatSettingsSheet";
+export { ChatThreadSkeleton } from "./ChatThreadSkeleton";
