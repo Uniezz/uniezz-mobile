@@ -8,6 +8,7 @@ import {
 } from "expo-notifications";
 import { Platform } from "react-native";
 import i18n from "@/internationalization";
+import { useRegisterPushToken } from "./usePush";
 
 // stale at once, so coming back from the system settings reads the switch again
 export function useNotificationPermission() {
@@ -28,8 +29,10 @@ export function useNotificationPermission() {
   };
 }
 
+// once allowed, the device's push token goes to the API right away
 export function useRequestNotificationPermission() {
   const queryClient = useQueryClient();
+  const { mutate: registerPushToken } = useRegisterPushToken();
   return useMutation({
     meta: { analyticsAction: "notifications_enable" },
     mutationFn: async () => {
@@ -42,7 +45,9 @@ export function useRequestNotificationPermission() {
       }
       return requestPermissionsAsync();
     },
-    onSuccess: (permission) =>
-      queryClient.setQueryData(["notifications", "permission"], permission),
+    onSuccess: (permission) => {
+      queryClient.setQueryData(["notifications", "permission"], permission);
+      if (permission.granted) registerPushToken();
+    },
   });
 }

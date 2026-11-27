@@ -20,6 +20,7 @@ import {
   useCompleteOnboarding,
   useMyProfile,
   usePickProfileImage,
+  useRequestNotificationPermission,
   useUpdateMyProfile,
 } from "@/hooks";
 import { personalDetailsSchema } from "@/schemas";
@@ -59,6 +60,7 @@ export default function OnboardingScreen() {
     usePickProfileImage("avatar");
   const { mutateAsync: completeOnboarding, isPending: isCompleting } =
     useCompleteOnboarding();
+  const { mutate: requestNotifications } = useRequestNotificationPermission();
   const programmesRef = useRef<BottomSheetModal>(null);
   const { bottom: bottomInset } = useSafeAreaInsets();
   const [step, setStep] = useState(0);
@@ -93,6 +95,8 @@ export default function OnboardingScreen() {
 
   // once the API stored it, onboardedAt is in the profile and the Redirect above takes over
   const goToFeed = async () => {
+    // asked before the feed replaces this screen; a refusal still lets the student in
+    requestNotifications();
     try {
       await completeOnboarding();
     } catch {

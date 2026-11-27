@@ -10,7 +10,7 @@ import { api, setApiAccessToken } from "@/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { usePostHog } from "posthog-react-native";
 import { captureAction } from "@/utils";
-import { useRegisterPushToken } from "@/hooks/usePush";
+import { useRequestNotificationPermission } from "@/hooks/useNotifications";
 import { deleteStoredSession, loadStoredSession, storeSession } from "@/store";
 
 type SessionContextValue = {
@@ -25,7 +25,7 @@ export const SessionContext = createContext<SessionContextValue | null>(null);
 export function SessionProvider({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient();
   const posthog = usePostHog();
-  const { mutate: registerPushToken } = useRegisterPushToken();
+  const { mutate: requestNotifications } = useRequestNotificationPermission();
   const [session, setSession] = useState<IssuedSession | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -43,13 +43,15 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
         setApiAccessToken(storedSession?.token ?? null);
         setIsLoading(false);
         if (!storedSession) return;
-        registerPushToken();
+        // a student never asked gets the prompt; an allowed device re-registers its token, as Expo may
+        // replace it; a refused one stays silent
+        requestNotifications();
       });
 
     return () => {
       isMounted = false;
     };
-  }, [registerPushToken]);
+  }, [requestNotifications]);
 
   const saveSession = useCallback(
     async (nextSession: IssuedSession) => {

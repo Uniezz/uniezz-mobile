@@ -55,7 +55,6 @@ import {
   useMyProfile,
   useMyProfilePhotos,
   useDeleteMyPushToken,
-  useRegisterPushToken,
   useMyPushSettings,
   useNotificationPermission,
   useUpdateMyPushSettings,
@@ -97,7 +96,6 @@ export default function ProfileScreen() {
   const { data: pushSettings } = useMyPushSettings();
   const { mutateAsync: updatePushSettings } = useUpdateMyPushSettings();
   const { mutateAsync: deletePushToken } = useDeleteMyPushToken();
-  const { mutate: registerPushToken } = useRegisterPushToken();
   // on only when the system allows them and the account has not switched them off
   const arePushesOn =
     areNotificationsEnabled && pushSettings?.enabled !== false;
@@ -228,7 +226,6 @@ export default function ProfileScreen() {
     try {
       const { granted } = await requestNotifications();
       if (!granted) return;
-      registerPushToken();
       if (pushSettings?.enabled === false) {
         await updatePushSettings({ body: { enabled: true } });
       }
