@@ -32,9 +32,10 @@ export const CONNECTION_PREFERENCES_ERRORS: Record<number, string> = {
   400: "connections.datingRequiresAdult",
 };
 
-// both are 400 on PUT /connections/me
+// all are 400 on PUT /connections/me
 export const CONNECTION_PREFERENCES_CODES: Record<string, string> = {
   dating_requires_adult: "connections.datingRequiresAdult",
+  dating_requires_profile: "connections.datingRequiresProfile",
   birth_date_immutable: "connections.birthDateImmutable",
 };
 

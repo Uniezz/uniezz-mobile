@@ -203,6 +203,7 @@
     "cardExpired": "Ta karta wygasła. Oto następna.",
     "likeLimit": "Osiągnięto dzisiejszy limit {{limit}} połączeń. Spróbuj jutro.",
     "datingRequiresAdult": "Randki są tylko dla studentów, którzy mają 18 lat lub więcej.",
+    "datingRequiresProfile": "Aby włączyć randki, ustaw płeć w profilu (Profil → Dane osobowe).",
     "inCommon": "Wspólne",
     "interests": "Zainteresowania",
     "closedToMode": "Nie masz jeszcze włączonego tego trybu. Zapisz preferencje w filtrach, aby zobaczyć studentów.",

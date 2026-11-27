@@ -27,6 +27,7 @@ import { vs } from "@/theme/scale";
 import {
   UIPressable,
   Icon,
+  UIChip,
   UIAvatar,
   UIButton,
   UIGlass,
@@ -38,6 +39,8 @@ import {
 } from "@/ui";
 import {
   captureAction,
+  GENDER_LABELS,
+  GENDERS,
   ONBOARDING_STEPS,
   splitInterests,
   toDetailsValues,
@@ -84,6 +87,8 @@ export default function OnboardingScreen() {
   const isBusy = isSaving || isUploadingPhoto || isCompleting;
   // skip doesn't save the form, so it waits for a saved name
   const canSkip = Boolean(profile.firstName && profile.lastName);
+  // the API rejects changing a saved gender (gender_immutable)
+  const isGenderLocked = Boolean(profile.gender);
 
   // once the API stored it, onboardedAt is in the profile and the Redirect above takes over
   const goToFeed = async () => {
@@ -94,13 +99,14 @@ export default function OnboardingScreen() {
     }
   };
   const saveDetails = handleSubmit(
-    async ({ interests, songUrl, gender: _gender, ...values }) => {
+    async ({ interests, songUrl, gender, ...values }) => {
       try {
         if (isDirty)
           await updateProfile({
             ...values,
             interests: splitInterests(interests),
             songUrl: songUrl.trim(),
+            ...(isGenderLocked || !gender ? {} : { gender }),
           });
         setStep(2);
       } catch {
@@ -211,6 +217,36 @@ export default function OnboardingScreen() {
                   />
                 );
               }}
+            />
+            <Controller
+              control={control}
+              name="gender"
+              render={({ field }) => (
+                <View style={styles.group}>
+                  <UIText size="xs" weight="semibold" color="secondary">
+                    {t("students.gender")}
+                  </UIText>
+                  <View style={styles.chips}>
+                    {GENDERS.map((value) => (
+                      <UIChip
+                        key={value}
+                        label={t(GENDER_LABELS[value])}
+                        selected={field.value === value}
+                        onPress={
+                          isGenderLocked
+                            ? undefined
+                            : () => field.onChange(value)
+                        }
+                      />
+                    ))}
+                  </View>
+                  {isGenderLocked ? null : (
+                    <UIText size="xs" color="secondary">
+                      {t("students.genderHint")}
+                    </UIText>
+                  )}
+                </View>
+              )}
             />
             <Controller
               control={control}
@@ -370,6 +406,13 @@ const styles = StyleSheet.create((theme, rt) => ({
   fields: {
     gap: theme.vs(16),
     paddingBottom: theme.vs(FOOTER_HEIGHT + 16),
+  },
+  group: {
+    gap: theme.vs(8),
+  },
+  chips: {
+    flexDirection: "row",
+    gap: theme.s(8),
   },
   // the scroll view clips the glow, so the step leaves room for all of it (blur + spread)
   photoStep: {
