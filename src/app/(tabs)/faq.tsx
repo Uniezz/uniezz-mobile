@@ -115,6 +115,9 @@ export default function FaqScreen() {
       </UICollapsingHeader>
       <FlashList
         data={visible}
+        // on by default, it keeps a row in place when a search changes the rows above it, so clearing
+        // a search could leave the list scrolled down
+        maintainVisibleContentPosition={{ disabled: true }}
         keyExtractor={(entry) => entry.id}
         onScroll={handleScroll}
         scrollEventThrottle={16}

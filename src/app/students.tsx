@@ -91,6 +91,9 @@ export default function StudentsScreen() {
       />
       <FlashList
         data={students}
+        // on by default, it keeps a row in place when a search changes the rows above it, so clearing
+        // a search could leave the list scrolled down
+        maintainVisibleContentPosition={{ disabled: true }}
         keyExtractor={(student) => student.id}
         onScroll={handleScroll}
         scrollEventThrottle={16}
