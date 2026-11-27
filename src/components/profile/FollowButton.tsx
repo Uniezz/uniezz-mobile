@@ -1,33 +1,24 @@
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner-native";
 import type { PublicProfile } from "@/@types";
 import { useFollowProfile } from "@/hooks";
 import { StyleSheet } from "react-native-unistyles";
-import { Icon, UIButton, UIText } from "@/ui";
+import { Icon, UIButton } from "@/ui";
 
 export const FollowButton = ({ profile }: { profile: PublicProfile }) => {
   const { t } = useTranslation();
-  const { mutate: follow, isPending } = useFollowProfile();
+  const { mutate: follow } = useFollowProfile(profile.id);
   const isFollowing = profile.followedByMe;
-  const handlePress = () =>
-    follow(
-      { id: profile.id, follow: !isFollowing },
-      {
-        onSuccess: () =>
-          toast.success(
-            t(isFollowing ? "follows.unfollowed" : "follows.followed"),
-          ),
-        onError: () => toast.error(t("apiState.error")),
-      },
-    );
+  const handlePress = () => follow(!isFollowing);
 
   return (
     <UIButton
       size="sm"
       type={isFollowing ? "ghost" : undefined}
       accessibilityRole="button"
+      accessibilityLabel={t(
+        isFollowing ? "follows.unfollow" : "follows.follow",
+      )}
       accessibilityState={{ selected: isFollowing }}
-      disabled={isPending}
       onPress={handlePress}
       style={styles.button(isFollowing)}
     >
@@ -38,25 +29,17 @@ export const FollowButton = ({ profile }: { profile: PublicProfile }) => {
           color: isFollowing ? theme.colors.white : theme.colors.ink,
         })}
       />
-      <UIText
-        size="sm"
-        weight="semibold"
-        color={isFollowing ? "white" : "black"}
-      >
-        {t(isFollowing ? "follows.unfollow" : "follows.follow")}
-      </UIText>
     </UIButton>
   );
 };
 
 const styles = StyleSheet.create((theme) => ({
-  // sized by its label, which is much longer in some languages
+  // icon only: the label overflowed the row in longer languages, so it is the accessibility label now
   button: (isFollowing: boolean) => ({
     width: "auto",
-    flexDirection: "row",
-    gap: theme.s(6),
-    paddingHorizontal: theme.s(16),
-    borderWidth: isFollowing ? 1 : 0,
-    borderColor: theme.colors.white40,
+    paddingHorizontal: theme.s(14),
+    // the same 1px border either way, so following does not resize the button and shift the row
+    borderWidth: 1,
+    borderColor: isFollowing ? theme.colors.white40 : "transparent",
   }),
 }));

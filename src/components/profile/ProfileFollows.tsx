@@ -4,6 +4,7 @@ import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import type { FollowList } from "@/@types";
 import { UIPressable, UIText } from "@/ui";
+import { formatCompactCount } from "@/utils";
 
 type ProfileFollowsProps = {
   /** missing for the signed-in student */
@@ -20,7 +21,8 @@ export const ProfileFollows = ({
   followersCount,
   followingCount,
 }: ProfileFollowsProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const locale = i18n.resolvedLanguage ?? i18n.language;
   const counts = { followers: followersCount, following: followingCount };
   const handlePress = (list: FollowList) =>
     router.push({
@@ -36,9 +38,10 @@ export const ProfileFollows = ({
           accessibilityRole="button"
           accessibilityLabel={`${counts[list]} ${t(`follows.${list}`)}`}
           onPress={() => handlePress(list)}
+          style={styles.count}
         >
-          <UIText size="md" weight="semibold">
-            {counts[list]}
+          <UIText size="sm" weight="semibold">
+            {formatCompactCount(counts[list], locale)}
           </UIText>
           <UIText size="sm" color="secondary">
             {t(`follows.${list}`)}
@@ -52,6 +55,12 @@ export const ProfileFollows = ({
 const styles = StyleSheet.create((theme) => ({
   row: {
     flexDirection: "row",
-    gap: theme.s(24),
+    gap: theme.s(16),
+  },
+  // the number and its label on one line, like a subtitle under the name
+  count: {
+    flexDirection: "row",
+    alignItems: "baseline",
+    gap: theme.s(4),
   },
 }));

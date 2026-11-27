@@ -4,6 +4,8 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
+import { toast } from "sonner-native";
 import type { PublicProfile } from "@/@types";
 import {
   followProfile,
@@ -39,20 +41,22 @@ export function usePublicProfile(id: string, isEnabled = true) {
   });
 }
 
-// the count moves at once; a failed request puts the profile back
-export function useFollowProfile() {
+// like Instagram: a tap flips the button and the count at once. Taps queue one request each, one
+// after another (scope), so the last tap wins; a failed one refetches, which puts the button back
+export function useFollowProfile(id: string) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
+  const queryKey = ["profiles", id];
+  const mutationKey = ["profiles", "follow", id];
   return useMutation({
     meta: { analyticsAction: "profile_follow" },
-    mutationFn: ({ id, follow }: { id: string; follow: boolean }) =>
+    mutationKey,
+    scope: { id: `profiles-follow-${id}` },
+    mutationFn: (follow: boolean) =>
       follow ? followProfile(id) : unfollowProfile(id),
-    onMutate: async ({ id, follow }) => {
-      await queryClient.cancelQueries({ queryKey: ["profiles", id] });
-      const previous = queryClient.getQueryData<PublicProfile>([
-        "profiles",
-        id,
-      ]);
-      queryClient.setQueryData<PublicProfile>(["profiles", id], (profile) =>
+    onMutate: async (follow) => {
+      await queryClient.cancelQueries({ queryKey });
+      queryClient.setQueryData<PublicProfile>(queryKey, (profile) =>
         profile && profile.followedByMe !== follow
           ? {
               ...profile,
@@ -61,14 +65,13 @@ export function useFollowProfile() {
             }
           : profile,
       );
-      return { previous };
     },
-    onError: (_error, { id }, context) => {
-      queryClient.setQueryData(["profiles", id], context?.previous);
-    },
-    onSettled: (_data, _error, { id }) =>
+    onError: () => toast.error(t("apiState.error")),
+    // a refetch while more taps wait would flip the button back, so only the last one refetches
+    onSettled: () =>
+      queryClient.isMutating({ mutationKey }) === 1 &&
       Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["profiles", id] }),
+        queryClient.invalidateQueries({ queryKey }),
         queryClient.invalidateQueries({ queryKey: ["profile", "me"] }),
         queryClient.invalidateQueries({ queryKey: ["follows"] }),
       ]),
