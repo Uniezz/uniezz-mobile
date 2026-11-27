@@ -1,9 +1,10 @@
 import type { FaqProposalInput } from "@/@types";
+import type { Language } from "@/store/languageStore";
 import { api } from "./client";
 
-export async function getFaqEntries(cursor?: string) {
+export async function getFaqEntries(lang: Language, cursor?: string) {
   const { data } = await api.GET("/faq", {
-    params: { query: { cursor, limit: 20 } },
+    params: { query: { cursor, limit: 20, lang } },
   });
 
   return data!;

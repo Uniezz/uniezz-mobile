@@ -62,6 +62,7 @@ import {
   usePickProfileImage,
   usePickProfilePhotos,
   useRequestNotificationPermission,
+  useUpdateMyProfile,
 } from "@/hooks";
 import { Icon, UIGlass, UIPage, UISubTabs, UIBlur } from "@/ui";
 import { ApiRequestError } from "@/api";
@@ -284,8 +285,11 @@ export default function ProfileScreen() {
   const setLanguage = useLanguageStore((state) => state.setLanguage);
   const { enabled: hapticEnabled, toggleEnabled: toggleHaptics } =
     useHapticsStore();
+  const { mutate: updateProfile } = useUpdateMyProfile();
   const handleLanguagePress = (code: Language) => {
     setLanguage(code);
+    // saved in the background so push notifications come in this language too
+    updateProfile({ language: code });
   };
   const handleMenuAction = ({ nativeEvent }: NativeActionEvent) => {
     const language = LANGUAGES.find((code) => nativeEvent.event === code);
