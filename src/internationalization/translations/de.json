@@ -487,7 +487,10 @@
     "notificationsPromptTitle": "Mitteilungen an?",
     "notificationsPromptMessage": "Erfahre von neuen Nachrichten, Antworten und Kontakten. Abschalten geht jederzeit in den Einstellungen.",
     "notificationsEnable": "Einschalten",
-    "notNow": "Nicht jetzt"
+    "notNow": "Nicht jetzt",
+    "updateTitle": "Update verfügbar",
+    "updateMessage": "Eine neue Version von uniezz ist im Store. Aktualisiere, um die neuesten Funktionen und Fehlerbehebungen zu erhalten.",
+    "update": "Aktualisieren"
   },
   "postComposer": {
     "duplicatePhoto": "Foto schon hinzugefügt.",

@@ -496,7 +496,10 @@
     "notificationsPromptTitle": "Turn on notifications?",
     "notificationsPromptMessage": "Get alerts for new messages, replies and connections. You can turn them off in settings.",
     "notificationsEnable": "Turn on",
-    "notNow": "Not now"
+    "notNow": "Not now",
+    "updateTitle": "Update available",
+    "updateMessage": "A new version of uniezz is in the store. Update to get the latest features and fixes.",
+    "update": "Update"
   },
   "postComposer": {
     "audience": "Who can see it",

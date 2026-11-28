@@ -504,7 +504,10 @@
     "notificationsPromptTitle": "Включить уведомления?",
     "notificationsPromptMessage": "Узнавайте о новых сообщениях, ответах на посты и знакомствах. Отключить можно в настройках.",
     "notificationsEnable": "Включить",
-    "notNow": "Не сейчас"
+    "notNow": "Не сейчас",
+    "updateTitle": "Доступно обновление",
+    "updateMessage": "Новая версия uniezz уже в магазине. Обновите, чтобы получить новые функции и исправления.",
+    "update": "Обновить"
   },
   "postComposer": {
     "audience": "Кто увидит",

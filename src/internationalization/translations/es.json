@@ -487,7 +487,10 @@
     "notificationsPromptTitle": "¿Activar notificaciones?",
     "notificationsPromptMessage": "Te avisaremos de mensajes, respuestas a tus publicaciones y nuevas conexiones. Puedes desactivarlo en ajustes.",
     "notificationsEnable": "Activar",
-    "notNow": "Ahora no"
+    "notNow": "Ahora no",
+    "updateTitle": "Actualización disponible",
+    "updateMessage": "Hay una nueva versión de uniezz en la tienda. Actualiza para tener las últimas funciones y correcciones.",
+    "update": "Actualizar"
   },
   "postComposer": {
     "duplicatePhoto": "Esta foto ya está añadida.",

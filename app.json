@@ -15,7 +15,9 @@
       "associatedDomains": ["applinks:uniezz.pl"],
       "appleTeamId": "ZSVCJ3UTY6",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "AppStoreID": "6835052645",
+        "AppStoreCountry": "pl"
       }
     },
     "android": {

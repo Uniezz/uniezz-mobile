@@ -496,7 +496,10 @@
     "notificationsPromptTitle": "Уключыць апавяшчэнні?",
     "notificationsPromptMessage": "Даведвайцеся пра новыя паведамленні, адказы на допісы і знаёмствы. Выключыць можна ў наладах.",
     "notificationsEnable": "Уключыць",
-    "notNow": "Не зараз"
+    "notNow": "Не зараз",
+    "updateTitle": "Даступнае абнаўленне",
+    "updateMessage": "Новая версія uniezz ужо ў краме. Абнавіце, каб атрымаць новыя функцыі і выпраўленні.",
+    "update": "Абнавіць"
   },
   "postComposer": {
     "duplicatePhoto": "Гэта фота ўжо дададзена.",

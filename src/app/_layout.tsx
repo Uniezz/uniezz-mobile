@@ -13,6 +13,7 @@ import { KeyboardProvider } from "react-native-keyboard-controller";
 import { StyleSheet } from "react-native-unistyles";
 import { PostHogProvider, useFeatureFlag } from "posthog-react-native";
 import { useNotificationTaps, useScreenTracking } from "@/hooks";
+import { promptAppUpdate } from "@/store";
 import { darkTheme } from "@/theme";
 import { stackHostNativeProps, stackScreenOptions } from "@/utils";
 
@@ -35,6 +36,11 @@ function RootNavigator(): React.JSX.Element {
   useEffect(() => {
     if (segments.length > 0) SplashScreen.hide();
   }, [segments.length]);
+
+  // once per launch: a newer store build is offered with each platform's native update UI
+  useEffect(() => {
+    void promptAppUpdate();
+  }, []);
 
   return (
     <Stack

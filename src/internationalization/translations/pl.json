@@ -504,7 +504,10 @@
     "notificationsPromptTitle": "Włączyć powiadomienia?",
     "notificationsPromptMessage": "Dowiesz się o nowych wiadomościach, odpowiedziach na posty i znajomościach. Wyłączysz je w ustawieniach.",
     "notificationsEnable": "Włącz",
-    "notNow": "Nie teraz"
+    "notNow": "Nie teraz",
+    "updateTitle": "Dostępna aktualizacja",
+    "updateMessage": "Nowa wersja uniezz jest już w sklepie. Zaktualizuj, aby mieć najnowsze funkcje i poprawki.",
+    "update": "Aktualizuj"
   },
   "postComposer": {
     "audience": "Kto to zobaczy",
