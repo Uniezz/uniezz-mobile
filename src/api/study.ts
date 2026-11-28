@@ -164,3 +164,42 @@ export async function rateProfessor({
 
   return data!;
 }
+
+export async function getProfessor(id: string) {
+  const { data } = await api.GET("/study/professors/{id}", {
+    params: { path: { id } },
+  });
+
+  return data!;
+}
+
+// newest first, anonymous; isMine marks the student's own
+export async function getProfessorReviews(id: string, cursor?: string) {
+  const { data } = await api.GET("/study/professors/{id}/reviews", {
+    params: { path: { id }, query: { cursor, limit: 20 } },
+  });
+
+  return data!;
+}
+
+// one review per student: writing again replaces it
+export async function reviewProfessor({
+  id,
+  content,
+}: {
+  id: string;
+  content: string;
+}) {
+  const { data } = await api.PUT("/study/professors/{id}/review", {
+    params: { path: { id } },
+    body: { content },
+  });
+
+  return data!;
+}
+
+export async function deleteMyProfessorReview(id: string) {
+  await api.DELETE("/study/professors/{id}/review", {
+    params: { path: { id } },
+  });
+}

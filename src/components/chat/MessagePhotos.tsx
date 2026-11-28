@@ -1,0 +1,75 @@
+import { useTranslation } from "react-i18next";
+import { View } from "react-native";
+import { StyleSheet } from "react-native-unistyles";
+import type { ApiChatMessage } from "@/@types";
+import { UIImage, UIPressable } from "@/ui";
+import { CHAT_ALBUM_ROWS, previewImages } from "@/utils";
+
+type MessagePhotosProps = {
+  attachments: NonNullable<ApiChatMessage["attachments"]>;
+  /** a photo failed to load, e.g. because its link expired */
+  onError: () => void;
+};
+
+// a message's photos as one album; a tap opens them full screen from that photo
+export const MessagePhotos = ({ attachments, onError }: MessagePhotosProps) => {
+  const { t } = useTranslation();
+  const urls = attachments.map(({ url }) => url);
+  const rows = CHAT_ALBUM_ROWS[urls.length] ?? [urls.length];
+  // where each row's photos start in `urls`
+  const starts = rows.map((_, index) =>
+    rows.slice(0, index).reduce((sum, size) => sum + size, 0),
+  );
+
+  return (
+    <View style={styles.album}>
+      {rows.map((size, rowIndex) => {
+        const start = starts[rowIndex] ?? 0;
+        return (
+          <View key={rowIndex} style={styles.row(size)}>
+            {attachments
+              .slice(start, start + size)
+              .map(({ mediaId, url }, offset) => (
+                <UIPressable
+                  key={mediaId}
+                  accessibilityRole="imagebutton"
+                  accessibilityLabel={t("app.openImage")}
+                  onPress={() => previewImages(urls, start + offset)}
+                  style={styles.photo}
+                >
+                  <UIImage
+                    // the link is presigned and changes on every fetch; the media id keeps the cached photo
+                    source={{ uri: url, cacheKey: mediaId }}
+                    fallback={undefined}
+                    contentFit="cover"
+                    onError={onError}
+                    style={StyleSheet.absoluteFill}
+                  />
+                </UIPressable>
+              ))}
+          </View>
+        );
+      })}
+    </View>
+  );
+};
+
+const styles = StyleSheet.create((theme) => ({
+  // the album fills the bubble's width, with thin gaps between photos as in Telegram
+  album: {
+    width: theme.s(252),
+    gap: theme.s(2),
+    borderRadius: theme.vs(13),
+    overflow: "hidden",
+  },
+  // a lone photo stands tall; more photos per row make the row shorter
+  row: (size: number) => ({
+    flexDirection: "row",
+    gap: theme.s(2),
+    height: theme.s(size === 1 ? 220 : size === 2 ? 140 : 100),
+  }),
+  photo: {
+    flex: 1,
+    backgroundColor: theme.colors.surface60,
+  },
+}));

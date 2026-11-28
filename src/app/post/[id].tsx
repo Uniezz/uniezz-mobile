@@ -31,7 +31,7 @@ import {
   useMyProfile,
 } from "@/hooks";
 import { commentSchema } from "@/schemas";
-import { captureAction, authorName } from "@/utils";
+import { captureAction, authorName, apiErrorKey } from "@/utils";
 import { Icon, UIIconButton, UIPage, UIText } from "@/ui";
 
 export default function PostScreen() {
@@ -159,8 +159,8 @@ export default function PostScreen() {
         setEditing(null);
         setReplyTo(null);
         toast.success(t(editing ? "app.saved" : "apiState.commentSent"));
-      } catch {
-        toast.error(t("apiState.error"));
+      } catch (error) {
+        toast.error(t(apiErrorKey(error)));
       }
     },
     () => captureAction(posthog, "comment_form", "validation_failed"),

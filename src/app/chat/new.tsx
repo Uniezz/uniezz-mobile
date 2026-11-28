@@ -1,25 +1,24 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FlashList } from "@shopify/flash-list";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { usePostHog } from "posthog-react-native";
 import { useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import {
-  Keyboard,
-  LayoutChangeEvent,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  View,
-} from "react-native";
+import { Keyboard, LayoutChangeEvent, View } from "react-native";
 import { KeyboardStickyView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
+import { toast } from "sonner-native";
 import type { CreateGroupFormValues } from "@/@types";
 import { RowPickerItem } from "@/components";
-import { useProfileSearch, useUniversities } from "@/hooks";
-import { createGroupSchema } from "@/schemas";
-import { useChatStore } from "@/store/chat";
+import {
+  useAddChatMembers,
+  useChatMembers,
+  useConnections,
+  useCreateChatGroup,
+} from "@/hooks";
+import { addGroupMembersSchema, createGroupSchema } from "@/schemas";
 import {
   Icon,
   UIAvatar,
@@ -31,22 +30,29 @@ import {
   UIPage,
   UIQueryError,
   UISearchOverlay,
-  UISkeleton,
   UIText,
   UIUniversityLogo,
+  UISkeletonRow,
 } from "@/ui";
-import { authorName, HEADER_COMPACT_OFFSET, captureAction } from "@/utils";
+import { apiErrorKey, authorName, captureAction } from "@/utils";
 
+// creates a group, or with a groupId adds people to that group
 export default function NewGroupScreen() {
+  const { groupId } = useLocalSearchParams<{ groupId?: string }>();
+  const isAdding = Boolean(groupId);
   const { t } = useTranslation();
   const posthog = usePostHog();
-  const createGroup = useChatStore((state) => state.createGroup);
-  const { data: universities = [] } = useUniversities();
+  const { createGroup, isPending: isCreating } = useCreateChatGroup();
+  const { mutateAsync: addMembers, isPending: isAddingMembers } =
+    useAddChatMembers(groupId ?? "");
+  const { data: memberPage } = useChatMembers(groupId ?? "", isAdding);
+  const memberIds = new Set(
+    (memberPage?.items ?? []).map(({ student }) => student.id),
+  );
   const [search, setSearch] = useState("");
   const [query, setQuery] = useState("");
-  // the header floats over the list; the list starts below it and turns the header compact once scrolled
+  // the header floats over the page; the pinned name field and heading start below it, so it keeps its size
   const [headerHeight, setHeaderHeight] = useState(0);
-  const [isHeaderCompact, setIsHeaderCompact] = useState(false);
   const {
     data,
     isPending,
@@ -55,14 +61,24 @@ export default function NewGroupScreen() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useProfileSearch(query);
-  const students = data?.pages.flatMap((page) => page.items ?? []) ?? [];
+  } = useConnections();
+  // the API takes only the student's own connections into a group.
+  // shortcut: search filters the loaded connections; the API has no connection search yet
+  const needle = query.trim().toLowerCase();
+  const students = (data?.pages.flatMap((page) => page.items ?? []) ?? [])
+    .map(({ profile }) => profile)
+    // people already in the group are not offered again
+    .filter(
+      (student) =>
+        !memberIds.has(student.id) &&
+        authorName(student).toLowerCase().includes(needle),
+    );
   const {
     control,
     handleSubmit,
     formState: { isValid },
   } = useForm<CreateGroupFormValues>({
-    resolver: zodResolver(createGroupSchema),
+    resolver: zodResolver(isAdding ? addGroupMembersSchema : createGroupSchema),
     defaultValues: { groupName: "", members: [] },
     mode: "onChange",
   });
@@ -79,11 +95,6 @@ export default function NewGroupScreen() {
     setQuery(search);
     Keyboard.dismiss();
   };
-  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    setIsHeaderCompact(
-      event.nativeEvent.contentOffset.y > HEADER_COMPACT_OFFSET,
-    );
-  };
   const handleHeaderLayout = (event: LayoutChangeEvent) => {
     setHeaderHeight(event.nativeEvent.layout.height);
   };
@@ -91,44 +102,57 @@ export default function NewGroupScreen() {
     if (hasNextPage && !isFetchingNextPage) return fetchNextPage();
   };
   const handleCreatePress = handleSubmit(
-    ({ groupName, members: memberIds }) => {
-      captureAction(posthog, "group_create", "attempted", { storage: "local" });
+    async ({ groupName, members: picked }) => {
       try {
-        const id = createGroup(groupName, memberIds);
-        captureAction(posthog, "group_create", "succeeded", {
-          storage: "local",
+        if (groupId) {
+          await addMembers({
+            params: { path: { id: groupId } },
+            body: { userIds: picked },
+          });
+          router.back();
+          return;
+        }
+        const { id } = await createGroup({
+          name: groupName,
+          memberIds: picked,
         });
         // replaces this form, so back from the new group returns to the chat list
         router.replace({ pathname: "/chat/[id]", params: { id } });
       } catch (error) {
-        captureAction(posthog, "group_create", "failed", { storage: "local" });
-        throw error;
+        toast.error(t(apiErrorKey(error)));
       }
     },
     () => captureAction(posthog, "group_form", "validation_failed"),
   );
 
-  const listHeader = (
-    <View style={styles.header}>
-      <UIText color="soft">{t("app.groupDescription")}</UIText>
-      <Controller
-        control={control}
-        name="groupName"
-        render={({ field, fieldState }) => (
-          <UIInput
-            captionText={t("app.groupName")}
-            placeholder={t("app.groupPlaceholder")}
-            value={field.value}
-            onChangeText={field.onChange}
-            onBlur={field.onBlur}
-            errorText={fieldState.error?.message && t(fieldState.error.message)}
-            maxLength={80}
+  // pinned above the list: only the people rows scroll
+  const top = (
+    <View style={styles.top(headerHeight)}>
+      {isAdding ? null : (
+        <>
+          <Controller
+            control={control}
+            name="groupName"
+            render={({ field, fieldState }) => (
+              <UIInput
+                captionText={t("app.groupName")}
+                placeholder={t("app.groupPlaceholder")}
+                value={field.value}
+                onChangeText={field.onChange}
+                onBlur={field.onBlur}
+                errorText={
+                  fieldState.error?.message && t(fieldState.error.message)
+                }
+                maxLength={80}
+              />
+            )}
           />
-        )}
-      />
+        </>
+      )}
       <View style={styles.peopleHeading}>
+        {/* adding to a group, the screen title already says it */}
         <UIText size="md" weight="semibold" style={styles.grow}>
-          {t("app.addPeople")}
+          {isAdding ? "" : t("app.addPeople")}
         </UIText>
         {members.length > 0 ? (
           <UIText size="sm" weight="medium" color="link">
@@ -152,13 +176,14 @@ export default function NewGroupScreen() {
   return (
     <UIPage>
       <UICollapsingHeader
-        title={t("chat.action")}
-        isCompact={isHeaderCompact}
+        title={t(isAdding ? "app.addPeople" : "chat.action")}
+        isCompact={false}
         onBackPress={handleBackPress}
         backLabel={t("app.back")}
         actions={headerActions}
         onLayout={handleHeaderLayout}
       />
+      {top}
       <Controller
         control={control}
         name="members"
@@ -166,26 +191,26 @@ export default function NewGroupScreen() {
           <FlashList
             data={students}
             extraData={field.value}
+            // on by default, it keeps the picked row in place when a search is cleared and the rows above
+            // it return, so the list opens scrolled down to it
+            maintainVisibleContentPosition={{ disabled: true }}
             keyExtractor={(student) => student.id}
             keyboardShouldPersistTaps="handled"
             keyboardDismissMode="on-drag"
             showsVerticalScrollIndicator={false}
-            onScroll={handleScroll}
-            scrollEventThrottle={16}
-            contentContainerStyle={styles.list(headerHeight)}
+            contentContainerStyle={styles.list}
             onEndReached={handleEndReached}
-            ListHeaderComponent={listHeader}
             ListEmptyComponent={
               isPending ? (
-                <UISkeleton height={64} />
+                <UISkeletonRow isGlass count={8} />
               ) : isError ? (
                 <UIQueryError message={t("apiState.error")} onRetry={refetch} />
               ) : null
             }
             ListFooterComponent={
               isFetchingNextPage ? (
-                <UISkeleton height={64} />
-              ) : (
+                <UISkeletonRow isGlass />
+              ) : isAdding ? null : (
                 <UIText size="sm" color="secondary" style={styles.hint}>
                   {t("app.minimumMembers")}
                 </UIText>
@@ -218,10 +243,8 @@ export default function NewGroupScreen() {
                           size="xxs"
                         />
                       ),
-                      bottomText:
-                        universities.find(
-                          ({ id }) => id === student.universityId,
-                        )?.name ?? student.universityId.toUpperCase(),
+                      // the short code, as on post cards
+                      bottomText: student.universityId.toUpperCase(),
                     }}
                   />
                 </View>
@@ -234,8 +257,10 @@ export default function NewGroupScreen() {
       {!isPending && !isError && students.length === 0 ? (
         <UIEmpty isScreenCentred message={t("students.noResults")} />
       ) : null}
-      {/* rides above the keyboard; UIPage's home-indicator gap is dropped while it's open */}
+      {/* rides above the keyboard; UIPage's home-indicator gap is dropped while it's open. The search
+          overlay's keyboard leaves it in place: it would rise under the search bar */}
       <KeyboardStickyView
+        enabled={!isSearching}
         offset={{ opened: bottomInset }}
         style={styles.footer}
       >
@@ -243,7 +268,7 @@ export default function NewGroupScreen() {
           radius="sm"
           size="rg"
           accessibilityRole="button"
-          disabled={!isValid}
+          disabled={!isValid || isCreating || isAddingMembers}
           onPress={handleCreatePress}
           style={styles.create}
         >
@@ -253,7 +278,7 @@ export default function NewGroupScreen() {
             uniProps={(theme) => ({ color: theme.colors.ink })}
           />
           <UIText size="rg" weight="semibold" color="black">
-            {t("app.createGroup")}
+            {t(isAdding ? "chat.addToGroup" : "app.createGroup")}
           </UIText>
         </UIButton>
       </KeyboardStickyView>
@@ -272,14 +297,15 @@ export default function NewGroupScreen() {
 
 const styles = StyleSheet.create((theme, rt) => ({
   // UIPage already pads the status bar; the rest of the header height is added here
-  list: (headerHeight: number) => ({
+  top: (headerHeight: number) => ({
     paddingTop: Math.max(headerHeight - rt.insets.top, 0) + theme.vs(8),
     paddingHorizontal: theme.s(16),
-    paddingBottom: theme.vs(16),
-  }),
-  header: {
     gap: theme.vs(24),
-    paddingBottom: theme.vs(12),
+  }),
+  list: {
+    paddingTop: theme.vs(12),
+    paddingHorizontal: theme.s(16),
+    paddingBottom: theme.vs(16),
   },
   peopleHeading: {
     flexDirection: "row",

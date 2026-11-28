@@ -128,8 +128,10 @@ const styles = StyleSheet.create((theme) => ({
     alignItems: "center",
     gap: theme.s(6),
   },
+  // Geist's caps sit below the middle of its line box, so beside the logo the text looks low
   bottomText: {
     flexShrink: 1,
+    transform: [{ translateY: -theme.vs(1) }],
   },
   item: (isItemSelected: boolean, isLast: boolean) => ({
     alignItems: "center",

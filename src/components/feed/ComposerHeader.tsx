@@ -1,10 +1,9 @@
-import { BlurView } from "expo-blur";
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { LayoutChangeEvent, View } from "react-native";
+import { LayoutChangeEvent, View, Platform } from "react-native";
 import { EaseView } from "react-native-ease";
 import { StyleSheet } from "react-native-unistyles";
-import { UIPressable, Icon, UIIconButton, UIText } from "@/ui";
+import { UIPressable, Icon, UIIconButton, UIText, UIBlur } from "@/ui";
 import { HEADER_TRANSITION } from "@/utils";
 
 type ComposerHeaderProps = {
@@ -35,7 +34,7 @@ export const ComposerHeader = ({
         transition={HEADER_TRANSITION}
         style={styles.backdrop}
       >
-        <BlurView intensity={50} tint="dark" style={styles.blur} />
+        <UIBlur intensity={50} tint="dark" style={styles.blur} />
       </EaseView>
       <View style={styles.row}>
         <UIIconButton
@@ -85,10 +84,11 @@ const styles = StyleSheet.create((theme, rt) => ({
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.white5,
   },
-  // shortcut: Android shows only the ink tint (no BlurTargetView behind the form), add one if Android needs real blur
   blur: {
     flex: 1,
-    backgroundColor: theme.colors.ink40,
+    // Android has no real blur: an opaque fill, so nothing scrolls through
+    backgroundColor:
+      Platform.OS === "android" ? theme.colors.ink : theme.colors.ink40,
   },
   row: {
     flexDirection: "row",

@@ -10,7 +10,7 @@ import {
   View,
 } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { FaqItem, FaqProposalSheet } from "@/components/faq";
+import { FaqItem, FaqProposalSheet, FaqItemSkeleton } from "@/components/faq";
 import { useFaqEntries, useMyFaqProposals } from "@/hooks";
 import { ProfileButton } from "@/components/profile";
 import {
@@ -21,7 +21,6 @@ import {
   UIPage,
   UIQueryError,
   UISearchOverlay,
-  UISkeleton,
   UISubTabs,
 } from "@/ui";
 import { HEADER_COMPACT_OFFSET } from "@/utils";
@@ -116,6 +115,9 @@ export default function FaqScreen() {
       </UICollapsingHeader>
       <FlashList
         data={visible}
+        // on by default, it keeps a row in place when a search changes the rows above it, so clearing
+        // a search could leave the list scrolled down
+        maintainVisibleContentPosition={{ disabled: true }}
         keyExtractor={(entry) => entry.id}
         onScroll={handleScroll}
         scrollEventThrottle={16}
@@ -127,14 +129,12 @@ export default function FaqScreen() {
         onEndReached={handleEndReached}
         ListEmptyComponent={
           isPending ? (
-            <UISkeleton height={56} />
+            <FaqItemSkeleton count={8} />
           ) : isError ? (
             <UIQueryError message={t("apiState.error")} onRetry={refetch} />
           ) : null
         }
-        ListFooterComponent={
-          isFetchingNextPage ? <UISkeleton height={56} /> : null
-        }
+        ListFooterComponent={isFetchingNextPage ? <FaqItemSkeleton /> : null}
         renderItem={({ item }) => (
           <View style={styles.cell}>
             <FaqItem entry={item} hasStatus={isMine} />

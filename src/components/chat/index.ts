@@ -1,4 +1,12 @@
 export { ConversationList } from "./ConversationList";
 export { ChatThread } from "./ChatThread";
 export { MessageComposer } from "./MessageComposer";
+export { Message } from "./Message";
+export { GroupMember } from "./GroupMember";
+export { ConversationRow } from "./ConversationRow";
+export { DraftPhotos } from "./DraftPhotos";
 export { ConnectionAvatarList } from "./ConnectionAvatarList";
+export { ConnectionAvatar } from "./ConnectionAvatar";
+export { ChatRequestBar } from "./ChatRequestBar";
+export { ChatSettingsSheet } from "./ChatSettingsSheet";
+export { ChatThreadSkeleton } from "./ChatThreadSkeleton";

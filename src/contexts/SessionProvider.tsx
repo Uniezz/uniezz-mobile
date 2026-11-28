@@ -10,12 +10,8 @@ import { api, setApiAccessToken } from "@/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { usePostHog } from "posthog-react-native";
 import { captureAction } from "@/utils";
-import {
-  deleteStoredSession,
-  loadStoredSession,
-  storeSession,
-  useChatStore,
-} from "@/store";
+import { useRequestNotificationPermission } from "@/hooks/useNotifications";
+import { deleteStoredSession, loadStoredSession, storeSession } from "@/store";
 
 type SessionContextValue = {
   session: IssuedSession | null;
@@ -29,6 +25,7 @@ export const SessionContext = createContext<SessionContextValue | null>(null);
 export function SessionProvider({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient();
   const posthog = usePostHog();
+  const { mutate: requestNotifications } = useRequestNotificationPermission();
   const [session, setSession] = useState<IssuedSession | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -45,19 +42,22 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
         setSession(storedSession);
         setApiAccessToken(storedSession?.token ?? null);
         setIsLoading(false);
+        if (!storedSession) return;
+        // a student never asked gets the prompt; an allowed device re-registers its token, as Expo may
+        // replace it; a refused one stays silent
+        requestNotifications();
       });
 
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [requestNotifications]);
 
   const saveSession = useCallback(
     async (nextSession: IssuedSession) => {
       captureAction(posthog, "session_save", "attempted");
       try {
         await storeSession(nextSession);
-        useChatStore.getState().reset();
         setSession(nextSession);
         setApiAccessToken(nextSession.token);
         captureAction(posthog, "session_save", "succeeded");
@@ -71,7 +71,6 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
 
   const clearSession = useCallback(async () => {
     captureAction(posthog, "session_clear", "attempted");
-    useChatStore.getState().reset();
     setApiAccessToken(null);
     setSession(null);
     queryClient.clear();

@@ -1,5 +1,5 @@
 import { usePostHog } from "posthog-react-native";
-import { captureAction, HEADER_COMPACT_OFFSET } from "@/utils";
+import { captureAction, HEADER_COMPACT_OFFSET, apiErrorKey } from "@/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router, useLocalSearchParams } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
@@ -45,8 +45,8 @@ export default function EditPostScreen() {
         await updatePost({ id, body: values });
         toast.success(t("app.saved"));
         router.back();
-      } catch {
-        toast.error(t("apiState.error"));
+      } catch (error) {
+        toast.error(t(apiErrorKey(error)));
       }
     },
     () => captureAction(posthog, "post_update_form", "validation_failed"),

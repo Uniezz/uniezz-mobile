@@ -20,7 +20,7 @@ import {
   UIPage,
   UIQueryError,
   UISearchOverlay,
-  UISkeleton,
+  UISkeletonRow,
 } from "@/ui";
 import { HEADER_COMPACT_OFFSET } from "@/utils";
 
@@ -91,6 +91,9 @@ export default function StudentsScreen() {
       />
       <FlashList
         data={students}
+        // on by default, it keeps a row in place when a search changes the rows above it, so clearing
+        // a search could leave the list scrolled down
+        maintainVisibleContentPosition={{ disabled: true }}
         keyExtractor={(student) => student.id}
         onScroll={handleScroll}
         scrollEventThrottle={16}
@@ -102,13 +105,13 @@ export default function StudentsScreen() {
         onEndReached={handleEndReached}
         ListEmptyComponent={
           isPending ? (
-            <UISkeleton height={64} />
+            <UISkeletonRow isGlass count={8} />
           ) : isError ? (
             <UIQueryError message={t("apiState.error")} onRetry={refetch} />
           ) : null
         }
         ListFooterComponent={
-          isFetchingNextPage ? <UISkeleton height={64} /> : null
+          isFetchingNextPage ? <UISkeletonRow isGlass /> : null
         }
         renderItem={({ item }) => (
           <View style={styles.cell}>

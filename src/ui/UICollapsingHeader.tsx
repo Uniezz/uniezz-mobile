@@ -1,7 +1,7 @@
-import { BlurView } from "expo-blur";
 import type { ReactNode } from "react";
-import { LayoutChangeEvent, View } from "react-native";
+import { LayoutChangeEvent, View, Platform } from "react-native";
 import { EaseView } from "react-native-ease";
+import { UIBlur } from "./UIBlur";
 import { StyleSheet } from "react-native-unistyles";
 import {
   HEADER_COLLAPSE_HEIGHT,
@@ -61,7 +61,7 @@ export const UICollapsingHeader = ({
         transition={HEADER_TRANSITION}
         style={styles.backdrop}
       >
-        <BlurView intensity={50} tint="dark" style={styles.blur} />
+        <UIBlur intensity={50} tint="dark" style={styles.blur} />
       </EaseView>
       <EaseView
         animate={{ translateY: isCompact ? -rowLift : 0 }}
@@ -138,10 +138,11 @@ const styles = StyleSheet.create((theme, rt) => ({
     ...StyleSheet.absoluteFillObject,
   },
   // light tint, so content stays visible, blurred, as it passes under the header
-  // shortcut: Android shows only the ink tint (no BlurTargetView behind the list), add one if Android needs real blur
   blur: {
     flex: 1,
-    backgroundColor: theme.colors.ink40,
+    // Android has no real blur: an opaque fill, so nothing scrolls through
+    backgroundColor:
+      Platform.OS === "android" ? theme.colors.ink : theme.colors.ink40,
   },
   title: {
     flex: 1,

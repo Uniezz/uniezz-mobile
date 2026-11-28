@@ -9,6 +9,7 @@ export default function ChatLayout() {
     >
       <Stack.Screen name="[id]" />
       <Stack.Screen name="new" />
+      <Stack.Screen name="group/[id]" />
     </Stack>
   );
 }

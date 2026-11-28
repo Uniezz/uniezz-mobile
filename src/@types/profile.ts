@@ -21,6 +21,7 @@ export type ProgrammeFormValues = { programme: string; faculty: string } & Pick<
 export type ProgrammeSelection = Programme["id"] | "new" | null;
 export type ProfileSummary = components["schemas"]["ProfileSummary"];
 export type PublicProfile = components["schemas"]["PublicProfile"];
+export type FollowList = "followers" | "following";
 export type PublicProgramme = components["schemas"]["PublicProgramme"];
 export type ProfileListItem = "overview" | "tabs" | ApiFeedPost;
 export type ProfilePhoto = components["schemas"]["ProfilePhoto"];

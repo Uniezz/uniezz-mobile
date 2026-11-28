@@ -68,7 +68,11 @@ const apiMiddleware: Middleware = {
         const allowsNoContent =
           (request.method === "POST" && schemaPath === "/auth/otp/request") ||
           (request.method === "PUT" &&
-            schemaPath === "/connections/blocks/{id}") ||
+            [
+              "/connections/blocks/{id}",
+              "/profile/onboarding",
+              "/profiles/{id}/follow",
+            ].includes(schemaPath)) ||
           (request.method === "DELETE" &&
             [
               "/feed/comments/{id}",
@@ -77,10 +81,15 @@ const apiMiddleware: Middleware = {
               "/profile/me",
               "/profile/programmes/{id}",
               "/profile/photos/{id}",
+              "/chat/conversations/{id}/members/me",
+              "/chat/conversations/{id}/members/{userId}",
+              "/chat/messages/{id}",
               "/connections/{id}",
               "/connections/blocks/{id}",
               "/study/comments/{id}",
               "/study/files/{id}",
+              "/study/professors/{id}/review",
+              "/profiles/{id}/follow",
             ].includes(schemaPath));
         if (!allowsNoContent) {
           throw apiError(`${request.method} ${schemaPath}`, response);
@@ -118,6 +127,10 @@ const apiMiddleware: Middleware = {
         : undefined;
     const errors = ENDPOINT_ERRORS[schemaPath];
     const translationKey =
+      // every endpoint that takes student text refuses blocked words with this code
+      (code === "content_not_allowed"
+        ? "apiState.contentNotAllowed"
+        : undefined) ??
       (code ? errors?.codes?.[code] : undefined) ??
       errors?.statuses[response.status] ??
       errors?.fallback;
@@ -139,7 +152,11 @@ const apiMiddleware: Middleware = {
   },
 };
 
-export const api = createFetchClient<paths>({ baseUrl: API_BASE_URL });
+// fetch is read per request, not when the client is created, so a later polyfill or test stub applies
+export const api = createFetchClient<paths>({
+  baseUrl: API_BASE_URL,
+  fetch: (request) => globalThis.fetch(request),
+});
 api.use(apiMiddleware);
 
 export const $api = createQueryClient(api);

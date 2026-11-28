@@ -4,16 +4,23 @@ import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import type { Professor } from "@/@types";
 import { useRateProfessor } from "@/hooks";
-import { UIGlass, UIText } from "@/ui";
+import { UIGlass, UIPressable, UIText } from "@/ui";
 import { UNIVERSITY_SHORT_NAMES, apiErrorKey } from "@/utils";
 import { RatingInput } from "./RatingInput";
 
-export function ProfessorRow({ professor }: { professor: Professor }) {
+type ProfessorRowProps = {
+  professor: Professor;
+  /** a tap on the card, e.g. to open the professor's page; left out on that page. The stars rate in place */
+  onPress?: (professor: Professor) => void;
+};
+
+export function ProfessorRow({ professor, onPress }: ProfessorRowProps) {
   const { t } = useTranslation();
   const { mutateAsync: rate, isPending, variables } = useRateProfessor();
   // the picked stars show while the rating saves, then the API's
   const myRating = (isPending ? variables.rating : professor.myRating) ?? 0;
 
+  const handlePress = () => onPress?.(professor);
   const handleRatingChange = async (rating: number) => {
     try {
       await rate({ id: professor.id, rating });
@@ -23,7 +30,13 @@ export function ProfessorRow({ professor }: { professor: Professor }) {
   };
 
   return (
-    <View style={styles.cell}>
+    <UIPressable
+      accessibilityRole="button"
+      accessibilityLabel={professor.name}
+      onPress={handlePress}
+      disabled={!onPress}
+      style={styles.cell}
+    >
       <UIGlass radius={16} style={styles.card}>
         <View style={styles.text}>
           <UIText weight="semibold" numberOfLines={1}>
@@ -75,7 +88,7 @@ export function ProfessorRow({ professor }: { professor: Professor }) {
           </View>
         </View>
       </UIGlass>
-    </View>
+    </UIPressable>
   );
 }
 

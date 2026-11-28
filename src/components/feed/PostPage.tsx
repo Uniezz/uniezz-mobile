@@ -14,11 +14,12 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native-unistyles";
 import type { FeedComment } from "@/@types";
 import { useFeedPost, useFeedComments, useMyProfile } from "@/hooks";
-import { UIEmpty, UIQueryError, UISkeleton, UIText } from "@/ui";
+import { UIEmpty, UIQueryError, UIText, UISkeletonRow } from "@/ui";
 import { HEADER_TRANSITION } from "@/utils";
 import { CommentItem } from "./CommentItem";
 import { PostCard } from "./PostCard";
 import { PostSummary } from "./PostSummary";
+import { PostCardSkeleton } from "./PostCardSkeleton";
 
 // lifts the visible comments with the keyboard, so the one being read stays in view;
 // the list ends above the home indicator (UIPage pads it), which the keyboard already covers.
@@ -89,7 +90,7 @@ export const PostPage = ({
   };
 
   const listHeader = isPending ? (
-    <UISkeleton height={260} />
+    <PostCardSkeleton />
   ) : isError || !post ? (
     <UIQueryError message={t("apiState.error")} onRetry={refetch} />
   ) : (
@@ -127,7 +128,7 @@ export const PostPage = ({
         ListHeaderComponent={listHeader}
         ListEmptyComponent={
           !post ? null : areCommentsPending ? (
-            <UISkeleton height={64} />
+            <UISkeletonRow avatarSize="sm" count={4} />
           ) : areCommentsError ? (
             <UIQueryError
               message={t("apiState.error")}
@@ -138,7 +139,7 @@ export const PostPage = ({
           )
         }
         ListFooterComponent={
-          isFetchingNextPage ? <UISkeleton height={64} /> : null
+          isFetchingNextPage ? <UISkeletonRow avatarSize="sm" /> : null
         }
         renderItem={({ item }) => (
           <CommentItem

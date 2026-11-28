@@ -1,19 +1,23 @@
-import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { FlashList } from "@shopify/flash-list";
 import { Alert, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import type { Connection } from "@/@types";
-import { useConnections, useDeleteConnection } from "@/hooks";
-import { UIPressable, UIAvatar, UIText } from "@/ui";
+import {
+  useConnections,
+  useDeleteConnection,
+  useOpenDirectChat,
+} from "@/hooks";
+import { ConnectionAvatar } from "./ConnectionAvatar";
 
-// shortcut: opens the revealed profile, not a thread; open the match's chat once the chat backend lands (UNI-43)
+// a tap opens the direct conversation with the match
 export function ConnectionAvatarList() {
   const { t } = useTranslation();
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useConnections();
   const { mutateAsync: removeConnection } = useDeleteConnection();
+  const { openChat } = useOpenDirectChat();
   const connections = data?.pages.flatMap((page) => page.items ?? []) ?? [];
 
   if (connections.length === 0) return null;
@@ -22,7 +26,7 @@ export function ConnectionAvatarList() {
     if (hasNextPage && !isFetchingNextPage) return fetchNextPage();
   };
   const handleOpen = (connection: Connection) =>
-    router.push(`/student/${connection.profile.id}`);
+    openChat(connection.profile.id);
   const handleRemove = (connection: Connection) =>
     Alert.alert(
       t("connections.removeTitle"),
@@ -42,36 +46,19 @@ export function ConnectionAvatarList() {
 
   return (
     <View style={styles.section}>
-      <UIText size="sm" weight="semibold" color="secondary">
-        {t("connections.matches")}
-      </UIText>
       <FlashList
         horizontal
         data={connections}
         keyExtractor={(connection) => connection.id}
         showsHorizontalScrollIndicator={false}
         onEndReached={handleEndReached}
-        renderItem={({ item: connection }) => {
-          const handlePress = () => handleOpen(connection);
-          const handleLongPress = () => handleRemove(connection);
-          return (
-            <UIPressable
-              accessibilityRole="button"
-              accessibilityHint={t("connections.removeHint")}
-              onPress={handlePress}
-              onLongPress={handleLongPress}
-              style={styles.match}
-            >
-              <UIAvatar size="lg" imageSrc={connection.profile.avatarUrl} />
-              <UIText size="xs" numberOfLines={1}>
-                {connection.profile.firstName ?? t("apiState.student")}
-              </UIText>
-              <UIText size="xs" color="secondary" numberOfLines={1}>
-                {t(`app.${connection.mode}`)}
-              </UIText>
-            </UIPressable>
-          );
-        }}
+        renderItem={({ item: connection }) => (
+          <ConnectionAvatar
+            connection={connection}
+            onOpen={handleOpen}
+            onRemove={handleRemove}
+          />
+        )}
       />
     </View>
   );
@@ -79,11 +66,4 @@ export function ConnectionAvatarList() {
 
 const styles = StyleSheet.create((theme) => ({
   section: { gap: theme.vs(8) },
-  match: {
-    width: theme.s(64),
-    // FlashList ignores gap, so each match keeps its own spacing
-    marginRight: theme.s(14),
-    alignItems: "center",
-    gap: theme.vs(2),
-  },
 }));

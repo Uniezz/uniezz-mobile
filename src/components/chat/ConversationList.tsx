@@ -1,52 +1,105 @@
-import { useState } from "react";
+import type { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { useRef, useState } from "react";
 import { ProfileButton } from "@/components/profile";
 import { useTranslation } from "react-i18next";
 import { FlashList } from "@shopify/flash-list";
 import { Keyboard, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import type { Conversation } from "@/@types";
-import { chatTime } from "@/utils";
+import type { ApiConversation } from "@/@types";
+import { useChatRequests } from "@/hooks";
+import { conversationTitle } from "@/utils";
+import { ChatSettingsSheet } from "./ChatSettingsSheet";
 import { ConnectionAvatarList } from "./ConnectionAvatarList";
+import { ConversationRow } from "./ConversationRow";
 import {
-  UIPressable,
   Icon,
-  UIAvatar,
   UIEmpty,
   UIIconButton,
+  UIQueryError,
   UISearchOverlay,
   UISubTabs,
   UIText,
+  UISkeletonRow,
 } from "@/ui";
 
 const FILTERS = [
   ["all", "app.all"],
   ["groups", "app.groups"],
-  ["requests", "chat.requests"],
+  ["requests", "chat.requestsTab"],
 ] as const;
+
+type ConversationListProps = {
+  conversations: ApiConversation[];
+  isPending: boolean;
+  isError: boolean;
+  onRetry: () => void;
+  refreshing: boolean;
+  onRefresh: () => void;
+  onEndReached: () => void;
+  onOpen: (id: string) => void;
+  onCreate: () => void;
+};
 
 export function ConversationList({
   conversations,
+  isPending,
+  isError,
+  onRetry,
+  refreshing,
+  onRefresh,
+  onEndReached,
   onOpen,
   onCreate,
-}: {
-  conversations: Conversation[];
-  onOpen: (id: string) => void;
-  onCreate: () => void;
-}) {
-  const { t, i18n } = useTranslation();
-  const locale = i18n.resolvedLanguage ?? "en";
+}: ConversationListProps) {
+  const { t } = useTranslation();
   const [search, setSearch] = useState("");
+  // the list filters by `query`, applied only on submit as in the feed; `search` is the text being typed
+  const [query, setQuery] = useState("");
+  const handleSearchSubmit = () => {
+    setQuery(search);
+    Keyboard.dismiss();
+  };
   // the search field only exists while the keyboard is up; blurring it closes it, the filter stays
   const [isSearching, setIsSearching] = useState(false);
   const handleSearchPress = () => setIsSearching(true);
+  const settingsRef = useRef<BottomSheetModal>(null);
+  const handleSettingsPress = () => settingsRef.current?.present();
   const handleSearchClose = () => setIsSearching(false);
   const [filter, setFilter] = useState<(typeof FILTERS)[number][0]>("all");
   const handleFilterPress = (index: number) =>
     setFilter(FILTERS[index]?.[0] ?? "all");
-  const visible = conversations.filter(
+  // message requests stay out of the chat list; their tab reads them from their own endpoint
+  const {
+    data: requestPages,
+    isPending: areRequestsPending,
+    isError: isRequestsError,
+    refetch: refetchRequests,
+    fetchNextPage: fetchNextRequests,
+    hasNextPage: hasMoreRequests,
+    isFetchingNextPage: isFetchingRequests,
+  } = useChatRequests();
+  const requests =
+    requestPages?.pages.flatMap((page) => page.items ?? []) ?? [];
+  const isRequests = filter === "requests";
+  const [areRequestsRefreshing, setAreRequestsRefreshing] = useState(false);
+  const handleRequestsRefresh = () => {
+    setAreRequestsRefreshing(true);
+    return refetchRequests().finally(() => setAreRequestsRefreshing(false));
+  };
+  const handleRequestsEndReached = () => {
+    if (hasMoreRequests && !isFetchingRequests) return fetchNextRequests();
+  };
+  // counts the loaded pages only; the API has no request total
+  const requestsLabel = requests.length
+    ? `${t("chat.requestsTab")} (${requests.length}${hasMoreRequests ? "+" : ""})`
+    : t("chat.requestsTab");
+  const listPending = isRequests ? areRequestsPending : isPending;
+  const listError = isRequests ? isRequestsError : isError;
+  // shortcut: search filters only the loaded pages; the API has no conversation search yet
+  const visible = (isRequests ? requests : conversations).filter(
     (item) =>
-      item.name.toLowerCase().includes(search.toLowerCase()) &&
-      (filter !== "groups" || item.group),
+      conversationTitle(item, t).toLowerCase().includes(query.toLowerCase()) &&
+      (filter !== "groups" || item.kind === "group"),
   );
   return (
     <>
@@ -64,6 +117,13 @@ export function ConversationList({
           </UIIconButton>
           <UIIconButton
             accessibilityRole="button"
+            accessibilityLabel={t("chat.whoCanMessage")}
+            onPress={handleSettingsPress}
+          >
+            <Icon name="settings" size={18} />
+          </UIIconButton>
+          <UIIconButton
+            accessibilityRole="button"
             accessibilityLabel={t("app.createGroup")}
             onPress={onCreate}
           >
@@ -73,74 +133,53 @@ export function ConversationList({
         </View>
         <View style={styles.filters}>
           <UISubTabs
-            items={FILTERS.map(([, label]) => t(label))}
+            items={FILTERS.map(([value, label]) =>
+              value === "requests" ? requestsLabel : t(label),
+            )}
             selectedItemIndex={FILTERS.findIndex(([value]) => value === filter)}
             onPress={handleFilterPress}
           />
         </View>
+        {/* the people you matched with, a chat with each a tap away; a long press removes one */}
         <ConnectionAvatarList />
         <FlashList
+          maintainVisibleContentPosition={{ disabled: true }}
           style={styles.list}
           contentContainerStyle={styles.listContent}
-          data={filter === "requests" ? [] : visible}
+          data={visible}
           keyExtractor={(item) => item.id}
           showsVerticalScrollIndicator={false}
+          refreshing={isRequests ? areRequestsRefreshing : refreshing}
+          onRefresh={isRequests ? handleRequestsRefresh : onRefresh}
+          onEndReached={isRequests ? handleRequestsEndReached : onEndReached}
+          ListEmptyComponent={
+            listPending ? (
+              <UISkeletonRow avatarSize="lg" count={8} />
+            ) : listError ? (
+              <UIQueryError
+                message={t("apiState.error")}
+                onRetry={isRequests ? refetchRequests : onRetry}
+              />
+            ) : null
+          }
           renderItem={({ item }) => (
-            <UIPressable
-              accessibilityRole="button"
-              onPress={() => onOpen(item.id)}
-            >
-              <View style={styles.row}>
-                <UIAvatar size="lg" />
-                <View style={styles.rowText}>
-                  <View style={styles.top}>
-                    <UIText
-                      size="rg"
-                      weight="semibold"
-                      numberOfLines={1}
-                      style={styles.name}
-                    >
-                      {item.name}
-                    </UIText>
-                    <UIText size="sm" color="secondary">
-                      {chatTime(item.updatedAt, locale)}
-                    </UIText>
-                  </View>
-                  <View style={styles.bottom}>
-                    <UIText
-                      size="body"
-                      color={item.unread > 0 ? "white" : "secondary"}
-                      numberOfLines={1}
-                      style={styles.preview}
-                    >
-                      {item.preview}
-                    </UIText>
-                    {item.unread > 0 ? (
-                      <View style={styles.badge}>
-                        <UIText size="xs" weight="semibold">
-                          {item.unread}
-                        </UIText>
-                      </View>
-                    ) : null}
-                  </View>
-                </View>
-              </View>
-            </UIPressable>
+            <ConversationRow conversation={item} onOpen={onOpen} />
           )}
         />
       </View>
       {/* beside the list, not inside it, so the cat centres on the screen like every other empty state */}
-      {filter === "requests" || visible.length === 0 ? (
+      {!listPending && !listError && visible.length === 0 ? (
         <UIEmpty
           isScreenCentred
-          message={t(filter === "requests" ? "chat.noRequests" : "app.empty")}
+          message={t(isRequests ? "chat.noRequests" : "app.empty")}
         />
       ) : null}
+      <ChatSettingsSheet ref={settingsRef} />
       <UISearchOverlay
         isOpen={isSearching}
         value={search}
         onChangeText={setSearch}
-        onSubmit={Keyboard.dismiss}
+        onSubmit={handleSearchSubmit}
         onClose={handleSearchClose}
         placeholder={t("app.searchConversations")}
         submitLabel={t("topbar.search")}
@@ -178,39 +217,5 @@ const styles = StyleSheet.create((theme) => ({
   // keeps the last row clear of the tab bar
   listContent: {
     paddingBottom: theme.vs(110),
-  },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: theme.s(12),
-    // lines up with the filters; the page already pads the sides
-    paddingVertical: theme.vs(10),
-  },
-  rowText: {
-    flex: 1,
-    gap: theme.vs(3),
-  },
-  top: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: theme.s(8),
-  },
-  name: {
-    flex: 1,
-  },
-  bottom: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: theme.s(8),
-  },
-  // badge sits right after the preview, not pinned to the edge
-  preview: {
-    flexShrink: 1,
-  },
-  badge: {
-    paddingVertical: theme.vs(1),
-    paddingHorizontal: theme.s(7),
-    borderRadius: theme.vs(999),
-    backgroundColor: theme.colors.blue,
   },
 }));

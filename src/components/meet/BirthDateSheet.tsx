@@ -14,10 +14,13 @@ import { Platform, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import type { BirthDateFormValues } from "@/@types";
-import { useUpdateConnectionPreferences } from "@/hooks";
+import {
+  useConnectionPreferences,
+  useUpdateConnectionPreferences,
+} from "@/hooks";
 import { birthDateSchema } from "@/schemas";
-import { UIPressable, UIFormSheet, UIText } from "@/ui";
-import { toCalendarDay, apiErrorKey } from "@/utils";
+import { Icon, UIPressable, UIFormSheet, UIText } from "@/ui";
+import { DEFAULT_OPEN_TO, toCalendarDay, apiErrorKey } from "@/utils";
 
 type BirthDateSheetProps = {
   ref: Ref<BottomSheetModal>;
@@ -30,6 +33,13 @@ type BirthDateSheetProps = {
 export const BirthDateSheet = ({ ref, onDismiss }: BirthDateSheetProps) => {
   const { t, i18n } = useTranslation();
   const today = new Date();
+  // the calendar opens on a typical student's year, not today, so picking needs no long scroll back
+  const startDate = new Date(
+    today.getFullYear() - 18,
+    today.getMonth(),
+    today.getDate(),
+  );
+  const { data: preferences } = useConnectionPreferences();
   const { mutateAsync: savePreferences, isPending } =
     useUpdateConnectionPreferences();
   const { dismiss } = useBottomSheetModal();
@@ -41,7 +51,11 @@ export const BirthDateSheet = ({ ref, onDismiss }: BirthDateSheetProps) => {
   const handleSavePress = handleSubmit(async ({ birthDate }) => {
     if (!birthDate) return;
     try {
-      await savePreferences({ birthDate: toCalendarDay(birthDate) });
+      // a new student is open to nothing, so the deck would stay empty until the filters are saved
+      const openTo = preferences?.openTo?.length
+        ? undefined
+        : [...DEFAULT_OPEN_TO];
+      await savePreferences({ birthDate: toCalendarDay(birthDate), openTo });
       toast.success(t("connections.ageSubmitted"));
       dismiss();
     } catch (error) {
@@ -73,38 +87,46 @@ export const BirthDateSheet = ({ ref, onDismiss }: BirthDateSheetProps) => {
           // Android has no inline picker: rendering one opens a dialog, so open it on demand
           const handleAndroidPress = () =>
             DateTimePickerAndroid.open({
-              value: field.value ?? today,
+              value: field.value ?? startDate,
               mode: "date",
               maximumDate: today,
               onValueChange: handleChange,
             });
           return (
             <View style={styles.field}>
-              <View style={styles.row}>
-                <UIText weight="medium">{t("connections.birthDate")}</UIText>
-                {Platform.OS === "android" ? (
-                  <UIPressable
-                    accessibilityRole="button"
-                    onPress={handleAndroidPress}
-                  >
-                    <UIText weight="semibold" color="link">
-                      {field.value
-                        ? new Intl.DateTimeFormat(i18n.resolvedLanguage, {
-                            dateStyle: "medium",
-                          }).format(field.value)
-                        : "—"}
-                    </UIText>
-                  </UIPressable>
-                ) : (
+              {Platform.OS === "android" ? (
+                // a whole field to tap, like the other inputs, rather than a small link
+                <UIPressable
+                  accessibilityRole="button"
+                  accessibilityLabel={t("connections.birthDate")}
+                  onPress={handleAndroidPress}
+                  style={styles.androidField(Boolean(fieldState.error))}
+                >
+                  <UIText color={field.value ? "white" : "secondary"}>
+                    {field.value
+                      ? new Intl.DateTimeFormat(i18n.resolvedLanguage, {
+                          dateStyle: "long",
+                        }).format(field.value)
+                      : t("connections.pickBirthDate")}
+                  </UIText>
+                  <Icon
+                    name="calendar"
+                    size={18}
+                    uniProps={(theme) => ({ color: theme.colors.white60 })}
+                  />
+                </UIPressable>
+              ) : (
+                <View style={styles.row}>
+                  <UIText weight="medium">{t("connections.birthDate")}</UIText>
                   <DateTimePicker
-                    value={field.value ?? today}
+                    value={field.value ?? startDate}
                     mode="date"
                     maximumDate={today}
                     themeVariant="dark"
                     onValueChange={handleChange}
                   />
-                )}
-              </View>
+                </View>
+              )}
               {fieldState.error?.message ? (
                 <UIText size="xs" color="error">
                   {t(fieldState.error.message)}
@@ -130,4 +152,16 @@ const styles = StyleSheet.create((theme) => ({
     alignItems: "center",
     justifyContent: "space-between",
   },
+  // looks like UIInput
+  androidField: (isError: boolean) => ({
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    height: theme.vs(48),
+    paddingHorizontal: theme.s(14),
+    borderWidth: 1,
+    borderRadius: theme.vs(12),
+    borderColor: isError ? theme.colors.red : theme.colors.white12,
+    backgroundColor: theme.colors.white3,
+  }),
 }));

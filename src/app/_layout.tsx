@@ -1,4 +1,5 @@
 import "@/schemas";
+import { env } from "@/schemas/env";
 import "@/internationalization";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Toaster } from "sonner-native";
@@ -11,7 +12,7 @@ import { useEffect } from "react";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { StyleSheet } from "react-native-unistyles";
 import { PostHogProvider, useFeatureFlag } from "posthog-react-native";
-import { useScreenTracking } from "@/hooks";
+import { useNotificationTaps, useScreenTracking } from "@/hooks";
 import { darkTheme } from "@/theme";
 import { stackHostNativeProps, stackScreenOptions } from "@/utils";
 
@@ -28,6 +29,7 @@ function RootNavigator(): React.JSX.Element {
   const coinsEnabled = useFeatureFlag("coins") !== false;
   const segments = useSegments();
   useScreenTracking();
+  useNotificationTaps(session?.token);
 
   // a cold start on any other route (USOS callback, deep link) never mounts the splash route
   useEffect(() => {
@@ -56,10 +58,12 @@ function RootNavigator(): React.JSX.Element {
         <Stack.Screen name="post" />
         <Stack.Screen name="student/[id]" />
         <Stack.Screen name="students" />
+        <Stack.Screen name="follows" />
         <Stack.Protected guard={coinsEnabled}>
           <Stack.Screen name="rewards" />
         </Stack.Protected>
         <Stack.Screen name="course/[id]" />
+        <Stack.Screen name="professor/[id]" />
       </Stack.Protected>
     </Stack>
   );
@@ -73,9 +77,10 @@ export default function RootLayout() {
         captureScreens: false,
         propsToCapture: ["testID", "ph-label"],
       }}
-      projectToken="phc_pSPCwUwaLeA8xTLn6Y5XWS6Kq3TXEbBa3W3DNnoLPHsJ"
+      projectToken={env.EXPO_PUBLIC_PROJECT_TOKEN}
       options={{
-        host: "https://us.i.posthog.com",
+        // the EU cloud keeps analytics in Frankfurt, as the privacy policy says
+        host: "https://eu.i.posthog.com",
       }}
     >
       <KeyboardProvider>

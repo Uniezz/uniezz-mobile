@@ -13,6 +13,13 @@ export const CONNECTION_MODES = [
   ["dating", "app.dating", "heart"],
 ] as const satisfies readonly (readonly [ConnectionMode, string, string])[];
 
+// opened together with the birth date, so the deck has cards without a trip to the filters;
+// dating stays off: the backend needs an adult with a complete profile for it
+export const DEFAULT_OPEN_TO = [
+  "friends",
+  "studyBuddy",
+] as const satisfies readonly ConnectionMode[];
+
 // the backend allows this many likes per 24 hours
 export const DAILY_LIKE_LIMIT = 50;
 
@@ -25,9 +32,10 @@ export const CONNECTION_PREFERENCES_ERRORS: Record<number, string> = {
   400: "connections.datingRequiresAdult",
 };
 
-// both are 400 on PUT /connections/me
+// all are 400 on PUT /connections/me
 export const CONNECTION_PREFERENCES_CODES: Record<string, string> = {
   dating_requires_adult: "connections.datingRequiresAdult",
+  dating_requires_profile: "connections.datingRequiresProfile",
   birth_date_immutable: "connections.birthDateImmutable",
 };
 

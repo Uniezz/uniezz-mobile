@@ -19,16 +19,24 @@ import {
 import { StyleSheet } from "react-native-unistyles";
 import { toast } from "sonner-native";
 import {
+  FollowButton,
   InterestChips,
   ProfileHeader,
   ProfileHero,
   ProfilePhotos,
   ProgrammeCard,
+  ProfileHeroSkeleton,
+  ProfileFollows,
 } from "@/components/profile";
-import { FeedPostCard } from "@/components/feed";
+import { FeedPostCard, PostCardSkeleton } from "@/components/feed";
 import { ReportSheet } from "@/components/report";
-import { useBlockStudent, useFeedPosts, usePublicProfile } from "@/hooks";
-import { Icon, UIGlass, UIPage, UIQueryError, UISkeleton, UIText } from "@/ui";
+import {
+  useBlockStudent,
+  useFeedPosts,
+  useOpenDirectChat,
+  usePublicProfile,
+} from "@/hooks";
+import { Icon, UIGlass, UIPage, UIPressable, UIQueryError, UIText } from "@/ui";
 import { authorName, HEADER_COMPACT_OFFSET, GENDER_LABELS } from "@/utils";
 
 export default function PublicProfileScreen() {
@@ -38,6 +46,7 @@ export default function PublicProfileScreen() {
   const { data: profile, isPending, isError, refetch } = usePublicProfile(id);
   const reportRef = useRef<BottomSheetModal>(null);
   const { mutateAsync: block } = useBlockStudent();
+  const { openChat } = useOpenDirectChat();
   const postFilters = { authorId: id };
   const {
     data: postPages,
@@ -86,12 +95,10 @@ export default function PublicProfileScreen() {
       },
     ]);
   const handleMenuAction = ({ nativeEvent }: NativeActionEvent) => {
-    if (nativeEvent.event === "message") return handleMessagePress();
     if (nativeEvent.event === "report") return handleReportPress();
     if (nativeEvent.event === "block") return handleBlockPress();
   };
   const menuActions: MenuAction[] = [
-    ...(chatEnabled ? [{ id: "message", title: t("app.message") }] : []),
     { id: "report", title: t("report.user") },
     {
       id: "block",
@@ -99,21 +106,34 @@ export default function PublicProfileScreen() {
       attributes: { destructive: true },
     },
   ];
-  const handleMessagePress = () => router.push("/(tabs)/chat");
+  const handleMessagePress = () => openChat(id);
 
-  // the same native menu as the own profile's ellipsis
+  // writing is a button of its own; the rest sits in the same native menu as the own profile's ellipsis
   const reportAction = profile ? (
-    <MenuView actions={menuActions} onPressAction={handleMenuAction}>
-      <UIGlass
-        radius={12}
-        accessible
-        accessibilityRole="button"
-        accessibilityLabel={t("students.actions")}
-        style={styles.more}
-      >
-        <Icon name="ellipsis" size={18} />
-      </UIGlass>
-    </MenuView>
+    <View style={styles.actions}>
+      {chatEnabled ? (
+        <UIPressable
+          accessibilityRole="button"
+          accessibilityLabel={t("app.message")}
+          onPress={handleMessagePress}
+        >
+          <UIGlass radius={12} style={styles.more}>
+            <Icon name="send" size={18} />
+          </UIGlass>
+        </UIPressable>
+      ) : null}
+      <MenuView actions={menuActions} onPressAction={handleMenuAction}>
+        <UIGlass
+          radius={12}
+          accessible
+          accessibilityRole="button"
+          accessibilityLabel={t("students.actions")}
+          style={styles.more}
+        >
+          <Icon name="ellipsis" size={18} />
+        </UIGlass>
+      </MenuView>
+    </View>
   ) : null;
 
   return (
@@ -135,7 +155,7 @@ export default function PublicProfileScreen() {
         ListHeaderComponent={
           <View style={styles.page}>
             {isPending ? (
-              <UISkeleton height={220} />
+              <ProfileHeroSkeleton />
             ) : isError || !profile ? (
               <UIQueryError message={t("apiState.error")} onRetry={refetch} />
             ) : (
@@ -148,6 +168,15 @@ export default function PublicProfileScreen() {
                   universityId={profile.universityId}
                   songUrl={profile.songUrl}
                 >
+                  <View style={styles.follows}>
+                    <ProfileFollows
+                      profileId={profile.id}
+                      name={authorName(profile) || t("apiState.student")}
+                      followersCount={profile.followersCount}
+                      followingCount={profile.followingCount}
+                    />
+                    <FollowButton profile={profile} />
+                  </View>
                   {profile.gender ? (
                     <UIText size="sm" color="secondary">
                       {t(GENDER_LABELS[profile.gender])}
@@ -194,7 +223,7 @@ export default function PublicProfileScreen() {
         onEndReached={handleEndReached}
         ListEmptyComponent={
           !profile ? null : arePostsPending ? (
-            <UISkeleton height={120} />
+            <PostCardSkeleton count={2} />
           ) : arePostsError ? (
             <UIQueryError
               message={t("apiState.error")}
@@ -204,9 +233,7 @@ export default function PublicProfileScreen() {
             <UIText color="secondary">{t("students.noPosts")}</UIText>
           )
         }
-        ListFooterComponent={
-          isFetchingNextPage ? <UISkeleton height={110} /> : null
-        }
+        ListFooterComponent={isFetchingNextPage ? <PostCardSkeleton /> : null}
         renderItem={({ item }) => (
           <View style={styles.cell}>
             <FeedPostCard post={item} filters={postFilters} />
@@ -219,6 +246,12 @@ export default function PublicProfileScreen() {
 }
 
 const styles = StyleSheet.create((theme, rt) => ({
+  follows: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: theme.s(16),
+  },
   // UIPage already pads the status bar; the rest of the header height is added here
   list: (headerHeight: number) => ({
     paddingTop: Math.max(headerHeight - rt.insets.top, 0),
@@ -237,6 +270,10 @@ const styles = StyleSheet.create((theme, rt) => ({
   },
   section: {
     gap: theme.vs(12),
+  },
+  actions: {
+    flexDirection: "row",
+    gap: theme.s(8),
   },
   more: {
     width: theme.vs(44),

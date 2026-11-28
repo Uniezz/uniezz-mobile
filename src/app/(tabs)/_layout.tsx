@@ -5,14 +5,21 @@ import { useFeatureFlag } from "posthog-react-native";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { BirthDateSheet } from "@/components/meet";
-import { useConnectionPreferences } from "@/hooks";
+import {
+  useChatStream,
+  useChatUnread,
+  useConnectionPreferences,
+} from "@/hooks";
 import type { ConnectionPreferences } from "@/@types";
-import { tabsHostNativeProps } from "@/utils";
+import { tabsHostNativeProps, unreadBadge } from "@/utils";
 import { router } from "expo-router";
 
 export default function TabLayout() {
   const { t } = useTranslation();
   const chatEnabled = useFeatureFlag("chat") === true;
+  // live chat updates while signed in, only where chat is switched on
+  useChatStream(chatEnabled);
+  const { data: unread } = useChatUnread(chatEnabled);
   const birthDateRef = useRef<BottomSheetModal>(null);
   const birthDateRequested = useRef(false);
   const queryClient = useQueryClient();
@@ -54,6 +61,11 @@ export default function TabLayout() {
             md={{ default: "chat_bubble_outline", selected: "chat_bubble" }}
           />
           <NativeTabs.Trigger.Label>{t("tabs.chat")}</NativeTabs.Trigger.Label>
+          {/* expo-router shows any text even when hidden, and a red dot for no text unless hidden:
+              at 0 the badge needs both no text and hidden */}
+          <NativeTabs.Trigger.Badge hidden={!unread?.totalUnread}>
+            {unread?.totalUnread ? unreadBadge(unread.totalUnread) : undefined}
+          </NativeTabs.Trigger.Badge>
         </NativeTabs.Trigger>
         <NativeTabs.Trigger
           name="meet"

@@ -1,12 +1,11 @@
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { BlurView } from "expo-blur";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Redirect, router } from "expo-router";
+import { Redirect } from "expo-router";
 import { usePostHog } from "posthog-react-native";
 import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { ActivityIndicator, Keyboard, View } from "react-native";
+import { ActivityIndicator, Keyboard, View, Platform } from "react-native";
 import {
   KeyboardAwareScrollView,
   KeyboardStickyView,
@@ -17,13 +16,19 @@ import { toast } from "sonner-native";
 import type { PersonalDetailsFormValues } from "@/@types";
 import { AuthPage } from "@/components/auth";
 import { ProgrammeCard, ProgrammesSheet } from "@/components/profile";
-import { useMyProfile, usePickProfileImage, useUpdateMyProfile } from "@/hooks";
+import {
+  useCompleteOnboarding,
+  useMyProfile,
+  usePickProfileImage,
+  useRequestNotificationPermission,
+  useUpdateMyProfile,
+} from "@/hooks";
 import { personalDetailsSchema } from "@/schemas";
-import { isOnboardingDone, markOnboardingDone } from "@/store";
 import { vs } from "@/theme/scale";
 import {
   UIPressable,
   Icon,
+  UIChip,
   UIAvatar,
   UIButton,
   UIGlass,
@@ -31,16 +36,20 @@ import {
   UIInput,
   UIPage,
   UIText,
+  UIBlur,
 } from "@/ui";
 import {
   captureAction,
-  isNewProfile,
+  GENDER_LABELS,
+  GENDERS,
   ONBOARDING_STEPS,
   splitInterests,
   toDetailsValues,
+  apiErrorKey,
 } from "@/utils";
 
-// first sign-in onboarding, as on web: photo, details, programmes; skipping or finishing closes it for good
+// first sign-in onboarding, as on web: photo, details, programmes. It shows until the profile's
+// onboardedAt is set; skipping or finishing sets it for good, on every device
 export default function OnboardingScreen() {
   const { t } = useTranslation();
   const posthog = usePostHog();
@@ -49,11 +58,12 @@ export default function OnboardingScreen() {
     useUpdateMyProfile();
   const { pickImage: handlePhotoPress, isPending: isUploadingPhoto } =
     usePickProfileImage("avatar");
+  const { mutateAsync: completeOnboarding, isPending: isCompleting } =
+    useCompleteOnboarding();
+  const { mutate: requestNotifications } = useRequestNotificationPermission();
   const programmesRef = useRef<BottomSheetModal>(null);
   const { bottom: bottomInset } = useSafeAreaInsets();
   const [step, setStep] = useState(0);
-  // decided once, so the 10-minute window can't close onboarding midway
-  const [isShown, setIsShown] = useState<boolean>();
   const {
     control,
     handleSubmit,
@@ -64,43 +74,48 @@ export default function OnboardingScreen() {
     resetOptions: { keepDirtyValues: true },
   });
 
-  if (profile && isShown === undefined)
-    setIsShown(
-      isNewProfile(profile.createdAt) && !isOnboardingDone(profile.id),
-    );
-
-  if (isPending || (profile && isShown === undefined)) {
+  if (isPending) {
     return (
       <UIPage style={styles.loading}>
         <ActivityIndicator color="white" />
       </UIPage>
     );
   }
-  if (isError || !isShown) return <Redirect href="/feed" />;
+  // finished or skipped (here or on another device): straight to the feed
+  if (isError || profile.onboardedAt) return <Redirect href="/feed" />;
 
   const key = ONBOARDING_STEPS[step]!;
   const isLast = step === ONBOARDING_STEPS.length - 1;
   const programmes = profile.programmes ?? [];
-  const isBusy = isSaving || isUploadingPhoto;
+  const isBusy = isSaving || isUploadingPhoto || isCompleting;
   // skip doesn't save the form, so it waits for a saved name
   const canSkip = Boolean(profile.firstName && profile.lastName);
+  // the API rejects changing a saved gender (gender_immutable)
+  const isGenderLocked = Boolean(profile.gender);
 
-  const goToFeed = () => {
-    markOnboardingDone(profile.id);
-    router.replace("/feed");
+  // once the API stored it, onboardedAt is in the profile and the Redirect above takes over
+  const goToFeed = async () => {
+    // asked before the feed replaces this screen; a refusal still lets the student in
+    requestNotifications();
+    try {
+      await completeOnboarding();
+    } catch {
+      toast.error(t("apiState.error"));
+    }
   };
   const saveDetails = handleSubmit(
-    async ({ interests, songUrl, gender: _gender, ...values }) => {
+    async ({ interests, songUrl, gender, ...values }) => {
       try {
         if (isDirty)
           await updateProfile({
             ...values,
             interests: splitInterests(interests),
             songUrl: songUrl.trim(),
+            ...(isGenderLocked || !gender ? {} : { gender }),
           });
         setStep(2);
-      } catch {
-        toast.error(t("apiState.profileSaveError"));
+      } catch (error) {
+        toast.error(t(apiErrorKey(error, "apiState.profileSaveError")));
       }
     },
     () => captureAction(posthog, "profile_form", "validation_failed"),
@@ -210,6 +225,36 @@ export default function OnboardingScreen() {
             />
             <Controller
               control={control}
+              name="gender"
+              render={({ field }) => (
+                <View style={styles.group}>
+                  <UIText size="xs" weight="semibold" color="secondary">
+                    {t("students.gender")}
+                  </UIText>
+                  <View style={styles.chips}>
+                    {GENDERS.map((value) => (
+                      <UIChip
+                        key={value}
+                        label={t(GENDER_LABELS[value])}
+                        selected={field.value === value}
+                        onPress={
+                          isGenderLocked
+                            ? undefined
+                            : () => field.onChange(value)
+                        }
+                      />
+                    ))}
+                  </View>
+                  {isGenderLocked ? null : (
+                    <UIText size="xs" color="secondary">
+                      {t("students.genderHint")}
+                    </UIText>
+                  )}
+                </View>
+              )}
+            />
+            <Controller
+              control={control}
               name="bio"
               render={({ field, fieldState }) => (
                 <UIInput
@@ -286,7 +331,7 @@ export default function OnboardingScreen() {
         offset={{ opened: bottomInset }}
         style={styles.footer}
       >
-        <BlurView intensity={50} tint="dark" style={styles.footerBlur} />
+        <UIBlur intensity={50} tint="dark" style={styles.footerBlur} />
         <View style={styles.actions}>
           {step > 0 ? (
             <UIIconButton
@@ -367,6 +412,13 @@ const styles = StyleSheet.create((theme, rt) => ({
     gap: theme.vs(16),
     paddingBottom: theme.vs(FOOTER_HEIGHT + 16),
   },
+  group: {
+    gap: theme.vs(8),
+  },
+  chips: {
+    flexDirection: "row",
+    gap: theme.s(8),
+  },
   // the scroll view clips the glow, so the step leaves room for all of it (blur + spread)
   photoStep: {
     alignItems: "center",
@@ -409,7 +461,9 @@ const styles = StyleSheet.create((theme, rt) => ({
   },
   footerBlur: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: theme.colors.ink40,
+    // Android has no real blur: an opaque fill, so nothing scrolls through
+    backgroundColor:
+      Platform.OS === "android" ? theme.colors.ink : theme.colors.ink40,
   },
   actions: {
     flexDirection: "row",

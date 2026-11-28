@@ -5,8 +5,7 @@ import { afterEach, test } from "node:test";
 process.env.EXPO_PUBLIC_API_URL = "https://api.test";
 process.env.EXPO_PUBLIC_PROJECT_TOKEN = "phc_test";
 
-// openapi-fetch reads globalThis.fetch when the client is created, so install a
-// stable dispatcher before importing it and swap the handler per test.
+// the client reads globalThis.fetch per request; one dispatcher swaps the handler per test.
 type FetchHandler = (
   input: RequestInfo | URL,
   init?: RequestInit,

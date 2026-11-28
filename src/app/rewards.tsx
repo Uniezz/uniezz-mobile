@@ -36,6 +36,7 @@ import {
   UIButton,
   UIGlass,
   UIText,
+  UISkeletonText,
 } from "@/ui";
 import {
   canRedeemInvite,
@@ -221,7 +222,7 @@ export default function RewardsScreen() {
           !isEarn ? (
             <ShopPreview />
           ) : isPending ? (
-            <UISkeleton height={56} />
+            <UISkeletonText count={5} />
           ) : isError ? (
             <UIQueryError message={t("apiState.error")} onRetry={refetch} />
           ) : (
@@ -230,7 +231,7 @@ export default function RewardsScreen() {
           )
         }
         ListFooterComponent={
-          isEarn && isFetchingNextPage ? <UISkeleton height={56} /> : null
+          isEarn && isFetchingNextPage ? <UISkeletonText /> : null
         }
         renderItem={({ item }) => <GrantRow grant={item} />}
       />

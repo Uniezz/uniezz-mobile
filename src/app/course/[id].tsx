@@ -32,6 +32,7 @@ import {
   CourseFormSheet,
   RatingInput,
   StudyRow,
+  StudyRowSkeleton,
 } from "@/components/study";
 import {
   useAddCourseComment,
@@ -49,8 +50,8 @@ import {
   UIIconButton,
   UIPage,
   UIQueryError,
-  UISkeleton,
   UIText,
+  UISkeletonText,
 } from "@/ui";
 import {
   FILE_TYPES,
@@ -74,6 +75,7 @@ const CommentsScrollView = (props: ScrollViewProps) => {
 export default function CourseScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { t } = useTranslation();
+  const { bottom: bottomInset } = useSafeAreaInsets();
   const posthog = usePostHog();
   const { data: course, isPending, isError, refetch } = useCourse(id);
   const { data: filePages } = useCourseFiles(id);
@@ -117,6 +119,13 @@ export default function CourseScreen() {
   const showError = (error: unknown) => toast.error(t(apiErrorKey(error)));
   const handleBackPress = () => router.back();
   const handleReportPress = () => reportRef.current?.present();
+  // someone else's comment: the second report sheet takes its id
+  const commentReportRef = useRef<BottomSheetModal>(null);
+  const [reportedCommentId, setReportedCommentId] = useState("");
+  const handleCommentReportPress = (comment: CourseComment) => {
+    setReportedCommentId(comment.id);
+    commentReportRef.current?.present();
+  };
   const handleEditPress = () => editRef.current?.present();
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     setIsHeaderCompact(
@@ -202,7 +211,7 @@ export default function CourseScreen() {
         onEndReached={handleEndReached}
         ListHeaderComponent={
           isPending ? (
-            <UISkeleton height={220} />
+            <StudyRowSkeleton />
           ) : isError ? (
             <UIQueryError message={t("apiState.error")} onRetry={refetch} />
           ) : (
@@ -308,23 +317,27 @@ export default function CourseScreen() {
               <UIText size="md" weight="semibold">
                 {t("study.comments")}
               </UIText>
-              {areCommentsPending ? <UISkeleton height={56} /> : null}
+              {areCommentsPending ? <UISkeletonText count={3} /> : null}
               {!areCommentsPending && comments.length === 0 ? (
                 <UIText color="secondary">{t("study.noComments")}</UIText>
               ) : null}
             </View>
           )
         }
-        ListFooterComponent={
-          isFetchingNextPage ? <UISkeleton height={56} /> : null
-        }
+        ListFooterComponent={isFetchingNextPage ? <UISkeletonText /> : null}
         renderItem={({ item }) => (
-          <CourseCommentItem comment={item} onDeletePress={handleDeletePress} />
+          <CourseCommentItem
+            comment={item}
+            onDeletePress={handleDeletePress}
+            onReportPress={handleCommentReportPress}
+          />
         )}
       />
       {course ? (
-        // UIPage already lifts the composer off the home indicator; above the keyboard that gap is dropped
+        // absolute, so UIPage's bottom padding doesn't reach it: lifted off the home indicator or
+        // Android's navigation buttons while closed, and right on the keyboard while open
         <KeyboardStickyView
+          offset={{ closed: -bottomInset }}
           style={styles.composer}
           onLayout={handleComposerLayout}
         >
@@ -336,6 +349,11 @@ export default function CourseScreen() {
         </KeyboardStickyView>
       ) : null}
       <ReportSheet ref={reportRef} targetId={id} targetType="course" />
+      <ReportSheet
+        ref={commentReportRef}
+        targetId={reportedCommentId}
+        targetType="course_comment"
+      />
       {course?.isMine ? (
         <CourseFormSheet ref={editRef} course={course} />
       ) : null}
