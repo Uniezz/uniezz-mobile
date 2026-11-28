@@ -35,3 +35,17 @@ test("invite links open the invite screen, whatever the session", () => {
     "/invite/short",
   );
 });
+
+test("shared web pages open their app screen", () => {
+  const id = "0b6f5b8e-2f0a-4c55-9a39-5d3c1e7f2a10";
+  for (const [path, route] of [
+    [`https://uniezz.pl/feed/post/${id}`, `/post/${id}`],
+    [`https://uniezz.pl/connections/students/${id}`, `/student/${id}`],
+    [`https://uniezz.pl/exams/courses/${id}`, `/course/${id}`],
+    [`https://uniezz.pl/feed/post/${id}/edit`, `/post/${id}`],
+    [`https://uniezz.pl/exams/courses/${id}/upload`, `/course/${id}`],
+    ["https://uniezz.pl/exams/courses/new", "/"],
+  ] as const) {
+    assert.equal(redirectSystemPath({ path, initial: true }), route, path);
+  }
+});

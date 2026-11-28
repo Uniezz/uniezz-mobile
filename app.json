@@ -35,6 +35,21 @@
               "scheme": "https",
               "host": "uniezz.pl",
               "pathPrefix": "/invite"
+            },
+            {
+              "scheme": "https",
+              "host": "uniezz.pl",
+              "pathPrefix": "/feed/post"
+            },
+            {
+              "scheme": "https",
+              "host": "uniezz.pl",
+              "pathPrefix": "/connections/students"
+            },
+            {
+              "scheme": "https",
+              "host": "uniezz.pl",
+              "pathPrefix": "/exams/courses"
             }
           ],
           "category": ["BROWSABLE", "DEFAULT"]
