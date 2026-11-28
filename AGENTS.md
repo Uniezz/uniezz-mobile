@@ -61,3 +61,10 @@
 - Do not list universities or their number in copy, such as "the five Lublin universities": there are more, and the list grows. Say "Lublin universities"; the university list comes from the API (`useUniversities`).
 - Show a count and its label on one line, such as "**2** Following", not stacked.
 - Keep chat sync cursors (`changeSeq`) moving only through the catch-up (`catchUpChatThread`). Do not merge a send or other mutation response into the message cache first: that moves the cursor past messages others sent a moment earlier, and they are never fetched.
+
+## Releases
+
+- The app's environment (`EXPO_PUBLIC_API_URL`, `EXPO_PUBLIC_PROJECT_TOKEN`) comes only from Doppler; EAS has no production variables. Run every production build and OTA update through Doppler, or the bundle ships without them and `src/schemas/env.ts` crashes the app on launch:
+  - Build: `doppler run -p mobile -c prd -- eas build --profile production --platform ios --local`
+  - OTA update: `doppler run -p mobile -c prd -- eas update --channel production`
+- An OTA update reaches only builds with the same `version` in `app.json` (`runtimeVersion` policy `appVersion`). After a native change (a new native package, a config plugin, permissions), raise `version` and ship a new store build instead of an update.
